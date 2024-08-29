@@ -9,16 +9,20 @@ export class LayoutComponent implements OnInit {
 
   navigation = [
     {
-      title: 'user'
+      title: 'users',
+      path: 'user'
     },
     {
-      title: 'project'
+      title: 'projects',
+      path: 'projects'
     },
     {
-      title: 'inventory'
+      title: 'inventory',
+      path: 'inventories'
     },
     {
-      title: 'report'
+      title: 'reports',
+      path: 'reports'
     }
   ]
 

@@ -1,15 +1,16 @@
 <nz-layout>
     <nz-header>
       <ul nz-menu nzMode="horizontal" class="shadow-sm border-0 px-4">
-        <li nz-menu-item>
+        <li nz-menu-item class="logo">
             <img 
                 class="img-fluid py-2"
                 src="/assets/images/company-logo.png"
                 width="48"
                 height="48"
+                routerLink="/dashboard"
             />
         </li>
-        <li nz-menu-item *ngFor="let nav of navigation">
+        <li nz-menu-item *ngFor="let nav of navigation" [routerLink]="'/'+nav.path" routerLinkActive="ant-menu-item-selected">
             <p class="p-0 m-0 fw-bold text-uppercase">{{ nav.title }}</p>
         </li>
         <li nz-menu-item class="ms-auto float-end" >
