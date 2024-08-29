@@ -7,9 +7,16 @@ import { Component, OnInit } from '@angular/core';
 })
 export class UserComponent implements OnInit {
 
+  user_type: string = 'employee';
+  
+
   constructor() { }
 
   ngOnInit(): void {
+  }
+
+  tabChange(value: any){
+    console.log(value);
   }
 
 }

@@ -1,1 +1,26 @@
-<p>user works!</p>
+<div class="user-wrapper">
+    <div class="row">
+        <nz-radio-group [(ngModel)]="user_type" (ngModelChange)="tabChange($event)">
+            <label nz-radio-button nzValue="employee"><span>Employee</span></label>
+            <label nz-radio-button nzValue="customer"><span>Customer</span></label>
+            <label nz-radio-button nzValue="supplier"><span>Supplier</span></label>
+        </nz-radio-group>
+    </div>
+    <div class="row mt-5">
+        <ng-container *ngIf="user_type === 'employee'">
+            <h4 class="fw-bold mb-4">Data Employee</h4>
+            <app-table-user></app-table-user>
+        </ng-container>
+    
+        <ng-container *ngIf="user_type === 'customer'">
+            <h4 class="fw-bold mb-4">Data Customer</h4>
+            <app-table-user></app-table-user>
+        </ng-container>
+    
+        <ng-container *ngIf="user_type === 'supplier'">
+            <h4 class="fw-bold mb-4">Data Supplier</h4>
+            <app-table-user></app-table-user>
+        </ng-container>
+    </div>
+
+</div>
