@@ -1,0 +1,25 @@
+<nz-layout>
+    <nz-header>
+      <ul nz-menu nzMode="horizontal" class="shadow-sm border-0 px-4">
+        <li nz-menu-item>
+            <img 
+                class="img-fluid py-2"
+                src="/assets/images/company-logo.png"
+                width="48"
+                height="48"
+            />
+        </li>
+        <li nz-menu-item *ngFor="let nav of navigation">
+            <p class="p-0 m-0 fw-bold text-uppercase">{{ nav.title }}</p>
+        </li>
+        <li nz-menu-item class="ms-auto float-end" >
+            <span nz-icon nzType="user" nzTheme="outline" style="font-size: 24px;"></span>
+        </li>
+      </ul>
+    </nz-header>
+    <nz-content>
+        <div class="inner-content">
+            <router-outlet></router-outlet>
+        </div>
+    </nz-content>
+</nz-layout>
