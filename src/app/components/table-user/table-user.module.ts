@@ -6,7 +6,8 @@ import { NzDividerModule } from 'ng-zorro-antd/divider'
 import { TableUserComponent } from './table-user.component';
 import { NzBadgeModule } from 'ng-zorro-antd/badge';
 import { NzButtonModule } from 'ng-zorro-antd/button';
-
+import { NzIconModule } from 'ng-zorro-antd/icon';
+ 
 @NgModule({
   declarations: [TableUserComponent],
   imports: [
@@ -14,7 +15,8 @@ import { NzButtonModule } from 'ng-zorro-antd/button';
     NzTableModule,
     NzDividerModule,
     NzBadgeModule,
-    NzButtonModule
+    NzButtonModule,
+    NzIconModule
   ],
   exports: [TableUserComponent]
 })

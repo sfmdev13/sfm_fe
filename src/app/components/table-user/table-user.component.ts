@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, Output, EventEmitter } from '@angular/core';
 
 
 @Component({
@@ -13,6 +13,8 @@ export class TableUserComponent implements OnInit {
   @Input() listOfDataEmp: any[] = [];
   @Input() listofDataCust: any[] = [];
   @Input() listofDataSupp: any[] = [];
+
+  @Output() showUpdateModal = new EventEmitter<void>();
 
   listOfData: any[] = [
     {
@@ -47,6 +49,10 @@ export class TableUserComponent implements OnInit {
   constructor() { }
 
   ngOnInit(): void {
+  }
+
+  updateHandler(){
+    this.showUpdateModal.emit();
   }
 
 }

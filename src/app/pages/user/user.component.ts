@@ -172,4 +172,12 @@ export class UserComponent implements OnInit {
     });
   }
 
+  showUpdateModal(){
+    console.log('masuk kocak')
+    this.modalService.create({
+      nzTitle: 'Update Employee',
+      nzContent: AddEmployeeModalComponent
+    });
+  }
+
 }
