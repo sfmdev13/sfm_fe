@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
+import { NzModalService } from 'ng-zorro-antd/modal';
 import { AddEmployeeModalComponent } from 'src/app/components/add-employee-modal/add-employee-modal.component';
+import { DetailEmployeeModalComponent } from 'src/app/components/detail-employee-modal/detail-employee-modal.component';
 
 @Component({
   selector: 'app-user',
@@ -173,10 +174,17 @@ export class UserComponent implements OnInit {
   }
 
   showUpdateModal(){
-    console.log('masuk kocak')
     this.modalService.create({
       nzTitle: 'Update Employee',
       nzContent: AddEmployeeModalComponent
+    });
+  }
+
+  showDetailModal(){
+    console.log('masuk')
+    this.modalService.create({
+      nzTitle: 'Detail Employee',
+      nzContent: DetailEmployeeModalComponent
     });
   }
 

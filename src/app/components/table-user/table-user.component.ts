@@ -15,6 +15,7 @@ export class TableUserComponent implements OnInit {
   @Input() listofDataSupp: any[] = [];
 
   @Output() showUpdateModal = new EventEmitter<void>();
+  @Output() showDetailModal = new EventEmitter<void>();
 
   listOfData: any[] = [
     {
@@ -53,6 +54,10 @@ export class TableUserComponent implements OnInit {
 
   updateHandler(){
     this.showUpdateModal.emit();
+  }
+
+  detailHandler(){
+    this.showDetailModal.emit();
   }
 
 }

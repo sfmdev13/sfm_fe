@@ -12,6 +12,7 @@ import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzInputModule } from 'ng-zorro-antd/input';
 import { AddEmployeeModalModule } from 'src/app/components/add-employee-modal/add-employee-modal.module';
+import { DetailEmployeeModalModule } from 'src/app/components/detail-employee-modal/detail-employee-modal.module';
 
 @NgModule({
   declarations: [UserComponent],
@@ -25,7 +26,8 @@ import { AddEmployeeModalModule } from 'src/app/components/add-employee-modal/ad
     NzButtonModule,
     NzIconModule,
     NzInputModule,
-    AddEmployeeModalModule
+    AddEmployeeModalModule,
+    DetailEmployeeModalModule
   ],
   exports: [UserComponent]
 })

@@ -22,20 +22,10 @@
                 <td>{{ data.phone }}</td>
                 <td>{{ data.address }}</td>
                 <td>
-                    <button 
-                     nz-button 
-                     nzType="primary" 
-                     nzSize="small" 
-                     nzShape="round" 
-                     [nzDanger]="!data.status"
-                     [ngClass]="data.status ? 'active-badge':''"
-                     >
-                        {{ data.status ? 'active' : 'inactive' }}
-                    </button>
-                </td>
+                    <nz-tag [nzColor]="data.status ? '#1DA32C' : '#f50'">{{ data.status ? 'Active' : 'Inactive' }}</nz-tag>
                 <td>
                     <div class="d-flex gap-3">
-                        <span nz-icon nzType="eye" nzTheme="twotone"></span>
+                        <span (click)="detailHandler()"  nz-icon nzType="eye" nzTheme="twotone"></span>
                         <span (click)="updateHandler()" nz-icon nzType="edit" nzTheme="twotone"></span>
                         <span nz-icon nzType="delete" nzTheme="twotone"></span>
                     </div>
@@ -70,16 +60,7 @@
                 <td>{{ data.phone }}</td>
                 <td>{{ data.address }}</td>
                 <td>
-                    <button 
-                     nz-button 
-                     nzType="primary" 
-                     nzSize="small" 
-                     nzShape="round" 
-                     [nzDanger]="!data.status"
-                     [ngClass]="data.status ? 'active-badge':''"
-                     >
-                        {{ data.status ? 'active' : 'inactive' }}
-                    </button>
+                    <nz-tag [nzColor]="data.status ? '#1DA32C' : '#f50'">{{ data.status ? 'Active' : 'Inactive' }}</nz-tag>
                 </td>
                 <td>{{ data.pic }}</td>
             </tr>
@@ -110,16 +91,7 @@
                 <td>{{ data.phone }}</td>
                 <td>{{ data.address }}</td>
                 <td>
-                    <button 
-                     nz-button 
-                     nzType="primary" 
-                     nzSize="small" 
-                     nzShape="round" 
-                     [nzDanger]="!data.status"
-                     [ngClass]="data.status ? 'active-badge':''"
-                     >
-                        {{ data.status ? 'active' : 'inactive' }}
-                    </button>
+                    <nz-tag [nzColor]="data.status ? '#1DA32C' : '#f50'">{{ data.status ? 'Active' : 'Inactive' }}</nz-tag>
                 </td>
                 <td>{{ data.pic }}</td>
             </tr>
