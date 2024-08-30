@@ -1,14 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 
-interface Person {
-  emp_id: string;
-  name: string;
-  email: string;
-  nik: string;
-  phone: string;
-  address: string;
-  status: boolean;
-}
 
 @Component({
   selector: 'app-table-user',
@@ -18,7 +9,12 @@ interface Person {
 
 export class TableUserComponent implements OnInit {
 
-  listOfData: Person[] = [
+  @Input() user_type: string = 'employee';
+  @Input() listOfDataEmp: any[] = [];
+  @Input() listofDataCust: any[] = [];
+  @Input() listofDataSupp: any[] = [];
+
+  listOfData: any[] = [
     {
       emp_id: '1',
       name: 'John Brown1',

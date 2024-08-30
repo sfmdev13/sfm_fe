@@ -8,7 +8,9 @@ import { NzTabsModule } from 'ng-zorro-antd/tabs';
 import { NzRadioModule } from 'ng-zorro-antd/radio'
 import { FormsModule } from '@angular/forms';
 import { TableUserModule } from 'src/app/components/table-user/table-user.module';
-
+import { NzButtonModule } from 'ng-zorro-antd/button';
+import { NzIconModule } from 'ng-zorro-antd/icon';
+import { NzInputModule } from 'ng-zorro-antd/input';
 
 @NgModule({
   declarations: [UserComponent],
@@ -18,7 +20,10 @@ import { TableUserModule } from 'src/app/components/table-user/table-user.module
     NzTabsModule,
     NzRadioModule,
     FormsModule,
-    TableUserModule
+    TableUserModule,
+    NzButtonModule,
+    NzIconModule,
+    NzInputModule
   ],
   exports: [UserComponent]
 })
