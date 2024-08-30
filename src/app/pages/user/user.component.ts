@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { NzModalService } from 'ng-zorro-antd/modal';
 import { AddEmployeeModalComponent } from 'src/app/components/add-employee-modal/add-employee-modal.component';
+import { DeleteEmployeeModalComponent } from 'src/app/components/delete-employee-modal/delete-employee-modal.component';
 import { DetailEmployeeModalComponent } from 'src/app/components/detail-employee-modal/detail-employee-modal.component';
 
 @Component({
@@ -181,10 +182,16 @@ export class UserComponent implements OnInit {
   }
 
   showDetailModal(){
-    console.log('masuk')
     this.modalService.create({
       nzTitle: 'Detail Employee',
       nzContent: DetailEmployeeModalComponent
+    });
+  }
+
+  showDeleteModal(){
+    this.modalService.create({
+      nzTitle: 'Delete Employee',
+      nzContent: DeleteEmployeeModalComponent
     });
   }
 

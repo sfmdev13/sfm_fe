@@ -1,0 +1,9 @@
+<div>
+    <nz-result nzStatus="warning" nzTitle="Are you sure want to delete this employee?">
+    </nz-result>
+</div>
+
+<div *nzModalFooter>
+    <button nz-button nzType="default" nzDanger (click)="destroyModal()">Cancel</button>
+    <button nz-button nzType="primary" nzDanger (click)="destroyModal()">Delete Employee</button>
+</div>
