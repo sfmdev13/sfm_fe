@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
+import { AddEmployeeModalComponent } from 'src/app/components/add-employee-modal/add-employee-modal.component';
 
 @Component({
   selector: 'app-user',
@@ -13,7 +15,7 @@ export class UserComponent implements OnInit {
   listofDataCust: any[] = [];
   listofDataSupp: any[] = [];
 
-  constructor() { }
+  constructor(private modalService: NzModalService) { }
 
   ngOnInit(): void {
 
@@ -26,7 +28,8 @@ export class UserComponent implements OnInit {
         nik: '212312312',
         phone: '0121283',
         address: 'Jalan Beruang II',
-        status: true
+        status: true,
+        role: 'superadmin'
       },
       {
         emp_id: '2',
@@ -35,7 +38,8 @@ export class UserComponent implements OnInit {
         nik: '212312312',
         phone: '0121283',
         address: 'Jalan Beruang II',
-        status: false
+        status: false,
+        role: 'Sales'
       },
       {
         emp_id: '3',
@@ -44,7 +48,8 @@ export class UserComponent implements OnInit {
         nik: '212312312',
         phone: '0121283',
         address: 'Jalan Beruang II',
-        status: false
+        status: false,
+        role: 'Sales'
       }
     ];
   }
@@ -158,6 +163,13 @@ export class UserComponent implements OnInit {
       ]
     }
     
+  }
+
+  showAddModal(){
+    this.modalService.create({
+      nzTitle: 'Add Employee',
+      nzContent: AddEmployeeModalComponent
+    });
   }
 
 }
