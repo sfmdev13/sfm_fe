@@ -1,0 +1,43 @@
+<div class="login-wrapper">
+    <div class="login-card container h-100">
+        <div class="d-flex align-items-center justify-content-center h-100">
+            <nz-card class="px-4 h-50" [nzBordered]="true">
+                <div class="login-card-header text-center">
+                    <img class="img-fluid" width="48" height="48" src="/assets/images/company-logo.png"/>
+                </div>
+                <div class="mt-4">
+                    <h4 class="text-center fw-bold">Login</h4>
+                </div>
+                <div class="mt-2">
+                    <h6 class="fw-normal">Login SFM web-based application</h6>
+                </div> 
+                <div class="mt-4">
+                    <form nz-form [formGroup]="validateForm" class="login-form" (ngSubmit)="submitForm()">
+                        <nz-form-item>
+                          <nz-form-control nzErrorTip="Please input your username!">
+                            <nz-input-group nzPrefixIcon="user">
+                              <input type="text" nz-input formControlName="userName" placeholder="Username" />
+                            </nz-input-group>
+                          </nz-form-control>
+                        </nz-form-item>
+                        <nz-form-item>
+                          <nz-form-control nzErrorTip="Please input your Password!">
+                            <nz-input-group nzPrefixIcon="lock" [nzSuffix]="suffixTemplate">
+                              <input [type]="passwordVisible ? 'text' : 'password'" nz-input formControlName="password" placeholder="Password" />
+                            </nz-input-group>
+                            <ng-template #suffixTemplate>
+                                <span
+                                  nz-icon
+                                  [nzType]="passwordVisible ? 'eye-invisible' : 'eye'"
+                                  (click)="passwordVisible = !passwordVisible"
+                                ></span>
+                              </ng-template>
+                          </nz-form-control>
+                        </nz-form-item>
+                        <button nz-button class="login-form-button login-form-margin w-100" [nzType]="'primary'">Log in</button>
+                      </form>
+                </div>
+            </nz-card>
+        </div>
+    </div>
+</div>

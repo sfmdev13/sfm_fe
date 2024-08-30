@@ -1,0 +1,81 @@
+<div class="user-wrapper">
+    <div class="row">
+        <nz-radio-group [(ngModel)]="user_type" (ngModelChange)="tabChange($event)">
+            <label nz-radio-button nzValue="employee"><span>Employee</span></label>
+            <label nz-radio-button nzValue="customer"><span>Customer</span></label>
+            <label nz-radio-button nzValue="supplier"><span>Supplier</span></label>
+        </nz-radio-group>
+    </div>
+    <div class="row mt-5">
+        <ng-container *ngIf="user_type === 'employee'">
+            <div class="d-flex align-items-center justify-content-between mb-4">
+                <h4 class="fw-bold">Data Employee</h4>
+                <nz-input-group [nzSuffix]="suffixIconSearch" nzSize="large" style="width: 320px;">
+                    <input type="text" nz-input placeholder="search employee" />
+                </nz-input-group>
+                <ng-template #suffixIconSearch>
+                    <span nz-icon nzType="search"></span>
+                </ng-template>
+            </div>
+            <div class="d-flex align-items-center justify-content-between mb-3">
+                <span class="fw-light">Result of 40 Employees</span>
+                <div class="row">
+                    <div class="text-end">
+                        <button class="me-2 filter-icon" nz-button nzType="default" nzSize="default"><span nz-icon nzType="reload"></span></button>
+                        <button class="me-2 filter-icon" nz-button nzType="default" nzSize="default"><span nz-icon nzType="filter"></span></button>
+                        <button nzSize="default" nz-button nzType="primary" (click)="showAddModal()">Add New Employee</button>
+                    </div>
+                </div>
+            </div>
+            <app-table-user [user_type]="user_type" [listOfDataEmp]="listOfDataEmp" (showUpdateModal)="showUpdateModal()" (showDetailModal)="showDetailModal()"></app-table-user>
+
+        </ng-container>
+    
+        <ng-container *ngIf="user_type === 'customer'">
+            <div class="d-flex align-items-center justify-content-between mb-4">
+                <h4 class="fw-bold">Data Customer</h4>
+                <nz-input-group [nzSuffix]="suffixIconSearch" nzSize="large" style="width: 320px;">
+                    <input type="text" nz-input placeholder="search customer" />
+                </nz-input-group>
+                <ng-template #suffixIconSearch>
+                    <span nz-icon nzType="search"></span>
+                </ng-template>
+            </div>
+            <div class="d-flex align-items-center justify-content-between mb-3">
+                <span class="fw-light">Result of 40 customers</span>
+                <div class="row">
+                    <div class="text-end">
+                        <button class="me-2 filter-icon" nz-button nzType="default" nzSize="default"><span nz-icon nzType="reload"></span></button>
+                        <button class="me-2 filter-icon" nz-button nzType="default" nzSize="default"><span nz-icon nzType="filter"></span></button>
+                        <button nzSize="default" nz-button nzType="primary">Add New Customer</button>
+                    </div>
+                </div>
+            </div>
+            <app-table-user [user_type]="user_type" [listofDataCust]="listofDataCust"></app-table-user>
+        </ng-container>
+    
+        <ng-container *ngIf="user_type === 'supplier'">
+            <div class="d-flex align-items-center justify-content-between mb-4">
+                <h4 class="fw-bold">Data Supplier</h4>
+                <nz-input-group [nzSuffix]="suffixIconSearch" nzSize="large" style="width: 320px;">
+                    <input type="text" nz-input placeholder="search supplier" />
+                </nz-input-group>
+                <ng-template #suffixIconSearch>
+                    <span nz-icon nzType="search"></span>
+                </ng-template>
+            </div>
+            <div class="d-flex align-items-center justify-content-between mb-3">
+                <span class="fw-light">Result of 40 suppliers</span>
+                <div class="row">
+                    <div class="text-end">
+                        <button class="me-2 filter-icon" nz-button nzType="default" nzSize="default"><span nz-icon nzType="reload"></span></button>
+                        <button class="me-2 filter-icon" nz-button nzType="default" nzSize="default"><span nz-icon nzType="filter"></span></button>
+                        <button nzSize="default" nz-button nzType="primary">Add New Supplier</button>
+                    </div>
+                </div>
+            </div>
+            <app-table-user [user_type]="user_type" [listofDataSupp]="listofDataSupp"></app-table-user>
+        </ng-container>
+    </div>
+
+</div>

@@ -1,0 +1,32 @@
+.logo {
+    &.ant-menu-item-selected{
+        &::after{
+            border-bottom: none !important;
+        }
+    }
+};
+
+.ant-layout{
+    background-color: transparent;
+}
+
+[nz-menu] {
+    line-height: 64px;
+    background: #fff;
+}
+
+nz-content {
+    padding: 24px 50px;
+}
+
+
+.inner-content {
+    background: #fff;
+    min-height: 280px;
+}
+
+
+.ant-layout-header{
+    background: #fff;
+    padding: 0px;
+}
