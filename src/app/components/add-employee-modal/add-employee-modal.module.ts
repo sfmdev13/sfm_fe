@@ -7,6 +7,7 @@ import { NzFormModule } from 'ng-zorro-antd/form';
 import { ReactiveFormsModule } from '@angular/forms';
 import { NzInputModule } from 'ng-zorro-antd/input';
 import { NzSelectModule } from 'ng-zorro-antd/select';
+import { NzSwitchModule } from 'ng-zorro-antd/switch';
 
 @NgModule({
   declarations: [AddEmployeeModalComponent],
@@ -17,7 +18,8 @@ import { NzSelectModule } from 'ng-zorro-antd/select';
     NzFormModule,
     ReactiveFormsModule,
     NzInputModule,
-    NzSelectModule
+    NzSelectModule,
+    NzSwitchModule
   ],
   exports: [AddEmployeeModalComponent]
 })

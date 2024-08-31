@@ -54,7 +54,13 @@
                     <nz-option nzValue="sales" nzLabel="Sales"></nz-option>
                   </nz-select>
                 </nz-form-control>
-              </nz-form-item>
+            </nz-form-item>
+            <nz-form-item>
+              <nz-form-label nzFor="status" nzRequired>Status</nz-form-label>
+              <nz-form-control>
+                <nz-switch nzSize="default" id="status" formControlName="status" nzCheckedChildren="active" nzUnCheckedChildren="inactive"></nz-switch>
+              </nz-form-control>
+          </nz-form-item>
         </div>
     </form>
 </div>
