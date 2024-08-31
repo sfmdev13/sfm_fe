@@ -3,6 +3,7 @@ import { NzModalService } from 'ng-zorro-antd/modal';
 import { AddEmployeeModalComponent } from 'src/app/components/add-employee-modal/add-employee-modal.component';
 import { DeleteEmployeeModalComponent } from 'src/app/components/delete-employee-modal/delete-employee-modal.component';
 import { DetailEmployeeModalComponent } from 'src/app/components/detail-employee-modal/detail-employee-modal.component';
+import { FilterEmployeeModalComponent } from 'src/app/components/filter-employee-modal/filter-employee-modal.component';
 
 @Component({
   selector: 'app-user',
@@ -193,6 +194,13 @@ export class UserComponent implements OnInit {
       nzTitle: 'Delete Employee',
       nzContent: DeleteEmployeeModalComponent
     });
+  }
+
+  showFilter(){
+    this.modalService.create({
+      nzTitle: 'Filter Employee',
+      nzContent: FilterEmployeeModalComponent
+    })
   }
 
 }

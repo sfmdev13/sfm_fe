@@ -14,6 +14,7 @@ import { NzInputModule } from 'ng-zorro-antd/input';
 import { AddEmployeeModalModule } from 'src/app/components/add-employee-modal/add-employee-modal.module';
 import { DetailEmployeeModalModule } from 'src/app/components/detail-employee-modal/detail-employee-modal.module';
 import { DeleteEmployeeModalModule } from 'src/app/components/delete-employee-modal/delete-employee-modal.module';
+import { FilterEmployeeModalModule } from 'src/app/components/filter-employee-modal/filter-employee-modal.module';
 
 @NgModule({
   declarations: [UserComponent],
@@ -29,7 +30,8 @@ import { DeleteEmployeeModalModule } from 'src/app/components/delete-employee-mo
     NzInputModule,
     AddEmployeeModalModule,
     DetailEmployeeModalModule,
-    DeleteEmployeeModalModule
+    DeleteEmployeeModalModule,
+    FilterEmployeeModalModule
   ],
   exports: [UserComponent]
 })
