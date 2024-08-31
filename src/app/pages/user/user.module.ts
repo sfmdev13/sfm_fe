@@ -15,6 +15,10 @@ import { AddEmployeeModalModule } from 'src/app/components/add-employee-modal/ad
 import { DetailEmployeeModalModule } from 'src/app/components/detail-employee-modal/detail-employee-modal.module';
 import { DeleteEmployeeModalModule } from 'src/app/components/delete-employee-modal/delete-employee-modal.module';
 import { FilterEmployeeModalModule } from 'src/app/components/filter-employee-modal/filter-employee-modal.module';
+import { AddCustomerModalModule } from 'src/app/components/add-customer-modal/add-customer-modal.module';
+import { DetailCustomerModalModule } from 'src/app/components/detail-customer-modal/detail-customer-modal.module';
+import { DeleteCustomerModalModule } from 'src/app/components/delete-customer-modal/delete-customer-modal.module';
+import { FilterCustomerModalModule } from 'src/app/components/filter-customer-modal/filter-customer-modal.module';
 
 @NgModule({
   declarations: [UserComponent],
@@ -31,7 +35,11 @@ import { FilterEmployeeModalModule } from 'src/app/components/filter-employee-mo
     AddEmployeeModalModule,
     DetailEmployeeModalModule,
     DeleteEmployeeModalModule,
-    FilterEmployeeModalModule
+    FilterEmployeeModalModule,
+    AddCustomerModalModule,
+    DetailCustomerModalModule,
+    DeleteCustomerModalModule,
+    FilterCustomerModalModule
   ],
   exports: [UserComponent]
 })

@@ -1,8 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { NzModalService } from 'ng-zorro-antd/modal';
+import { AddCustomerModalComponent } from 'src/app/components/add-customer-modal/add-customer-modal.component';
 import { AddEmployeeModalComponent } from 'src/app/components/add-employee-modal/add-employee-modal.component';
+import { DeleteCustomerModalComponent } from 'src/app/components/delete-customer-modal/delete-customer-modal.component';
 import { DeleteEmployeeModalComponent } from 'src/app/components/delete-employee-modal/delete-employee-modal.component';
+import { DetailCustomerModalComponent } from 'src/app/components/detail-customer-modal/detail-customer-modal.component';
 import { DetailEmployeeModalComponent } from 'src/app/components/detail-employee-modal/detail-employee-modal.component';
+import { FilterCustomerModalComponent } from 'src/app/components/filter-customer-modal/filter-customer-modal.component';
 import { FilterEmployeeModalComponent } from 'src/app/components/filter-employee-modal/filter-employee-modal.component';
 
 @Component({
@@ -169,38 +173,88 @@ export class UserComponent implements OnInit {
   }
 
   showAddModal(){
-    this.modalService.create({
-      nzTitle: 'Add Employee',
-      nzContent: AddEmployeeModalComponent
-    });
+
+    if(this.user_type === 'employee'){
+      this.modalService.create({
+        nzTitle: 'Add Employee',
+        nzContent: AddEmployeeModalComponent
+      });
+    }
+
+    if(this.user_type === 'customer'){
+      this.modalService.create({
+        nzTitle: 'Add Customer',
+        nzContent: AddCustomerModalComponent
+      });
+    }
+
   }
 
   showUpdateModal(){
-    this.modalService.create({
-      nzTitle: 'Update Employee',
-      nzContent: AddEmployeeModalComponent
-    });
+    if(this.user_type === 'employee'){
+      this.modalService.create({
+        nzTitle: 'Update Employee',
+        nzContent: AddEmployeeModalComponent
+      });
+    }
+
+    if(this.user_type === 'customer'){
+      this.modalService.create({
+        nzTitle: 'Update Customer',
+        nzContent: AddCustomerModalComponent
+      });
+    }
+
   }
 
   showDetailModal(){
-    this.modalService.create({
-      nzTitle: 'Detail Employee',
-      nzContent: DetailEmployeeModalComponent
-    });
+    if(this.user_type === 'employee'){
+      this.modalService.create({
+        nzTitle: 'Detail Employee',
+        nzContent: DetailEmployeeModalComponent
+      });
+    }
+
+    if(this.user_type === 'customer'){
+      this.modalService.create({
+        nzTitle: 'Detail Customer',
+        nzContent: DetailCustomerModalComponent
+      });
+    }
+
   }
 
   showDeleteModal(){
-    this.modalService.create({
-      nzTitle: 'Delete Employee',
-      nzContent: DeleteEmployeeModalComponent
-    });
+    if(this.user_type === 'employee'){
+      this.modalService.create({
+        nzTitle: 'Delete Employee',
+        nzContent: DeleteEmployeeModalComponent
+      });
+    }
+
+    if(this.user_type === 'customer'){
+      this.modalService.create({
+        nzTitle: 'Delete Customer',
+        nzContent: DeleteCustomerModalComponent
+      });
+    }
+
   }
 
   showFilter(){
-    this.modalService.create({
-      nzTitle: 'Filter Employee',
-      nzContent: FilterEmployeeModalComponent
-    })
+    if(this.user_type === 'employee'){
+      this.modalService.create({
+        nzTitle: 'Filter Employee',
+        nzContent: FilterEmployeeModalComponent
+      })
+    }
+
+    if(this.user_type === 'customer'){
+      this.modalService.create({
+        nzTitle: 'Filter Customer',
+        nzContent: FilterCustomerModalComponent
+      })
+    }
   }
 
 }
