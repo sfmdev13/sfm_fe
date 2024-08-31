@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { FormBuilder } from '@angular/forms';
 import { NzModalRef } from 'ng-zorro-antd/modal';
 
 @Component({
@@ -8,8 +9,15 @@ import { NzModalRef } from 'ng-zorro-antd/modal';
 })
 export class FilterEmployeeModalComponent implements OnInit {
 
+  filterEmpForm = this.fb.group({
+    role: [''],
+    status: [''],
+    sort: ['']
+  })
+
   constructor(
-    private modal: NzModalRef
+    private modal: NzModalRef,
+    private fb: FormBuilder
   ) { }
 
   ngOnInit(): void {
@@ -17,6 +25,10 @@ export class FilterEmployeeModalComponent implements OnInit {
 
   destroyModal(): void{
     this.modal.destroy()
+  }
+
+  submitForm(): void{
+    console.log('aselole')
   }
 
 }
