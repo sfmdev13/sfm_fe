@@ -7,6 +7,8 @@ import { Component, OnInit } from '@angular/core';
 })
 export class DetailCustomerModalComponent implements OnInit {
 
+  status: boolean = true;
+  
   constructor() { }
 
   ngOnInit(): void {
