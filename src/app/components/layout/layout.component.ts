@@ -23,6 +23,10 @@ export class LayoutComponent implements OnInit {
     {
       title: 'reports',
       path: 'reports'
+    },
+    {
+      title: 'roles',
+      path: 'roles'
     }
   ]
 

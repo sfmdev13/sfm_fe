@@ -1,0 +1,20 @@
+<div class="roles-wrapper">
+    <div class="d-flex align-items-center justify-content-between mb-4">
+        <h4 class="fw-bold">Manage Roles</h4>
+        <nz-input-group [nzSuffix]="suffixIconSearch" nzSize="large" style="width: 320px;">
+            <input type="text" nz-input placeholder="search roles" />
+        </nz-input-group>
+        <ng-template #suffixIconSearch>
+            <span nz-icon nzType="search"></span>
+        </ng-template>
+    </div>
+    <div class="d-flex align-items-center justify-content-between mb-3">
+        <span class="fw-light">Result of 5 Roles</span>
+        <div class="row">
+            <div class="text-end">
+                <button nzSize="default" nz-button nzType="primary" (click)="showAddModal()">Add New Roles</button>
+            </div>
+        </div>
+    </div>
+    <app-table-roles [listOfDataRoles]="listOfDataRole"></app-table-roles>
+</div>
