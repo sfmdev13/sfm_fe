@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { FormBuilder } from '@angular/forms';
+import { NzModalRef } from 'ng-zorro-antd/modal';
 
 @Component({
   selector: 'app-filter-customer-modal',
@@ -7,9 +9,26 @@ import { Component, OnInit } from '@angular/core';
 })
 export class FilterCustomerModalComponent implements OnInit {
 
-  constructor() { }
+  filterCustForm = this.fb.group({
+    type: [''],
+    status: [''],
+    sort: ['']
+  })
+
+  constructor(
+    private modal: NzModalRef,
+    private fb: FormBuilder
+  ) { }
 
   ngOnInit(): void {
+  }
+
+  destroyModal(): void{
+    this.modal.destroy()
+  }
+
+  submitForm(): void{
+    console.log('submit')
   }
 
 }

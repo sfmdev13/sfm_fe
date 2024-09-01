@@ -6,7 +6,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzFormModule } from 'ng-zorro-antd/form';
 import { NzRadioModule } from 'ng-zorro-antd/radio';
-
+import { NzModalModule } from 'ng-zorro-antd/modal';
 
 @NgModule({
   declarations: [FilterEmployeeModalComponent],
@@ -16,7 +16,8 @@ import { NzRadioModule } from 'ng-zorro-antd/radio';
     ReactiveFormsModule,
     NzButtonModule,
     NzFormModule,
-    NzRadioModule
+    NzRadioModule,
+    NzModalModule
   ],
   exports: [FilterEmployeeModalComponent]
 })
