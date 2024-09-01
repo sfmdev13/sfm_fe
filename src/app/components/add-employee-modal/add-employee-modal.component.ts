@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { NzModalRef } from 'ng-zorro-antd/modal';
 
@@ -8,6 +8,8 @@ import { NzModalRef } from 'ng-zorro-antd/modal';
   styleUrls: ['./add-employee-modal.component.scss']
 })
 export class AddEmployeeModalComponent implements OnInit {
+
+  @Input() modal_type: string = 'add';
 
   employeeForm = this.fb.group({
     name: ['', [Validators.required]],

@@ -177,14 +177,20 @@ export class UserComponent implements OnInit {
     if(this.user_type === 'employee'){
       this.modalService.create({
         nzTitle: 'Add Employee',
-        nzContent: AddEmployeeModalComponent
+        nzContent: AddEmployeeModalComponent,
+        nzComponentParams: {
+          modal_type: 'add',
+        }
       });
     }
 
     if(this.user_type === 'customer'){
       this.modalService.create({
         nzTitle: 'Add Customer',
-        nzContent: AddCustomerModalComponent
+        nzContent: AddCustomerModalComponent,
+        nzComponentParams: {
+          modal_type: 'add',
+        }
       });
     }
 
@@ -194,14 +200,20 @@ export class UserComponent implements OnInit {
     if(this.user_type === 'employee'){
       this.modalService.create({
         nzTitle: 'Update Employee',
-        nzContent: AddEmployeeModalComponent
+        nzContent: AddEmployeeModalComponent,
+        nzComponentParams: {
+          modal_type: 'update'
+        }
       });
     }
 
     if(this.user_type === 'customer'){
       this.modalService.create({
         nzTitle: 'Update Customer',
-        nzContent: AddCustomerModalComponent
+        nzContent: AddCustomerModalComponent,
+        nzComponentParams: {
+          modal_type: 'update'
+        }
       });
     }
 
@@ -252,7 +264,8 @@ export class UserComponent implements OnInit {
     if(this.user_type === 'customer'){
       this.modalService.create({
         nzTitle: 'Filter Customer',
-        nzContent: FilterCustomerModalComponent
+        nzContent: FilterCustomerModalComponent,
+
       })
     }
   }
