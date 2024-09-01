@@ -1,1 +1,9 @@
-<p>delete-customer-modal works!</p>
+<div>
+    <nz-result nzStatus="warning" nzTitle="Are you sure want to delete this customer?">
+    </nz-result>
+</div>
+
+<div *nzModalFooter>
+    <button nz-button nzType="default" nzDanger (click)="destroyModal()">Cancel</button>
+    <button nz-button nzType="primary" nzDanger (click)="destroyModal()">Delete Customer</button>
+</div>
