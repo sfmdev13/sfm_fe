@@ -19,6 +19,10 @@ import { AddCustomerModalModule } from 'src/app/components/add-customer-modal/ad
 import { DetailCustomerModalModule } from 'src/app/components/detail-customer-modal/detail-customer-modal.module';
 import { DeleteCustomerModalModule } from 'src/app/components/delete-customer-modal/delete-customer-modal.module';
 import { FilterCustomerModalModule } from 'src/app/components/filter-customer-modal/filter-customer-modal.module';
+import { AddSupplierModalModule } from 'src/app/components/add-supplier-modal/add-supplier-modal.module';
+import { DetailSupplierModalModule } from 'src/app/components/detail-supplier-modal/detail-supplier-modal.module';
+import { DeleteSupplierModalModule } from 'src/app/components/delete-supplier-modal/delete-supplier-modal.module';
+import { FilterSupplierModalModule } from 'src/app/components/filter-supplier-modal/filter-supplier-modal.module';
 
 @NgModule({
   declarations: [UserComponent],
@@ -39,7 +43,11 @@ import { FilterCustomerModalModule } from 'src/app/components/filter-customer-mo
     AddCustomerModalModule,
     DetailCustomerModalModule,
     DeleteCustomerModalModule,
-    FilterCustomerModalModule
+    FilterCustomerModalModule,
+    AddSupplierModalModule,
+    DetailSupplierModalModule,
+    DeleteSupplierModalModule,
+    FilterSupplierModalModule
   ],
   exports: [UserComponent]
 })

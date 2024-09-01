@@ -88,6 +88,7 @@
                 <th>Address</th>
                 <th>Status</th>
                 <th>PIC</th>
+                <th>Action</th>
             </tr>
         </thead>
         <tbody>
@@ -102,6 +103,13 @@
                     <nz-tag [nzColor]="data.status ? '#1DA32C' : '#f50'">{{ data.status ? 'Active' : 'Inactive' }}</nz-tag>
                 </td>
                 <td>{{ data.pic }}</td>
+                <td>
+                    <div class="d-flex gap-3">
+                        <span (click)="detailHandler()"  nz-icon nzType="eye" nzTheme="twotone"></span>
+                        <span (click)="updateHandler()" nz-icon nzType="edit" nzTheme="twotone"></span>
+                        <span (click)="deleteHandler()" nz-icon nzType="delete" nzTheme="twotone"></span>
+                    </div>
+                </td>
             </tr>
         </tbody>
     </nz-table>

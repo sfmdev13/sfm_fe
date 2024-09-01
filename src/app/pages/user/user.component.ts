@@ -2,12 +2,16 @@ import { Component, OnInit } from '@angular/core';
 import { NzModalService } from 'ng-zorro-antd/modal';
 import { AddCustomerModalComponent } from 'src/app/components/add-customer-modal/add-customer-modal.component';
 import { AddEmployeeModalComponent } from 'src/app/components/add-employee-modal/add-employee-modal.component';
+import { AddSupplierModalComponent } from 'src/app/components/add-supplier-modal/add-supplier-modal.component';
 import { DeleteCustomerModalComponent } from 'src/app/components/delete-customer-modal/delete-customer-modal.component';
 import { DeleteEmployeeModalComponent } from 'src/app/components/delete-employee-modal/delete-employee-modal.component';
+import { DeleteSupplierModalComponent } from 'src/app/components/delete-supplier-modal/delete-supplier-modal.component';
 import { DetailCustomerModalComponent } from 'src/app/components/detail-customer-modal/detail-customer-modal.component';
 import { DetailEmployeeModalComponent } from 'src/app/components/detail-employee-modal/detail-employee-modal.component';
+import { DetailSupplierModalComponent } from 'src/app/components/detail-supplier-modal/detail-supplier-modal.component';
 import { FilterCustomerModalComponent } from 'src/app/components/filter-customer-modal/filter-customer-modal.component';
 import { FilterEmployeeModalComponent } from 'src/app/components/filter-employee-modal/filter-employee-modal.component';
+import { FilterSupplierModalComponent } from 'src/app/components/filter-supplier-modal/filter-supplier-modal.component';
 
 @Component({
   selector: 'app-user',
@@ -194,6 +198,16 @@ export class UserComponent implements OnInit {
       });
     }
 
+    if(this.user_type === 'supplier'){
+      this.modalService.create({
+        nzTitle: 'Add Supplier',
+        nzContent: AddSupplierModalComponent,
+        nzComponentParams: {
+          modal_type: 'add'
+        }
+      })
+    }
+
   }
 
   showUpdateModal(){
@@ -217,6 +231,16 @@ export class UserComponent implements OnInit {
       });
     }
 
+    if(this.user_type === 'supplier'){
+      this.modalService.create({
+        nzTitle: 'Update Supplier',
+        nzContent: AddSupplierModalComponent,
+        nzComponentParams: {
+          modal_type: 'update'
+        }
+      });
+    }
+
   }
 
   showDetailModal(){
@@ -231,6 +255,13 @@ export class UserComponent implements OnInit {
       this.modalService.create({
         nzTitle: 'Detail Customer',
         nzContent: DetailCustomerModalComponent
+      });
+    }
+
+    if(this.user_type === 'supplier'){
+      this.modalService.create({
+        nzTitle: 'Detail Supplier',
+        nzContent: DetailSupplierModalComponent
       });
     }
 
@@ -251,6 +282,13 @@ export class UserComponent implements OnInit {
       });
     }
 
+    if(this.user_type === 'supplier'){
+      this.modalService.create({
+        nzTitle: 'Delete Supplier',
+        nzContent: DeleteSupplierModalComponent
+      })
+    }
+
   }
 
   showFilter(){
@@ -266,6 +304,13 @@ export class UserComponent implements OnInit {
         nzTitle: 'Filter Customer',
         nzContent: FilterCustomerModalComponent,
 
+      })
+    }
+
+    if(this.user_type === 'supplier'){
+      this.modalService.create({
+        nzTitle: 'Filter Supplier',
+        nzContent: FilterSupplierModalComponent
       })
     }
   }
