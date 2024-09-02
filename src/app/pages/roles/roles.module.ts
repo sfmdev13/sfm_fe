@@ -9,6 +9,7 @@ import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { AddRolesModalModule } from 'src/app/components/add-roles-modal/add-roles-modal.module';
 import { NzTabsModule } from 'ng-zorro-antd/tabs';
+import { DetailRolesModalModule } from 'src/app/components/detail-roles-modal/detail-roles-modal.module';
 
 @NgModule({
   declarations: [RolesComponent],
@@ -20,7 +21,8 @@ import { NzTabsModule } from 'ng-zorro-antd/tabs';
     NzIconModule,
     NzButtonModule,
     AddRolesModalModule,
-    NzTabsModule
+    NzTabsModule,
+    DetailRolesModalModule
   ],
   exports: [RolesComponent]
 })

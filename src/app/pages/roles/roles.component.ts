@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { NzModalService } from 'ng-zorro-antd/modal';
 import { AddRolesModalComponent } from 'src/app/components/add-roles-modal/add-roles-modal.component';
+import { DetailRolesModalComponent } from 'src/app/components/detail-roles-modal/detail-roles-modal.component';
 
 @Component({
   selector: 'app-roles',
@@ -60,11 +61,14 @@ export class RolesComponent implements OnInit {
   }
 
   showDetailModal(): void{
-
+    this.modalService.create({
+      nzTitle: 'Detail Roles',
+      nzContent: DetailRolesModalComponent
+    })
   }
 
   showDeleteModal(): void{
-    
+
   }
 
 }
