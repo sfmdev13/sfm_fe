@@ -184,7 +184,8 @@ export class UserComponent implements OnInit {
         nzContent: AddEmployeeModalComponent,
         nzComponentParams: {
           modal_type: 'add',
-        }
+        },
+        nzCentered: true
       });
     }
 
@@ -194,7 +195,8 @@ export class UserComponent implements OnInit {
         nzContent: AddCustomerModalComponent,
         nzComponentParams: {
           modal_type: 'add',
-        }
+        },
+        nzCentered: true
       });
     }
 
@@ -204,7 +206,8 @@ export class UserComponent implements OnInit {
         nzContent: AddSupplierModalComponent,
         nzComponentParams: {
           modal_type: 'add'
-        }
+        },
+        nzCentered: true
       })
     }
 
@@ -217,7 +220,8 @@ export class UserComponent implements OnInit {
         nzContent: AddEmployeeModalComponent,
         nzComponentParams: {
           modal_type: 'update'
-        }
+        },
+        nzCentered: true
       });
     }
 
@@ -227,7 +231,8 @@ export class UserComponent implements OnInit {
         nzContent: AddCustomerModalComponent,
         nzComponentParams: {
           modal_type: 'update'
-        }
+        },
+        nzCentered: true
       });
     }
 
@@ -237,7 +242,8 @@ export class UserComponent implements OnInit {
         nzContent: AddSupplierModalComponent,
         nzComponentParams: {
           modal_type: 'update'
-        }
+        },
+        nzCentered: true
       });
     }
 
@@ -247,21 +253,24 @@ export class UserComponent implements OnInit {
     if(this.user_type === 'employee'){
       this.modalService.create({
         nzTitle: 'Detail Employee',
-        nzContent: DetailEmployeeModalComponent
+        nzContent: DetailEmployeeModalComponent,
+        nzCentered: true
       });
     }
 
     if(this.user_type === 'customer'){
       this.modalService.create({
         nzTitle: 'Detail Customer',
-        nzContent: DetailCustomerModalComponent
+        nzContent: DetailCustomerModalComponent,
+        nzCentered: true
       });
     }
 
     if(this.user_type === 'supplier'){
       this.modalService.create({
         nzTitle: 'Detail Supplier',
-        nzContent: DetailSupplierModalComponent
+        nzContent: DetailSupplierModalComponent,
+        nzCentered: true
       });
     }
 
@@ -271,21 +280,24 @@ export class UserComponent implements OnInit {
     if(this.user_type === 'employee'){
       this.modalService.create({
         nzTitle: 'Delete Employee',
-        nzContent: DeleteEmployeeModalComponent
+        nzContent: DeleteEmployeeModalComponent,
+        nzCentered: true
       });
     }
 
     if(this.user_type === 'customer'){
       this.modalService.create({
         nzTitle: 'Delete Customer',
-        nzContent: DeleteCustomerModalComponent
+        nzContent: DeleteCustomerModalComponent,
+        nzCentered: true
       });
     }
 
     if(this.user_type === 'supplier'){
       this.modalService.create({
         nzTitle: 'Delete Supplier',
-        nzContent: DeleteSupplierModalComponent
+        nzContent: DeleteSupplierModalComponent,
+        nzCentered: true
       })
     }
 
@@ -295,7 +307,8 @@ export class UserComponent implements OnInit {
     if(this.user_type === 'employee'){
       this.modalService.create({
         nzTitle: 'Filter Employee',
-        nzContent: FilterEmployeeModalComponent
+        nzContent: FilterEmployeeModalComponent,
+        nzCentered: true
       })
     }
 
@@ -303,14 +316,15 @@ export class UserComponent implements OnInit {
       this.modalService.create({
         nzTitle: 'Filter Customer',
         nzContent: FilterCustomerModalComponent,
-
+        nzCentered: true
       })
     }
 
     if(this.user_type === 'supplier'){
       this.modalService.create({
         nzTitle: 'Filter Supplier',
-        nzContent: FilterSupplierModalComponent
+        nzContent: FilterSupplierModalComponent,
+        nzCentered: true
       })
     }
   }

@@ -47,7 +47,8 @@ export class RolesComponent implements OnInit {
       nzContent: AddRolesModalComponent,
       nzComponentParams: {
         modal_type: 'add'
-      }
+      },
+      nzCentered: true
     })
   }
 
@@ -57,21 +58,24 @@ export class RolesComponent implements OnInit {
       nzContent: AddRolesModalComponent,
       nzComponentParams: {
         modal_type: 'Edit'
-      }
+      },
+      nzCentered: true
     })
   }
 
   showDetailModal(): void{
     this.modalService.create({
       nzTitle: 'Detail Roles',
-      nzContent: DetailRolesModalComponent
+      nzContent: DetailRolesModalComponent,
+      nzCentered: true
     })
   }
 
   showDeleteModal(): void{
     this.modalService.create({
       nzTitle: 'Delete Role',
-      nzContent: DeleteRolesModalComponent
+      nzContent: DeleteRolesModalComponent,
+      nzCentered: true
     })
   }
 
