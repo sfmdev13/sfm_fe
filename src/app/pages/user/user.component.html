@@ -22,12 +22,18 @@
                 <div class="row">
                     <div class="text-end">
                         <button class="me-2 filter-icon" nz-button nzType="default" nzSize="default"><span nz-icon nzType="reload"></span></button>
-                        <button class="me-2 filter-icon" nz-button nzType="default" nzSize="default"><span nz-icon nzType="filter"></span></button>
+                        <button  (click)="showFilter()" class="me-2 filter-icon" nz-button nzType="default" nzSize="default"><span nz-icon nzType="filter"></span></button>
                         <button nzSize="default" nz-button nzType="primary" (click)="showAddModal()">Add New Employee</button>
                     </div>
                 </div>
             </div>
-            <app-table-user [user_type]="user_type" [listOfDataEmp]="listOfDataEmp" (showUpdateModal)="showUpdateModal()" (showDetailModal)="showDetailModal()"></app-table-user>
+            <app-table-user 
+                [user_type]="user_type" 
+                [listOfDataEmp]="listOfDataEmp" 
+                (showUpdateModal)="showUpdateModal()" 
+                (showDetailModal)="showDetailModal()"
+                (showDeleteModal)="showDeleteModal()"
+            ></app-table-user>
 
         </ng-container>
     
@@ -46,12 +52,18 @@
                 <div class="row">
                     <div class="text-end">
                         <button class="me-2 filter-icon" nz-button nzType="default" nzSize="default"><span nz-icon nzType="reload"></span></button>
-                        <button class="me-2 filter-icon" nz-button nzType="default" nzSize="default"><span nz-icon nzType="filter"></span></button>
-                        <button nzSize="default" nz-button nzType="primary">Add New Customer</button>
+                        <button (click)="showFilter()" class="me-2 filter-icon" nz-button nzType="default" nzSize="default"><span nz-icon nzType="filter"></span></button>
+                        <button nzSize="default" nz-button nzType="primary" (click)="showAddModal()">Add New Customer</button>
                     </div>
                 </div>
             </div>
-            <app-table-user [user_type]="user_type" [listofDataCust]="listofDataCust"></app-table-user>
+            <app-table-user 
+                [user_type]="user_type" 
+                [listofDataCust]="listofDataCust"
+                (showUpdateModal)="showUpdateModal()" 
+                (showDetailModal)="showDetailModal()"
+                (showDeleteModal)="showDeleteModal()"
+            ></app-table-user>
         </ng-container>
     
         <ng-container *ngIf="user_type === 'supplier'">
@@ -69,12 +81,18 @@
                 <div class="row">
                     <div class="text-end">
                         <button class="me-2 filter-icon" nz-button nzType="default" nzSize="default"><span nz-icon nzType="reload"></span></button>
-                        <button class="me-2 filter-icon" nz-button nzType="default" nzSize="default"><span nz-icon nzType="filter"></span></button>
-                        <button nzSize="default" nz-button nzType="primary">Add New Supplier</button>
+                        <button (click)="showFilter()" class="me-2 filter-icon" nz-button nzType="default" nzSize="default"><span nz-icon nzType="filter"></span></button>
+                        <button nzSize="default" nz-button nzType="primary" (click)="showAddModal()">Add New Supplier</button>
                     </div>
                 </div>
             </div>
-            <app-table-user [user_type]="user_type" [listofDataSupp]="listofDataSupp"></app-table-user>
+            <app-table-user 
+                [user_type]="user_type" 
+                [listofDataSupp]="listofDataSupp"
+                (showUpdateModal)="showUpdateModal()" 
+                (showDetailModal)="showDetailModal()"
+                (showDeleteModal)="showDeleteModal()"
+            ></app-table-user>
         </ng-container>
     </div>
 
