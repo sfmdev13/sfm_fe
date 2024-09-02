@@ -8,6 +8,7 @@ import { Component, Input, OnInit, Output, EventEmitter } from '@angular/core';
 export class TableRolesComponent implements OnInit {
 
   @Input() listOfDataRoles: any[] = []
+  
   @Output() showUpdateModal = new EventEmitter<void>();
   @Output() showDetailModal = new EventEmitter<void>();
   @Output() showDeleteModal = new EventEmitter<void>();

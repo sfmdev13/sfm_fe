@@ -16,5 +16,10 @@
             </div>
         </div>
     </div>
-    <app-table-roles [listOfDataRoles]="listOfDataRole"></app-table-roles>
+    <app-table-roles 
+        [listOfDataRoles]="listOfDataRole"
+        (showUpdateModal)="showUpdateModal()"
+        (showDetailModal)="showDetailModal()"
+        (showDeleteModal)="showDeleteModal()"
+    ></app-table-roles>
 </div>

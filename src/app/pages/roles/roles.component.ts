@@ -49,4 +49,22 @@ export class RolesComponent implements OnInit {
     })
   }
 
+  showUpdateModal(): void{
+    this.modalService.create({
+      nzTitle: 'Edit Roles',
+      nzContent: AddRolesModalComponent,
+      nzComponentParams: {
+        modal_type: 'Edit'
+      }
+    })
+  }
+
+  showDetailModal(): void{
+
+  }
+
+  showDeleteModal(): void{
+    
+  }
+
 }
