@@ -1,4 +1,9 @@
 
-::ng-deep .ant-result-icon{
-    margin-bottom: 0;
+::ng-deep {
+    .ant-result{
+        padding: 0;
+    }
+    .ant-result-icon{
+        margin-bottom: 0;
+    }
 }
