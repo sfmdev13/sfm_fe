@@ -7,7 +7,8 @@ import { TableRolesModule } from 'src/app/components/table-roles/table-roles.mod
 import { NzInputModule } from 'ng-zorro-antd/input';
 import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzButtonModule } from 'ng-zorro-antd/button';
-
+import { AddRolesModalModule } from 'src/app/components/add-roles-modal/add-roles-modal.module';
+import { NzTabsModule } from 'ng-zorro-antd/tabs';
 
 @NgModule({
   declarations: [RolesComponent],
@@ -18,6 +19,8 @@ import { NzButtonModule } from 'ng-zorro-antd/button';
     NzInputModule,
     NzIconModule,
     NzButtonModule,
+    AddRolesModalModule,
+    NzTabsModule
   ],
   exports: [RolesComponent]
 })

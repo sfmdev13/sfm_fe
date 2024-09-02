@@ -1,0 +1,105 @@
+<div>
+    <div class="mb-4">
+      <nz-form-label nzRequired nzFor="roleName" class="fw-bold">Role Name</nz-form-label>
+      <nz-form-control>
+        <input nz-input id="roleName" [(ngModel)]="roleName" />
+      </nz-form-control>
+    </div>
+
+    <nz-tabset>
+      <nz-tab nzTitle="Access">
+        <p class="fw-bold m-0 p-0">
+          Access Rights
+        </p>
+    
+        <div nz-row>
+          <nz-collapse nzGhost>
+            <ng-container *ngFor="let access of accessRights; let accessIndex = index">
+              <nz-collapse-panel class="text-capitalize" [nzHeader]="access.nav_name" [nzActive]="false" [nzExtra]="extraAccessTemplate">
+                <!-- Checkbox for Main Access -->
+                <ng-template #extraAccessTemplate>
+                  <label nz-checkbox [(ngModel)]="access.selected" (ngModelChange)="toggleAccess(accessIndex)"></label>
+                </ng-template>
+        
+                <!-- Nested Sections -->
+                <nz-collapse nzGhost>
+                  <ng-container *ngFor="let section of access.nav_section; let sectionIndex = index">
+                    <div style="padding-left: 24px;padding-right: 24px;">
+                      <nz-collapse-panel class="section-panel text-capitalize mb-3" [nzHeader]="section.section_name" [nzActive]="false" [nzExtra]="extraSectionTemplate">
+                        <!-- Checkbox for Section -->
+                        <ng-template #extraSectionTemplate>
+                          <label nz-checkbox [nzDisabled]="isSectionDisabled(sectionIndex, accessIndex)" [(ngModel)]="section.selected" (ngModelChange)="toggleSection(accessIndex, sectionIndex)"></label>
+                        </ng-template>
+        
+                        <!-- Section Actions -->
+                        <div class="px-2">
+                          <div class="row">
+                            <div class="col-4"  *ngFor="let action of section.section_action; let actionIndex = index">
+                              <nz-tag 
+                                [nzColor]="action.selected ? 'blue' : 'default'" 
+                                (click)="!isActionDisabled(accessIndex, actionIndex) && toggleAction(action)"
+                                [ngClass]="getTagClass(accessIndex, actionIndex)"
+                                class="action-tag w-100"
+                              >
+                                {{ action.name }}
+                              </nz-tag>
+                            </div>
+                          </div>
+    
+                        </div>
+                      </nz-collapse-panel>
+                    </div>
+                  </ng-container>
+                </nz-collapse>
+              </nz-collapse-panel>
+            </ng-container>
+          </nz-collapse>
+        </div>
+      </nz-tab>
+      <nz-tab nzTitle="Assign">
+
+        <div class="d-flex flex-column align-items-start gap-1">
+          <p class="fw-bold m-0 p-0">
+            Assign to Employee
+          </p>
+          <nz-input-group [nzSuffix]="suffixIconSearch" nzSize="default">
+              <input type="text" nz-input placeholder="search employee" />
+          </nz-input-group>
+          <ng-template #suffixIconSearch>
+              <span nz-icon nzType="search"></span>
+          </ng-template>
+        </div>
+
+        <nz-table #basicTable nzBordered [nzData]="listOfDataEmp" nzSize="small" class="mt-3">
+          <thead>
+              <tr>
+                  <th>Name</th>
+                  <th>Status</th>
+                  <th>Action</th>
+              </tr>
+          </thead>
+          
+          <tbody>
+              <tr *ngFor="let data of basicTable.data">
+                  <td>{{data.name}}</td>
+                  <td>
+                      <nz-tag [nzColor]="data.assigned ? '#1DA32C' : '#f50'">{{ data.assigned ? 'Assign' : 'Unassigned' }}</nz-tag>
+                  </td>
+                  <td>
+                    <button nzSize="small" nz-button nzType="primary" class="text-capitalize" (click)="assignEmp(data)">
+                      {{ data.assigned ? 'Cancel' : 'Assign' }}
+                    </button>
+                  </td>
+              </tr>
+          </tbody>
+      </nz-table>
+      </nz-tab>
+    </nz-tabset>
+
+
+</div>
+
+<div *nzModalFooter>
+    <button nz-button nzType="default" (click)="destroyModal()">Cancel</button>
+    <button nz-button nzType="primary" class="text-capitalize"  (click)="submitForm()">{{ modal_type }} Roles</button>
+</div>

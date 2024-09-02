@@ -1,0 +1,31 @@
+::ng-deep{
+    .section-panel{
+        .ant-collapse-header{
+            display: flex;
+            gap: 8px;
+
+            .ant-collapse-extra{
+                margin-left: auto;
+            }
+        }
+
+        .ant-collapse-content{
+            border-top: 0;
+        }
+    }
+}
+
+.action-tag{
+    cursor: pointer;
+    height: 60px;
+    padding: 8px;
+    text-wrap: balance;
+    text-align: center;
+}
+
+.disabled-tag {
+    cursor: not-allowed;
+    color: rgba(0, 0, 0, 0.25);
+    background-color: #f5f5f5;
+    border-color: #d9d9d9;
+}
