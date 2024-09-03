@@ -7,9 +7,10 @@
                     <input nz-input formControlName="pic" id="pic">
                 </nz-form-control>
             </nz-form-item>
+
             <div class="col-md-6">
                 <nz-form-item class="mb-4">
-                    <nz-form-label nzRequired nzFor="name" class="fw-semibold">Name</nz-form-label>
+                    <nz-form-label nzRequired nzFor="name" class="fw-semibold">Company Name</nz-form-label>
                     <nz-form-control>
                     <input nz-input formControlName="name" id="name" />
                     </nz-form-control>
@@ -17,7 +18,7 @@
             </div>
             <div class="col-md-6">
                 <nz-form-item class="mb-4">
-                    <nz-form-label nzRequired nzFor="email" class="fw-semibold">Email</nz-form-label>
+                    <nz-form-label nzRequired nzFor="email" class="fw-semibold">Company Email</nz-form-label>
                     <nz-form-control>
                     <input nz-input formControlName="email" id="email"  />
                     </nz-form-control>
@@ -25,7 +26,7 @@
             </div>
             <div class="col-md-6">
                 <nz-form-item>
-                    <nz-form-label nzRequired nzFor="nik" class="fw-semibold">NIK</nz-form-label>
+                    <nz-form-label nzRequired nzFor="nik" class="fw-semibold">NIB</nz-form-label>
                     <nz-form-control>
                       <input nz-input formControlName="nik" id="nik"  />
                     </nz-form-control>
@@ -33,36 +34,73 @@
             </div>
             <div class="col-md-6">
                 <nz-form-item>
-                    <nz-form-label nzRequired nzFor="phone" class="fw-semibold">Phone</nz-form-label>
+                    <nz-form-label nzRequired nzFor="phone" class="fw-semibold">Company Phone</nz-form-label>
                     <nz-form-control>
                       <input nz-input formControlName="phone" id="phone"  />
                     </nz-form-control>
                 </nz-form-item>
             </div>
             <nz-form-item>
-                <nz-form-label nzRequired nzFor="address" class="fw-semibold">Address</nz-form-label>
+                <nz-form-label nzRequired nzFor="address" class="fw-semibold">Company Address</nz-form-label>
                 <nz-form-control>
                   <nz-textarea-count [nzMaxCharacterCount]="200">
                     <textarea rows="4" formControlName="address" nz-input></textarea>
                   </nz-textarea-count>
                 </nz-form-control>
             </nz-form-item>
-            <nz-form-item>
-                <nz-form-label nzFor="type" nzRequired>Type</nz-form-label>
-                <nz-form-control>
-                  <nz-select
-                    id="type"
-                    formControlName="type"
-                    nzPlaceHolder="Select Type"
-                  >
-                    <nz-option nzValue="owner" nzLabel="Owner"></nz-option>
-                    <nz-option nzValue="architect" nzLabel="Sales"></nz-option>
-                    <nz-option nzValue="me_consultant" nzLabel="M&E Consultant"></nz-option>
-                    <nz-option nzValue="qs_consultant" nzLabel="QS Consultant"></nz-option>
-                    <nz-option nzValue="contractor" nzLabel="Contractor"></nz-option>
-                  </nz-select>
-                </nz-form-control>
-            </nz-form-item>
+
+            <div class="d-flex gap-2 mb-4 flex-column w-auto">
+                <p class="m-0 p-0 fw-semibold">Customer Type</p>
+                <nz-segmented class="text-capitalize" [nzOptions]="optionsCust" (nzValueChange)="optionCustChange($event)"></nz-segmented>
+            </div>
+
+            <ng-container *ngIf="optionCustSelected === 'company'">
+              <div class="d-flex mb-2">
+                <p class="m-0 p-0 fw-semibold">Contact Person</p>
+              </div>
+  
+              <div formArrayName="contactPerson">
+                <div class="row align-items-center" *ngFor="let contact of contactPerson.controls; let i = index" [formGroupName]="i">
+                  <p class="m-0 p-0 px-3 fw-normal mb-2">Person {{ i + 1 }}</p>
+  
+                    <div class="col-3">
+                      <nz-form-item>
+                        <nz-form-label nzRequired>Contact Name</nz-form-label>
+                        <nz-form-control>
+                          <input nz-input formControlName="contact_name" />
+                        </nz-form-control>
+                      </nz-form-item>
+                    </div>
+                    <div class="col-3">
+                      <nz-form-item>
+                        <nz-form-label nzRequired>Contact Type</nz-form-label>
+                        <nz-form-control>
+                          <input nz-input formControlName="contact_type" />
+                        </nz-form-control>
+                      </nz-form-item>
+                    </div>
+                    <div class="col-3">
+                      <nz-form-item>
+                        <nz-form-label nzRequired>Contact Phone</nz-form-label>
+                        <nz-form-control>
+                          <input nz-input formControlName="contact_phone" />
+                        </nz-form-control>
+                      </nz-form-item>
+                    </div>
+                    <div class="col-3">
+                      <button nz-button nzDanger (click)="removeContactPerson(i)">Remove</button>
+                    </div>
+                </div>
+              </div>
+  
+              <div class="col-md-3 mx-auto">
+                <nz-form-item>
+                  <button nz-button nzType="primary" (click)="addContactPerson()">Add Person</button>
+                </nz-form-item>
+              </div>
+            </ng-container>
+
+
             <nz-form-item>
               <nz-form-label nzFor="status" nzRequired>Status</nz-form-label>
               <nz-form-control>

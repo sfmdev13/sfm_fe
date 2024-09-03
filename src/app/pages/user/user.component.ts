@@ -185,7 +185,8 @@ export class UserComponent implements OnInit {
         nzComponentParams: {
           modal_type: 'add',
         },
-        nzCentered: true
+        nzCentered: true,
+
       });
     }
 
@@ -196,7 +197,8 @@ export class UserComponent implements OnInit {
         nzComponentParams: {
           modal_type: 'add',
         },
-        nzCentered: true
+        nzCentered: true,
+        nzWidth: '900px'
       });
     }
 
