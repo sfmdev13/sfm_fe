@@ -6,7 +6,7 @@ import { AuthService } from 'src/app/auth.service';
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
-  styleUrls: ['./login.component.scss']
+  styleUrls: ['./login.component.scss'],
 })
 export class LoginComponent implements OnInit {
 
@@ -28,17 +28,22 @@ export class LoginComponent implements OnInit {
 
   submitForm(): void {
     if (this.validateForm.valid) {
-      console.log('submit', this.validateForm.value.email);
-
       this.authService.login(this.validateForm.value.email, this.validateForm.value.password).subscribe(
         (response) => {
-          const token = response?.auth_token;
-          if(token){
-            this.authService.storeToken(token);
-            this.router.navigate(['/user']);
-          } else {
-            console.log('error')
+          if(response.data.status === 'NEW_PASSWORD_REQUIRED'){
+            this.authService.storeEmailTemp(response.data.email, response.session_token);
+            this.router.navigate(['/register']);
           }
+          if(response.data.status === 'LOGIN_SUCCESSFUL'){
+            const token = response?.auth_token;
+            if(token){
+              this.authService.storeToken(token);
+              this.router.navigate(['/user']);
+            } else {
+              console.log('error')
+            }
+          }
+
         },
         (error) => {
           console.log(error);

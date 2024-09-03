@@ -19,6 +19,11 @@ private apiUrl = environment.apiUrl;
     return this.http.post(url, {});
   }
 
+  setPassword(email: string, new_password: string, token: string): Observable<any> {
+    const url = `${this.apiUrl}/cognito/new-password?email=${email}&new_password=${new_password}&session=${token}`
+    return this.http.post(url, {});
+  }
+
   logout(): Observable<any>{
     const token = this.getToken();
     const headers = new HttpHeaders({
@@ -44,5 +49,11 @@ private apiUrl = environment.apiUrl;
   clearToken(): void {
     localStorage.removeItem('authToken');
     this.router.navigate(['/login'])
+  }
+
+
+  storeEmailTemp(email: string, token: string): void {
+    localStorage.setItem('email', email );
+    localStorage.setItem('sessionToken', token);
   }
 }
