@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { Route } from '@angular/router';
+import { AuthService } from 'src/app/auth.service';
 
 @Component({
   selector: 'app-layout',
@@ -30,9 +32,22 @@ export class LayoutComponent implements OnInit {
     }
   ]
 
-  constructor() { }
+  constructor(
+    private authService: AuthService,
+  ) { }
 
   ngOnInit(): void {
+  }
+
+  logoutHandler(){
+    this.authService.logout().subscribe(
+      () => {
+        this.authService.clearToken();
+      },
+      (error) => {
+        console.log(error)
+      }
+    )
   }
 
 }
