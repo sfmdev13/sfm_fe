@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Route } from '@angular/router';
+import { ApiService } from 'src/app/api.service';
 import { AuthService } from 'src/app/auth.service';
 
 @Component({
@@ -8,6 +9,8 @@ import { AuthService } from 'src/app/auth.service';
   styleUrls: ['./layout.component.scss']
 })
 export class LayoutComponent implements OnInit {
+
+  profileName: string = '';
 
   navigation = [
     {
@@ -34,9 +37,15 @@ export class LayoutComponent implements OnInit {
 
   constructor(
     private authService: AuthService,
+    private apiSvc: ApiService
   ) { }
 
   ngOnInit(): void {
+    this.apiSvc.getProfile().subscribe(
+      (profile) => {
+        this.profileName = profile.data.name
+      }
+    )
   }
 
   logoutHandler(){

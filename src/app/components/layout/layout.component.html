@@ -14,7 +14,11 @@
             <p class="p-0 m-0 fw-bold text-uppercase">{{ nav.title }}</p>
         </li>
         <li class="ms-auto float-end" >
-            <span nz-dropdown nzTrigger="click" [nzDropdownMenu]="menu" nz-icon nzType="user" nzTheme="outline" style="font-size: 24px;"></span>
+            <a class="profile-dropdown" nz-dropdown nzTrigger="click" [nzDropdownMenu]="menu">
+                <span nz-dropdown nzTrigger="click" [nzDropdownMenu]="menu" nz-icon nzType="user" nzTheme="outline"></span>
+                {{ profileName }}
+                <span nz-icon nzType="down"></span>
+            </a>
             <nz-dropdown-menu #menu="nzDropdownMenu">
                 <ul nz-menu>
                     <li nz-menu-item (click)="logoutHandler()" style="color: #f5222d">
