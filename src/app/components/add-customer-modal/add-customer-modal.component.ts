@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { FormBuilder, Validators } from '@angular/forms';
+import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { NzModalRef } from 'ng-zorro-antd/modal';
 
 @Component({
@@ -19,8 +19,12 @@ export class AddCustomerModalComponent implements OnInit {
     phone: ['',[Validators.required]],
     address: ['',[Validators.required, Validators.maxLength(200)]],
     status: [true,[Validators.required]],
-    pic: [{value: 'Sales 1', disabled: true},[Validators.required]]
+    pic: [{value: 'Sales 1', disabled: true},[Validators.required]],
+    contactPerson: this.fb.array([])
   })
+
+  optionsCust = ['company', 'individual'];
+  optionCustSelected = 'company'
 
   constructor(
     private modal: NzModalRef,
@@ -28,7 +32,28 @@ export class AddCustomerModalComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
+    this.addContactPerson();
   }
+
+  get contactPerson(): FormArray {
+    return this.customerForm.get('contactPerson') as FormArray;
+  }
+
+  addContactPerson(): void {
+    this.contactPerson.push(this.fb.group({
+      contact_name: ['', [Validators.required]],
+      contact_type: ['', [Validators.required]],
+      contact_phone: ['', [Validators.required]]
+    }));
+  }
+
+  removeContactPerson(index: number): void {
+    if(index === 0){
+      return;
+    }
+    this.contactPerson.removeAt(index);
+  }
+
 
   destroyModal(): void {
     this.modal.destroy();
@@ -39,5 +64,9 @@ export class AddCustomerModalComponent implements OnInit {
     console.log('masuk sini')
   }
 
+  optionCustChange($event: number){
+    if($event === 0) this.optionCustSelected = 'company';
+    if($event === 1) this.optionCustSelected = 'individual';
+  }
 
 }
