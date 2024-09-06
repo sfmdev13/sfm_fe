@@ -36,39 +36,49 @@
 </ng-container>
 
 <ng-container *ngIf="user_type === 'customer'">
-    <nz-table #basicTable nzBordered [nzData]="listofDataCust">
+    <nz-table 
+        #basicTable 
+        nzBordered 
+        [nzData]="listofDataCust"
+        nzShowPagination
+        [nzFrontPagination]="false"
+        [nzTotal]="totalAllCustomer"
+        [nzPageSize]="pageSizeCustomer"
+        (nzPageIndexChange)="pageIndexChange($event)"
+        [nzPageIndex]="currentPageCustomer"
+    >
         <thead>
             <tr>
                 <th>CUST ID</th>
                 <th>Name</th>
-                <th>type</th>
+                <th>Type</th>
                 <th>Email</th>
                 <th>NIK</th>
                 <th>Phone</th>
                 <th>Address</th>
                 <th>Status</th>
-                <th>PIC</th>
+                <th>PIC SFM</th>
                 <th>Action</th>
             </tr>
         </thead>
         <tbody>
             <tr *ngFor="let data of basicTable.data">
-                <td>{{ data.cust_id }}</td>
+                <td>{{ data.customer_pid }}</td>
                 <td>{{ data.name }}</td>
-                <td>{{ data.cust_cat }}</td>
+                <td>{{ data.type }}</td>
                 <td>{{ data.email }}</td>
                 <td>{{ data.nik }}</td>
                 <td>{{ data.phone }}</td>
                 <td>{{ data.address }}</td>
                 <td>
-                    <nz-tag [nzColor]="data.status ? '#1DA32C' : '#f50'">{{ data.status ? 'Active' : 'Inactive' }}</nz-tag>
+                    <nz-tag [nzColor]="data.status === 1 ? '#1DA32C' : '#f50'">{{ data.status === 1 ? 'Active' : 'Inactive' }}</nz-tag>
                 </td>
-                <td>{{ data.pic }}</td>
+                <td>{{ data.pic.name }}</td>
                 <td>
                     <div class="d-flex gap-3">
-                        <span (click)="detailHandler()"  nz-icon nzType="eye" nzTheme="twotone"></span>
-                        <span (click)="updateHandler()" nz-icon nzType="edit" nzTheme="twotone"></span>
-                        <span (click)="deleteHandler()" nz-icon nzType="delete" nzTheme="twotone"></span>
+                        <span (click)="detailCustHandler(data)"  nz-icon nzType="eye" nzTheme="twotone"></span>
+                        <span (click)="updateCustHandler(data)" nz-icon nzType="edit" nzTheme="twotone"></span>
+                        <span (click)="deleteCustHandler(data.id)" nz-icon nzType="delete" nzTheme="twotone"></span>
                     </div>
                 </td>
             </tr>

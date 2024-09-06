@@ -1,35 +1,79 @@
 <div class="d-flex flex-column gap-2">
     <nz-avatar [nzSize]="64" nzText="K" class="custom-avatar mb-3"></nz-avatar>
     <div>
-        <p class="m-0 p-0 fw-semibold">PIC</p>
-        <p class="fw-light">Sales 1</p>
+        <p class="m-0 p-0 fw-semibold">Employee PIC</p>
+        <p class="fw-light text-capitalize">{{ data.pic.name }}</p>
     </div>
-    <div>
-        <p class="m-0 p-0 fw-semibold">Name</p>
-        <p class="fw-light">Kevin Hidayat</p>
+    <div class="row">
+        <div class="col-md-4">
+            <p class="m-0 p-0 fw-semibold">Company Name</p>
+            <p class="fw-light text-capitalize">{{ data.name }}</p>
+        </div>
+        <div class="col-md-4">
+            <p class="m-0 p-0 fw-semibold">Type</p>
+            <p class="fw-light text-capitalize">{{ data.type }}</p>
+        </div>
+        <div class="col-md-4">
+            <p class="m-0 p-0 fw-semibold">Email</p>
+            <p class="fw-light">{{ data.email }}</p>
+        </div>
+        <div class="col-md-4">
+            <p class="m-0 p-0 fw-semibold">NIK</p>
+            <p class="fw-light">{{ data.nik }}</p>
+        </div>
+        <div class="col-md-4">
+            <p class="m-0 p-0 fw-semibold">Phone</p>
+            <p class="fw-light text-capitalize">{{ data.phone }}</p>
+        </div>
+        <div class="col-md-4">
+            <p class="m-0 p-0 fw-semibold">Address</p>
+            <p class="fw-light text-capitalize">{{ data.address }}</p>
+        </div>
     </div>
-    <div>
-        <p class="m-0 p-0 fw-semibold">Type</p>
-        <p class="fw-light">Architect</p>
-    </div>
-    <div>
-        <p class="m-0 p-0 fw-semibold">Email</p>
-        <p class="fw-light">JohnBrow@gmail.com</p>
-    </div>
-    <div>
-        <p class="m-0 p-0 fw-semibold">NIK</p>
-        <p class="fw-light">212312312</p>
-    </div>
-    <div>
-        <p class="m-0 p-0 fw-semibold">Phone</p>
-        <p class="fw-light">212312312</p>
-    </div>
-    <div>
-        <p class="m-0 p-0 fw-semibold">Address</p>
-        <p class="fw-light">Jalan Beruang II</p>
-    </div>
+
     <div>
         <p class="m-0 p-0 fw-semibold">Status</p>
-        <nz-tag [nzColor]="status ? '#1DA32C' : '#f50'">{{ status ? 'Active' : 'Inactive' }}</nz-tag>
+        <nz-tag [nzColor]="data.status === 1 ? '#1DA32C' : '#f50'">{{ data.status === 1 ? 'Active' : 'Inactive' }}</nz-tag>
     </div>
+
+    <ng-container *ngFor="let contact of data.contact_person; let i = index">
+        <div class="row mt-3">
+            <div class="col">
+                <p class="m-0 p-0 fw-bold">Contact Person {{ i + 1 }}</p>
+            </div>
+        </div>
+    
+        <div class="row">
+            <div class="col-md-4">
+                <p class="m-0 p-0 fw-semibold">Name</p>
+                <p class="fw-light text-capitalize">{{ contact.name }}</p>
+            </div>
+            <div class="col-md-4">
+                <p class="m-0 p-0 fw-semibold">Email</p>
+                <p class="fw-light">{{ contact.email }}</p>
+            </div>
+            <div class="col-md-4">
+                <p class="m-0 p-0 fw-semibold">NIK</p>
+                <p class="fw-light text-capitalize">{{ contact.nik }}</p>
+            </div>
+            <div class="col-md-4">
+                <p class="m-0 p-0 fw-semibold">Phone</p>
+                <p class="fw-light text-capitalize">{{ contact.phone }}</p>
+            </div>
+            <div class="col-md-4">
+                <p class="m-0 p-0 fw-semibold">Address</p>
+                <p class="fw-light">{{ contact.address }}</p>
+            </div>
+            <div class="col-md-4">
+                <p class="m-0 p-0 fw-semibold">Category</p>
+                <p class="fw-light">{{ contact.customer_category.name }}</p>
+            </div>
+            <div class="col-md-4">
+                <p class="m-0 p-0 fw-semibold">PIC Company</p>
+                <nz-tag [nzColor]="contact.is_pic_company === 1 ? '#1DA32C' : '#f50'">{{ contact.is_pic_company  === 1 ? 'Yes' : 'No' }}</nz-tag>
+            </div>
+        </div>
+    </ng-container>
+
+
 </div>

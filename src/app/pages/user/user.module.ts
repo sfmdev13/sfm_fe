@@ -23,6 +23,7 @@ import { AddSupplierModalModule } from 'src/app/components/add-supplier-modal/ad
 import { DetailSupplierModalModule } from 'src/app/components/detail-supplier-modal/detail-supplier-modal.module';
 import { DeleteSupplierModalModule } from 'src/app/components/delete-supplier-modal/delete-supplier-modal.module';
 import { FilterSupplierModalModule } from 'src/app/components/filter-supplier-modal/filter-supplier-modal.module';
+import { NzTableModule } from 'ng-zorro-antd/table';
 
 @NgModule({
   declarations: [UserComponent],
@@ -47,7 +48,8 @@ import { FilterSupplierModalModule } from 'src/app/components/filter-supplier-mo
     AddSupplierModalModule,
     DetailSupplierModalModule,
     DeleteSupplierModalModule,
-    FilterSupplierModalModule
+    FilterSupplierModalModule,
+    NzTableModule
   ],
   exports: [UserComponent]
 })

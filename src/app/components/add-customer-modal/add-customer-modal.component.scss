@@ -1,4 +1,10 @@
 ::ng-deep {
+
+    .ant-modal-body{
+        max-height: 800px;
+        overflow-y: auto;
+    }
+
     .ant-switch-checked{
         .ant-switch-inner{
             margin: -3px 27px 0px 12px;
@@ -7,5 +13,15 @@
 
     .ant-switch-inner{
         margin: -3px 7px 0 25px;
+    }
+
+    .ant-divider-horizontal.ant-divider-with-text::before, 
+    .ant-divider-horizontal.ant-divider-with-text::after{
+        border-top: 3px solid transparent;
+        border-top-color: inherit;
+    }
+
+    .ant-divider-horizontal.ant-divider-with-text{
+        font-size: 14px;
     }
 }

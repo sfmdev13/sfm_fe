@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { NzModalService } from 'ng-zorro-antd/modal';
+import { Observable, tap } from 'rxjs';
+import { ApiService } from 'src/app/api.service';
 import { AddCustomerModalComponent } from 'src/app/components/add-customer-modal/add-customer-modal.component';
 import { AddEmployeeModalComponent } from 'src/app/components/add-employee-modal/add-employee-modal.component';
 import { AddSupplierModalComponent } from 'src/app/components/add-supplier-modal/add-supplier-modal.component';
@@ -12,6 +14,7 @@ import { DetailSupplierModalComponent } from 'src/app/components/detail-supplier
 import { FilterCustomerModalComponent } from 'src/app/components/filter-customer-modal/filter-customer-modal.component';
 import { FilterEmployeeModalComponent } from 'src/app/components/filter-employee-modal/filter-employee-modal.component';
 import { FilterSupplierModalComponent } from 'src/app/components/filter-supplier-modal/filter-supplier-modal.component';
+import { IDataCustomer, IRootCustomer } from 'src/app/interfaces';
 
 @Component({
   selector: 'app-user',
@@ -23,10 +26,27 @@ export class UserComponent implements OnInit {
   user_type: string = 'employee';
   
   listOfDataEmp: any[] = [];
-  listofDataCust: any[] = [];
   listofDataSupp: any[] = [];
 
-  constructor(private modalService: NzModalService) { }
+  customers$!: Observable<IRootCustomer>;
+
+  totalCustomer: number = 0;
+  totalAllCustomer: number = 0;
+  pageSizeCustomer: number = 2; // Default page size
+  currentPageCustomer: number = 1;
+
+  filterParams = {
+    type: '',
+    status: '',
+    sort_by: 'asc'
+  };
+  filteredCust: boolean = false;
+
+
+  constructor(
+    private modalService: NzModalService,
+    private apiSvc: ApiService
+  ) { }
 
   ngOnInit(): void {
 
@@ -63,6 +83,19 @@ export class UserComponent implements OnInit {
         role: 'Sales'
       }
     ];
+
+    // Watch for filter changes
+    // this.apiSvc.isFiltered$.subscribe(isFiltered => {
+    //   if (isFiltered) {
+    //     this.getFilteredCustomer(); 
+    //   } else {
+    //     this.getCustomer();
+    //   }
+    // });
+    
+    this.apiSvc.refreshGetCustomer$.subscribe(() => {
+      this.getCustomer();
+    });
   }
 
   tabChange(value: string){
@@ -101,42 +134,11 @@ export class UserComponent implements OnInit {
       ];
     }
     if(value === 'customer'){
-      this.listofDataCust = [
-        {
-          cust_id: '12312',
-          cust_cat: 'Architect',
-          name: 'John Brown 1',
-          email: 'johnBrow1@gmail.com',
-          nik: '123123',
-          phone: '3330192',
-          address: 'Jalan Beruang II',
-          status: true,
-          pic: 'sales1'
-        },
-        {
-          cust_id: '12312',
-          cust_cat: 'QS',
-          name: 'John Brown 2',
-          email: 'johnBrow1@gmail.com',
-          nik: '123123',
-          phone: '3330192',
-          address: 'Jalan Beruang II',
-          status: true,
-          pic: 'sales2'
-        },
-        {
-          cust_id: '12312',
-          cust_cat: 'architect',
-          name: 'John Brown 3',
-          email: 'johnBrow1@gmail.com',
-          nik: '123123',
-          phone: '3330192',
-          address: 'Jalan Beruang II',
-          status: false,
-          pic: 'sales3'
-        }
-        
-      ]
+      if(this.filteredCust){
+        this.getFilteredCustomer();
+      } else {
+        this.getCustomer();
+      }
     }
 
     if(value === 'supplier'){
@@ -227,17 +229,6 @@ export class UserComponent implements OnInit {
       });
     }
 
-    if(this.user_type === 'customer'){
-      this.modalService.create({
-        nzTitle: 'Update Customer',
-        nzContent: AddCustomerModalComponent,
-        nzComponentParams: {
-          modal_type: 'update'
-        },
-        nzCentered: true
-      });
-    }
-
     if(this.user_type === 'supplier'){
       this.modalService.create({
         nzTitle: 'Update Supplier',
@@ -260,14 +251,6 @@ export class UserComponent implements OnInit {
       });
     }
 
-    if(this.user_type === 'customer'){
-      this.modalService.create({
-        nzTitle: 'Detail Customer',
-        nzContent: DetailCustomerModalComponent,
-        nzCentered: true
-      });
-    }
-
     if(this.user_type === 'supplier'){
       this.modalService.create({
         nzTitle: 'Detail Supplier',
@@ -283,14 +266,6 @@ export class UserComponent implements OnInit {
       this.modalService.create({
         nzTitle: 'Delete Employee',
         nzContent: DeleteEmployeeModalComponent,
-        nzCentered: true
-      });
-    }
-
-    if(this.user_type === 'customer'){
-      this.modalService.create({
-        nzTitle: 'Delete Customer',
-        nzContent: DeleteCustomerModalComponent,
         nzCentered: true
       });
     }
@@ -315,11 +290,24 @@ export class UserComponent implements OnInit {
     }
 
     if(this.user_type === 'customer'){
-      this.modalService.create({
+
+       const custModal = this.modalService.create({
         nzTitle: 'Filter Customer',
         nzContent: FilterCustomerModalComponent,
-        nzCentered: true
+        nzCentered: true,
+        nzComponentParams: {
+          filteredCust: this.filteredCust
+        }
       })
+
+      custModal.afterClose.subscribe(result => {
+        if(result){
+          this.filterParams = result
+          this.getFilteredCustomer();
+        }
+
+      })
+
     }
 
     if(this.user_type === 'supplier'){
@@ -331,4 +319,79 @@ export class UserComponent implements OnInit {
     }
   }
 
+
+  showDetailModalCust(dataCustomer: IDataCustomer){
+    this.modalService.create({
+      nzTitle: 'Detail Customer',
+      nzContent: DetailCustomerModalComponent,
+      nzCentered: true,
+      nzComponentParams: {
+        data: dataCustomer
+      },
+      nzWidth: '900px'
+    });
+  }
+
+  showUpdateModalCust(dataCustomer: IDataCustomer){
+    this.modalService.create({
+      nzTitle: 'Edit Customer',
+      nzContent: AddCustomerModalComponent,
+      nzComponentParams: {
+        modal_type: 'update',
+        customerDetail: dataCustomer
+      },
+      nzCentered: true,
+      nzWidth: '900px'
+    });
+  }
+
+  showDeleteModalCust(id: string){
+    this.modalService.create({
+      nzTitle: 'Delete Customer',
+      nzContent: DeleteCustomerModalComponent,
+      nzCentered: true,
+      nzComponentParams: {
+        id
+      }
+    });
+  }
+
+  getCustomer(){
+    this.customers$ = this.apiSvc.getCustomer(this.currentPageCustomer, this.pageSizeCustomer).pipe(
+      tap(res =>{
+        this.totalCustomer = res.data.length;
+        this.currentPageCustomer = res.pagination.current_page;
+        this.totalAllCustomer = res.pagination.total
+      })
+    );
+  }
+
+  getFilteredCustomer(){
+    this.customers$ = this.apiSvc.filterCustomer(this.filterParams, this.currentPageCustomer, this.pageSizeCustomer).pipe(
+      tap(res =>{
+        this.totalCustomer = res.data.length;
+        this.currentPageCustomer = res.pagination.current_page;
+        this.totalAllCustomer = res.pagination.total
+        this.filteredCust = true
+        localStorage.setItem('filterItems', JSON.stringify(this.filterParams));
+      })
+    )
+  }
+
+  onPageIndexChange(page: number): void {
+    this.currentPageCustomer = page;
+
+    if (this.filteredCust) {
+      this.getFilteredCustomer();
+    } else {
+      this.getCustomer();
+    }
+  }
+
+  refreshTableCust(){
+    this.filteredCust = false;
+    this.pageSizeCustomer = 2;
+    this.currentPageCustomer = 1;
+    this.getCustomer();
+  }
 }
