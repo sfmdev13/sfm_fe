@@ -32,7 +32,7 @@ export class UserComponent implements OnInit {
 
   totalCustomer: number = 0;
   totalAllCustomer: number = 0;
-  pageSizeCustomer: number = 2; // Default page size
+  pageSizeCustomer: number = 5;
   currentPageCustomer: number = 1;
 
   filterParams = {
@@ -83,15 +83,6 @@ export class UserComponent implements OnInit {
         role: 'Sales'
       }
     ];
-
-    // Watch for filter changes
-    // this.apiSvc.isFiltered$.subscribe(isFiltered => {
-    //   if (isFiltered) {
-    //     this.getFilteredCustomer(); 
-    //   } else {
-    //     this.getCustomer();
-    //   }
-    // });
     
     this.apiSvc.refreshGetCustomer$.subscribe(() => {
       this.getCustomer();
