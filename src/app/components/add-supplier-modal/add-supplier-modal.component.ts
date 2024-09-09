@@ -162,7 +162,6 @@ export class AddSupplierModalComponent implements OnInit {
   submitForm(){
 
     this.picComplete = this.supplierForm.get('pic')!.value.map((pic_id: any) => ({
-      id: this.supplierDetail.pic.filter((list) => list.pic_id === pic_id ).map((filterList) => filterList.id)[0],
       pic_id: pic_id,
       is_pic_internal: pic_id === this.supplierForm.get('is_pic_internal')!.value
     }));
