@@ -207,7 +207,8 @@ export class AddSupplierModalComponent implements OnInit {
           status: this.supplierForm.get('status')?.value,
           type: this.supplierForm.get('type')?.value,
           contactPerson: this.supplierForm.get('contactPerson')?.value,
-          pic: this.picComplete
+          pic: this.supplierDetail.pic,
+          pic_new: this.picComplete
         };
 
         this.apiSvc.updateSupplier(body).subscribe({
