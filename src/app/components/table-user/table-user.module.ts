@@ -8,6 +8,7 @@ import { NzBadgeModule } from 'ng-zorro-antd/badge';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzTagModule } from 'ng-zorro-antd/tag';
+import { NzPaginationModule } from 'ng-zorro-antd/pagination';
  
 @NgModule({
   declarations: [TableUserComponent],
@@ -18,7 +19,8 @@ import { NzTagModule } from 'ng-zorro-antd/tag';
     NzBadgeModule,
     NzButtonModule,
     NzIconModule,
-    NzTagModule
+    NzTagModule,
+    NzPaginationModule
   ],
   exports: [TableUserComponent]
 })

@@ -1,12 +1,47 @@
 <div>
     <form nz-form nzLayout="vertical" [formGroup]="supplierForm" (ngSubmit)="submitForm()">
         <div class="row">
-            <nz-form-item class="mb-4">
-                <nz-form-label nzRequired nzFor="pic" class="fw-semibold">PIC</nz-form-label>
-                <nz-form-control>
-                    <input nz-input formControlName="pic" id="pic">
-                </nz-form-control>
-            </nz-form-item>
+
+
+                <nz-form-item class="mb-4">
+                    <nz-form-label nzRequired nzFor="pic" class="fw-semibold">PIC Internal</nz-form-label>
+                        <nz-select nzMode="tags" nzPlaceHolder="Tag Mode" formControlName="pic">
+                            <nz-option
+                            *ngFor="let pic of listOfPic"
+                                [nzLabel]="pic.name" 
+                                [nzValue]="pic.pic_id"
+                            ></nz-option>
+                        </nz-select>
+                </nz-form-item>
+
+                  
+                <nz-form-item>
+                    <nz-form-label nzRequired class="fw-semibold" nzFor="is_pic_internal" nzRequired>Head of PIC internal</nz-form-label>
+                    <nz-form-control>
+                        <nz-select nzPlaceHolder="Select Category" formControlName="is_pic_internal">
+                        <ng-container *ngFor="let pic of filteredListOfPic">
+                          <nz-option [nzLabel]="pic.name" [nzValue]="pic.pic_id"></nz-option>
+                        </ng-container>
+                        </nz-select>
+                    </nz-form-control>
+                </nz-form-item>
+            <ng-template #loadingSupp>
+                <nz-form-item class="mb-4">
+                    <nz-form-label nzRequired nzFor="pic" class="fw-semibold">PIC Internal</nz-form-label>
+                    <nz-select nzDisabled nzPlaceHolder="Loading..." formControlName="pic">
+                        <nz-option nzLabel="disable"></nz-option>
+                    </nz-select>
+                </nz-form-item>
+
+                  
+                <nz-form-item>
+                    <nz-form-label nzRequired nzFor="pic" class="fw-semibold">Head of PIC internal</nz-form-label>
+                    <nz-select nzDisabled nzPlaceHolder="Loading..." formControlName="is_pic_internal">
+                        <nz-option nzLabel="disable"></nz-option>
+                    </nz-select>
+                </nz-form-item>
+            </ng-template>
+
             <div class="col-md-6">
                 <nz-form-item class="mb-4">
                     <nz-form-label nzRequired nzFor="name" class="fw-semibold">Name</nz-form-label>
@@ -47,6 +82,81 @@
                   </nz-textarea-count>
                 </nz-form-control>
             </nz-form-item>
+
+            
+            <div class="d-flex gap-2 mb-4 flex-column w-auto">
+                <p class="m-0 p-0 fw-semibold">Customer Type</p>
+                <ng-container *ngIf="modal_type === 'add'; else updateType">
+                  <nz-segmented class="text-capitalize" [nzOptions]="optionsCust" (nzValueChange)="optionCustChange($event)"></nz-segmented>
+                </ng-container>
+                <ng-template #updateType>
+                  <p class="m-0 p-0 fw-normal text-capitalize"> {{ optionCustSelected }} </p>
+                </ng-template>
+            </div>
+
+            <ng-container *ngIf="optionCustSelected === 'company'">
+                <div class="d-flex mt-4 ">
+                  <p class="m-0 p-0 fw-semibold">Contact Person</p>
+                </div>
+    
+                <div formArrayName="contactPerson">
+                  <div class="row align-items-center mt-3" *ngFor="let contact of contactPerson.controls; let i = index" [formGroupName]="i">
+                    <nz-divider [nzText]="'Person ' + (i + 1)" nzOrientation="left"></nz-divider>
+                      <div class="col-3">
+                        <nz-form-item>
+                          <nz-form-label nzRequired>Contact Name</nz-form-label>
+                          <nz-form-control>
+                            <input nz-input formControlName="cp_name" />
+                          </nz-form-control>
+                        </nz-form-item>
+                      </div>
+                      <div class="col-3">
+                        <nz-form-item>
+                          <nz-form-label nzRequired>Contact Phone</nz-form-label>
+                          <nz-form-control>
+                            <input nz-input formControlName="cp_phone" />
+                          </nz-form-control>
+                        </nz-form-item>
+                      </div>
+                      <div class="col-3">
+                        <button nz-button nzDanger (click)="removeContactPerson(i)">Remove</button>
+                      </div>
+                      <div class="col-4">
+                        <nz-form-label nzRequired>Contact Address</nz-form-label>
+                        <nz-form-control>
+                          <input nz-input formControlName="cp_address" />
+                        </nz-form-control>
+                      </div>
+                      <div class="col-4">
+                        <nz-form-label nzRequired>Contact NIK</nz-form-label>
+                        <nz-form-control>
+                          <input nz-input formControlName="cp_nik" />
+                        </nz-form-control>
+                      </div>
+                      <div class="col-4">
+                        <nz-form-label nzRequired>Contact Email</nz-form-label>
+                        <nz-form-control>
+                          <input nz-input formControlName="cp_email" />
+                        </nz-form-control>
+                      </div>
+                      <div class="col-4 mt-2">
+                        <nz-form-label nzRequired>is PIC Company?</nz-form-label>
+                        <nz-form-control>
+                          <label nz-checkbox 
+                          formControlName="is_pic_company"
+                          >Yes</label>
+                        </nz-form-control>
+                      </div>
+                  </div>
+                </div>
+    
+                <div class="col-md-3 mx-auto mt-4">
+                  <nz-form-item>
+                    <button nz-button nzType="primary" (click)="addContactPerson()">Add Person</button>
+                  </nz-form-item>
+                </div>
+              </ng-container>
+
             <nz-form-item>
               <nz-form-label nzFor="status" nzRequired>Status</nz-form-label>
               <nz-form-control>
@@ -60,5 +170,5 @@
 
 <div *nzModalFooter>
     <button nz-button nzType="default" (click)="destroyModal()">Cancel</button>
-    <button nz-button nzType="primary" class="text-capitalize" (click)="destroyModal()">{{ modal_type }} Supplier</button>
+    <button nz-button nzType="primary" class="text-capitalize" (click)="submitForm()">{{ modal_type }} Supplier</button>
 </div>

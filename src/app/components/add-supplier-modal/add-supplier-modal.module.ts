@@ -9,6 +9,9 @@ import { NzInputModule } from 'ng-zorro-antd/input';
 import { NzModalModule } from 'ng-zorro-antd/modal';
 import { NzSelectModule } from 'ng-zorro-antd/select';
 import { NzSwitchModule } from 'ng-zorro-antd/switch';
+import { NzSegmentedModule } from 'ng-zorro-antd/segmented';
+import { NzDividerModule } from 'ng-zorro-antd/divider';
+import { NzCheckboxModule } from 'ng-zorro-antd/checkbox';
 
 
 @NgModule({
@@ -21,7 +24,10 @@ import { NzSwitchModule } from 'ng-zorro-antd/switch';
     ReactiveFormsModule,
     NzInputModule,
     NzSelectModule,
-    NzSwitchModule
+    NzSwitchModule,
+    NzSegmentedModule,
+    NzDividerModule,
+    NzCheckboxModule
   ],
   exports: [AddSupplierModalComponent]
 })

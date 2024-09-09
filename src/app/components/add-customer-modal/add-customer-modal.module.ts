@@ -10,6 +10,8 @@ import { NzSelectModule } from 'ng-zorro-antd/select';
 import { NzSwitchModule } from 'ng-zorro-antd/switch';
 import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzSegmentedModule } from 'ng-zorro-antd/segmented';
+import { NzDividerModule } from 'ng-zorro-antd/divider';
+import { NzCheckboxModule } from 'ng-zorro-antd/checkbox';
 
 
 @NgModule({
@@ -26,7 +28,9 @@ import { NzSegmentedModule } from 'ng-zorro-antd/segmented';
     FormsModule,
     NzIconModule,
     NzButtonModule,
-    NzSegmentedModule
+    NzSegmentedModule,
+    NzDividerModule,
+    NzCheckboxModule
   ],
   exports: [AddCustomerModalComponent]
 })

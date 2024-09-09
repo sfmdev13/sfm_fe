@@ -6,14 +6,10 @@
               <nz-select
                 id="type"
                 formControlName="type"
-                nzPlaceHolder="Select Type"
               >
-                <nz-option nzValue="all" nzLabel="all"></nz-option>
-                <nz-option nzValue="owner" nzLabel="Owner"></nz-option>
-                <nz-option nzValue="architect" nzLabel="Sales"></nz-option>
-                <nz-option nzValue="me_consultant" nzLabel="M&E Consultant"></nz-option>
-                <nz-option nzValue="qs_consultant" nzLabel="QS Consultant"></nz-option>
-                <nz-option nzValue="contractor" nzLabel="Contractor"></nz-option>
+                <nz-option nzValue="company" nzLabel="Company"></nz-option>
+                <nz-option nzValue="person" nzLabel="Person"></nz-option>
+                <nz-option nzValue=""  nzLabel="All Type"></nz-option>
               </nz-select>
             </nz-form-control>
         </nz-form-item>
@@ -23,21 +19,19 @@
               <nz-select
                 id="status"
                 formControlName="status"
-                nzPlaceHolder="Select Role"
               >
-                <nz-option nzValue="all" nzLabel="all"></nz-option>
-                <nz-option nzValue="active" nzLabel="Active"></nz-option>
-                <nz-option nzValue="inactive" nzLabel="Inactive"></nz-option>
+                <nz-option nzValue="" nzLabel="All Status" ></nz-option>
+                <nz-option [nzValue]="1" nzLabel="Active"></nz-option>
+                <nz-option [nzValue]="0" nzLabel="Inactive"></nz-option>
               </nz-select>
             </nz-form-control>
         </nz-form-item>
         <nz-form-item>
-            <nz-form-label nzFor="sort">Sort by</nz-form-label>
-            <nz-form-control id="sort" formControlName="sort">
-                <nz-radio-group >
+            <nz-form-label nzFor="sort_by">Sort by</nz-form-label>
+            <nz-form-control >
+                <nz-radio-group id="sort_by" formControlName="sort_by" >
                     <label nz-radio nzValue="asc">ASC</label>
                     <label nz-radio nzValue="desc">DESC</label>
-                    <label nz-radio nzValue="none">None</label>
                 </nz-radio-group>
             </nz-form-control>
         </nz-form-item>
@@ -47,5 +41,5 @@
 
 <div *nzModalFooter>
     <button nz-button nzType="default" (click)="destroyModal()">Cancel</button>
-    <button nz-button nzType="primary" (click)="destroyModal()">Search Customer</button>
+    <button nz-button nzType="primary" (click)="submitForm()">Search Customer</button>
 </div>

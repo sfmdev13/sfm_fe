@@ -44,6 +44,7 @@ export class LayoutComponent implements OnInit {
     this.apiSvc.getProfile().subscribe(
       (profile) => {
         this.profileName = profile.data.name
+        localStorage.setItem('pic_id', profile.data.id)
       }
     )
   }

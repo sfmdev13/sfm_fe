@@ -1,5 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { NzModalRef } from 'ng-zorro-antd/modal';
+import { ApiService } from 'src/app/api.service';
 
 @Component({
   selector: 'app-delete-customer-modal',
@@ -8,13 +9,32 @@ import { NzModalRef } from 'ng-zorro-antd/modal';
 })
 export class DeleteCustomerModalComponent implements OnInit {
 
-  constructor(private modal: NzModalRef) { }
+  @Input() id: string = ''
+
+  constructor(
+    private modal: NzModalRef,
+    private apiSvc: ApiService
+  ) { }
 
   ngOnInit(): void {
   }
 
   destroyModal(): void{
     this.modal.destroy()
+  }
+
+  deleteCust(): void{
+    this.apiSvc.deleteCustomer(this.id).subscribe({
+      next: () => {
+        this.apiSvc.triggerRefreshCustomers();
+      },
+      error: (error) => {
+        console.log(error)
+      },
+      complete: () => {
+        this.modal.destroy()
+      }
+    })
   }
 
 }
