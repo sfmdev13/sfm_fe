@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { NzModalService } from 'ng-zorro-antd/modal';
-import { Observable, tap } from 'rxjs';
+import { debounceTime, distinctUntilChanged, Observable, Subject, switchMap, tap } from 'rxjs';
 import { ApiService } from 'src/app/api.service';
 import { AddCustomerModalComponent } from 'src/app/components/add-customer-modal/add-customer-modal.component';
 import { AddEmployeeModalComponent } from 'src/app/components/add-employee-modal/add-employee-modal.component';
@@ -50,6 +50,9 @@ export class UserComponent implements OnInit {
   currentPageSupplier: number = 1;
 
   filteredSupp: boolean = false;
+
+  searchSupp: string = '';
+  private searchSuppSubject = new Subject<string>();
 
   listOfPic: any[] = [];
 
@@ -104,7 +107,20 @@ export class UserComponent implements OnInit {
 
     this.apiSvc.getPic().subscribe(res => {
       this.listOfPic = res;
-    })
+    }) 
+
+    this.searchSuppSubject.pipe(
+      debounceTime(300),
+      distinctUntilChanged()
+    ).subscribe(search => {
+      this.suppliers$ = this.apiSvc.searchSupplier(search, this.currentPageSupplier, this.pageSizeSupplier).pipe(
+        tap(res => {
+          this.totalSupplier = res.data.length;
+          this.currentPageSupplier = res.pagination.current_page;
+          this.totalAllSupplier = res.pagination.total;
+        })
+      );
+    });
   }
 
   tabChange(value: string){
@@ -271,11 +287,22 @@ export class UserComponent implements OnInit {
     }
 
     if(this.user_type === 'supplier'){
-      this.modalService.create({
+      const suppModal = this.modalService.create({
         nzTitle: 'Filter Supplier',
         nzContent: FilterSupplierModalComponent,
-        nzCentered: true
+        nzCentered: true,
+        nzComponentParams: {
+          filteredSupp: this.filteredSupp
+        }
       })
+
+      suppModal.afterClose.subscribe(result => {
+        if(result) {
+          this.filterParams = result;
+          this.getFilteredSupplier();
+        }
+      })
+      
     }
   }
 
@@ -374,6 +401,18 @@ export class UserComponent implements OnInit {
     )
   }
 
+  getFilteredSupplier(){
+    this.suppliers$ = this.apiSvc.filterSupplier(this.filterParams, this.currentPageSupplier, this.pageSizeSupplier).pipe(
+      tap(res =>{
+        this.totalSupplier = res.data.length;
+        this.currentPageSupplier = res.pagination.current_page;
+        this.totalAllSupplier = res.pagination.total
+        this.filteredSupp = true
+        localStorage.setItem('filterItemsSupp', JSON.stringify(this.filterParams));
+      })
+    )
+  }
+
   onPageIndexChangeCust(page: number): void {
     this.currentPageCustomer = page;
 
@@ -387,7 +426,11 @@ export class UserComponent implements OnInit {
   onPageindexChangeSupp(page: number): void{
     this.currentPageSupplier = page;
 
-    this.getSupplier();
+    if(this.filteredSupp){
+      this.getFilteredSupplier();
+    } else {
+      this.getSupplier();
+    }
   }
 
   refreshTableCust(){
@@ -395,5 +438,16 @@ export class UserComponent implements OnInit {
     this.pageSizeCustomer = 2;
     this.currentPageCustomer = 1;
     this.getCustomer();
+  }
+
+  refreshTableSupp(){
+    this.filteredSupp = false;
+    this.pageSizeCustomer = 2;
+    this.currentPageCustomer = 1;
+    this.getSupplier();
+  }
+
+  searchSuppHandler(search: string): void{
+    this.searchSuppSubject.next(search);
   }
 }
