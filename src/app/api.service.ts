@@ -206,4 +206,14 @@ export class ApiService {
 
     return this.http.post<any>(url, body, {headers})
   }
+
+  deleteSupplier(id: string): Observable<any>{
+    const token = localStorage.getItem('authToken');
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+    });
+
+    const url = `${this.apiUrl}/delete-supplier?id=${id}`;
+    return this.http.delete<any>(url, { headers })
+  }
 }

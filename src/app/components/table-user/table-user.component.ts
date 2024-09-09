@@ -33,6 +33,7 @@ export class TableUserComponent implements OnInit {
 
   @Output() showUpdateModalSupp: EventEmitter<IDataSupplier> = new EventEmitter<IDataSupplier>();
   @Output() showDetailModalSupp: EventEmitter<IDataSupplier> = new EventEmitter<IDataSupplier>();
+  @Output() showDeleteModalSupp: EventEmitter<string> = new EventEmitter<string>();
   
   @Output() onPageIndexChangeCust: EventEmitter<number> = new EventEmitter<number>();
   @Output() onPageIndexChangeSupp: EventEmitter<number> = new EventEmitter<number>();
@@ -107,6 +108,10 @@ export class TableUserComponent implements OnInit {
 
   detailSuppHandler(dataSupp: IDataSupplier){
     this.showDetailModalSupp.emit(dataSupp);
+  }
+
+  deleteSuppHandler(id: string){
+    this.showDeleteModalSupp.emit(id);
   }
 
   pageIndexChangeSupp(page: number){

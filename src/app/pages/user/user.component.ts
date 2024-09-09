@@ -387,6 +387,17 @@ export class UserComponent implements OnInit {
     });
   }
 
+  showDeleteModalSupp(id: string){
+    this.modalService.create({
+      nzTitle: 'Delete Supplier',
+      nzContent: DeleteSupplierModalComponent,
+      nzCentered: true,
+      nzComponentParams: {
+        id
+      }
+    });
+  }
+
   getCustomer(){
     this.customers$ = this.apiSvc.getCustomer(this.currentPageCustomer, this.pageSizeCustomer).pipe(
       tap(res =>{
