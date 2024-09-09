@@ -12,14 +12,16 @@ export interface IDataCustomer {
     email: string
     nik: string
     phone: string
-    pic: IPicCustomer;
+    pic: IPicCustomer[];
     type: string
     address: string
     status: number
     created_at: string
     updated_at: string
     billing_addresses: any[]
-    contact_person: IContactPerson[]
+    contactPerson: IContactPerson[]
+    website: string
+    maps_url: string
 }
 
 export interface ICustomerCategory {
@@ -52,6 +54,7 @@ export interface IMetaResponse {
 export interface IPicCustomer{
     id: string
     user_id: string
+    pic_id: string
     employee_pid: string
     name: string
     email: string
@@ -59,6 +62,7 @@ export interface IPicCustomer{
     phone: string
     address: string
     status: number
+    is_pic_internal: number;
 }
 
 export interface IPagination{

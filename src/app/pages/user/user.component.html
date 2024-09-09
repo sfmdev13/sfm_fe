@@ -42,7 +42,7 @@
                 <div class="d-flex align-items-center justify-content-between mb-4">
                     <h4 class="fw-bold">Data Customer</h4>
                     <nz-input-group [nzSuffix]="suffixIconSearch" nzSize="large" style="width: 320px;">
-                        <input type="text" nz-input placeholder="search customer" />
+                        <input [(ngModel)]="searchCust"  (ngModelChange)="searchCustHandler($event)"  type="text" nz-input placeholder="search customer" />
                     </nz-input-group>
                     <ng-template #suffixIconSearch>
                         <span nz-icon nzType="search"></span>
@@ -118,7 +118,7 @@
                 <div class="d-flex align-items-center justify-content-between mb-4">
                     <h4 class="fw-bold">Data Supplier</h4>
                     <nz-input-group [nzSuffix]="suffixIconSearch" nzSize="large" style="width: 320px;">
-                        <input type="text" nz-input placeholder="search supplier" />
+                        <input [(ngModel)]="searchSupp"  (ngModelChange)="searchSuppHandler($event)"  type="text" nz-input placeholder="search supplier" />
                     </nz-input-group>
                     <ng-template #suffixIconSearch>
                         <span nz-icon nzType="search"></span>
@@ -128,7 +128,7 @@
                     <span class="fw-light">Result of {{ totalSupplier }} suppliers</span>
                     <div class="row">
                         <div class="text-end">
-                            <button class="me-2 filter-icon" nz-button nzType="default" nzSize="default"><span nz-icon nzType="reload"></span></button>
+                            <button (click)="refreshTableSupp()" class="me-2 filter-icon" nz-button nzType="default" nzSize="default"><span nz-icon nzType="reload"></span></button>
                             <button (click)="showFilter()" class="me-2 filter-icon" nz-button nzType="default" nzSize="default"><span nz-icon nzType="filter"></span></button>
                             <button nzSize="default" nz-button nzType="primary" (click)="showAddModal()">Add New Supplier</button>
                         </div>
@@ -174,11 +174,12 @@
                             <th>SUPP ID</th>
                             <th>Name</th>
                             <th>Email</th>
-                            <th>NIK</th>
+                            <th>Type</th>
                             <th>Phone</th>
                             <th>Address</th>
                             <th>Status</th>
-                            <th>PIC</th>
+                            <th>PIC SFM</th>
+                            <th>PIC Customer</th>
                             <th>Action</th>
                         </tr>
                     </thead>

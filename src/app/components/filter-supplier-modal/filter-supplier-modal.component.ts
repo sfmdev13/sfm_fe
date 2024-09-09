@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { NzModalRef } from 'ng-zorro-antd/modal';
 
@@ -9,9 +9,12 @@ import { NzModalRef } from 'ng-zorro-antd/modal';
 })
 export class FilterSupplierModalComponent implements OnInit {
 
+  @Input() filteredSupp: boolean = false;
+  
   filterSupplierForm = this.fb.group({
+    type: [''],
     status: [''],
-    sort: ['']
+    sort_by: ['asc']
   })
 
   constructor(
@@ -20,6 +23,18 @@ export class FilterSupplierModalComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
+
+    if (this.filteredSupp) {
+      const filterItem = JSON.parse(localStorage.getItem('filterItemsSupp')!);
+      
+      this.filterSupplierForm.patchValue({
+        type: filterItem.type,
+        status: filterItem.status,
+        sort_by: filterItem.sort_by
+      })
+    } 
+
+
   }
 
   destroyModal(): void{
@@ -27,7 +42,15 @@ export class FilterSupplierModalComponent implements OnInit {
   }
 
   submitForm(): void{
-    console.log('aselole')
+
+    const paramsUrl = {
+      type: this.filterSupplierForm.value.type,
+      status: this.filterSupplierForm.value.status,
+      sort_by: this.filterSupplierForm.value.sort_by
+    }
+
+    this.modal.close(paramsUrl);
+
   }
 
 }

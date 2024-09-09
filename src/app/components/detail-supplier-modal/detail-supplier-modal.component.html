@@ -46,7 +46,11 @@
         </div>
         <div class="col-md-4">
             <p class="m-0 p-0 fw-semibold">Address</p>
-            <p class="fw-light text-capitalize">{{ data.address }}</p>
+            <p class="fw-light text-capitalize"><a [href]="data.maps_url" target="_blank" rel="noopener noreferrer">{{ data.address }}</a></p>
+        </div>
+        <div class="col-md-4">
+            <p class="m-0 p-0 fw-semibold">Website</p>
+            <p class="fw-light"><a [href]="data.website" target="_blank" rel="noopener noreferrer">{{ data.website }}</a></p>
         </div>
     </div>
 

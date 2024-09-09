@@ -1,9 +1,27 @@
 <div class="d-flex flex-column gap-2">
     <nz-avatar [nzSize]="64" nzText="K" class="custom-avatar mb-3"></nz-avatar>
-    <div>
-        <p class="m-0 p-0 fw-semibold">Employee PIC</p>
-        <p class="fw-light text-capitalize">{{ data.pic.name }}</p>
-    </div>
+    <ng-container *ngFor="let data of data.pic; let i = index">
+        <div class="row mt-3">
+            <div class="col">
+                <p class="m-0 p-0 fw-bold">PIC SFM {{ i + 1 }}</p>
+            </div>
+            <div  class="row">
+                <div class="col-md-4">
+                    <p class="m-0 p-0 fw-semibold">Name</p>
+                    <p class="fw-light text-capitalize">{{ data.name }}</p>
+                </div>
+    
+                <div class="col-md-4">
+                    <p class="m-0 p-0 fw-semibold">Head of PIC</p>
+                    <nz-tag [nzColor]="data.is_pic_internal === 1 ? '#1DA32C' : '#f50'">{{ data.is_pic_internal  === 1 ? 'Yes' : 'No' }}</nz-tag>
+                </div>
+            </div>
+
+        </div>
+    </ng-container>
+
+    <nz-divider></nz-divider>
+
     <div class="row">
         <div class="col-md-4">
             <p class="m-0 p-0 fw-semibold">Company Name</p>
@@ -27,7 +45,11 @@
         </div>
         <div class="col-md-4">
             <p class="m-0 p-0 fw-semibold">Address</p>
-            <p class="fw-light text-capitalize">{{ data.address }}</p>
+            <p class="fw-light text-capitalize"><a [href]="data.maps_url" target="_blank" rel="noopener noreferrer">{{ data.address }}</a></p>
+        </div>
+        <div class="col-md-4">
+            <p class="m-0 p-0 fw-semibold">Website</p>
+            <p class="fw-light"><a [href]="data.website" target="_blank" rel="noopener noreferrer">{{ data.website }}</a></p>
         </div>
     </div>
 
@@ -36,7 +58,9 @@
         <nz-tag [nzColor]="data.status === 1 ? '#1DA32C' : '#f50'">{{ data.status === 1 ? 'Active' : 'Inactive' }}</nz-tag>
     </div>
 
-    <ng-container *ngFor="let contact of data.contact_person; let i = index">
+    <nz-divider></nz-divider>
+
+    <ng-container *ngFor="let contact of data.contactPerson; let i = index">
         <div class="row mt-3">
             <div class="col">
                 <p class="m-0 p-0 fw-bold">Contact Person {{ i + 1 }}</p>
