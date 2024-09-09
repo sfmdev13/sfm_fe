@@ -1,3 +1,10 @@
-::ng-deep .ant-avatar-string{
-    transform: scale(1.533333) translateX(-50%) !important;
-}
+::ng-deep {
+    .ant-modal-body{
+        max-height: 80vh;
+        overflow-y: auto;
+    }
+
+    .ant-avatar-string{
+        transform: scale(1.533333) translateX(-50%) !important;
+    }
+} 

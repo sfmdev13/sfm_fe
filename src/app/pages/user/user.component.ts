@@ -219,15 +219,6 @@ export class UserComponent implements OnInit {
         nzCentered: true
       });
     }
-
-    if(this.user_type === 'supplier'){
-      this.modalService.create({
-        nzTitle: 'Detail Supplier',
-        nzContent: DetailSupplierModalComponent,
-        nzCentered: true
-      });
-    }
-
   }
 
   showDeleteModal(){
@@ -337,6 +328,18 @@ export class UserComponent implements OnInit {
       nzCentered: true,
       nzWidth: '900px'
     })
+  }
+
+  showDetailModalSupp(dataSupp: IDataSupplier){
+    this.modalService.create({
+      nzTitle: 'Detail Supplier',
+      nzContent: DetailSupplierModalComponent,
+      nzCentered: true,
+      nzComponentParams: {
+        data: dataSupp
+      },
+      nzWidth: '900px'
+    });
   }
 
   getCustomer(){

@@ -1,5 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { NzModalRef } from 'ng-zorro-antd/modal';
+import { IDataSupplier } from 'src/app/interfaces';
 
 @Component({
   selector: 'app-detail-supplier-modal',
@@ -7,6 +8,8 @@ import { NzModalRef } from 'ng-zorro-antd/modal';
   styleUrls: ['./detail-supplier-modal.component.scss']
 })
 export class DetailSupplierModalComponent implements OnInit {
+
+  @Input() data!: IDataSupplier;
 
   status: boolean = true;
 
