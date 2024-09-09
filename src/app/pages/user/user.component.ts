@@ -192,6 +192,7 @@ export class UserComponent implements OnInit {
         nzContent: AddCustomerModalComponent,
         nzComponentParams: {
           modal_type: 'add',
+          listOfPic: this.listOfPic
         },
         nzCentered: true,
         nzWidth: '900px'
@@ -325,7 +326,8 @@ export class UserComponent implements OnInit {
       nzContent: AddCustomerModalComponent,
       nzComponentParams: {
         modal_type: 'update',
-        customerDetail: dataCustomer
+        customerDetail: dataCustomer,
+        listOfPic: this.listOfPic
       },
       nzCentered: true,
       nzWidth: '900px'

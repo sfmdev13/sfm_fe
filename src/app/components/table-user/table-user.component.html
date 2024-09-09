@@ -53,11 +53,12 @@
                 <th>Name</th>
                 <th>Type</th>
                 <th>Email</th>
-                <th>NIK</th>
                 <th>Phone</th>
+                <th>Website</th>
                 <th>Address</th>
                 <th>Status</th>
                 <th>PIC SFM</th>
+                <th>PIC Customer</th>
                 <th>Action</th>
             </tr>
         </thead>
@@ -67,13 +68,18 @@
                 <td>{{ data.name }}</td>
                 <td>{{ data.type }}</td>
                 <td>{{ data.email }}</td>
-                <td>{{ data.nik }}</td>
                 <td>{{ data.phone }}</td>
-                <td>{{ data.address }}</td>
+                <td><a [href]="data.website" target="_blank" rel="noopener noreferrer">{{ data.website }}</a></td>
+                <td><a [href]="data.maps_url" target="_blank" rel="noopener noreferrer">{{ data.address }}</a></td>
                 <td>
                     <nz-tag [nzColor]="data.status === 1 ? '#1DA32C' : '#f50'">{{ data.status === 1 ? 'Active' : 'Inactive' }}</nz-tag>
                 </td>
-                <td>{{ data.pic.name }}</td>
+                <td>
+                    <ng-container *ngFor="let pic of data.pic; last as isLast">{{ pic.name }}<span *ngIf="!isLast">, </span></ng-container>
+                </td>
+                <td>
+                    <ng-container *ngFor="let cp of data.contactPerson; last as isLast">{{ cp.name }}<span *ngIf="!isLast">, </span></ng-container>
+                </td>
                 <td>
                     <div class="d-flex gap-3">
                         <span (click)="detailCustHandler(data)"  nz-icon nzType="eye" nzTheme="twotone"></span>
