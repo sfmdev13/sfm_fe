@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { DetailCustomerModalComponent } from './detail-customer-modal.component';
 import { NzAvatarModule } from 'ng-zorro-antd/avatar';
 import { NzTagModule } from 'ng-zorro-antd/tag';
+import { NzDividerModule } from 'ng-zorro-antd/divider';
 
 
 
@@ -11,7 +12,8 @@ import { NzTagModule } from 'ng-zorro-antd/tag';
   imports: [
     CommonModule,
     NzAvatarModule,
-    NzTagModule
+    NzTagModule,
+    NzDividerModule
   ],
   exports: [DetailCustomerModalComponent]
 })

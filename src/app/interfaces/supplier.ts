@@ -20,6 +20,8 @@ export interface IDataSupplier {
     updated_at: string
     pic: IPicSupplier[]
     contactPerson: ContactPerson[]
+    website: string
+    maps_url: string
 }
 
 export interface IPicSupplier {
