@@ -150,7 +150,16 @@ export class ApiService {
     return this.http.post<IRootSupplier>(url, {}, { headers });
   }
   
+  searchCustomer(params: any, page: number, per_page: number): Observable<IRootCustomer>{
+    const token = localStorage.getItem('authToken');
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+    });
 
+    const url = `${this.apiUrl}/search-customer?search=${params}&page=${page}&per_page=${per_page}`
+
+    return this.http.post<IRootCustomer>(url, {}, { headers });
+  }
 
   getSupplier(page: number, per_page: number): Observable<IRootSupplier>{
     const token = localStorage.getItem('authToken');

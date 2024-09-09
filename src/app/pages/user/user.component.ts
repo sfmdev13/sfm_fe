@@ -54,6 +54,9 @@ export class UserComponent implements OnInit {
   searchSupp: string = '';
   private searchSuppSubject = new Subject<string>();
 
+  searchCust: string = '';
+  private searchCustSubject = new Subject<string>();
+
   listOfPic: any[] = [];
 
   constructor(
@@ -121,6 +124,19 @@ export class UserComponent implements OnInit {
         })
       );
     });
+
+    this.searchCustSubject.pipe(
+      debounceTime(300),
+      distinctUntilChanged()
+    ).subscribe(search => {
+      this.customers$ = this.apiSvc.searchCustomer(search, this.currentPageCustomer, this.pageSizeCustomer).pipe(
+        tap(res => {
+          this.totalCustomer = res.data.length;
+          this.currentPageCustomer = res.pagination.current_page;
+          this.totalAllCustomer = res.pagination.total;
+        })
+      );
+    })
   }
 
   tabChange(value: string){
@@ -451,5 +467,9 @@ export class UserComponent implements OnInit {
 
   searchSuppHandler(search: string): void{
     this.searchSuppSubject.next(search);
+  }
+
+  searchCustHandler(search: string): void{
+    this.searchCustSubject.next(search);
   }
 }

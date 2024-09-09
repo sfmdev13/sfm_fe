@@ -42,7 +42,7 @@
                 <div class="d-flex align-items-center justify-content-between mb-4">
                     <h4 class="fw-bold">Data Customer</h4>
                     <nz-input-group [nzSuffix]="suffixIconSearch" nzSize="large" style="width: 320px;">
-                        <input type="text" nz-input placeholder="search customer" />
+                        <input [(ngModel)]="searchCust"  (ngModelChange)="searchCustHandler($event)"  type="text" nz-input placeholder="search customer" />
                     </nz-input-group>
                     <ng-template #suffixIconSearch>
                         <span nz-icon nzType="search"></span>
