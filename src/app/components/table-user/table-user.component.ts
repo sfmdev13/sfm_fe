@@ -1,5 +1,5 @@
 import { Component, Input, OnInit, Output, EventEmitter } from '@angular/core';
-import { IDataCustomer } from 'src/app/interfaces';
+import { IDataCustomer, IDataSupplier } from 'src/app/interfaces';
 
 
 @Component({
@@ -13,11 +13,15 @@ export class TableUserComponent implements OnInit {
   @Input() user_type: string = 'employee';
   @Input() listOfDataEmp: any[] = [];
   @Input() listofDataCust: IDataCustomer[] = [];
-  @Input() listofDataSupp: any[] = [];
+  @Input() listofDataSupp: IDataSupplier[] = [];
 
   @Input() totalAllCustomer: number = 0;
   @Input() pageSizeCustomer: number = 0;
   @Input() currentPageCustomer: number = 0;
+
+  @Input() totalAllSupplier: number = 0;
+  @Input() pageSizeSupplier: number = 0;
+  @Input() currentPageSupplier: number = 0;
 
   @Output() showUpdateModal = new EventEmitter<void>();
   @Output() showDetailModal = new EventEmitter<void>();
@@ -26,8 +30,11 @@ export class TableUserComponent implements OnInit {
   @Output() showDetailModalCust: EventEmitter<IDataCustomer> = new EventEmitter<IDataCustomer>();
   @Output() showUpdateModalCust: EventEmitter<IDataCustomer> = new EventEmitter<IDataCustomer>();
   @Output() showDeleteModalCust: EventEmitter<string> = new EventEmitter<string>();
+
+  @Output() showUpdateModalSupp: EventEmitter<IDataSupplier> = new EventEmitter<IDataSupplier>();
   
-  @Output() onPageIndexChange: EventEmitter<number> = new EventEmitter<number>();
+  @Output() onPageIndexChangeCust: EventEmitter<number> = new EventEmitter<number>();
+  @Output() onPageIndexChangeSupp: EventEmitter<number> = new EventEmitter<number>();
 
   listOfData: any[] = [
     {
@@ -88,7 +95,17 @@ export class TableUserComponent implements OnInit {
     this.showDeleteModalCust.emit(id);
   }
 
-  pageIndexChange(page: number){
-    this.onPageIndexChange.emit(page);
+  pageIndexChangeCust(page: number){
+    this.onPageIndexChangeCust.emit(page);
   }
+
+
+  updateSuppHandler(dataSupp: IDataSupplier){
+    this.showUpdateModalSupp.emit(dataSupp);
+  }
+
+  pageIndexChangeSupp(page: number){
+    this.onPageIndexChangeSupp.emit(page);
+  }
+  
 }

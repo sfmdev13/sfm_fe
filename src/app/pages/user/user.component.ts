@@ -14,7 +14,7 @@ import { DetailSupplierModalComponent } from 'src/app/components/detail-supplier
 import { FilterCustomerModalComponent } from 'src/app/components/filter-customer-modal/filter-customer-modal.component';
 import { FilterEmployeeModalComponent } from 'src/app/components/filter-employee-modal/filter-employee-modal.component';
 import { FilterSupplierModalComponent } from 'src/app/components/filter-supplier-modal/filter-supplier-modal.component';
-import { IDataCustomer, IRootCustomer } from 'src/app/interfaces';
+import { IDataCustomer, IDataSupplier, IRootCustomer, IRootSupplier } from 'src/app/interfaces';
 
 @Component({
   selector: 'app-user',
@@ -42,6 +42,16 @@ export class UserComponent implements OnInit {
   };
   filteredCust: boolean = false;
 
+  suppliers$!: Observable<IRootSupplier>;
+
+  totalSupplier: number = 0;
+  totalAllSupplier: number = 0;
+  pageSizeSupplier: number = 2;
+  currentPageSupplier: number = 1;
+
+  filteredSupp: boolean = false;
+
+  listOfPic: any[] = [];
 
   constructor(
     private modalService: NzModalService,
@@ -87,6 +97,14 @@ export class UserComponent implements OnInit {
     this.apiSvc.refreshGetCustomer$.subscribe(() => {
       this.getCustomer();
     });
+
+    this.apiSvc.refreshGetSupplier$.subscribe(() => {
+      this.getSupplier();
+    })
+
+    this.apiSvc.getPic().subscribe(res => {
+      this.listOfPic = res;
+    })
   }
 
   tabChange(value: string){
@@ -133,38 +151,7 @@ export class UserComponent implements OnInit {
     }
 
     if(value === 'supplier'){
-      this.listofDataSupp = [
-        {
-          supp_id: '123123',
-          name: 'John Brown 1',
-          email: 'johnbrow1@gmail.com',
-          nik: '123123123123',
-          phone: '0812371239',
-          pic: 'Sales 1',
-          address: 'Jalan Beruang II',
-          status: true
-        },
-        {
-          supp_id: '123123',
-          name: 'John Brown 2',
-          email: 'johnbrow1@gmail.com',
-          nik: '123123123123',
-          phone: '0812371239',
-          pic: 'Sales 1',
-          address: 'Jalan Beruang II',
-          status: true
-        },
-        {
-          supp_id: '123123',
-          name: 'John Brown 3',
-          email: 'johnbrow1@gmail.com',
-          nik: '123123123123',
-          phone: '0812371239',
-          pic: 'Sales 1',
-          address: 'Jalan Beruang II',
-          status: true
-        }
-      ]
+      this.getSupplier();
     }
     
   }
@@ -200,11 +187,14 @@ export class UserComponent implements OnInit {
         nzTitle: 'Add Supplier',
         nzContent: AddSupplierModalComponent,
         nzComponentParams: {
-          modal_type: 'add'
+          modal_type: 'add',
+          listOfPic: this.listOfPic
         },
-        nzCentered: true
-      })
+        nzCentered: true,
+        nzWidth: '900px'
+      });
     }
+
 
   }
 
@@ -219,18 +209,6 @@ export class UserComponent implements OnInit {
         nzCentered: true
       });
     }
-
-    if(this.user_type === 'supplier'){
-      this.modalService.create({
-        nzTitle: 'Update Supplier',
-        nzContent: AddSupplierModalComponent,
-        nzComponentParams: {
-          modal_type: 'update'
-        },
-        nzCentered: true
-      });
-    }
-
   }
 
   showDetailModal(){
@@ -347,6 +325,20 @@ export class UserComponent implements OnInit {
     });
   }
 
+  showUpdateModalSupp(dataSupp: IDataSupplier){
+    this.modalService.create({
+      nzTitle: 'Update Supplier',
+      nzContent: AddSupplierModalComponent,
+      nzComponentParams: {
+        modal_type: 'update',
+        supplierDetail: dataSupp,
+        listOfPic: this.listOfPic
+      },
+      nzCentered: true,
+      nzWidth: '900px'
+    })
+  }
+
   getCustomer(){
     this.customers$ = this.apiSvc.getCustomer(this.currentPageCustomer, this.pageSizeCustomer).pipe(
       tap(res =>{
@@ -355,6 +347,16 @@ export class UserComponent implements OnInit {
         this.totalAllCustomer = res.pagination.total
       })
     );
+  }
+
+  getSupplier(){
+    this.suppliers$ = this.apiSvc.getSupplier(this.currentPageSupplier, this.pageSizeSupplier).pipe(
+      tap(res => {
+        this.totalSupplier = res.data.length;
+        this.currentPageSupplier = res.pagination.current_page;
+        this.totalAllSupplier = res.pagination.total
+      })
+    )
   }
 
   getFilteredCustomer(){
@@ -369,7 +371,7 @@ export class UserComponent implements OnInit {
     )
   }
 
-  onPageIndexChange(page: number): void {
+  onPageIndexChangeCust(page: number): void {
     this.currentPageCustomer = page;
 
     if (this.filteredCust) {
@@ -377,6 +379,12 @@ export class UserComponent implements OnInit {
     } else {
       this.getCustomer();
     }
+  }
+
+  onPageindexChangeSupp(page: number): void{
+    this.currentPageSupplier = page;
+
+    this.getSupplier();
   }
 
   refreshTableCust(){

@@ -1,8 +1,8 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable, tap } from 'rxjs';
+import { BehaviorSubject, map, Observable, tap } from 'rxjs';
 import { environment } from 'src/environments/environment';
-import { IRootCatContact, IRootCustomer } from './interfaces';
+import { IRootCatContact, IRootCustomer, IRootSupplier } from './interfaces';
 
 @Injectable({
   providedIn: 'root'
@@ -19,6 +19,9 @@ export class ApiService {
 
   private refreshGetCustomer = new BehaviorSubject<void>(undefined);
   refreshGetCustomer$ = this.refreshGetCustomer.asObservable();
+
+  private refreshGetSupplier = new BehaviorSubject<void>(undefined);
+  refreshGetSupplier$ = this.refreshGetSupplier.asObservable();
 
   private filteredCustomerDataSubject = new BehaviorSubject<IRootCustomer>({} as IRootCustomer);
   filteredCustomerData$ = this.filteredCustomerDataSubject.asObservable();
@@ -46,6 +49,10 @@ export class ApiService {
 
   triggerRefreshCustomers() {
     this.refreshGetCustomer.next();
+  }
+
+  triggerRefreshSuppliers() {
+    this.refreshGetSupplier.next();
   }
 
   setFilteredCustomerData(data: IRootCustomer) {
@@ -119,5 +126,51 @@ export class ApiService {
     const url = `${this.apiUrl}/filter-customer?type=${params.type}&status=${params.status}&sort_by=${params.sort_by}&page=${page}&per_page=${per_page}`
 
     return this.http.post<IRootCustomer>(url, {}, { headers });
+  }
+
+  getSupplier(page: number, per_page: number): Observable<IRootSupplier>{
+    const token = localStorage.getItem('authToken');
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+    });
+
+    const url = `${this.apiUrl}/suppliers?page=${page}&per_page=${per_page}`
+
+    return this.http.get<IRootSupplier>(url, { headers })
+  }
+
+  getPic():Observable<any>{
+    const token = localStorage.getItem('authToken');
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+    });
+    
+    const url = `${this.apiUrl}/pic`;
+
+    return this.http.get<any>(url, { headers }).pipe(
+      map(response => response.data)
+    )
+  }
+
+  createSupplier(body: any): Observable<any>{
+    const token = localStorage.getItem('authToken');
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+    });
+
+    const url = `${this.apiUrl}/create-supplier`;
+
+    return this.http.post<any>(url, body, {headers})
+  }
+
+  updateSupplier(body: any): Observable<any>{
+    const token = localStorage.getItem('authToken');
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+    });
+
+    const url = `${this.apiUrl}/update-supplier`;
+
+    return this.http.post<any>(url, body, {headers})
   }
 }
