@@ -8,33 +8,78 @@
     </div>
     <div class="row mt-5">
         <ng-container *ngIf="user_type === 'employee'">
-            <div class="d-flex align-items-center justify-content-between mb-4">
-                <h4 class="fw-bold">Data Employee</h4>
-                <nz-input-group [nzSuffix]="suffixIconSearch" nzSize="large" style="width: 320px;">
-                    <input type="text" nz-input placeholder="search employee" />
-                </nz-input-group>
-                <ng-template #suffixIconSearch>
-                    <span nz-icon nzType="search"></span>
-                </ng-template>
-            </div>
-            <div class="d-flex align-items-center justify-content-between mb-3">
-                <span class="fw-light">Result of 40 Employees</span>
-                <div class="row">
-                    <div class="text-end">
-                        <button class="me-2 filter-icon" nz-button nzType="default" nzSize="default"><span nz-icon nzType="reload"></span></button>
-                        <button  (click)="showFilter()" class="me-2 filter-icon" nz-button nzType="default" nzSize="default"><span nz-icon nzType="filter"></span></button>
-                        <button nzSize="default" nz-button nzType="primary" (click)="showAddModal()">Add New Employee</button>
+            <ng-container *ngIf="employees$ | async as employee; else employeeLoading">
+                <div class="d-flex align-items-center justify-content-between mb-4">
+                    <h4 class="fw-bold">Data Employee</h4>
+                    <nz-input-group [nzSuffix]="suffixIconSearch" nzSize="large" style="width: 320px;">
+                        <input [(ngModel)]="searchEmp"  (ngModelChange)="searchEmpHandler($event)" type="text" nz-input placeholder="search employee" />
+                    </nz-input-group>
+                    <ng-template #suffixIconSearch>
+                        <span nz-icon nzType="search"></span>
+                    </ng-template>
+                </div>
+                <div class="d-flex align-items-center justify-content-between mb-3">
+                    <span class="fw-light">Result of {{ totalEmployee }} Employees</span>
+                    <div class="row">
+                        <div class="text-end">
+                            <button (click)="refreshTableEmp()" class="me-2 filter-icon" nz-button nzType="default" nzSize="default"><span nz-icon nzType="reload"></span></button>
+                            <button  (click)="showFilter()" class="me-2 filter-icon" nz-button nzType="default" nzSize="default"><span nz-icon nzType="filter"></span></button>
+                            <button nzSize="default" nz-button nzType="primary" (click)="showAddModal()">Add New Employee</button>
+                        </div>
                     </div>
                 </div>
-            </div>
-            <app-table-user 
-                [user_type]="user_type" 
-                [listOfDataEmp]="listOfDataEmp" 
-                (showUpdateModal)="showUpdateModal()" 
-                (showDetailModal)="showDetailModal()"
-                (showDeleteModal)="showDeleteModal()"
-            ></app-table-user>
-
+                <app-table-user 
+                    [user_type]="user_type" 
+                    [listOfDataEmp]="employee.data"
+                    [totalAllEmployee]="totalAllEmployee"
+                    [pageSizeEmployee]="pageSizeEmployee"
+                    [currentPageEmployee]="currentPageEmployee"
+                    (showUpdateModal)="showUpdateModal()" 
+                    (showDetailModal)="showDetailModal()"
+                    (showDeleteModal)="showDeleteModal()"
+                    (onPageIndexChangeEmp)="onPageIndexChangeEmp($event)"
+                ></app-table-user>
+            </ng-container>
+            <ng-template #employeeLoading >
+                <div class="d-flex align-items-center justify-content-between mb-4">
+                    <h4 class="fw-bold">Data Employee</h4>
+                    <nz-input-group [nzSuffix]="suffixIconSearch" nzSize="large" style="width: 320px;">
+                        <input disabled type="text" nz-input placeholder="search customer" />
+                    </nz-input-group>
+                    <ng-template #suffixIconSearch>
+                        <span nz-icon nzType="search"></span>
+                    </ng-template>
+                </div>
+                <div class="d-flex align-items-center justify-content-between mb-3">
+                    <p class="placeholder-glow" style="width: 500px;">
+                        <span class="placeholder col-4"></span>
+                    </p>
+                    <div class="row">
+                        <div class="text-end">
+                            <button class="me-2 filter-icon" nz-button nzType="default" nzSize="default" disabled><span nz-icon nzType="reload"></span></button>
+                            <button class="me-2 filter-icon" nz-button nzType="default" nzSize="default" disabled><span nz-icon nzType="filter"></span></button>
+                            <button nzSize="default" nz-button nzType="primary" disabled>Add New Employee</button>
+                        </div>
+                    </div>
+                </div>
+                <nz-table #basicTable nzBordered>
+                    <thead>
+                        <tr>
+                            <th>EMP ID</th>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Role</th>
+                            <th>NIK</th>
+                            <th>Phone</th>
+                            <th>Address</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </nz-table>
+            </ng-template>
         </ng-container>
     
         <ng-container *ngIf="user_type === 'customer'">

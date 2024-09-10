@@ -1,11 +1,22 @@
 
 <ng-container *ngIf="user_type === 'employee'">
-    <nz-table #basicTable nzBordered [nzData]="listOfDataEmp">
+    <nz-table 
+        #basicTable 
+        nzBordered 
+        [nzData]="listOfDataEmp"
+        nzShowPagination
+        [nzFrontPagination]="false"
+        [nzTotal]="totalAllEmployee"
+        [nzPageSize]="pageSizeEmployee"
+        (nzPageIndexChange)="pageIndexChangeEmp($event)"
+        [nzPageIndex]="currentPageEmployee"
+    >
         <thead>
             <tr>
                 <th>EMP ID</th>
                 <th>Name</th>
                 <th>Email</th>
+                <th>Role</th>
                 <th>NIK</th>
                 <th>Phone</th>
                 <th>Address</th>
@@ -15,14 +26,15 @@
         </thead>
         <tbody>
             <tr *ngFor="let data of basicTable.data">
-                <td>{{ data.emp_id }}</td>
+                <td>{{ data.employee_pid }}</td>
                 <td>{{ data.name }}</td>
                 <td>{{ data.email }}</td>
+                <td>{{ data.user.role.title }}</td>
                 <td>{{ data.nik }}</td>
                 <td>{{ data.phone }}</td>
                 <td>{{ data.address }}</td>
                 <td>
-                    <nz-tag [nzColor]="data.status ? '#1DA32C' : '#f50'">{{ data.status ? 'Active' : 'Inactive' }}</nz-tag>
+                    <nz-tag [nzColor]="data.status === 1 ? '#1DA32C' : '#f50'">{{ data.status === 1 ? 'Active' : 'Inactive' }}</nz-tag>
                 <td>
                     <div class="d-flex gap-3">
                         <span (click)="detailHandler()"  nz-icon nzType="eye" nzTheme="twotone"></span>

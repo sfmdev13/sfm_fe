@@ -2,7 +2,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, map, Observable, tap } from 'rxjs';
 import { environment } from 'src/environments/environment';
-import { IRootCatContact, IRootCustomer, IRootSupplier } from './interfaces';
+import { IRootAllRoles, IRootCatContact, IRootCustomer, IRootEmployee, IRootSupplier } from './interfaces';
 
 @Injectable({
   providedIn: 'root'
@@ -22,6 +22,9 @@ export class ApiService {
 
   private refreshGetSupplier = new BehaviorSubject<void>(undefined);
   refreshGetSupplier$ = this.refreshGetSupplier.asObservable();
+
+  private refreshGetEmployee = new BehaviorSubject<void>(undefined);
+  refreshGetEmployee$ = this.refreshGetSupplier.asObservable();
 
   private filteredCustomerDataSubject = new BehaviorSubject<IRootCustomer>({} as IRootCustomer);
   filteredCustomerData$ = this.filteredCustomerDataSubject.asObservable();
@@ -139,6 +142,18 @@ export class ApiService {
     return this.http.post<IRootSupplier>(url, {}, { headers });
   }
 
+  filterEmployee(params: any, page: number, per_page: number): Observable<IRootEmployee>{
+    const token = localStorage.getItem('authToken');
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+    });
+
+    const url = `${this.apiUrl}/filter-employee?role_id=${params.role_id}&status=${params.status}&sort_by=${params.sort_by}&page=${page}&per_page=${per_page}`
+
+    return this.http.post<IRootEmployee>(url, {}, { headers });
+  }
+
+
   searchSupplier(params: any, page: number, per_page: number): Observable<IRootSupplier>{
     const token = localStorage.getItem('authToken');
     const headers = new HttpHeaders({
@@ -150,6 +165,7 @@ export class ApiService {
     return this.http.post<IRootSupplier>(url, {}, { headers });
   }
   
+  
   searchCustomer(params: any, page: number, per_page: number): Observable<IRootCustomer>{
     const token = localStorage.getItem('authToken');
     const headers = new HttpHeaders({
@@ -159,6 +175,17 @@ export class ApiService {
     const url = `${this.apiUrl}/search-customer?search=${params}&page=${page}&per_page=${per_page}`
 
     return this.http.post<IRootCustomer>(url, {}, { headers });
+  }
+
+  searchEmployee(params: any, page: number, per_page: number): Observable<IRootEmployee>{
+    const token = localStorage.getItem('authToken');
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+    });
+
+    const url = `${this.apiUrl}/search-employee?search=${params}&page=${page}&per_page=${per_page}`
+
+    return this.http.post<IRootEmployee>(url, {}, { headers });
   }
 
   getSupplier(page: number, per_page: number): Observable<IRootSupplier>{
@@ -215,5 +242,27 @@ export class ApiService {
 
     const url = `${this.apiUrl}/delete-supplier?id=${id}`;
     return this.http.delete<any>(url, { headers })
+  }
+
+  getEmployee(page: number, per_page: number): Observable<IRootEmployee>{
+    const token = localStorage.getItem('authToken');
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+    });
+
+    const url = `${this.apiUrl}/employee?page=${page}&per_page=${per_page}`
+
+    return this.http.get<IRootEmployee>(url, { headers } )
+  }
+  
+  getAllRole(): Observable<IRootAllRoles>{
+    const token = localStorage.getItem('authToken');
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+    })
+
+    const url = `${this.apiUrl}/all-roles`
+
+    return this.http.get<IRootAllRoles>(url, { headers })
   }
 }
