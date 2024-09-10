@@ -4,7 +4,7 @@
 
 
                 <nz-form-item class="mb-4">
-                    <nz-form-label nzRequired nzFor="pic" class="fw-semibold">PIC Internal</nz-form-label>
+                    <nz-form-label nzRequired nzFor="pic" class="fw-semibold">PIC SFM</nz-form-label>
                         <nz-select nzMode="tags" nzPlaceHolder="Tag Mode" formControlName="pic">
                             <nz-option
                             *ngFor="let pic of listOfPic"
@@ -16,7 +16,7 @@
 
                   
                 <nz-form-item>
-                    <nz-form-label nzRequired class="fw-semibold" nzFor="is_pic_internal" nzRequired>Head of PIC internal</nz-form-label>
+                    <nz-form-label nzRequired class="fw-semibold" nzFor="is_pic_internal" nzRequired>Head of PIC SFM</nz-form-label>
                     <nz-form-control>
                         <nz-select nzPlaceHolder="Select Category" formControlName="is_pic_internal">
                         <ng-container *ngFor="let pic of filteredListOfPic">
@@ -85,7 +85,7 @@
 
             
             <div class="d-flex gap-2 mb-4 flex-column w-auto">
-                <p class="m-0 p-0 fw-semibold">Customer Type</p>
+                <p class="m-0 p-0 fw-semibold">Supplier Type</p>
                 <ng-container *ngIf="modal_type === 'add'; else updateType">
                   <nz-segmented class="text-capitalize" [nzOptions]="optionsCust" (nzValueChange)="optionCustChange($event)"></nz-segmented>
                 </ng-container>
@@ -139,12 +139,13 @@
                           <input nz-input formControlName="cp_email" />
                         </nz-form-control>
                       </div>
-                      <div class="col-4 mt-2">
-                        <nz-form-label nzRequired>is PIC Company?</nz-form-label>
+                      <div class="col-4 mt-4">
+                        <nz-form-label nzRequired>Decision Maker</nz-form-label>
                         <nz-form-control>
-                          <label nz-checkbox 
-                          formControlName="is_pic_company"
-                          >Yes</label>
+                          <nz-radio-group formControlName="is_pic_company">
+                            <label nz-radio [nzValue]="true">Yes</label>
+                            <label nz-radio [nzValue]="false">No</label>
+                          </nz-radio-group>
                         </nz-form-control>
                       </div>
                   </div>

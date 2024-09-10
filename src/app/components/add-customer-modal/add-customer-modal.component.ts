@@ -255,14 +255,4 @@ export class AddCustomerModalComponent implements OnInit {
       }
     };
   }
-
-  checkButton(i: number){
-    const contactPerson = this.customerForm.get('contactPerson') as FormArray;
-
-    for (let index = 0; index < contactPerson.length; index++) {
-      if (index !== i) {
-        contactPerson.at(index).patchValue({ is_pic_company: false });
-      }
-    }
-  }
 }
