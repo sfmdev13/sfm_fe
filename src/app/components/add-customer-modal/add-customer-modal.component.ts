@@ -99,7 +99,6 @@ export class AddCustomerModalComponent implements OnInit {
         contactPerson.push(this.fb.group({
           cp_name: [contact.name, Validators.required],
           cp_email: [contact.email, Validators.required],
-          cp_nik: [contact.nik, Validators.required],
           cp_phone: [contact.phone, Validators.required],
           cp_category_id: [contact.customer_category.id, Validators.required],
           cp_address: [contact.address, Validators.required],
@@ -129,7 +128,6 @@ export class AddCustomerModalComponent implements OnInit {
     this.contactPerson.push(this.fb.group({
       cp_name: ['', [Validators.required]],
       cp_email: ['', [Validators.required]],
-      cp_nik: ['', [Validators.required]],
       cp_phone: ['', [Validators.required]],
       cp_category_id: [0, [Validators.required]],
       cp_address: ['', [Validators.required]],
