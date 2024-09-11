@@ -45,6 +45,14 @@ const routes: Routes = [
       {
         path: 'roles',
         loadChildren: () => import('./pages/roles/roles.module').then(m => m.RolesModule)
+      },
+      {
+        path: 'settings',
+        loadChildren: () => import('./pages/settings/settings.module').then(m => m.SettingsModule)
+      },
+      {
+        path: 'settings/categories-setting',
+        loadChildren: () => import('./pages/categories-setting/categories-setting.module').then(m => m.CategoriesSettingModule)
       }
     ]
   },
