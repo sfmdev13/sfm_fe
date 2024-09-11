@@ -12,13 +12,15 @@ import { NzInputModule } from 'ng-zorro-antd/input';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { DeleteCategoriesModalComponent } from './delete-categories-modal/delete-categories-modal.component';
 import { NzResultModule } from 'ng-zorro-antd/result';
+import { CustomerSectorComponent } from './customer-sector/customer-sector.component';
 
 
 @NgModule({
   declarations: [
     LoyalCustomerComponent,
     EditCategoriesModalComponent,
-    DeleteCategoriesModalComponent
+    DeleteCategoriesModalComponent,
+    CustomerSectorComponent
   ],
   imports: [
     CommonModule,
@@ -35,7 +37,8 @@ import { NzResultModule } from 'ng-zorro-antd/result';
   exports: [
     LoyalCustomerComponent,
     EditCategoriesModalComponent,
-    DeleteCategoriesModalComponent
+    DeleteCategoriesModalComponent,
+    CustomerSectorComponent
   ]
 })
 export class CategoriesSettingTableModule { }

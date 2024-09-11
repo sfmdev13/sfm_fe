@@ -35,6 +35,9 @@ export class ApiService {
   private refreshGetLoyalCustomer = new BehaviorSubject<void>(undefined);
   refreshGetLoyalCustomer$ = this.refreshGetLoyalCustomer.asObservable();
 
+  private refreshGetCustomerSector = new BehaviorSubject<void>(undefined);
+  refreshGetCustomerSector$ = this.refreshGetCustomerSector.asObservable();
+
   getProfile(): Observable<any> {
     const token = localStorage.getItem('authToken');
     const headers = new HttpHeaders({
@@ -63,6 +66,10 @@ export class ApiService {
 
   triggerRefreshLoyalCustomer(){
     this.refreshGetLoyalCustomer.next();
+  }
+
+  triggerRefreshCustomerSector(){
+    this.refreshGetCustomerSector.next();
   }
 
   setFilteredCustomerData(data: IRootCustomer) {
@@ -313,6 +320,51 @@ export class ApiService {
     });
 
     const url = `${this.apiUrl}/delete/loyal-customer?id=${id}`;
+    return this.http.delete<any>(url, { headers })
+  }
+
+  getCustomerSector(): Observable<ICategories>{
+    const token = localStorage.getItem('authToken');
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+    })
+
+    const url = `${this.apiUrl}/customer-sector`
+
+    return this.http.get<ICategories>(url, { headers })
+  }
+
+
+  createCustomerSector(name: string, description: string): Observable<any>{
+    const token = localStorage.getItem('authToken');
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+    })
+
+    const url = `${this.apiUrl}/create/customer-sector?name=${name}&description=${description}`
+
+    return this.http.post<any>(url, {} , { headers })
+  }
+
+  editCustomerSector(id: string, name: string, description: string): Observable<any>{
+    const token = localStorage.getItem('authToken');
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+    })
+
+    const url = `${this.apiUrl}/edit/customer-sector?id=${id}&name=${name}&description=${description}`
+
+    return this.http.post<any>(url, {} , { headers })
+  }
+
+  
+  deleteCustomerSector(id: number): Observable<any>{
+    const token = localStorage.getItem('authToken');
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+    });
+
+    const url = `${this.apiUrl}/delete/customer-sector?id=${id}`;
     return this.http.delete<any>(url, { headers })
   }
 }

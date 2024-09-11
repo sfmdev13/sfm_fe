@@ -1,17 +1,16 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, Validators } from '@angular/forms';
+import { Validators, FormBuilder, FormGroup } from '@angular/forms';
 import { Observable, tap } from 'rxjs';
 import { ApiService } from 'src/app/api.service';
 import { ICategories, IDataCategories } from 'src/app/interfaces';
 
 @Component({
-  selector: 'app-loyal-customer',
-  templateUrl: './loyal-customer.component.html',
-  styleUrls: ['./loyal-customer.component.scss']
+  selector: 'app-customer-sector',
+  templateUrl: './customer-sector.component.html',
+  styleUrls: ['./customer-sector.component.scss']
 })
-export class LoyalCustomerComponent implements OnInit {  
-
-  loyalCustomers$!: Observable<ICategories>
+export class CustomerSectorComponent implements OnInit {
+  customerSector$!: Observable<ICategories>
 
   isVisibleEdit = false;
   isVisibleAdd = false;
@@ -21,11 +20,7 @@ export class LoyalCustomerComponent implements OnInit {
 
   total_category: number = 0;
 
-  categoryForm = this.fb.group({
-    id: [''],
-    name: ['', Validators.required],
-    description: ['', Validators.required]
-  })
+  categoryForm: FormGroup;
 
   categoryFormEdit = this.fb.group({
     id: [''],
@@ -38,18 +33,24 @@ export class LoyalCustomerComponent implements OnInit {
   constructor(
     private apiSvc: ApiService,
     private fb: FormBuilder
-  ) { }
+  ) { 
+    this.categoryForm = this.fb.group({
+      id: [''],
+      name: ['', Validators.required],
+      description: ['', Validators.required]
+    })
+   }
 
   ngOnInit(): void {
-    this.getLoyalCustomer();
+    this.getCustomerSector();
 
-    this.apiSvc.refreshGetLoyalCustomer$.subscribe(() => {
-      this.getLoyalCustomer();
+    this.apiSvc.refreshGetCustomerSector$.subscribe(() => {
+      this.getCustomerSector();
     })
   }
 
-  getLoyalCustomer(): void{
-    this.loyalCustomers$ = this.apiSvc.getLoyalCustomer().pipe(
+  getCustomerSector(): void{
+    this.customerSector$ = this.apiSvc.getCustomerSector().pipe(
       tap(res => {
         this.total_category = res.data.length
       })
@@ -81,9 +82,9 @@ export class LoyalCustomerComponent implements OnInit {
   handleSubmitEdit(): void {
     
     if(this.categoryFormEdit.valid){
-      this.apiSvc.editLoyalCustomer(this.categoryFormEdit.value.id,this.categoryFormEdit.value.name, this.categoryFormEdit.value.description).subscribe({
+      this.apiSvc.editCustomerSector(this.categoryFormEdit.value.id,this.categoryFormEdit.value.name, this.categoryFormEdit.value.description).subscribe({
         next: () => {
-          this.apiSvc.triggerRefreshLoyalCustomer()
+          this.apiSvc.triggerRefreshCustomerSector()
         },
         error: (error) => {
           console.log(error)
@@ -97,25 +98,25 @@ export class LoyalCustomerComponent implements OnInit {
 
   handleSubmitAdd(): void{
     if(this.categoryForm.valid){
-      this.apiSvc.createLoyalCustomer(this.categoryForm.value.name, this.categoryForm.value.description).subscribe({
+      this.apiSvc.createCustomerSector(this.categoryForm.value.name, this.categoryForm.value.description).subscribe({
         next: () => {
-          this.apiSvc.triggerRefreshLoyalCustomer()
+          this.apiSvc.triggerRefreshCustomerSector()
           this.isVisibleAdd = false;
         },
         error: (error) => {
           console.log(error)
         },
         complete: () => {
-          this.categoryForm.reset()
+          this.categoryForm.reset();
         }
       })
     }
   }
 
   handleSubmitDelete(): void{
-    this.apiSvc.deleteLoyalCustomer(this.selectedIdDelete).subscribe({
+    this.apiSvc.deleteCustomerSector(this.selectedIdDelete).subscribe({
       next:() => {
-        this.apiSvc.triggerRefreshLoyalCustomer();
+        this.apiSvc.triggerRefreshCustomerSector();
         this.isVisibleDelete = false;
       },
       error:(error) => {
@@ -135,5 +136,4 @@ export class LoyalCustomerComponent implements OnInit {
   handleCancelDelete(): void{
     this.isVisibleDelete = false;
   }
-
 }
