@@ -2,7 +2,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, map, Observable, tap } from 'rxjs';
 import { environment } from 'src/environments/environment';
-import { IRootAllRoles, IRootCatContact, IRootCustomer, IRootEmployee, IRootSupplier } from './interfaces';
+import { ICategories, IRootAllRoles, IRootCatContact, IRootCustomer, IRootEmployee, IRootSupplier } from './interfaces';
 
 @Injectable({
   providedIn: 'root'
@@ -24,13 +24,16 @@ export class ApiService {
   refreshGetSupplier$ = this.refreshGetSupplier.asObservable();
 
   private refreshGetEmployee = new BehaviorSubject<void>(undefined);
-  refreshGetEmployee$ = this.refreshGetSupplier.asObservable();
+  refreshGetEmployee$ = this.refreshGetEmployee.asObservable();
 
   private filteredCustomerDataSubject = new BehaviorSubject<IRootCustomer>({} as IRootCustomer);
   filteredCustomerData$ = this.filteredCustomerDataSubject.asObservable();
 
   private isFiltered = new BehaviorSubject<boolean>(false);
   isFiltered$ = this.isFiltered.asObservable();
+
+  private refreshGetLoyalCustomer = new BehaviorSubject<void>(undefined);
+  refreshGetLoyalCustomer$ = this.refreshGetLoyalCustomer.asObservable();
 
   getProfile(): Observable<any> {
     const token = localStorage.getItem('authToken');
@@ -56,6 +59,10 @@ export class ApiService {
 
   triggerRefreshSuppliers() {
     this.refreshGetSupplier.next();
+  }
+
+  triggerRefreshLoyalCustomer(){
+    this.refreshGetLoyalCustomer.next();
   }
 
   setFilteredCustomerData(data: IRootCustomer) {
@@ -264,5 +271,48 @@ export class ApiService {
     const url = `${this.apiUrl}/all-roles`
 
     return this.http.get<IRootAllRoles>(url, { headers })
+  }
+
+  getLoyalCustomer(): Observable<ICategories>{
+    const token = localStorage.getItem('authToken');
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+    })
+
+    const url = `${this.apiUrl}/loyal-customer`
+
+    return this.http.get<ICategories>(url, { headers })
+  }
+
+  createLoyalCustomer(name: string, description: string): Observable<any>{
+    const token = localStorage.getItem('authToken');
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+    })
+
+    const url = `${this.apiUrl}/create/loyal-customer?name=${name}&description=${description}`
+
+    return this.http.post<any>(url, {} , { headers })
+  }
+
+  editLoyalCustomer(id: string, name: string, description: string): Observable<any>{
+    const token = localStorage.getItem('authToken');
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+    })
+
+    const url = `${this.apiUrl}/edit/loyal-customer?id=${id}&name=${name}&description=${description}`
+
+    return this.http.post<any>(url, {} , { headers })
+  }
+
+  deleteLoyalCustomer(id: number): Observable<any>{
+    const token = localStorage.getItem('authToken');
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+    });
+
+    const url = `${this.apiUrl}/delete/loyal-customer?id=${id}`;
+    return this.http.delete<any>(url, { headers })
   }
 }
