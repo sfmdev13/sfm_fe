@@ -15,6 +15,7 @@ import { NzResultModule } from 'ng-zorro-antd/result';
 import { CustomerSectorComponent } from './customer-sector/customer-sector.component';
 import { CustomerFirmComponent } from './customer-firm/customer-firm.component';
 import { SupplierProductComponent } from './supplier-product/supplier-product.component';
+import { SupplierSourceComponent } from './supplier-source/supplier-source.component';
 
 
 @NgModule({
@@ -24,7 +25,8 @@ import { SupplierProductComponent } from './supplier-product/supplier-product.co
     DeleteCategoriesModalComponent,
     CustomerSectorComponent,
     CustomerFirmComponent,
-    SupplierProductComponent
+    SupplierProductComponent,
+    SupplierSourceComponent
   ],
   imports: [
     CommonModule,
@@ -44,7 +46,8 @@ import { SupplierProductComponent } from './supplier-product/supplier-product.co
     DeleteCategoriesModalComponent,
     CustomerSectorComponent,
     CustomerFirmComponent,
-    SupplierProductComponent
+    SupplierProductComponent,
+    SupplierSourceComponent
   ]
 })
 export class CategoriesSettingTableModule { }
