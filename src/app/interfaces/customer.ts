@@ -1,3 +1,5 @@
+import { IDataCategories } from "./categories"
+
 export interface IRootCustomer {
     data: IDataCustomer[],
     pagination: IPagination,
@@ -10,7 +12,7 @@ export interface IDataCustomer {
     customer_category_id: string
     name: string
     email: string
-    nik: string
+    nib: string
     phone: string
     pic: IPicCustomer[];
     type: string
@@ -22,6 +24,15 @@ export interface IDataCustomer {
     contactPerson: IContactPerson[]
     website: string
     maps_url: string
+    city: string
+    province: string
+    postal_code: string
+    country: string
+    loyal_customer: IDataCategories
+    customer_sector: IDataCategories
+    customer_firm: IDataCategories
+    wa_phone: string;
+
 }
 
 export interface ICustomerCategory {
@@ -43,6 +54,14 @@ export interface IContactPerson {
     address: string
     is_pic_company: number
     customer_category: ICustomerCategory
+    wa_phone: string
+    province: string
+    city: string
+    country: string
+    postal_code: string
+    loyal_customer_program_id: number,
+    cp_loyal_customer: IDataCategories,
+    pic: IPicCp[]
 }
 
 export interface IMetaResponse {
@@ -63,6 +82,12 @@ export interface IPicCustomer{
     address: string
     status: number
     is_pic_internal: number;
+}
+
+interface IPicCp{
+    pic_id: string;
+    is_pic_head: number;
+    name: string
 }
 
 export interface IPagination{

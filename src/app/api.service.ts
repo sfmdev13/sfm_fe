@@ -10,6 +10,8 @@ import { ICategories, IRootAllRoles, IRootCatContact, IRootCustomer, IRootEmploy
 export class ApiService {
 
   private apiUrl = environment.apiUrl;
+  private provinceUrl = 'assets/wilayah/provinces.json';
+  private regencyUrl = 'assets/wilayah/regencies.json';
   
   constructor(
     private http: HttpClient
@@ -488,5 +490,23 @@ export class ApiService {
 
     const url = `${this.apiUrl}/delete/supplier-source?id=${id}`;
     return this.http.delete<any>(url, { headers })
+  }
+
+  getProvinces(): Observable<any> {
+    return this.http.get(this.provinceUrl);
+  }
+  
+  getRegencies(): Observable<any> {
+    return this.http.get(this.regencyUrl);
+  }
+
+  getRegenciesByProvince(provinceId: number): Observable<any> {
+    return new Observable(observer => {
+      this.getRegencies().subscribe((regencies: any[]) => {
+        const filteredRegencies = regencies.filter(regency => regency.province_id === provinceId);
+        observer.next(filteredRegencies);
+        observer.complete();
+      });
+    });
   }
 }

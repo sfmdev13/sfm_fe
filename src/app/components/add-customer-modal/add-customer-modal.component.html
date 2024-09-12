@@ -4,7 +4,7 @@
 
           <nz-form-item class="mb-4">
             <nz-form-label nzRequired nzFor="pic" class="fw-semibold">PIC SFM</nz-form-label>
-                <nz-select nzMode="tags" nzPlaceHolder="Tag Mode" formControlName="pic">
+                <nz-select nzMode="tags" nzPlaceHolder="Select PIC" formControlName="pic">
                     <nz-option
                     *ngFor="let pic of listOfPic"
                         [nzLabel]="pic.name" 
@@ -17,7 +17,7 @@
         <nz-form-item>
             <nz-form-label nzRequired class="fw-semibold" nzFor="is_pic_internal" nzRequired>Head of PIC SFM</nz-form-label>
             <nz-form-control>
-                <nz-select nzPlaceHolder="Select Category" formControlName="is_pic_internal">
+                <nz-select nzPlaceHolder="Select Head" formControlName="is_pic_internal">
                 <ng-container *ngFor="let pic of filteredListOfPic">
                   <nz-option [nzLabel]="pic.name" [nzValue]="pic.pic_id"></nz-option>
                 </ng-container>
@@ -42,10 +42,64 @@
                 </nz-form-item>
             </div>
             <div class="col-md-6">
+              <nz-form-item>
+                  <nz-form-label nzRequired nzFor="customer_firm_id" class="fw-semibold">Category Firm</nz-form-label>
+                  <nz-form-control>
+                    <ng-container *ngIf="customerFirm$ | async as customerFirm; else firmLoad">
+                      <nz-select nzPlaceHolder="Select Category Firm" formControlName="customer_firm_id">
+                        <ng-container *ngFor="let cust of customerFirm.data">
+                          <nz-option [nzLabel]="cust.name" [nzValue]="cust.id"></nz-option>
+                        </ng-container>
+                      </nz-select>
+                    </ng-container>
+                    <ng-template #firmLoad>
+                      <nz-select nzDisabled nzPlaceHolder="Select Category Firm" formControlName="customer_firm_id">
+                      </nz-select>
+                    </ng-template>
+                  </nz-form-control>
+              </nz-form-item>
+            </div>
+            <div class="col-md-6">
+              <nz-form-item>
+                  <nz-form-label nzRequired nzFor="loyal_customer_program_id" class="fw-semibold">Loyal Customer Program</nz-form-label>
+                  <nz-form-control>
+                    <ng-container *ngIf="loyalCustCat$ | async as loyalCustCat; else loyalLoad">
+                      <nz-select nzPlaceHolder="Select Category" formControlName="loyal_customer_program_id">
+                        <ng-container *ngFor="let cust of loyalCustCat.data">
+                          <nz-option [nzLabel]="cust.name" [nzValue]="cust.id"></nz-option>
+                        </ng-container>
+                      </nz-select>
+                    </ng-container>
+                    <ng-template #loyalLoad>
+                      <nz-select nzDisabled nzPlaceHolder="Select Category" formControlName="loyal_customer_program_id">
+                      </nz-select>
+                    </ng-template>
+                  </nz-form-control>
+              </nz-form-item>
+            </div>
+            <div class="col-md-6">
+              <nz-form-item>
+                  <nz-form-label nzRequired nzFor="customer_sector_id" class="fw-semibold">Customer Sector</nz-form-label>
+                  <nz-form-control>
+                    <ng-container *ngIf="customerSector$ | async as customerSector; else firmLoad">
+                      <nz-select nzPlaceHolder="Select Category Sector" formControlName="customer_sector_id">
+                        <ng-container *ngFor="let cust of customerSector.data">
+                          <nz-option [nzLabel]="cust.name" [nzValue]="cust.id"></nz-option>
+                        </ng-container>
+                      </nz-select>
+                    </ng-container>
+                    <ng-template #firmLoad>
+                      <nz-select nzDisabled nzPlaceHolder="Select Category Sector" formControlName="customer_sector_id">
+                      </nz-select>
+                    </ng-template>
+                  </nz-form-control>
+              </nz-form-item>
+            </div>
+            <div class="col-md-6">
                 <nz-form-item>
-                    <nz-form-label nzRequired nzFor="nik" class="fw-semibold">NIB</nz-form-label>
+                    <nz-form-label nzRequired nzFor="nib" class="fw-semibold">NIB</nz-form-label>
                     <nz-form-control>
-                      <input nz-input formControlName="nik" id="nik"  />
+                      <input nz-input formControlName="nib" id="nib"  />
                     </nz-form-control>
                 </nz-form-item>
             </div>
@@ -57,6 +111,14 @@
                     </nz-form-control>
                 </nz-form-item>
             </div>
+            <div class="col-md-6">
+              <nz-form-item>
+                  <nz-form-label nzRequired nzFor="wa_phone" class="fw-semibold">Registered Whatsapp Number</nz-form-label>
+                  <nz-form-control>
+                    <input nz-input formControlName="wa_phone" id="wa_phone"  />
+                  </nz-form-control>
+              </nz-form-item>
+          </div>
             <div class="col-md-6">
               <nz-form-item>
                   <nz-form-label nzRequired nzFor="website" class="fw-semibold">Website</nz-form-label>
@@ -73,8 +135,65 @@
                 </nz-form-control>
               </nz-form-item>
             </div>
+
+            <div class="col-md-6">
+              <ng-container *ngIf="provinces$ | async as province; else provinceLoad">
+                <nz-form-item>
+                  <nz-form-label nzRequired class="fw-semibold" nzFor="province" nzRequired>Province</nz-form-label>
+                  <nz-form-control>
+                      <nz-select nzPlaceHolder="Select Province" formControlName="province">
+                      <ng-container *ngFor="let p of province">
+                        <nz-option [nzLabel]="p.province" [nzValue]="p.id"></nz-option>
+                      </ng-container>
+                      </nz-select>
+                  </nz-form-control>
+                </nz-form-item>
+              </ng-container>
+
+              <ng-template #provinceLoad>
+                <nz-form-item>
+                  <nz-form-label nzRequired class="fw-semibold" nzFor="province" nzRequired>Province</nz-form-label>
+                  <nz-form-control>
+                      <nz-select nzDisabled nzPlaceHolder="Select Province" formControlName="province">
+                      </nz-select>
+                  </nz-form-control>
+                </nz-form-item>
+              </ng-template>
+            </div>
+
+            <div class="col-md-6">
+              <ng-container *ngIf="city.length > 0; else loadingCity">
+                <nz-form-item>
+                  <nz-form-label nzRequired class="fw-semibold" nzFor="city" nzRequired>City</nz-form-label>
+                  <nz-form-control>
+                      <nz-select nzPlaceHolder="Select city" formControlName="city">
+                      <ng-container *ngFor="let c of city">
+                        <nz-option [nzLabel]="c.regency" [nzValue]="c.id"></nz-option>
+                      </ng-container>
+                      </nz-select>
+                  </nz-form-control>
+                </nz-form-item>
+              </ng-container>
+              <ng-template #loadingCity>
+                <nz-form-item>
+                  <nz-form-label nzRequired class="fw-semibold" nzFor="city" nzRequired>City</nz-form-label>
+                  <nz-form-control>
+                      <nz-select nzDisabled nzPlaceHolder="Select province first" formControlName="city">
+                      </nz-select>
+                  </nz-form-control>
+                </nz-form-item>
+              </ng-template>
+            </div>
+            <div class="col-md-6">
+              <nz-form-item>
+                <nz-form-label nzRequired nzFor="postal_code" class="fw-semibold">Postal Code</nz-form-label>
+                <nz-form-control>
+                  <input nz-input formControlName="postal_code" id="postal_code"  />
+                </nz-form-control>
+              </nz-form-item>
+            </div>
             <nz-form-item>
-                <nz-form-label nzRequired nzFor="address" class="fw-semibold">Company Address</nz-form-label>
+                <nz-form-label nzRequired nzFor="address" class="fw-semibold">Company Full Address</nz-form-label>
                 <nz-form-control>
                   <nz-textarea-count [nzMaxCharacterCount]="200">
                     <textarea rows="4" formControlName="address" nz-input></textarea>
@@ -98,72 +217,190 @@
               </div>
   
               <div formArrayName="contactPerson">
-                <div class="row align-items-center mt-3" *ngFor="let contact of contactPerson.controls; let i = index" [formGroupName]="i">
+                <div class="mt-3" *ngFor="let contact of contactPerson.controls; let i = index" [formGroupName]="i">
                   <nz-divider [nzText]="'Person ' + (i + 1)" nzOrientation="left"></nz-divider>
-                    <div class="col-3">
-                      <nz-form-item>
-                        <nz-form-label nzRequired>Contact Name</nz-form-label>
-                        <nz-form-control>
-                          <input nz-input formControlName="cp_name" />
-                        </nz-form-control>
-                      </nz-form-item>
+                  <div class="d-flex gap-4">
+                    <div>
+                      <span nz-icon (click)="removeContactPerson(i)" class="remove-button" nzType="minus-circle" nzTheme="outline"></span>
                     </div>
-                    <div class="col-3">
-                      <ng-container *ngIf="catContact$ | async as catContact; else loading">
+                    <div class="row align-items-center ">
+                      <div class="col-4">
                         <nz-form-item>
-                          <nz-form-label nzRequired>Contact Type</nz-form-label>
+                          <nz-form-label nzRequired>Contact Name</nz-form-label>
                           <nz-form-control>
-                            <nz-select nzPlaceHolder="Select Category" formControlName="cp_category_id">
-                              <ng-container *ngFor="let cat of catContact.data">
-                                <nz-option [nzLabel]="cat.name" [nzValue]="cat.id"></nz-option>
+                            <input nz-input formControlName="cp_name" />
+                          </nz-form-control>
+                        </nz-form-item>
+                      </div>
+                      <div class="col-4">
+                        <ng-container *ngIf="catContact$ | async as catContact; else loading">
+                          <nz-form-item>
+                            <nz-form-label nzRequired>Contact Type</nz-form-label>
+                            <nz-form-control>
+                              <nz-select nzPlaceHolder="Select Category" formControlName="cp_category_id">
+                                <ng-container *ngFor="let cat of catContact.data">
+                                  <nz-option [nzLabel]="cat.name" [nzValue]="cat.id"></nz-option>
+                                </ng-container>
+                              </nz-select>
+                            </nz-form-control>
+                          </nz-form-item>
+                        </ng-container>
+                        <ng-template #loading>
+                          <nz-form-item>
+                            <nz-form-label nzRequired>Contact Type</nz-form-label>
+                            <nz-form-control>
+                              <nz-select nzDisabled nzPlaceHolder="Loading..." formControlName="cp_category_id">
+                                <nz-option nzLabel="disable"></nz-option>
+                              </nz-select>
+                            </nz-form-control>
+                          </nz-form-item>
+                        </ng-template>
+                      </div>
+                      <div class="col-4">
+                        <nz-form-item>
+                            <nz-form-label nzRequired nzFor="cp_loyal_customer_program_id">Loyal Customer Program</nz-form-label>
+                            <nz-form-control>
+                              <ng-container *ngIf="loyalCustCat$ | async as loyalCustCat; else loyalLoad">
+                                <nz-select nzPlaceHolder="Select Category" formControlName="cp_loyal_customer_program_id">
+                                  <ng-container *ngFor="let cust of loyalCustCat.data">
+                                    <nz-option [nzLabel]="cust.name" [nzValue]="cust.id"></nz-option>
+                                  </ng-container>
+                                </nz-select>
                               </ng-container>
-                            </nz-select>
-                          </nz-form-control>
+                              <ng-template #loyalLoad>
+                                <nz-select nzDisabled nzPlaceHolder="Select Category" formControlName="cp_loyal_customer_program_id">
+                                </nz-select>
+                              </ng-template>
+                            </nz-form-control>
                         </nz-form-item>
-                      </ng-container>
-                      <ng-template #loading>
+                      </div>
+                      <div class="col-4">
                         <nz-form-item>
-                          <nz-form-label nzRequired>Contact Type</nz-form-label>
+                          <nz-form-label nzRequired>Phone Number</nz-form-label>
                           <nz-form-control>
-                            <nz-select nzDisabled nzPlaceHolder="Loading..." formControlName="cp_category_id">
-                              <nz-option nzLabel="disable"></nz-option>
-                            </nz-select>
+                            <input nz-input formControlName="cp_phone" />
                           </nz-form-control>
                         </nz-form-item>
-                      </ng-template>
-                    </div>
-                    <div class="col-3">
-                      <nz-form-item>
-                        <nz-form-label nzRequired>Contact Phone</nz-form-label>
+                      </div>
+
+                      <div class="col-4">
+                        <nz-form-item>
+                          <nz-form-label nzRequired>Registered Whatsapp Number</nz-form-label>
+                          <nz-form-control>
+                            <input nz-input formControlName="cp_wa_phone" />
+                          </nz-form-control>
+                        </nz-form-item>
+                      </div>
+
+                      <div class="col-4">
+                        <ng-container *ngIf="provinces$ | async as province; else provinceLoad">
+                          <nz-form-item>
+                            <nz-form-label nzRequired nzFor="cp_province" nzRequired>Province</nz-form-label>
+                            <nz-form-control>
+                                <nz-select nzPlaceHolder="Select Province" formControlName="cp_province">
+                                <ng-container *ngFor="let p of province">
+                                  <nz-option [nzLabel]="p.province" [nzValue]="p.id"></nz-option>
+                                </ng-container>
+                                </nz-select>
+                            </nz-form-control>
+                          </nz-form-item>
+                        </ng-container>
+          
+                        <ng-template #provinceLoad>
+                          <nz-form-item>
+                            <nz-form-label nzRequired nzFor="cp_province" nzRequired>Province</nz-form-label>
+                            <nz-form-control>
+                                <nz-select nzDisabled nzPlaceHolder="Select Province" formControlName="cp_province">
+                                </nz-select>
+                            </nz-form-control>
+                          </nz-form-item>
+                        </ng-template>
+                      </div>
+          
+                      <div class="col-4">
+                        <ng-container>
+                          <nz-form-item>
+                            <nz-form-label nzRequired  nzFor="cp_city" nzRequired>City</nz-form-label>
+                            <nz-form-control>
+                                <nz-select nzPlaceHolder="Select city" formControlName="cp_city">
+                                <ng-container *ngFor="let c of contact.get('filteredCity')?.value">
+                                  <nz-option [nzLabel]="c.regency" [nzValue]="c.id"></nz-option>
+                                </ng-container>
+                                </nz-select>
+                            </nz-form-control>
+                          </nz-form-item>
+                        </ng-container>
+                        <ng-template #loadingCity>
+                          <nz-form-item>
+                            <nz-form-label nzRequired nzFor="cp_city" nzRequired>City</nz-form-label>
+                            <nz-form-control>
+                                <nz-select nzDisabled nzPlaceHolder="Select province first" formControlName="cp_city">
+                                </nz-select>
+                            </nz-form-control>
+                          </nz-form-item>
+                        </ng-template>
+                      </div>
+                      <div class="col-4">
+                        <nz-form-item>
+                          <nz-form-label nzRequired nzFor="cp_postal_code">Postal Code</nz-form-label>
+                          <nz-form-control>
+                            <input nz-input formControlName="cp_postal_code" id="cp_postal_code"  />
+                          </nz-form-control>
+                        </nz-form-item>
+                      </div>
+                      
+                      <div class="col-4">
+                        <nz-form-item>
+                          <nz-form-label nzRequired>Contact Address</nz-form-label>
+                          <nz-form-control>
+                            <input nz-input formControlName="cp_address" />
+                          </nz-form-control>
+                        </nz-form-item>
+                      </div>
+
+                      <div class="col-4">
+                        <nz-form-label nzRequired>Contact Email</nz-form-label>
                         <nz-form-control>
-                          <input nz-input formControlName="cp_phone" />
+                          <input nz-input formControlName="cp_email" />
                         </nz-form-control>
+                      </div>
+                      <br/>
+                      <div class="col-6 mt-4">
+                        <nz-form-item class="mb-4">
+                          <nz-form-label nzRequired nzFor="cp_pic">Contact PIC</nz-form-label>
+                              <nz-select nzMode="tags" nzPlaceHolder="Tag Mode" formControlName="cp_pic">
+                                  <nz-option
+                                  *ngFor="let pic of cpListOfPic"
+                                      [nzLabel]="pic.name" 
+                                      [nzValue]="pic.pic_id"
+                                  ></nz-option>
+                              </nz-select>
+                        </nz-form-item>
+                      </div>
+                      <div class="col-6 mt-4">
+                        <nz-form-item>
+                          <nz-form-label nzRequired nzFor="cp_is_pic_head" nzRequired>Head of Contact PIC</nz-form-label>
+                          <nz-form-control>
+                              <nz-select nzPlaceHolder="Select Head" formControlName="cp_is_pic_head">
+                              <ng-container *ngFor="let pic of contact.get('filteredCpListOfPic')?.value">
+                                <nz-option [nzLabel]="pic.name" [nzValue]="pic.pic_id"></nz-option>
+                              </ng-container>
+                              </nz-select>
+                          </nz-form-control>
                       </nz-form-item>
+                      </div>
+                      <div class="col-4 mt-2">
+                        <nz-form-label nzRequired>Decision Maker</nz-form-label>
+                        <nz-form-control>
+                          <nz-radio-group formControlName="is_pic_company">
+                            <label nz-radio [nzValue]="true">Yes</label>
+                            <label nz-radio [nzValue]="false">No</label>
+                          </nz-radio-group>
+                        </nz-form-control>
+                      </div>
                     </div>
-                    <div class="col-3">
-                      <button nz-button nzDanger (click)="removeContactPerson(i)">Remove</button>
-                    </div>
-                    <div class="col-4">
-                      <nz-form-label nzRequired>Contact Address</nz-form-label>
-                      <nz-form-control>
-                        <input nz-input formControlName="cp_address" />
-                      </nz-form-control>
-                    </div>
-                    <div class="col-4">
-                      <nz-form-label nzRequired>Contact Email</nz-form-label>
-                      <nz-form-control>
-                        <input nz-input formControlName="cp_email" />
-                      </nz-form-control>
-                    </div>
-                    <div class="col-4 mt-2">
-                      <nz-form-label nzRequired>Decision Maker</nz-form-label>
-                      <nz-form-control>
-                        <nz-radio-group formControlName="is_pic_company">
-                          <label nz-radio [nzValue]="true">Yes</label>
-                          <label nz-radio [nzValue]="false">No</label>
-                        </nz-radio-group>
-                      </nz-form-control>
-                    </div>
+                  </div>
+
                 </div>
               </div>
   
