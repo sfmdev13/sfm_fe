@@ -403,4 +403,48 @@ export class ApiService {
     const url = `${this.apiUrl}/delete/customer-firm?id=${id}`;
     return this.http.delete<any>(url, { headers })
   }
+
+  getSupplierProduct(): Observable<ICategories>{
+    const token = localStorage.getItem('authToken');
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+    })
+
+    const url = `${this.apiUrl}/supplier-product`
+
+    return this.http.get<ICategories>(url, { headers })
+  }
+
+  createSupplierProduct(name: string, description: string): Observable<any>{
+    const token = localStorage.getItem('authToken');
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+    })
+
+    const url = `${this.apiUrl}/create/supplier-product?name=${name}&description=${description}`
+
+    return this.http.post<any>(url, {} , { headers })
+  }
+
+  editSupplierProduct(id: string, name: string, description: string): Observable<any>{
+    const token = localStorage.getItem('authToken');
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+    })
+
+    const url = `${this.apiUrl}/edit/supplier-product?id=${id}&name=${name}&description=${description}`
+
+    return this.http.post<any>(url, {} , { headers })
+  }
+
+  deleteSupplierProduct(id: number): Observable<any>{
+    const token = localStorage.getItem('authToken');
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+    });
+
+    const url = `${this.apiUrl}/delete/supplier-product?id=${id}`;
+    return this.http.delete<any>(url, { headers })
+  }
+
 }

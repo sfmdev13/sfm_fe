@@ -14,6 +14,7 @@ import { DeleteCategoriesModalComponent } from './delete-categories-modal/delete
 import { NzResultModule } from 'ng-zorro-antd/result';
 import { CustomerSectorComponent } from './customer-sector/customer-sector.component';
 import { CustomerFirmComponent } from './customer-firm/customer-firm.component';
+import { SupplierProductComponent } from './supplier-product/supplier-product.component';
 
 
 @NgModule({
@@ -22,7 +23,8 @@ import { CustomerFirmComponent } from './customer-firm/customer-firm.component';
     EditCategoriesModalComponent,
     DeleteCategoriesModalComponent,
     CustomerSectorComponent,
-    CustomerFirmComponent
+    CustomerFirmComponent,
+    SupplierProductComponent
   ],
   imports: [
     CommonModule,
@@ -41,7 +43,8 @@ import { CustomerFirmComponent } from './customer-firm/customer-firm.component';
     EditCategoriesModalComponent,
     DeleteCategoriesModalComponent,
     CustomerSectorComponent,
-    CustomerFirmComponent
+    CustomerFirmComponent,
+    SupplierProductComponent
   ]
 })
 export class CategoriesSettingTableModule { }
