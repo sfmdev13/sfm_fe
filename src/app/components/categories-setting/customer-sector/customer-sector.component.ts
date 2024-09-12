@@ -44,7 +44,7 @@ export class CustomerSectorComponent implements OnInit {
   ngOnInit(): void {
     this.getCustomerSector();
 
-    this.apiSvc.refreshGetCustomerSector$.subscribe(() => {
+    this.apiSvc.refreshGetCategories$.subscribe(() => {
       this.getCustomerSector();
     })
   }
@@ -84,7 +84,7 @@ export class CustomerSectorComponent implements OnInit {
     if(this.categoryFormEdit.valid){
       this.apiSvc.editCustomerSector(this.categoryFormEdit.value.id,this.categoryFormEdit.value.name, this.categoryFormEdit.value.description).subscribe({
         next: () => {
-          this.apiSvc.triggerRefreshCustomerSector()
+          this.apiSvc.triggerRefreshCategories()
         },
         error: (error) => {
           console.log(error)
@@ -100,7 +100,7 @@ export class CustomerSectorComponent implements OnInit {
     if(this.categoryForm.valid){
       this.apiSvc.createCustomerSector(this.categoryForm.value.name, this.categoryForm.value.description).subscribe({
         next: () => {
-          this.apiSvc.triggerRefreshCustomerSector()
+          this.apiSvc.triggerRefreshCategories()
           this.isVisibleAdd = false;
         },
         error: (error) => {
@@ -116,7 +116,7 @@ export class CustomerSectorComponent implements OnInit {
   handleSubmitDelete(): void{
     this.apiSvc.deleteCustomerSector(this.selectedIdDelete).subscribe({
       next:() => {
-        this.apiSvc.triggerRefreshCustomerSector();
+        this.apiSvc.triggerRefreshCategories();
         this.isVisibleDelete = false;
       },
       error:(error) => {

@@ -32,12 +32,6 @@ export class ApiService {
   private isFiltered = new BehaviorSubject<boolean>(false);
   isFiltered$ = this.isFiltered.asObservable();
 
-  private refreshGetLoyalCustomer = new BehaviorSubject<void>(undefined);
-  refreshGetLoyalCustomer$ = this.refreshGetLoyalCustomer.asObservable();
-
-  private refreshGetCustomerSector = new BehaviorSubject<void>(undefined);
-  refreshGetCustomerSector$ = this.refreshGetCustomerSector.asObservable();
-
   private refreshGetCategories = new BehaviorSubject<void>(undefined);
   refreshGetCategories$ = this.refreshGetCategories.asObservable();
 
@@ -65,14 +59,6 @@ export class ApiService {
 
   triggerRefreshSuppliers() {
     this.refreshGetSupplier.next();
-  }
-
-  triggerRefreshLoyalCustomer(){
-    this.refreshGetLoyalCustomer.next();
-  }
-
-  triggerRefreshCustomerSector(){
-    this.refreshGetCustomerSector.next();
   }
 
   triggerRefreshCategories(){

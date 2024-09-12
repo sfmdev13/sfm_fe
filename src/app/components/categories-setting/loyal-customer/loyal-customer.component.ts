@@ -43,7 +43,7 @@ export class LoyalCustomerComponent implements OnInit {
   ngOnInit(): void {
     this.getLoyalCustomer();
 
-    this.apiSvc.refreshGetLoyalCustomer$.subscribe(() => {
+    this.apiSvc.refreshGetCategories$.subscribe(() => {
       this.getLoyalCustomer();
     })
   }
@@ -83,7 +83,7 @@ export class LoyalCustomerComponent implements OnInit {
     if(this.categoryFormEdit.valid){
       this.apiSvc.editLoyalCustomer(this.categoryFormEdit.value.id,this.categoryFormEdit.value.name, this.categoryFormEdit.value.description).subscribe({
         next: () => {
-          this.apiSvc.triggerRefreshLoyalCustomer()
+          this.apiSvc.triggerRefreshCategories()
         },
         error: (error) => {
           console.log(error)
@@ -99,7 +99,7 @@ export class LoyalCustomerComponent implements OnInit {
     if(this.categoryForm.valid){
       this.apiSvc.createLoyalCustomer(this.categoryForm.value.name, this.categoryForm.value.description).subscribe({
         next: () => {
-          this.apiSvc.triggerRefreshLoyalCustomer()
+          this.apiSvc.triggerRefreshCategories()
           this.isVisibleAdd = false;
         },
         error: (error) => {
@@ -115,7 +115,7 @@ export class LoyalCustomerComponent implements OnInit {
   handleSubmitDelete(): void{
     this.apiSvc.deleteLoyalCustomer(this.selectedIdDelete).subscribe({
       next:() => {
-        this.apiSvc.triggerRefreshLoyalCustomer();
+        this.apiSvc.triggerRefreshCategories();
         this.isVisibleDelete = false;
       },
       error:(error) => {
