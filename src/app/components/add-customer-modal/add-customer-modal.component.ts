@@ -235,7 +235,7 @@ export class AddCustomerModalComponent implements OnInit {
       filteredCpListOfPic: [this.cpListOfPic],
       filteredCity: [],
       cp_id: [''],
-      // cp_attachments: [[], [Validators.required]]
+      cp_attachments: [[], [Validators.required]]
 
     });
 
@@ -320,7 +320,8 @@ export class AddCustomerModalComponent implements OnInit {
           pic_id: p,
           is_pic_head: p === pic.cp_is_pic_head
         })),
-        cp_loyal_customer_program_id: pic.cp_loyal_customer_program_id
+        cp_loyal_customer_program_id: pic.cp_loyal_customer_program_id,
+        cp_attachments: pic.cp_attachments
       }))
 
       if(this.customerForm.valid){
@@ -353,9 +354,10 @@ export class AddCustomerModalComponent implements OnInit {
           formData.append(key, (body as any)[key]);
         });
 
-        // Append the file to FormData if a file is selected
         if (this.fileList.length > 0) {
-          formData.append('attachments', this.fileList[0] as any); // Assuming single file, can handle multiple files if needed
+          for(let i = 0; i < this.fileList.length; i++){
+            formData.append('attachments', this.fileList[i] as any);
+          }
         }
 
         this.apiSvc.createCustomer(formData).subscribe({
@@ -477,15 +479,17 @@ export class AddCustomerModalComponent implements OnInit {
     return false; // Stop the auto upload
   };
 
-  beforeUploadCp = (file: NzUploadFile, index: number): boolean => {
-    const contactPersonForm = this.contactPerson.at(index);
+  beforeUploadCp(index: number) {
+    return (file: NzUploadFile): boolean => {
+      const contactPersonFormArray = this.customerForm.get('contactPerson') as FormArray;
+      const contactPersonForm = contactPersonFormArray.at(index);
   
-    const fileList = contactPersonForm.get('cp_attachments')?.value || [];
-    contactPersonForm.get('cp_attachments')?.setValue([...fileList, file]);
+      const fileList = contactPersonForm.get('cp_attachments')?.value || [];
+      contactPersonForm.get('cp_attachments')?.setValue([...fileList, file]);
   
-    return false; // Prevent auto upload
-
-  };
+      return false; // Prevent auto upload
+    };
+  }
 
 
 }

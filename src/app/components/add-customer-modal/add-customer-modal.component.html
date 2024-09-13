@@ -379,18 +379,20 @@
                       </div>
 
                       <div class="col-4">
-                        <nz-form-label nzRequired>Contact Email</nz-form-label>
-                        <nz-form-control>
-                          <input nz-input formControlName="cp_email" />
-                        </nz-form-control>
+                        <nz-form-item>
+                          <nz-form-label nzRequired>Contact Email</nz-form-label>
+                          <nz-form-control>
+                            <input nz-input formControlName="cp_email" />
+                          </nz-form-control>
+                        </nz-form-item>
                       </div>
 
-                      <!-- <div class="col-4">
+                      <div class="col-4">
                         <nz-form-item>
                           <nz-form-label [nzRequired]="true">Upload Document File</nz-form-label>
                           <nz-form-control>
                             <nz-upload
-                              [nzBeforeUpload]="(file) => beforeUploadCp(file, i)"
+                              [nzBeforeUpload]="beforeUploadCp(i)"
                               [nzFileList]="contact.get('cp_attachments')?.value"
                               [nzShowUploadList]="true"
                               [nzWithCredentials]="true"
@@ -404,7 +406,7 @@
                             </nz-upload>
                           </nz-form-control>
                         </nz-form-item>
-                      </div> -->
+                      </div>
 
                       <br/>
                       <div class="col-6 mt-4">
