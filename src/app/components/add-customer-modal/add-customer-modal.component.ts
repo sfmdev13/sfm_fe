@@ -1,6 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { AbstractControl, FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { NzModalRef } from 'ng-zorro-antd/modal';
+import { NzUploadFile } from 'ng-zorro-antd/upload';
 import { Observable, tap } from 'rxjs';
 import { ApiService } from 'src/app/api.service';
 import { IDataCustomer, IRootCatContact } from 'src/app/interfaces';
@@ -66,11 +67,13 @@ export class AddCustomerModalComponent implements OnInit {
 
   provinceList: any [] = [];
 
+  fileList: NzUploadFile[] = [];
+
   constructor(
     private modal: NzModalRef,
     private fb: FormBuilder,
     private apiSvc: ApiService
-  ) { }
+  ) {}
 
   ngOnInit(): void { 
 
@@ -231,7 +234,8 @@ export class AddCustomerModalComponent implements OnInit {
       cp_loyal_customer_program_id: ['', [Validators.required]],
       filteredCpListOfPic: [this.cpListOfPic],
       filteredCity: [],
-      cp_id: ['']
+      cp_id: [''],
+      // cp_attachments: [[], [Validators.required]]
 
     });
 
@@ -298,11 +302,6 @@ export class AddCustomerModalComponent implements OnInit {
       is_pic_internal: pic_id === this.customerForm.get('is_pic_internal')!.value
     }));
 
-
-
-    const selectedProv = this.provinceList.find(item => item.id === this.customerForm.get('province')?.value);
-    const selectedCity = this.city.find(item => item.id === this.customerForm.get('city')?.value);
-
     if(this.modal_type === 'add'){
       this.contactPersonComplete = this.contactPerson.value.map((pic:any) => ({
         cp_name: pic.cp_name,
@@ -348,7 +347,18 @@ export class AddCustomerModalComponent implements OnInit {
           country: this.customerForm.get('country')?.value
         };
 
-        this.apiSvc.createCustomer(body).subscribe({
+        const formData = new FormData();
+
+        Object.keys(body).forEach(key => {
+          formData.append(key, (body as any)[key]);
+        });
+
+        // Append the file to FormData if a file is selected
+        if (this.fileList.length > 0) {
+          formData.append('attachments', this.fileList[0] as any); // Assuming single file, can handle multiple files if needed
+        }
+
+        this.apiSvc.createCustomer(formData).subscribe({
           next: (response) => {
             this.apiSvc.triggerRefreshCustomers();
           },
@@ -389,7 +399,8 @@ export class AddCustomerModalComponent implements OnInit {
           pic_id: p,
           is_pic_head: p === pic.cp_is_pic_head
         })),
-        cp_loyal_customer_program_id: pic.cp_loyal_customer_program_id
+        cp_loyal_customer_program_id: pic.cp_loyal_customer_program_id,
+        cp_attachments: pic.cp_attachments
       }))
 
       if(this.customerForm.valid){
@@ -459,4 +470,22 @@ export class AddCustomerModalComponent implements OnInit {
       }
     };
   }
+
+  // Prevent the default automatic upload behavior
+  beforeUpload = (file: NzUploadFile): boolean => {
+    this.fileList = this.fileList.concat(file);
+    return false; // Stop the auto upload
+  };
+
+  beforeUploadCp = (file: NzUploadFile, index: number): boolean => {
+    const contactPersonForm = this.contactPerson.at(index);
+  
+    const fileList = contactPersonForm.get('cp_attachments')?.value || [];
+    contactPersonForm.get('cp_attachments')?.setValue([...fileList, file]);
+  
+    return false; // Prevent auto upload
+
+  };
+
+
 }

@@ -104,6 +104,26 @@
                 </nz-form-item>
             </div>
             <div class="col-md-6">
+              <nz-form-item>
+                <nz-form-label [nzRequired]="true">Upload Document FIle</nz-form-label>
+                <nz-form-control>
+                  <nz-upload
+                    [(nzFileList)]="fileList"
+                    [nzBeforeUpload]="beforeUpload"
+                    [nzShowUploadList]="true"
+                    [nzWithCredentials]="true"
+                    [nzLimit]="3"
+                    [nzSize]="5000"
+                  >
+                    <button nz-button>
+                      <i nz-icon nzType="upload"></i>
+                      <span>Click to Upload</span>
+                    </button>
+                  </nz-upload>
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+            <div class="col-md-6">
                 <nz-form-item>
                     <nz-form-label nzRequired nzFor="phone" class="fw-semibold">Company Phone</nz-form-label>
                     <nz-form-control>
@@ -364,6 +384,28 @@
                           <input nz-input formControlName="cp_email" />
                         </nz-form-control>
                       </div>
+
+                      <!-- <div class="col-4">
+                        <nz-form-item>
+                          <nz-form-label [nzRequired]="true">Upload Document File</nz-form-label>
+                          <nz-form-control>
+                            <nz-upload
+                              [nzBeforeUpload]="(file) => beforeUploadCp(file, i)"
+                              [nzFileList]="contact.get('cp_attachments')?.value"
+                              [nzShowUploadList]="true"
+                              [nzWithCredentials]="true"
+                              [nzLimit]="3"
+                              [nzSize]="5000"
+                            >
+                              <button nz-button>
+                                <i nz-icon nzType="upload"></i>
+                                <span>Click to Upload</span>
+                              </button>
+                            </nz-upload>
+                          </nz-form-control>
+                        </nz-form-item>
+                      </div> -->
+
                       <br/>
                       <div class="col-6 mt-4">
                         <nz-form-item class="mb-4">

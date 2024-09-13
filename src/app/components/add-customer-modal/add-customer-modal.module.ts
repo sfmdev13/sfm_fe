@@ -13,7 +13,7 @@ import { NzSegmentedModule } from 'ng-zorro-antd/segmented';
 import { NzDividerModule } from 'ng-zorro-antd/divider';
 import { NzCheckboxModule } from 'ng-zorro-antd/checkbox';
 import { NzRadioModule } from 'ng-zorro-antd/radio';
-
+import { NzUploadModule } from 'ng-zorro-antd/upload';
 
 @NgModule({
   declarations: [AddCustomerModalComponent],
@@ -32,7 +32,8 @@ import { NzRadioModule } from 'ng-zorro-antd/radio';
     NzSegmentedModule,
     NzDividerModule,
     NzCheckboxModule,
-    NzRadioModule
+    NzRadioModule,
+    NzUploadModule
   ],
   exports: [AddCustomerModalComponent]
 })
