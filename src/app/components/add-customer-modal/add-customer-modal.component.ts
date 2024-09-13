@@ -6,6 +6,14 @@ import { Observable, tap } from 'rxjs';
 import { ApiService } from 'src/app/api.service';
 import { IDataCustomer, IRootCatContact } from 'src/app/interfaces';
 
+const getBase64 = (file: File): Promise<string | ArrayBuffer | null> =>
+  new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = error => reject(error);
+  });
+  
 @Component({
   selector: 'app-add-customer-modal',
   templateUrl: './add-customer-modal.component.html',
@@ -68,6 +76,8 @@ export class AddCustomerModalComponent implements OnInit {
   provinceList: any [] = [];
 
   fileList: NzUploadFile[] = [];
+
+  fileImageList: NzUploadFile[] = []
 
   constructor(
     private modal: NzModalRef,
@@ -235,7 +245,8 @@ export class AddCustomerModalComponent implements OnInit {
       filteredCpListOfPic: [this.cpListOfPic],
       filteredCity: [],
       cp_id: [''],
-      cp_attachments: [[], [Validators.required]]
+      cp_attachments: [[], [Validators.required]],
+      cp_profile_picture: [[], [Validators.required]]
 
     });
 
@@ -321,10 +332,11 @@ export class AddCustomerModalComponent implements OnInit {
           is_pic_head: p === pic.cp_is_pic_head
         })),
         cp_loyal_customer_program_id: pic.cp_loyal_customer_program_id,
-        cp_attachments: pic.cp_attachments
+        cp_attachments: pic.cp_attachments,
+        cp_profile_picture: pic.cp_profile_picture
       }))
 
-      if(this.customerForm.valid){
+      if(!this.customerForm.valid){
 
         const body = {
           name: this.customerForm.get('name')?.value,
@@ -351,12 +363,12 @@ export class AddCustomerModalComponent implements OnInit {
         const formData = new FormData();
 
         Object.keys(body).forEach(key => {
-          formData.append(key, (body as any)[key]);
+          formData.append(key, JSON.stringify((body as any)[key]));
         });
 
         if (this.fileList.length > 0) {
           for(let i = 0; i < this.fileList.length; i++){
-            formData.append('attachments', this.fileList[i] as any);
+            formData.append('attachments[]', this.fileList[i] as any);
           }
         }
 
@@ -481,15 +493,36 @@ export class AddCustomerModalComponent implements OnInit {
 
   beforeUploadCp(index: number) {
     return (file: NzUploadFile): boolean => {
-      const contactPersonFormArray = this.customerForm.get('contactPerson') as FormArray;
-      const contactPersonForm = contactPersonFormArray.at(index);
+
+      const contactPersonForm = this.contactPerson.at(index);
   
       const fileList = contactPersonForm.get('cp_attachments')?.value || [];
       contactPersonForm.get('cp_attachments')?.setValue([...fileList, file]);
   
-      return false; // Prevent auto upload
+      return false;
     };
   }
 
+  beforeUploadCpProfile(index: number) {
+    return (file: NzUploadFile): boolean => {
+      const contactPersonForm = this.contactPerson.at(index);
+
+      const fileList = contactPersonForm.get('cp_profile_picture')?.value || [];
+      contactPersonForm.get('cp_profile_picture')?.setValue([...fileList, file]);
+  
+      return false;
+    };
+  }
+
+  previewImage: string | undefined = '';
+  previewVisible = false;
+
+  handlePreview = async (file: NzUploadFile): Promise<void> => {
+    if (!file.url && !file['preview']) {
+      file['preview'] = await getBase64(file.originFileObj!);
+    }
+    this.previewImage = file.url || file['preview'];
+    this.previewVisible = true;
+  };
 
 }
