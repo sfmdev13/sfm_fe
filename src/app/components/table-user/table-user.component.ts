@@ -1,5 +1,5 @@
 import { Component, Input, OnInit, Output, EventEmitter } from '@angular/core';
-import { IDataCustomer, IDataSupplier } from 'src/app/interfaces';
+import { IDataCustomer, IDataEmployee, IDataSupplier } from 'src/app/interfaces';
 
 
 @Component({
@@ -11,7 +11,7 @@ import { IDataCustomer, IDataSupplier } from 'src/app/interfaces';
 export class TableUserComponent implements OnInit {
 
   @Input() user_type: string = 'employee';
-  @Input() listOfDataEmp: any[] = [];
+  @Input() listOfDataEmp: IDataEmployee[] = [];
   @Input() listofDataCust: IDataCustomer[] = [];
   @Input() listofDataSupp: IDataSupplier[] = [];
 
@@ -23,6 +23,10 @@ export class TableUserComponent implements OnInit {
   @Input() pageSizeSupplier: number = 0;
   @Input() currentPageSupplier: number = 0;
 
+  @Input() totalAllEmployee: number = 0;
+  @Input() pageSizeEmployee: number = 0;
+  @Input() currentPageEmployee: number = 0;
+
   @Output() showUpdateModal = new EventEmitter<void>();
   @Output() showDetailModal = new EventEmitter<void>();
   @Output() showDeleteModal = new EventEmitter<void>();
@@ -33,39 +37,11 @@ export class TableUserComponent implements OnInit {
 
   @Output() showUpdateModalSupp: EventEmitter<IDataSupplier> = new EventEmitter<IDataSupplier>();
   @Output() showDetailModalSupp: EventEmitter<IDataSupplier> = new EventEmitter<IDataSupplier>();
+  @Output() showDeleteModalSupp: EventEmitter<string> = new EventEmitter<string>();
   
   @Output() onPageIndexChangeCust: EventEmitter<number> = new EventEmitter<number>();
   @Output() onPageIndexChangeSupp: EventEmitter<number> = new EventEmitter<number>();
-
-  listOfData: any[] = [
-    {
-      emp_id: '1',
-      name: 'John Brown1',
-      email: 'JohnBrow@gmail.com',
-      nik: '212312312',
-      phone: '0121283',
-      address: 'Jalan Beruang II',
-      status: true
-    },
-    {
-      emp_id: '2',
-      name: 'John Brown2',
-      email: 'JohnBrow@gmail.com',
-      nik: '212312312',
-      phone: '0121283',
-      address: 'Jalan Beruang II',
-      status: false
-    },
-    {
-      emp_id: '3',
-      name: 'John Brown3',
-      email: 'JohnBrow@gmail.com',
-      nik: '212312312',
-      phone: '0121283',
-      address: 'Jalan Beruang II',
-      status: false
-    }
-  ];
+  @Output() onPageIndexChangeEmp: EventEmitter<number> = new EventEmitter<number>();
 
   constructor() { }
 
@@ -109,8 +85,16 @@ export class TableUserComponent implements OnInit {
     this.showDetailModalSupp.emit(dataSupp);
   }
 
+  deleteSuppHandler(id: string){
+    this.showDeleteModalSupp.emit(id);
+  }
+
   pageIndexChangeSupp(page: number){
     this.onPageIndexChangeSupp.emit(page);
+  }
+
+  pageIndexChangeEmp(page: number){
+    this.onPageIndexChangeEmp.emit(page);
   }
   
 }

@@ -36,20 +36,48 @@
             <p class="fw-light">{{ data.email }}</p>
         </div>
         <div class="col-md-4">
-            <p class="m-0 p-0 fw-semibold">NIK</p>
-            <p class="fw-light">{{ data.nik }}</p>
+            <p class="m-0 p-0 fw-semibold">NIB</p>
+            <p class="fw-light">{{ data.nib }}</p>
         </div>
         <div class="col-md-4">
-            <p class="m-0 p-0 fw-semibold">Phone</p>
+            <p class="m-0 p-0 fw-semibold">Phone Number</p>
             <p class="fw-light text-capitalize">{{ data.phone }}</p>
         </div>
         <div class="col-md-4">
-            <p class="m-0 p-0 fw-semibold">Address</p>
+            <p class="m-0 p-0 fw-semibold">Register Whatsapp Number</p>
+            <p class="fw-light text-capitalize">{{ data.phone }}</p>
+        </div>
+        <div class="col-md-4">
+            <p class="m-0 p-0 fw-semibold">Province</p>
+            <p class="fw-light text-capitalize">{{ getProvinceName(data.province) }}</p>
+        </div>
+        <div class="col-md-4">
+            <p class="m-0 p-0 fw-semibold">City</p>
+            <p class="fw-light text-capitalize">{{ getRegencyName(data.city) }}</p>
+        </div>
+        <div class="col-md-4">
+            <p class="m-0 p-0 fw-semibold">Postal Code</p>
+            <p class="fw-light text-capitalize">{{ data.postal_code }}</p>
+        </div>
+        <div class="col-md-4">
+            <p class="m-0 p-0 fw-semibold">Detail Address</p>
             <p class="fw-light text-capitalize"><a [href]="data.maps_url" target="_blank" rel="noopener noreferrer">{{ data.address }}</a></p>
         </div>
         <div class="col-md-4">
             <p class="m-0 p-0 fw-semibold">Website</p>
             <p class="fw-light"><a [href]="data.website" target="_blank" rel="noopener noreferrer">{{ data.website }}</a></p>
+        </div>
+        <div class="col-md-4">
+            <p class="m-0 p-0 fw-semibold">Loyal Customer Program</p>
+            <p class="fw-light">{{ data.loyal_customer.name }}</p>
+        </div>
+        <div class="col-md-4">
+            <p class="m-0 p-0 fw-semibold">Customer Sector</p>
+            <p class="fw-light">{{ data.customer_sector.name }}</p>
+        </div>
+        <div class="col-md-4">
+            <p class="m-0 p-0 fw-semibold">Customer Firm</p>
+            <p class="fw-light">{{ data.customer_firm.name }}</p>
         </div>
     </div>
 
@@ -81,20 +109,54 @@
                 <p class="fw-light text-capitalize">{{ contact.nik }}</p>
             </div>
             <div class="col-md-4">
-                <p class="m-0 p-0 fw-semibold">Phone</p>
+                <p class="m-0 p-0 fw-semibold">Phone Number</p>
                 <p class="fw-light text-capitalize">{{ contact.phone }}</p>
             </div>
             <div class="col-md-4">
-                <p class="m-0 p-0 fw-semibold">Address</p>
+                <p class="m-0 p-0 fw-semibold">Registered Whatsapp Number</p>
+                <p class="fw-light text-capitalize">{{ contact.wa_phone }}</p>
+            </div>
+            <div class="col-md-4">
+                <p class="m-0 p-0 fw-semibold">Province</p>
+                <p class="fw-light">{{ getProvinceName(contact.province) }}</p>
+            </div>
+            <div class="col-md-4">
+                <p class="m-0 p-0 fw-semibold">City</p>
+                <p class="fw-light">{{ getRegencyName(contact.city) }}</p>
+            </div>
+            <div class="col-md-4">
+                <p class="m-0 p-0 fw-semibold">Postal Code</p>
+                <p class="fw-light">{{ contact.postal_code }}</p>
+            </div>
+            <div class="col-md-4">
+                <p class="m-0 p-0 fw-semibold">Full Address</p>
                 <p class="fw-light">{{ contact.address }}</p>
             </div>
             <div class="col-md-4">
-                <p class="m-0 p-0 fw-semibold">Category</p>
+                <p class="m-0 p-0 fw-semibold">Contact Type</p>
                 <p class="fw-light">{{ contact.customer_category.name }}</p>
+            </div>
+            <div class="col-md-4">
+                <p class="m-0 p-0 fw-semibold">Loyal Customer Program</p>
+                <p class="fw-light">{{ contact.cp_loyal_customer.name}}</p>
             </div>
             <div class="col-md-4">
                 <p class="m-0 p-0 fw-semibold">PIC Company</p>
                 <nz-tag [nzColor]="contact.is_pic_company === 1 ? '#1DA32C' : '#f50'">{{ contact.is_pic_company  === 1 ? 'Yes' : 'No' }}</nz-tag>
+            </div>
+            <div class="col-md-6 mt-2">
+                <p class="m-0 p-0 fw-semibold">Contact PIC</p>
+                <div class="row" *ngFor="let c of contact.pic">
+                    <div class="col-6">
+                        <p class="m-0 p-0 fw-semibold">Name</p>
+                        <p class="fw-light text-capitalize">{{ c.name }}</p>
+                    </div>
+                    <div class="col-6">
+                        <p class="m-0 p-0 fw-semibold">Head PIC Contact</p>
+                        <p class="fw-light text-capitalize">{{ c.is_pic_head === 1 ? 'Yes' : 'No' }}</p>
+                    </div>
+                </div>
+
             </div>
         </div>
     </ng-container>

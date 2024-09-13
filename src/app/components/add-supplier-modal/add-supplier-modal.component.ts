@@ -89,7 +89,6 @@ export class AddSupplierModalComponent implements OnInit {
         this.contactPerson.push(this.fb.group({
           cp_name: [contact.name, Validators.required],
           cp_email: [contact.email, Validators.required],
-          cp_nik: [contact.nik, Validators.required],
           cp_phone: [contact.phone, Validators.required],
           cp_address: [contact.address, Validators.required],
           is_pic_company: [contact.is_pic_company === 1 ? true : false, Validators.required],
@@ -119,7 +118,6 @@ export class AddSupplierModalComponent implements OnInit {
     this.contactPerson.push(this.fb.group({
       cp_name: ['', [Validators.required]],
       cp_email: ['', [Validators.required]],
-      cp_nik: ['', [Validators.required]],
       cp_phone: ['', [Validators.required]],
       cp_address: ['', [Validators.required]],
       is_pic_company: [false, [Validators.required]]
@@ -161,68 +159,68 @@ export class AddSupplierModalComponent implements OnInit {
 
   submitForm(){
 
-    this.picComplete = this.supplierForm.get('pic')!.value.map((pic_id: any) => ({
-      pic_id: pic_id,
-      is_pic_internal: pic_id === this.supplierForm.get('is_pic_internal')!.value
-    }));
+    console.log(this.supplierForm.value)
 
-    console.log(this.picComplete);
+    // this.picComplete = this.supplierForm.get('pic')!.value.map((pic_id: any) => ({
+    //   pic_id: pic_id,
+    //   is_pic_internal: pic_id === this.supplierForm.get('is_pic_internal')!.value
+    // }));
 
-    if(this.supplierForm.valid){
-      if(this.modal_type === 'add'){
-        const body = {
-          name: this.supplierForm.get('name')?.value,
-          email: this.supplierForm.get('email')?.value,
-          nik: this.supplierForm.get('nik')?.value,
-          phone: this.supplierForm.get('phone')?.value,
-          address: this.supplierForm.get('address')?.value,
-          status: this.supplierForm.get('status')?.value,
-          type: this.supplierForm.get('type')?.value,
-          contactPerson: this.supplierForm.get('contactPerson')?.value,
-          pic: this.picComplete
-        };
+    // if(this.supplierForm.valid){
+    //   if(this.modal_type === 'add'){
+    //     const body = {
+    //       name: this.supplierForm.get('name')?.value,
+    //       email: this.supplierForm.get('email')?.value,
+    //       nik: this.supplierForm.get('nik')?.value,
+    //       phone: this.supplierForm.get('phone')?.value,
+    //       address: this.supplierForm.get('address')?.value,
+    //       status: this.supplierForm.get('status')?.value,
+    //       type: this.supplierForm.get('type')?.value,
+    //       contactPerson: this.supplierForm.get('contactPerson')?.value,
+    //       pic: this.picComplete
+    //     };
 
-        this.apiSvc.createSupplier(body).subscribe({
-          next:() => {
-            this.apiSvc.triggerRefreshSuppliers();
-          },
-          error: (error) => {
-            console.log(error);
-          },
-          complete: () => {
-            this.modal.destroy();
-          }
-        })
-      }
+    //     this.apiSvc.createSupplier(body).subscribe({
+    //       next:() => {
+    //         this.apiSvc.triggerRefreshSuppliers();
+    //       },
+    //       error: (error) => {
+    //         console.log(error);
+    //       },
+    //       complete: () => {
+    //         this.modal.destroy();
+    //       }
+    //     })
+    //   }
 
-      if(this.modal_type === 'update'){
-        const body = {
-          id: this.supplierForm.get('id')?.value,
-          name: this.supplierForm.get('name')?.value,
-          email: this.supplierForm.get('email')?.value,
-          nik: this.supplierForm.get('nik')?.value,
-          phone: this.supplierForm.get('phone')?.value,
-          address: this.supplierForm.get('address')?.value,
-          status: this.supplierForm.get('status')?.value,
-          type: this.supplierForm.get('type')?.value,
-          contactPerson: this.supplierForm.get('contactPerson')?.value,
-          pic: this.supplierDetail.pic,
-          pic_new: this.picComplete
-        };
+    //   if(this.modal_type === 'update'){
+    //     const body = {
+    //       id: this.supplierForm.get('id')?.value,
+    //       name: this.supplierForm.get('name')?.value,
+    //       email: this.supplierForm.get('email')?.value,
+    //       nik: this.supplierForm.get('nik')?.value,
+    //       phone: this.supplierForm.get('phone')?.value,
+    //       address: this.supplierForm.get('address')?.value,
+    //       status: this.supplierForm.get('status')?.value,
+    //       type: this.supplierForm.get('type')?.value,
+    //       contactPerson: this.supplierForm.get('contactPerson')?.value,
+    //       pic: this.supplierDetail.pic,
+    //       pic_new: this.picComplete
+    //     };
 
-        this.apiSvc.updateSupplier(body).subscribe({
-          next:() => {
-            this.apiSvc.triggerRefreshSuppliers();
-          },
-          error: (error) => {
-            console.log(error);
-          },
-          complete: () => {
-            this.modal.destroy();
-          }
-        })
-      }
-    }
+    //     this.apiSvc.updateSupplier(body).subscribe({
+    //       next:() => {
+    //         this.apiSvc.triggerRefreshSuppliers();
+    //       },
+    //       error: (error) => {
+    //         console.log(error);
+    //       },
+    //       complete: () => {
+    //         this.modal.destroy();
+    //       }
+    //     })
+    //   }
+    // }
   }
 
 }

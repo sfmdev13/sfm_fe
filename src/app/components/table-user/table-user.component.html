@@ -1,11 +1,22 @@
 
 <ng-container *ngIf="user_type === 'employee'">
-    <nz-table #basicTable nzBordered [nzData]="listOfDataEmp">
+    <nz-table 
+        #basicTable 
+        nzBordered 
+        [nzData]="listOfDataEmp"
+        nzShowPagination
+        [nzFrontPagination]="false"
+        [nzTotal]="totalAllEmployee"
+        [nzPageSize]="pageSizeEmployee"
+        (nzPageIndexChange)="pageIndexChangeEmp($event)"
+        [nzPageIndex]="currentPageEmployee"
+    >
         <thead>
             <tr>
                 <th>EMP ID</th>
                 <th>Name</th>
                 <th>Email</th>
+                <th>Role</th>
                 <th>NIK</th>
                 <th>Phone</th>
                 <th>Address</th>
@@ -15,14 +26,15 @@
         </thead>
         <tbody>
             <tr *ngFor="let data of basicTable.data">
-                <td>{{ data.emp_id }}</td>
+                <td>{{ data.employee_pid }}</td>
                 <td>{{ data.name }}</td>
                 <td>{{ data.email }}</td>
+                <td>{{ data.user.role.title }}</td>
                 <td>{{ data.nik }}</td>
                 <td>{{ data.phone }}</td>
                 <td>{{ data.address }}</td>
                 <td>
-                    <nz-tag [nzColor]="data.status ? '#1DA32C' : '#f50'">{{ data.status ? 'Active' : 'Inactive' }}</nz-tag>
+                    <nz-tag [nzColor]="data.status === 1 ? '#1DA32C' : '#f50'">{{ data.status === 1 ? 'Active' : 'Inactive' }}</nz-tag>
                 <td>
                     <div class="d-flex gap-3">
                         <span (click)="detailHandler()"  nz-icon nzType="eye" nzTheme="twotone"></span>
@@ -66,7 +78,7 @@
             <tr *ngFor="let data of basicTable.data">
                 <td>{{ data.customer_pid }}</td>
                 <td>{{ data.name }}</td>
-                <td>{{ data.type }}</td>
+                <td class="text-capitalize">{{ data.type }}</td>
                 <td>{{ data.email }}</td>
                 <td>{{ data.phone }}</td>
                 <td><a [href]="data.website" target="_blank" rel="noopener noreferrer">{{ data.website }}</a></td>
@@ -139,7 +151,7 @@
                     <div class="d-flex gap-3">
                         <span (click)="detailSuppHandler(data)"  nz-icon nzType="eye" nzTheme="twotone"></span>
                         <span (click)="updateSuppHandler(data)" nz-icon nzType="edit" nzTheme="twotone"></span>
-                        <span (click)="deleteHandler()" nz-icon nzType="delete" nzTheme="twotone"></span>
+                        <span (click)="deleteSuppHandler(data.id)" nz-icon nzType="delete" nzTheme="twotone"></span>
                     </div>
                 </td>
             </tr>

@@ -2,7 +2,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, map, Observable, tap } from 'rxjs';
 import { environment } from 'src/environments/environment';
-import { IRootCatContact, IRootCustomer, IRootSupplier } from './interfaces';
+import { ICategories, IRootAllRoles, IRootCatContact, IRootCustomer, IRootEmployee, IRootSupplier } from './interfaces';
 
 @Injectable({
   providedIn: 'root'
@@ -10,6 +10,8 @@ import { IRootCatContact, IRootCustomer, IRootSupplier } from './interfaces';
 export class ApiService {
 
   private apiUrl = environment.apiUrl;
+  private provinceUrl = 'assets/wilayah/provinces.json';
+  private regencyUrl = 'assets/wilayah/regencies.json';
   
   constructor(
     private http: HttpClient
@@ -23,11 +25,17 @@ export class ApiService {
   private refreshGetSupplier = new BehaviorSubject<void>(undefined);
   refreshGetSupplier$ = this.refreshGetSupplier.asObservable();
 
+  private refreshGetEmployee = new BehaviorSubject<void>(undefined);
+  refreshGetEmployee$ = this.refreshGetEmployee.asObservable();
+
   private filteredCustomerDataSubject = new BehaviorSubject<IRootCustomer>({} as IRootCustomer);
   filteredCustomerData$ = this.filteredCustomerDataSubject.asObservable();
 
   private isFiltered = new BehaviorSubject<boolean>(false);
   isFiltered$ = this.isFiltered.asObservable();
+
+  private refreshGetCategories = new BehaviorSubject<void>(undefined);
+  refreshGetCategories$ = this.refreshGetCategories.asObservable();
 
   getProfile(): Observable<any> {
     const token = localStorage.getItem('authToken');
@@ -53,6 +61,10 @@ export class ApiService {
 
   triggerRefreshSuppliers() {
     this.refreshGetSupplier.next();
+  }
+
+  triggerRefreshCategories(){
+    this.refreshGetCategories.next();
   }
 
   setFilteredCustomerData(data: IRootCustomer) {
@@ -139,6 +151,18 @@ export class ApiService {
     return this.http.post<IRootSupplier>(url, {}, { headers });
   }
 
+  filterEmployee(params: any, page: number, per_page: number): Observable<IRootEmployee>{
+    const token = localStorage.getItem('authToken');
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+    });
+
+    const url = `${this.apiUrl}/filter-employee?role_id=${params.role_id}&status=${params.status}&sort_by=${params.sort_by}&page=${page}&per_page=${per_page}`
+
+    return this.http.post<IRootEmployee>(url, {}, { headers });
+  }
+
+
   searchSupplier(params: any, page: number, per_page: number): Observable<IRootSupplier>{
     const token = localStorage.getItem('authToken');
     const headers = new HttpHeaders({
@@ -150,6 +174,7 @@ export class ApiService {
     return this.http.post<IRootSupplier>(url, {}, { headers });
   }
   
+  
   searchCustomer(params: any, page: number, per_page: number): Observable<IRootCustomer>{
     const token = localStorage.getItem('authToken');
     const headers = new HttpHeaders({
@@ -159,6 +184,17 @@ export class ApiService {
     const url = `${this.apiUrl}/search-customer?search=${params}&page=${page}&per_page=${per_page}`
 
     return this.http.post<IRootCustomer>(url, {}, { headers });
+  }
+
+  searchEmployee(params: any, page: number, per_page: number): Observable<IRootEmployee>{
+    const token = localStorage.getItem('authToken');
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+    });
+
+    const url = `${this.apiUrl}/search-employee?search=${params}&page=${page}&per_page=${per_page}`
+
+    return this.http.post<IRootEmployee>(url, {}, { headers });
   }
 
   getSupplier(page: number, per_page: number): Observable<IRootSupplier>{
@@ -205,5 +241,272 @@ export class ApiService {
     const url = `${this.apiUrl}/update-supplier`;
 
     return this.http.post<any>(url, body, {headers})
+  }
+
+  deleteSupplier(id: string): Observable<any>{
+    const token = localStorage.getItem('authToken');
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+    });
+
+    const url = `${this.apiUrl}/delete-supplier?id=${id}`;
+    return this.http.delete<any>(url, { headers })
+  }
+
+  getEmployee(page: number, per_page: number): Observable<IRootEmployee>{
+    const token = localStorage.getItem('authToken');
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+    });
+
+    const url = `${this.apiUrl}/employee?page=${page}&per_page=${per_page}`
+
+    return this.http.get<IRootEmployee>(url, { headers } )
+  }
+  
+  getAllRole(): Observable<IRootAllRoles>{
+    const token = localStorage.getItem('authToken');
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+    })
+
+    const url = `${this.apiUrl}/all-roles`
+
+    return this.http.get<IRootAllRoles>(url, { headers })
+  }
+
+  getLoyalCustomer(): Observable<ICategories>{
+    const token = localStorage.getItem('authToken');
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+    })
+
+    const url = `${this.apiUrl}/loyal-customer`
+
+    return this.http.get<ICategories>(url, { headers })
+  }
+
+  createLoyalCustomer(name: string, description: string): Observable<any>{
+    const token = localStorage.getItem('authToken');
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+    })
+
+    const url = `${this.apiUrl}/create/loyal-customer?name=${name}&description=${description}`
+
+    return this.http.post<any>(url, {} , { headers })
+  }
+
+  editLoyalCustomer(id: string, name: string, description: string): Observable<any>{
+    const token = localStorage.getItem('authToken');
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+    })
+
+    const url = `${this.apiUrl}/edit/loyal-customer?id=${id}&name=${name}&description=${description}`
+
+    return this.http.post<any>(url, {} , { headers })
+  }
+
+  deleteLoyalCustomer(id: number): Observable<any>{
+    const token = localStorage.getItem('authToken');
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+    });
+
+    const url = `${this.apiUrl}/delete/loyal-customer?id=${id}`;
+    return this.http.delete<any>(url, { headers })
+  }
+
+  getCustomerSector(): Observable<ICategories>{
+    const token = localStorage.getItem('authToken');
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+    })
+
+    const url = `${this.apiUrl}/customer-sector`
+
+    return this.http.get<ICategories>(url, { headers })
+  }
+
+
+  createCustomerSector(name: string, description: string): Observable<any>{
+    const token = localStorage.getItem('authToken');
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+    })
+
+    const url = `${this.apiUrl}/create/customer-sector?name=${name}&description=${description}`
+
+    return this.http.post<any>(url, {} , { headers })
+  }
+
+  editCustomerSector(id: string, name: string, description: string): Observable<any>{
+    const token = localStorage.getItem('authToken');
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+    })
+
+    const url = `${this.apiUrl}/edit/customer-sector?id=${id}&name=${name}&description=${description}`
+
+    return this.http.post<any>(url, {} , { headers })
+  }
+
+  
+  deleteCustomerSector(id: number): Observable<any>{
+    const token = localStorage.getItem('authToken');
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+    });
+
+    const url = `${this.apiUrl}/delete/customer-sector?id=${id}`;
+    return this.http.delete<any>(url, { headers })
+  }
+
+  getCustomerFirm(): Observable<ICategories>{
+    const token = localStorage.getItem('authToken');
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+    })
+
+    const url = `${this.apiUrl}/customer-firm`
+
+    return this.http.get<ICategories>(url, { headers })
+  }
+
+  createCustomerFirm(name: string, description: string): Observable<any>{
+    const token = localStorage.getItem('authToken');
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+    })
+
+    const url = `${this.apiUrl}/create/customer-firm?name=${name}&description=${description}`
+
+    return this.http.post<any>(url, {} , { headers })
+  }
+
+  editCustomerFirm(id: string, name: string, description: string): Observable<any>{
+    const token = localStorage.getItem('authToken');
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+    })
+
+    const url = `${this.apiUrl}/edit/customer-firm?id=${id}&name=${name}&description=${description}`
+
+    return this.http.post<any>(url, {} , { headers })
+  }
+
+  deleteCustomerFirm(id: number): Observable<any>{
+    const token = localStorage.getItem('authToken');
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+    });
+
+    const url = `${this.apiUrl}/delete/customer-firm?id=${id}`;
+    return this.http.delete<any>(url, { headers })
+  }
+
+  getSupplierProduct(): Observable<ICategories>{
+    const token = localStorage.getItem('authToken');
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+    })
+
+    const url = `${this.apiUrl}/supplier-product`
+
+    return this.http.get<ICategories>(url, { headers })
+  }
+
+  createSupplierProduct(name: string, description: string): Observable<any>{
+    const token = localStorage.getItem('authToken');
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+    })
+
+    const url = `${this.apiUrl}/create/supplier-product?name=${name}&description=${description}`
+
+    return this.http.post<any>(url, {} , { headers })
+  }
+
+  editSupplierProduct(id: string, name: string, description: string): Observable<any>{
+    const token = localStorage.getItem('authToken');
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+    })
+
+    const url = `${this.apiUrl}/edit/supplier-product?id=${id}&name=${name}&description=${description}`
+
+    return this.http.post<any>(url, {} , { headers })
+  }
+
+  deleteSupplierProduct(id: number): Observable<any>{
+    const token = localStorage.getItem('authToken');
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+    });
+
+    const url = `${this.apiUrl}/delete/supplier-product?id=${id}`;
+    return this.http.delete<any>(url, { headers })
+  }
+
+  getSupplierSource(): Observable<ICategories>{
+    const token = localStorage.getItem('authToken');
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+    })
+
+    const url = `${this.apiUrl}/supplier-source`
+
+    return this.http.get<ICategories>(url, { headers })
+  }
+
+  createSupplierSource(name: string, description: string): Observable<any>{
+    const token = localStorage.getItem('authToken');
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+    })
+
+    const url = `${this.apiUrl}/create/supplier-source?name=${name}&description=${description}`
+
+    return this.http.post<any>(url, {} , { headers })
+  }
+
+  editSupplierSource(id: string, name: string, description: string): Observable<any>{
+    const token = localStorage.getItem('authToken');
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+    })
+
+    const url = `${this.apiUrl}/edit/supplier-source?id=${id}&name=${name}&description=${description}`
+
+    return this.http.post<any>(url, {} , { headers })
+  }
+
+  deleteSupplierSource(id: number): Observable<any>{
+    const token = localStorage.getItem('authToken');
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+    });
+
+    const url = `${this.apiUrl}/delete/supplier-source?id=${id}`;
+    return this.http.delete<any>(url, { headers })
+  }
+
+  getProvinces(): Observable<any> {
+    return this.http.get(this.provinceUrl);
+  }
+  
+  getRegencies(): Observable<any> {
+    return this.http.get(this.regencyUrl);
+  }
+
+  getRegenciesByProvince(provinceId: number): Observable<any> {
+    return new Observable(observer => {
+      this.getRegencies().subscribe((regencies: any[]) => {
+        const filteredRegencies = regencies.filter(regency => regency.province_id === provinceId);
+        observer.next(filteredRegencies);
+        observer.complete();
+      });
+    });
   }
 }

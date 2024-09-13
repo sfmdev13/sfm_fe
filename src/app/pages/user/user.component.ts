@@ -14,7 +14,7 @@ import { DetailSupplierModalComponent } from 'src/app/components/detail-supplier
 import { FilterCustomerModalComponent } from 'src/app/components/filter-customer-modal/filter-customer-modal.component';
 import { FilterEmployeeModalComponent } from 'src/app/components/filter-employee-modal/filter-employee-modal.component';
 import { FilterSupplierModalComponent } from 'src/app/components/filter-supplier-modal/filter-supplier-modal.component';
-import { IDataCustomer, IDataSupplier, IRootCustomer, IRootSupplier } from 'src/app/interfaces';
+import { IDataCustomer, IDataSupplier, IRootCustomer, IRootEmployee, IRootSupplier } from 'src/app/interfaces';
 
 @Component({
   selector: 'app-user',
@@ -26,7 +26,6 @@ export class UserComponent implements OnInit {
   user_type: string = 'employee';
   
   listOfDataEmp: any[] = [];
-  listofDataSupp: any[] = [];
 
   customers$!: Observable<IRootCustomer>;
 
@@ -46,7 +45,7 @@ export class UserComponent implements OnInit {
 
   totalSupplier: number = 0;
   totalAllSupplier: number = 0;
-  pageSizeSupplier: number = 2;
+  pageSizeSupplier: number = 5;
   currentPageSupplier: number = 1;
 
   filteredSupp: boolean = false;
@@ -57,7 +56,19 @@ export class UserComponent implements OnInit {
   searchCust: string = '';
   private searchCustSubject = new Subject<string>();
 
+  searchEmp: string = '';
+  private searchEmpSubject = new Subject<string>();
+
   listOfPic: any[] = [];
+
+  employees$!: Observable<IRootEmployee>;
+
+  totalEmployee: number = 0;
+  totalAllEmployee: number = 0;
+  pageSizeEmployee: number = 5;
+  currentPageEmployee: number = 1;
+
+  filteredEmp: boolean = false;
 
   constructor(
     private modalService: NzModalService,
@@ -67,38 +78,7 @@ export class UserComponent implements OnInit {
   ngOnInit(): void {
 
     //for the first load
-    this.listOfDataEmp = [
-      {
-        emp_id: '1',
-        name: 'John Brown1',
-        email: 'JohnBrow@gmail.com',
-        nik: '212312312',
-        phone: '0121283',
-        address: 'Jalan Beruang II',
-        status: true,
-        role: 'superadmin'
-      },
-      {
-        emp_id: '2',
-        name: 'John Brown2',
-        email: 'JohnBrow@gmail.com',
-        nik: '212312312',
-        phone: '0121283',
-        address: 'Jalan Beruang II',
-        status: false,
-        role: 'Sales'
-      },
-      {
-        emp_id: '3',
-        name: 'John Brown3',
-        email: 'JohnBrow@gmail.com',
-        nik: '212312312',
-        phone: '0121283',
-        address: 'Jalan Beruang II',
-        status: false,
-        role: 'Sales'
-      }
-    ];
+    this.getEmployee();
     
     this.apiSvc.refreshGetCustomer$.subscribe(() => {
       this.getCustomer();
@@ -106,6 +86,10 @@ export class UserComponent implements OnInit {
 
     this.apiSvc.refreshGetSupplier$.subscribe(() => {
       this.getSupplier();
+    })
+
+    this.apiSvc.refreshGetEmployee$.subscribe(() => {
+      this.getEmployee();
     })
 
     this.apiSvc.getPic().subscribe(res => {
@@ -137,6 +121,19 @@ export class UserComponent implements OnInit {
         })
       );
     })
+
+    this.searchEmpSubject.pipe(
+      debounceTime(300),
+      distinctUntilChanged()
+    ).subscribe(search => {
+      this.employees$ = this.apiSvc.searchEmployee(search, this.currentPageEmployee, this.pageSizeEmployee).pipe(
+        tap(res => {
+          this.totalEmployee = res.data.length;
+          this.currentPageEmployee = res.pagination.current_page;
+          this.totalAllEmployee = res.pagination.total;
+        })
+      )
+    })
   }
 
   tabChange(value: string){
@@ -144,35 +141,7 @@ export class UserComponent implements OnInit {
     this.user_type = value;
 
     if(value === 'employee'){
-      this.listOfDataEmp = [
-        {
-          emp_id: '1',
-          name: 'John Brown1',
-          email: 'JohnBrow@gmail.com',
-          nik: '212312312',
-          phone: '0121283',
-          address: 'Jalan Beruang II',
-          status: true
-        },
-        {
-          emp_id: '2',
-          name: 'John Brown2',
-          email: 'JohnBrow@gmail.com',
-          nik: '212312312',
-          phone: '0121283',
-          address: 'Jalan Beruang II',
-          status: false
-        },
-        {
-          emp_id: '3',
-          name: 'John Brown3',
-          email: 'JohnBrow@gmail.com',
-          nik: '212312312',
-          phone: '0121283',
-          address: 'Jalan Beruang II',
-          status: false
-        }
-      ];
+      this.getEmployee();
     }
     if(value === 'customer'){
       if(this.filteredCust){
@@ -275,10 +244,20 @@ export class UserComponent implements OnInit {
 
   showFilter(){
     if(this.user_type === 'employee'){
-      this.modalService.create({
+      const empModal = this.modalService.create({
         nzTitle: 'Filter Employee',
         nzContent: FilterEmployeeModalComponent,
-        nzCentered: true
+        nzCentered: true,
+        nzComponentParams: {
+          filteredEmp: this.filteredEmp
+        }
+      })
+
+      empModal.afterClose.subscribe(result => {
+        if(result){
+          this.filterParams = result
+          this.getFilteredEmployee()
+        }
       })
     }
 
@@ -387,6 +366,17 @@ export class UserComponent implements OnInit {
     });
   }
 
+  showDeleteModalSupp(id: string){
+    this.modalService.create({
+      nzTitle: 'Delete Supplier',
+      nzContent: DeleteSupplierModalComponent,
+      nzCentered: true,
+      nzComponentParams: {
+        id
+      }
+    });
+  }
+
   getCustomer(){
     this.customers$ = this.apiSvc.getCustomer(this.currentPageCustomer, this.pageSizeCustomer).pipe(
       tap(res =>{
@@ -403,6 +393,16 @@ export class UserComponent implements OnInit {
         this.totalSupplier = res.data.length;
         this.currentPageSupplier = res.pagination.current_page;
         this.totalAllSupplier = res.pagination.total
+      })
+    )
+  }
+
+  getEmployee(){
+    this.employees$ = this.apiSvc.getEmployee(this.currentPageEmployee, this.pageSizeEmployee).pipe(
+      tap(res => {
+        this.totalEmployee = res.data.length;
+        this.currentPageEmployee = res.pagination.current_page;
+        this.totalAllEmployee = res.pagination.total
       })
     )
   }
@@ -431,6 +431,18 @@ export class UserComponent implements OnInit {
     )
   }
 
+  getFilteredEmployee(){
+    this.employees$ = this.apiSvc.filterEmployee(this.filterParams, this.currentPageEmployee, this.pageSizeEmployee).pipe(
+      tap(res => {
+        this.totalEmployee = res.data.length;
+        this.currentPageEmployee = res.pagination.current_page;
+        this.totalAllEmployee = res.pagination.total
+        this.filteredEmp = true
+        localStorage.setItem('filterItemsEmp', JSON.stringify(this.filterParams))
+      })
+    )
+  }
+
   onPageIndexChangeCust(page: number): void {
     this.currentPageCustomer = page;
 
@@ -451,18 +463,35 @@ export class UserComponent implements OnInit {
     }
   }
 
+  onPageIndexChangeEmp(page: number): void{
+    this.currentPageEmployee = page;
+
+    if(this.filteredEmp){
+      this.getFilteredEmployee();  
+    } else {
+      this.getEmployee();
+    }
+  }
+
   refreshTableCust(){
     this.filteredCust = false;
-    this.pageSizeCustomer = 2;
+    this.pageSizeCustomer = 5;
     this.currentPageCustomer = 1;
     this.getCustomer();
   }
 
   refreshTableSupp(){
     this.filteredSupp = false;
-    this.pageSizeCustomer = 2;
-    this.currentPageCustomer = 1;
+    this.pageSizeSupplier = 5;
+    this.currentPageSupplier = 1;
     this.getSupplier();
+  }
+
+  refreshTableEmp(){
+    this.filteredEmp = false;
+    this.pageSizeEmployee = 5;
+    this.currentPageSupplier = 1;
+    this.getEmployee();
   }
 
   searchSuppHandler(search: string): void{
@@ -471,5 +500,9 @@ export class UserComponent implements OnInit {
 
   searchCustHandler(search: string): void{
     this.searchCustSubject.next(search);
+  }
+
+  searchEmpHandler(search: string): void{
+    this.searchEmpSubject.next(search);
   }
 }

@@ -1,0 +1,34 @@
+<nz-layout class="inner-layout">
+    <nz-sider nzWidth="200px" nzTheme="light">
+      <ul nz-menu nzMode="inline" class="sider-menu">
+        <li *ngFor="let cat of navCategory" nz-submenu nzOpen [nzTitle]="cat.name">
+            <ul>
+                <li 
+                    *ngFor="let cat_sub of cat.sub_menu" 
+                    nz-menu-item [nzSelected]="cat_sub.slug === navCategoryActive"
+                    (click)="navCategoryActive = cat_sub.slug"
+                > 
+                    {{ cat_sub.name }} 
+                </li>
+            </ul>
+        </li>
+      </ul>
+    </nz-sider>
+    <nz-content class="inner-content">
+        <ng-container *ngIf="navCategoryActive === 'loyal_customer'">
+            <app-loyal-customer></app-loyal-customer>
+        </ng-container>
+        <ng-container *ngIf="navCategoryActive === 'customer_sector'">
+            <app-customer-sector></app-customer-sector>
+        </ng-container>
+        <ng-container *ngIf="navCategoryActive === 'customer_firm'">
+            <app-customer-firm></app-customer-firm>
+        </ng-container>
+        <ng-container *ngIf="navCategoryActive === 'supplier_product'">
+            <app-supplier-product></app-supplier-product>
+        </ng-container>
+        <ng-container *ngIf="navCategoryActive === 'supplier_source'">
+            <app-supplier-source></app-supplier-source>
+        </ng-container>
+    </nz-content>
+</nz-layout>

@@ -32,6 +32,10 @@ export class LayoutComponent implements OnInit {
     {
       title: 'roles',
       path: 'roles'
+    },
+    {
+      title: 'settings',
+      path: 'settings'
     }
   ]
 
