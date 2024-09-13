@@ -78,7 +78,7 @@
             <tr *ngFor="let data of basicTable.data">
                 <td>{{ data.customer_pid }}</td>
                 <td>{{ data.name }}</td>
-                <td>{{ data.type }}</td>
+                <td class="text-capitalize">{{ data.type }}</td>
                 <td>{{ data.email }}</td>
                 <td>{{ data.phone }}</td>
                 <td><a [href]="data.website" target="_blank" rel="noopener noreferrer">{{ data.website }}</a></td>
