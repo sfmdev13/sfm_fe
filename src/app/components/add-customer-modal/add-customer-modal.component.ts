@@ -336,7 +336,7 @@ export class AddCustomerModalComponent implements OnInit {
         cp_profile_picture: pic.cp_profile_picture
       }))
 
-      if(!this.customerForm.valid){
+      if(this.customerForm.valid){
 
         const body = {
           name: this.customerForm.get('name')?.value,
@@ -347,7 +347,6 @@ export class AddCustomerModalComponent implements OnInit {
           address: this.customerForm.get('address')?.value,
           status: this.customerForm.get('status')?.value,
           type: this.customerForm.get('type')?.value,
-          contactPerson: this.contactPersonComplete,
           website: this.customerForm.get('website')?.value,
           maps_url: this.customerForm.get('maps_url')?.value,
           pic: this.picComplete,
@@ -362,10 +361,25 @@ export class AddCustomerModalComponent implements OnInit {
 
         const formData = new FormData();
 
+        //append basic information
         Object.keys(body).forEach(key => {
-          formData.append(key, JSON.stringify((body as any)[key]));
-        });
+          if(typeof (body as any)[key] === 'object'){
+            formData.append(key, JSON.stringify((body as any)[key]))
+          } else {
+            formData.append(key, ( body as any )[key]);
+          }
+        })
 
+        //append cp
+        Object.keys(this.contactPersonComplete).forEach(key => {
+          if(typeof (this.contactPersonComplete as any)[key] === 'object'){
+            formData.append(key, JSON.stringify((body as any)[key]))
+          } else {
+            formData.append(key, ( body as any )[key]);
+          }
+        })
+
+        //append attachment
         if (this.fileList.length > 0) {
           for(let i = 0; i < this.fileList.length; i++){
             formData.append('attachments[]', this.fileList[i] as any);
