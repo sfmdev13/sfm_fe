@@ -246,7 +246,7 @@ export class AddCustomerModalComponent implements OnInit {
       filteredCity: [],
       cp_id: [''],
       cp_attachments: [[], [Validators.required]],
-      cp_profile_picture: [[], [Validators.required]]
+      cp_profile_picture: [[], [Validators.required]],
 
     });
 
@@ -336,9 +336,8 @@ export class AddCustomerModalComponent implements OnInit {
         cp_profile_picture: pic.cp_profile_picture
       }))
 
-
       if(this.customerForm.valid){
-
+        console.log('masuk')
         const body = {
           name: this.customerForm.get('name')?.value,
           email: this.customerForm.get('email')?.value,
@@ -381,12 +380,8 @@ export class AddCustomerModalComponent implements OnInit {
 
 
           //append cp profile picture
-          if (contactPerson.cp_profile_picture && contactPerson.cp_profile_picture.length > 0) {
-            contactPerson.cp_profile_picture.forEach((file: File, fileIndex: number) => {
-              if (file instanceof File) {
-                formData.append(`contactPerson[${index}][cp_profile_picture][${fileIndex}]`, file);
-              }
-            });
+          if (contactPerson.cp_profile_picture) {
+            formData.append(`contactPerson[${index}][cp_profile_picture][0]`, contactPerson.cp_profile_picture);
           }
 
           //append cp attachment
@@ -400,7 +395,6 @@ export class AddCustomerModalComponent implements OnInit {
           //append cp pic
           formData.append(`contactPerson[${index}][cp_pic]`, JSON.stringify(contactPerson.cp_pic))
 
-
         })
 
 
@@ -409,6 +403,13 @@ export class AddCustomerModalComponent implements OnInit {
           this.fileList.forEach((file: any) => {
             formData.append('attachments[]', file);
           });
+        }
+
+        //append profile picture person
+        if(this.fileImageList.length > 0){
+          this.fileImageList.forEach((file: any) => {
+            formData.append('profile_picture[]', file);
+          })
         }
 
         this.apiSvc.createCustomer(formData).subscribe({
@@ -532,6 +533,15 @@ export class AddCustomerModalComponent implements OnInit {
     return false; // Stop the auto upload
   };
 
+  beforeUploadProfile = (file: NzUploadFile): boolean => {
+    this.getBase64(file, (img: string) => {
+      file.url = img; // Set the base64 string as the file's URL for preview
+      this.fileImageList = [file]; // Replace the file list with the new file
+    });
+  
+    return false; // Prevent automatic upload
+  };
+
   beforeUploadCp(index: number) {
     return (file: NzUploadFile): boolean => {
 
@@ -558,6 +568,7 @@ export class AddCustomerModalComponent implements OnInit {
       return false;
     };
   }
+
   previewImage: string | undefined = '';
   previewVisible = false;
 
@@ -586,5 +597,11 @@ export class AddCustomerModalComponent implements OnInit {
     }
 
   }
+
+  getBase64(file: NzUploadFile, callback: (img: string) => void): void {
+    const reader = new FileReader();
+    reader.readAsDataURL(file as any); // Convert file to base64
+    reader.onload = () => callback(reader.result as string);
+  };
 
 }
