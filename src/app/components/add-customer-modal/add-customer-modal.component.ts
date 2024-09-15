@@ -79,7 +79,12 @@ export class AddCustomerModalComponent implements OnInit {
 
   fileImageList: NzUploadFile[] = [];
 
+
+  deletedCpIds: string[] = [];
+
   isSpinning: boolean = false;
+
+  attachmentDeletedIds: string[] = [];
 
   constructor(
     private modal: NzModalRef,
@@ -146,6 +151,41 @@ export class AddCustomerModalComponent implements OnInit {
 
       this.optionCustSelected = this.customerDetail.type;
 
+      const newUpdateFileList: NzUploadFile[] = this.customerDetail.attachments.map(attachment => ({
+        uid: attachment.id,
+        name: attachment.file_name,
+        status: 'done',
+        url: attachment.file_url,
+        response: {
+          id: attachment.id,
+          attachment_path: attachment.attachment_path
+        } 
+      }))
+
+      this.fileList = newUpdateFileList;
+
+      if(this.optionCustSelected === 'person'){
+
+        //mapping image for person
+        const updateContactPerson = this.customerDetail.contactPerson;
+        const updateProfilePictue = updateContactPerson.map((cp) => cp.cp_profile_picture)[0];
+        
+        const newUpdateFileListImage: NzUploadFile[] = updateProfilePictue.map(attachment => ({
+          uid: attachment.id,
+          name: attachment.file_name,
+          status: 'done',
+          url: attachment.file_url,
+          response: {
+            id: attachment.id,
+            attachment_path: attachment.attachment_path
+          } 
+        }))
+
+        this.fileImageList = newUpdateFileListImage;
+      }
+
+
+
       this.customerForm.patchValue({
         id: this.customerDetail.id,
         name: this.customerDetail.name,
@@ -172,8 +212,36 @@ export class AddCustomerModalComponent implements OnInit {
       while (this.contactPerson.length !== 0) {
         this.contactPerson.removeAt(0);
       }
-    
+
+
+
       this.customerDetail.contactPerson.forEach((contact) => {
+
+        //change cp attachments type
+        const updatedCpAttachments: NzUploadFile[] = contact.cp_attachments.map((attachment) => ({
+          uid: attachment.id,
+          name: attachment.file_name,
+          status: 'done',
+          url: attachment.file_url,
+          response: {
+            id: attachment.id,
+            attachment_path: attachment.attachment_path
+          },
+          isImageUrl: true
+        }))
+
+        const updatedCpProfileAttachments: NzUploadFile[] = contact.cp_profile_picture.map((attachment) => ({
+          uid: attachment.id,
+          name: attachment.file_name,
+          status: 'done',
+          url: attachment.file_url,
+          response: {
+            id: attachment.id,
+            attachment_path: attachment.attachment_path
+          },
+          isImageUrl: true
+        }))
+
         const updateCp = this.fb.group({
           cp_name: [contact.name, Validators.required],
           cp_email: [contact.email, Validators.required],
@@ -191,7 +259,9 @@ export class AddCustomerModalComponent implements OnInit {
           cp_pic: [contact.pic.map(item => item.pic_id), Validators.required],
           cp_is_pic_head: [contact.pic.filter(item => item.is_pic_head === 1)[0].pic_id, Validators.required],
           filteredCpListOfPic: [this.cpListOfPic],
-          filteredCity: []
+          filteredCity: [],
+          cp_attachments: [updatedCpAttachments],
+          cp_profile_picture: [updatedCpProfileAttachments][0]
         });
 
         this.cpValueChangeSubscriptions(updateCp);
@@ -299,6 +369,9 @@ export class AddCustomerModalComponent implements OnInit {
     if(index === 0){
       return;
     }
+
+    this.deletedCpIds = [...this.contactPerson.at(index).get('cp_id')?.value]
+
     this.contactPerson.removeAt(index);
   }
 
@@ -337,8 +410,6 @@ export class AddCustomerModalComponent implements OnInit {
         cp_attachments: pic.cp_attachments,
         cp_profile_picture: pic.cp_profile_picture
       }))
-
-      console.log(this.contactPersonComplete);
 
       if(this.customerForm.valid){
         const body = {
@@ -439,6 +510,7 @@ export class AddCustomerModalComponent implements OnInit {
     }
 
     if(this.modal_type === 'update'){
+
       this.contactPersonComplete = this.contactPerson.value.map((pic:any, i: number) => ({
         cp_id: pic.cp_id,
         cp_name: pic.cp_name,
@@ -484,10 +556,80 @@ export class AddCustomerModalComponent implements OnInit {
           postal_code: this.customerForm.get('postal_code')?.value,
           province: this.customerForm.get('province')?.value.toString(),
           city: this.customerForm.get('city')?.value.toString(),
-          country: this.customerForm.get('country')?.value
+          country: this.customerForm.get('country')?.value,
+          deletedCpIds: this.deletedCpIds,
+          attachmentDeleteIds: this.attachmentDeletedIds
         };
 
-        this.apiSvc.updateCustomer(body).subscribe({
+        const formData = new FormData();
+
+        //append basic information
+        Object.keys(body).forEach(key => {
+          if(typeof (body as any)[key] === 'object'){
+            formData.append(key, JSON.stringify((body as any)[key]))
+          } else {
+            formData.append(key, ( body as any )[key]);
+          }
+        })
+
+        //append cp
+        this.contactPersonComplete.forEach((contactPerson: any, index: number) => {
+          Object.keys(contactPerson).forEach(key => {
+            if (key !== 'cp_attachments' && key !== 'cp_profile_picture' && key !== 'cp_pic') {
+              formData.append(`contactPerson[${index}][${key}]`, contactPerson[key]);
+            }
+          })
+
+
+          //append cp profile picture
+          if (contactPerson.cp_profile_picture) {
+            formData.append(`contactPerson[${index}][cp_profile_picture][0]`, contactPerson.cp_profile_picture);
+          }
+
+          //append cp attachment
+          if (contactPerson.cp_attachments && contactPerson.cp_attachments.length > 0) {
+            contactPerson.cp_attachments.forEach((file: any, fileIndex: number) => {
+              formData.append(`contactPerson[${index}][cp_attachments][${fileIndex}]`, file);
+            });
+          }
+          
+
+          //append cp pic
+          formData.append(`contactPerson[${index}][cp_pic]`, JSON.stringify(contactPerson.cp_pic))
+
+        })
+
+
+        //append attachment for update
+        const attachments: { id: string; attachment_file: any }[] = [];
+        if (this.fileList.length > 0) {
+          this.fileList.forEach((file: any, index: number) => {
+            attachments.push({
+              id: !file['isImageUrl'] ? '' : file.uid, 
+              attachment_file: file
+            });
+          });
+        }
+
+        // Append the attachments array to formData
+        attachments.forEach((attachment, index) => {
+          formData.append(`attachments[${index}][id]`, attachment.id);
+          if (attachment.attachment_file) {
+            formData.append(`attachments[${index}][attachment_file]`, attachment.attachment_file);
+          }
+        });
+
+        //append profile picture person
+        if(this.fileImageList.length > 0){
+          this.fileImageList.forEach((file: any) => {
+            formData.append('profile_picture[]', file);
+          })
+        }
+
+
+        console.log('kekirim')
+
+        this.apiSvc.updateCustomer(formData).subscribe({
           next: (response) => {
             this.apiSvc.triggerRefreshCustomers();
           },
@@ -608,8 +750,10 @@ export class AddCustomerModalComponent implements OnInit {
   };
 
   removeDocument = (file: NzUploadFile): boolean => {
+
+    this.attachmentDeletedIds = this.fileList.filter(item => item.uid === file.uid).map(item => item.uid)
+
     this.fileList = this.fileList.filter(item => item.uid !== file.uid);
-    console.log(this.fileList)
     return true; // Return true to confirm the file removal
   };
 
