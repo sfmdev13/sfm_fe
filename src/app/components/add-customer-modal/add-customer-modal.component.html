@@ -105,7 +105,7 @@
             </div>
             <div class="col-md-6">
               <nz-form-item>
-                <nz-form-label [nzRequired]="true">Upload Document FIle</nz-form-label>
+                <nz-form-label [nzRequired]="true">Upload Document File</nz-form-label>
                 <nz-form-control>
                   <nz-upload
                     [(nzFileList)]="fileList"
@@ -487,6 +487,43 @@
               </div>
             </ng-container>
 
+            <ng-container *ngIf="optionCustSelected === 'person'">
+              <div class="row">
+                <nz-form-item>
+                  <nz-form-label [nzRequired]="true">Upload Customer Photo</nz-form-label>
+                  <nz-form-control>
+                    <nz-upload
+                      [(nzFileList)]="fileImageList"
+                      [nzBeforeUpload]="beforeUploadProfile"
+                      [nzShowUploadList]="true"
+                      [nzWithCredentials]="true"
+                      [nzLimit]="1"
+                      [nzSize]="5000"
+                      class="avatar-uploader"
+                      nzName="avatar"
+                      nzListType="picture-card"
+                      [nzPreview]="handlePreview"
+                      [nzShowButton]="fileImageList.length >= 0"
+                    >
+                      <div>
+                        <span nz-icon nzType="plus"></span>
+                        <div style="margin-top: 8px">Upload</div>
+                      </div>
+                    </nz-upload>
+                    <nz-modal
+                    [nzVisible]="previewVisible"
+                    [nzContent]="modalContent"
+                    [nzFooter]="null"
+                    (nzOnCancel)="previewVisible = false"
+                    >
+                      <ng-template #modalContent>
+                        <img [src]="previewImage" [ngStyle]="{ width: '100%' }" />
+                      </ng-template>
+                    </nz-modal>
+                  </nz-form-control>
+                </nz-form-item>
+              </div>
+            </ng-container>
 
             <nz-form-item>
               <nz-form-label nzFor="status" nzRequired>Status</nz-form-label>
