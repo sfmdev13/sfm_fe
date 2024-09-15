@@ -262,7 +262,8 @@ export class AddCustomerModalComponent implements OnInit {
           filteredCity: [],
           cp_attachments: [updatedCpAttachments],
           cp_profile_picture: [updatedCpProfileAttachments][0],
-          cp_attachmentDeleteIds: [[]]
+          cp_attachmentDeleteIds: [[]],
+          cp_profile_pictureDeleteIds: [[]]
         });
 
         this.cpValueChangeSubscriptions(updateCp);
@@ -320,7 +321,8 @@ export class AddCustomerModalComponent implements OnInit {
       cp_id: [''],
       cp_attachments: [[], [Validators.required]],
       cp_profile_picture: [[], [Validators.required]],
-      cp_attachmentDeleteIds: [[]]
+      cp_attachmentDeleteIds: [[]],
+      cp_profile_pictureDeleteIds: [[]]
 
     });
 
@@ -410,7 +412,8 @@ export class AddCustomerModalComponent implements OnInit {
         })),
         cp_loyal_customer_program_id: pic.cp_loyal_customer_program_id,
         cp_attachments: pic.cp_attachments,
-        cp_profile_picture: pic.cp_profile_picture
+        cp_profile_picture: pic.cp_profile_picture,
+        cp_profile_pictureDeleteIds: pic.cp_profile_pictureDeleteIds
       }))
 
       if(this.customerForm.valid){
@@ -534,7 +537,9 @@ export class AddCustomerModalComponent implements OnInit {
         })),
         cp_loyal_customer_program_id: pic.cp_loyal_customer_program_id,
         cp_attachments: pic.cp_attachments,
-        cp_attachmentDeleteIds: pic.cp_attachmentDeleteIds
+        cp_attachmentDeleteIds: pic.cp_attachmentDeleteIds,
+        cp_profile_pictureDeleteIds: pic.cp_profile_pictureDeleteIds,
+        cp_profile_picture: pic.cp_profile_picture
       }))
 
       if(this.customerForm.valid){
@@ -586,19 +591,26 @@ export class AddCustomerModalComponent implements OnInit {
 
           //append cp profile picture
           if (contactPerson.cp_profile_picture) {
-            formData.append(`contactPerson[${index}][cp_profile_picture][0]`, contactPerson.cp_profile_picture);
+            const profilePictures = {
+              id: contactPerson.cp_profile_picture.hasOwnProperty('response') ? contactPerson.cp_profile_picture.uid : '',
+              profile_picturefile: contactPerson.cp_profile_picture
+            };
+
+            console.log(profilePictures)
+            formData.append(`contactPerson[${index}][cp_profile_picture][0][id]`, profilePictures.id);
+            formData.append(`contactPerson[${index}][cp_profile_picture][0][profile_picturefile]`, profilePictures.profile_picturefile);
           }
 
           //append cp attachment
-          const attachments: { id: string; attachment_file: File }[] = [];
+          const attachments: { id: string; attachment_file: any }[] = [];
 
-          contactPerson.cp_attachments.forEach((file: NzUploadFile,) => {
+          contactPerson.cp_attachments.forEach((file: any) => {
             attachments.push({
               id: file.hasOwnProperty('response') ? file.uid : '',
-              attachment_file: file.originFileObj as File
+              attachment_file: file
             });
           });
-        
+          
           // Append the attachments array to formData
           attachments.forEach((attachment, fileIndex) => {
             formData.append(`contactPerson[${index}][cp_attachments][${fileIndex}][id]`, attachment.id);
@@ -610,7 +622,8 @@ export class AddCustomerModalComponent implements OnInit {
 
           //append cp pic
           formData.append(`contactPerson[${index}][cp_pic]`, JSON.stringify(contactPerson.cp_pic))
-
+          formData.append(`contactPerson[${index}][cp_pic_new]`, JSON.stringify(contactPerson.cp_pic_new))
+          formData.append(`contactPerson[${index}][cp_attachmentDeleteIds]`, JSON.stringify(contactPerson.attachmentDeleteIds))
         })
         
 
@@ -750,7 +763,10 @@ export class AddCustomerModalComponent implements OnInit {
   handleRemoveProfilePicture(index: number) {
     return (file: NzUploadFile): boolean => {
       const contactPersonForm = this.contactPerson.at(index);
-  
+
+      // For updating deleted attachment
+      contactPersonForm.get('cp_profile_pictureDeleteIds')?.setValue([file.uid]);
+
       contactPersonForm.get('cp_profile_picture')?.setValue([]);
     
       return true;
