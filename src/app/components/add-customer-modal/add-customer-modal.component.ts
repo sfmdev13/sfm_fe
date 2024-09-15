@@ -605,7 +605,7 @@ export class AddCustomerModalComponent implements OnInit {
         if (this.fileList.length > 0) {
           this.fileList.forEach((file: any, index: number) => {
             attachments.push({
-              id: !file['isImageUrl'] ? '' : file.uid, 
+              id: file.hasOwnProperty('response') ? file.uid : '', 
               attachment_file: file
             });
           });
@@ -626,20 +626,21 @@ export class AddCustomerModalComponent implements OnInit {
           })
         }
 
+        console.log(attachments);
+        console.log(this.attachmentDeletedIds);
+        console.log('masuk kesini')
 
-        console.log('kekirim')
-
-        this.apiSvc.updateCustomer(formData).subscribe({
-          next: (response) => {
-            this.apiSvc.triggerRefreshCustomers();
-          },
-          error: (error) => {
-            console.log(error)
-          },
-          complete: () => {
-            this.modal.destroy();
-          }
-        });
+        // this.apiSvc.updateCustomer(formData).subscribe({
+        //   next: (response) => {
+        //     this.apiSvc.triggerRefreshCustomers();
+        //   },
+        //   error: (error) => {
+        //     console.log(error)
+        //   },
+        //   complete: () => {
+        //     this.modal.destroy();
+        //   }
+        // });
       } else {
         Object.values(this.customerForm.controls).forEach(control => {
           if (control.invalid) {
