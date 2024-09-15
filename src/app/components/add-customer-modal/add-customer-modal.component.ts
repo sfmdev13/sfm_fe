@@ -261,7 +261,8 @@ export class AddCustomerModalComponent implements OnInit {
           filteredCpListOfPic: [this.cpListOfPic],
           filteredCity: [],
           cp_attachments: [updatedCpAttachments],
-          cp_profile_picture: [updatedCpProfileAttachments][0]
+          cp_profile_picture: [updatedCpProfileAttachments][0],
+          cp_attachmentDeleteIds: [[]]
         });
 
         this.cpValueChangeSubscriptions(updateCp);
@@ -319,6 +320,7 @@ export class AddCustomerModalComponent implements OnInit {
       cp_id: [''],
       cp_attachments: [[], [Validators.required]],
       cp_profile_picture: [[], [Validators.required]],
+      cp_attachmentDeleteIds: [[]]
 
     });
 
@@ -531,7 +533,8 @@ export class AddCustomerModalComponent implements OnInit {
           is_pic_head: p === pic.cp_is_pic_head
         })),
         cp_loyal_customer_program_id: pic.cp_loyal_customer_program_id,
-        cp_attachments: pic.cp_attachments
+        cp_attachments: pic.cp_attachments,
+        cp_attachmentDeleteIds: pic.cp_attachmentDeleteIds
       }))
 
       if(this.customerForm.valid){
@@ -587,17 +590,29 @@ export class AddCustomerModalComponent implements OnInit {
           }
 
           //append cp attachment
-          if (contactPerson.cp_attachments && contactPerson.cp_attachments.length > 0) {
-            contactPerson.cp_attachments.forEach((file: any, fileIndex: number) => {
-              formData.append(`contactPerson[${index}][cp_attachments][${fileIndex}]`, file);
+          const attachments: { id: string; attachment_file: File }[] = [];
+
+          contactPerson.cp_attachments.forEach((file: NzUploadFile,) => {
+            attachments.push({
+              id: file.hasOwnProperty('response') ? file.uid : '',
+              attachment_file: file.originFileObj as File
             });
-          }
+          });
+        
+          // Append the attachments array to formData
+          attachments.forEach((attachment, fileIndex) => {
+            formData.append(`contactPerson[${index}][cp_attachments][${fileIndex}][id]`, attachment.id);
+            if (attachment.attachment_file) {
+              formData.append(`contactPerson[${index}][cp_attachments][${fileIndex}][attachment_file]`, attachment.attachment_file);
+            }
+          });
           
 
           //append cp pic
           formData.append(`contactPerson[${index}][cp_pic]`, JSON.stringify(contactPerson.cp_pic))
 
         })
+        
 
 
         //append attachment for update
@@ -626,8 +641,7 @@ export class AddCustomerModalComponent implements OnInit {
           })
         }
 
-        console.log(attachments);
-        console.log(this.attachmentDeletedIds);
+        console.log(this.contactPersonComplete);
         console.log('masuk kesini')
 
         // this.apiSvc.updateCustomer(formData).subscribe({
@@ -752,7 +766,11 @@ export class AddCustomerModalComponent implements OnInit {
 
   removeDocument = (file: NzUploadFile): boolean => {
 
-    this.attachmentDeletedIds = this.fileList.filter(item => item.uid === file.uid).map(item => item.uid)
+    //for update deleted attachment
+    const matchingFile = this.fileList.find(item => item.uid === file.uid);
+    if (matchingFile) {
+      this.attachmentDeletedIds.push(matchingFile.uid);
+    }
 
     this.fileList = this.fileList.filter(item => item.uid !== file.uid);
     return true; // Return true to confirm the file removal
@@ -764,6 +782,16 @@ export class AddCustomerModalComponent implements OnInit {
 
       // Get the current file list
       const fileList = contactPersonForm.get('cp_attachments')?.value || [];
+
+      // For updating deleted attachment
+      const matchingFile = fileList
+        .filter((item: NzUploadFile) => item.uid === file.uid)
+        .map((item: any) => item.uid);
+
+      // Get or initialize 'cp_attachmentDeleteIds'
+      const currentDeleteIds = contactPersonForm.get('cp_attachmentDeleteIds')?.value || [];
+      const updatedDeleteIds = [...currentDeleteIds, ...matchingFile];
+      contactPersonForm.get('cp_attachmentDeleteIds')?.setValue(updatedDeleteIds);
 
       // Filter out the file to be removed
       const updatedFileList = fileList.filter((item: NzUploadFile) => item.uid !== file.uid);
