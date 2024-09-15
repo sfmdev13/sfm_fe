@@ -77,7 +77,9 @@ export class AddCustomerModalComponent implements OnInit {
 
   fileList: NzUploadFile[] = [];
 
-  fileImageList: NzUploadFile[] = []
+  fileImageList: NzUploadFile[] = [];
+
+  isSpinning: boolean = false;
 
   constructor(
     private modal: NzModalRef,
@@ -336,8 +338,9 @@ export class AddCustomerModalComponent implements OnInit {
         cp_profile_picture: pic.cp_profile_picture
       }))
 
+      console.log(this.contactPersonComplete);
+
       if(this.customerForm.valid){
-        console.log('masuk')
         const body = {
           name: this.customerForm.get('name')?.value,
           email: this.customerForm.get('email')?.value,
@@ -603,5 +606,29 @@ export class AddCustomerModalComponent implements OnInit {
     reader.readAsDataURL(file as any); // Convert file to base64
     reader.onload = () => callback(reader.result as string);
   };
+
+  removeDocument = (file: NzUploadFile): boolean => {
+    this.fileList = this.fileList.filter(item => item.uid !== file.uid);
+    console.log(this.fileList)
+    return true; // Return true to confirm the file removal
+  };
+
+  handleRemoveAttachmentCp(index: number) {
+    return (file: NzUploadFile): boolean => {
+      const contactPersonForm = this.contactPerson.at(index);
+
+      // Get the current file list
+      const fileList = contactPersonForm.get('cp_attachments')?.value || [];
+
+      // Filter out the file to be removed
+      const updatedFileList = fileList.filter((item: NzUploadFile) => item.uid !== file.uid);
+      
+      // Update the form control value
+      contactPersonForm.get('cp_attachments')?.setValue(updatedFileList);
+  
+      return true; // Return true to allow removal
+    }
+
+  }
 
 }

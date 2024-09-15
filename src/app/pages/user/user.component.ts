@@ -179,6 +179,8 @@ export class UserComponent implements OnInit {
           modal_type: 'add',
           listOfPic: this.listOfPic
         },
+        nzClosable: false,
+        nzMaskClosable: false,
         nzCentered: true,
         nzWidth: '900px'
       });
@@ -324,6 +326,8 @@ export class UserComponent implements OnInit {
         customerDetail: dataCustomer,
         listOfPic: this.listOfPic
       },
+      nzClosable: false,
+      nzMaskClosable: false,
       nzCentered: true,
       nzWidth: '900px'
     });
