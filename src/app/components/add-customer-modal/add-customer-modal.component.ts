@@ -336,6 +336,7 @@ export class AddCustomerModalComponent implements OnInit {
         cp_profile_picture: pic.cp_profile_picture
       }))
 
+
       if(this.customerForm.valid){
 
         const body = {
@@ -371,19 +372,43 @@ export class AddCustomerModalComponent implements OnInit {
         })
 
         //append cp
-        Object.keys(this.contactPersonComplete).forEach(key => {
-          if(typeof (this.contactPersonComplete as any)[key] === 'object'){
-            formData.append(key, JSON.stringify((body as any)[key]))
-          } else {
-            formData.append(key, ( body as any )[key]);
+        this.contactPersonComplete.forEach((contactPerson: any, index: number) => {
+          Object.keys(contactPerson).forEach(key => {
+            if (key !== 'cp_attachments' && key !== 'cp_profile_picture' && key !== 'cp_pic') {
+              formData.append(`contactPerson[${index}][${key}]`, contactPerson[key]);
+            }
+          })
+
+
+          //append cp profile picture
+          if (contactPerson.cp_profile_picture && contactPerson.cp_profile_picture.length > 0) {
+            contactPerson.cp_profile_picture.forEach((file: File, fileIndex: number) => {
+              if (file instanceof File) {
+                formData.append(`contactPerson[${index}][cp_profile_picture][${fileIndex}]`, file);
+              }
+            });
           }
+
+          //append cp attachment
+          if (contactPerson.cp_attachments && contactPerson.cp_attachments.length > 0) {
+            contactPerson.cp_attachments.forEach((file: any, fileIndex: number) => {
+              formData.append(`contactPerson[${index}][cp_attachments][${fileIndex}]`, file);
+            });
+          }
+          
+
+          //append cp pic
+          formData.append(`contactPerson[${index}][cp_pic]`, JSON.stringify(contactPerson.cp_pic))
+
+
         })
+
 
         //append attachment
         if (this.fileList.length > 0) {
-          for(let i = 0; i < this.fileList.length; i++){
-            formData.append('attachments[]', this.fileList[i] as any);
-          }
+          this.fileList.forEach((file: any) => {
+            formData.append('attachments[]', file);
+          });
         }
 
         this.apiSvc.createCustomer(formData).subscribe({
@@ -400,6 +425,8 @@ export class AddCustomerModalComponent implements OnInit {
       } else {
         Object.values(this.customerForm.controls).forEach(control => {
           if (control.invalid) {
+            console.log('Invalid Control:', control);
+            console.log('Errors:', control.errors);
             control.markAsDirty();
             control.updateValueAndValidity({ onlySelf: true });
           }
@@ -521,13 +548,16 @@ export class AddCustomerModalComponent implements OnInit {
     return (file: NzUploadFile): boolean => {
       const contactPersonForm = this.contactPerson.at(index);
 
-      const fileList = contactPersonForm.get('cp_profile_picture')?.value || [];
-      contactPersonForm.get('cp_profile_picture')?.setValue([...fileList, file]);
+      const reader = new FileReader();
+      reader.readAsDataURL(file as any);
+      reader.onload = () => {
+        file.url = reader.result as string;
+        contactPersonForm.get('cp_profile_picture')?.setValue(file);
+      };
   
       return false;
     };
   }
-
   previewImage: string | undefined = '';
   previewVisible = false;
 
@@ -538,5 +568,23 @@ export class AddCustomerModalComponent implements OnInit {
     this.previewImage = file.url || file['preview'];
     this.previewVisible = true;
   };
+
+  getValidProfilePicture(file: NzUploadFile | null): NzUploadFile[] {
+    if (file && file.url) {
+      return [file];
+    }
+    return [];
+  }
+
+  handleRemoveProfilePicture(index: number) {
+    return (file: NzUploadFile): boolean => {
+      const contactPersonForm = this.contactPerson.at(index);
+  
+      contactPersonForm.get('cp_profile_picture')?.setValue([]);
+    
+      return true;
+    }
+
+  }
 
 }
