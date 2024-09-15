@@ -7,13 +7,13 @@
                 <nz-select nzMode="tags" nzPlaceHolder="Select PIC" formControlName="pic">
                     <nz-option
                     *ngFor="let pic of listOfPic"
-                        [nzLabel]="pic.name" 
+                        [nzLabel]="pic.name"
                         [nzValue]="pic.pic_id"
                     ></nz-option>
                 </nz-select>
         </nz-form-item>
 
-          
+
         <nz-form-item>
             <nz-form-label nzRequired class="fw-semibold" nzFor="is_pic_internal" nzRequired>Head of PIC SFM</nz-form-label>
             <nz-form-control>
@@ -235,7 +235,7 @@
               <div class="d-flex mb-2">
                 <p class="m-0 p-0 fw-semibold">Contact Person</p>
               </div>
-  
+
               <div formArrayName="contactPerson">
                 <div class="mt-3" *ngFor="let contact of contactPerson.controls; let i = index" [formGroupName]="i">
                   <nz-divider [nzText]="'Person ' + (i + 1)" nzOrientation="left"></nz-divider>
@@ -257,12 +257,13 @@
                           <nz-form-label [nzRequired]="true">Upload Contact Photo</nz-form-label>
                           <nz-form-control>
                             <nz-upload
+                            [nzBeforeUpload]="beforeUploadCpProfile(i)"
                             class="avatar-uploader"
                             nzName="avatar"
                             nzListType="picture-card"
-                            (nzFileList)="contact.get('cp_attachments')?.value"
+                            (nzFileList)="contact.get('cp_profile_picture')?.value"
                             [nzPreview]="handlePreview"
-                            [nzShowButton]="contact.get('cp_attachments')?.value.length < 3"
+                            [nzShowButton]="contact.get('cp_profile_picture')?.value.length <= 1"
                           >
                             <div>
                               <span nz-icon nzType="plus"></span>
@@ -355,7 +356,7 @@
                             </nz-form-control>
                           </nz-form-item>
                         </ng-container>
-          
+
                         <ng-template #provinceLoad>
                           <nz-form-item>
                             <nz-form-label nzRequired nzFor="cp_province" nzRequired>Province</nz-form-label>
@@ -366,7 +367,7 @@
                           </nz-form-item>
                         </ng-template>
                       </div>
-          
+
                       <div class="col-4">
                         <ng-container>
                           <nz-form-item>
@@ -398,7 +399,7 @@
                           </nz-form-control>
                         </nz-form-item>
                       </div>
-                      
+
                       <div class="col-4">
                         <nz-form-item>
                           <nz-form-label nzRequired>Contact Address</nz-form-label>
@@ -445,7 +446,7 @@
                               <nz-select nzMode="tags" nzPlaceHolder="Tag Mode" formControlName="cp_pic">
                                   <nz-option
                                   *ngFor="let pic of cpListOfPic"
-                                      [nzLabel]="pic.name" 
+                                      [nzLabel]="pic.name"
                                       [nzValue]="pic.pic_id"
                                   ></nz-option>
                               </nz-select>
@@ -477,7 +478,7 @@
 
                 </div>
               </div>
-  
+
               <div class="col-md-3 mx-auto mt-4">
                 <nz-form-item>
                   <button nz-button nzType="primary" (click)="addContactPerson()">Add Person</button>

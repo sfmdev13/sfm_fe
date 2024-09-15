@@ -13,7 +13,7 @@ const getBase64 = (file: File): Promise<string | ArrayBuffer | null> =>
     reader.onload = () => resolve(reader.result);
     reader.onerror = error => reject(error);
   });
-  
+
 @Component({
   selector: 'app-add-customer-modal',
   templateUrl: './add-customer-modal.component.html',
@@ -28,7 +28,7 @@ export class AddCustomerModalComponent implements OnInit {
   provinces$!: Observable<any>;
 
   pic_id = localStorage.getItem('pic_id')!;
-  
+
   customerForm = this.fb.group({
     id: [null],
     name: ['', [Validators.required]],
@@ -57,7 +57,7 @@ export class AddCustomerModalComponent implements OnInit {
   optionCustSelected = 'company'
 
   catContact$!:Observable<IRootCatContact>;
-  
+
   loyalCustCat$!: Observable<IRootCatContact>;
   customerFirm$!: Observable<IRootCatContact>;
   customerSector$!: Observable<IRootCatContact>;
@@ -67,7 +67,7 @@ export class AddCustomerModalComponent implements OnInit {
   cpListOfPic: any[] = [];
 
   filteredCpListOfPic: any[] = [];
- 
+
   picComplete: any;
   contactPersonComplete: any;
 
@@ -85,14 +85,14 @@ export class AddCustomerModalComponent implements OnInit {
     private apiSvc: ApiService
   ) {}
 
-  ngOnInit(): void { 
+  ngOnInit(): void {
 
     this.provinces$ = this.apiSvc.getProvinces().pipe(
       tap(p => {
         this.provinceList = p;
       })
     );
-    
+
     this.catContact$ = this.apiSvc.getCategoryCP();
     this.loyalCustCat$ = this.apiSvc.getLoyalCustomer();
     this.customerSector$ = this.apiSvc.getCustomerSector();
@@ -170,7 +170,7 @@ export class AddCustomerModalComponent implements OnInit {
       while (this.contactPerson.length !== 0) {
         this.contactPerson.removeAt(0);
       }
-    
+
       this.customerDetail.contactPerson.forEach((contact) => {
         const updateCp = this.fb.group({
           cp_name: [contact.name, Validators.required],
@@ -198,14 +198,14 @@ export class AddCustomerModalComponent implements OnInit {
           const selectedPicId  = updateCp.get('cp_pic')?.value
           return selectedPicId.includes(pic.pic_id);
         });
-    
+
         updateCp.get('filteredCpListOfPic')?.setValue(filteredList);
 
 
         this.apiSvc.getRegenciesByProvince(parseInt(contact.province)).subscribe((res) => {
           updateCp.get('filteredCity')?.setValue(res, { emitEvent: false });
         })
-    
+
         this.contactPerson.push(updateCp);
       });
 
@@ -304,7 +304,7 @@ export class AddCustomerModalComponent implements OnInit {
   destroyModal(): void {
     this.modal.destroy();
   }
-  
+
 
   submitForm(){
 
@@ -335,7 +335,7 @@ export class AddCustomerModalComponent implements OnInit {
         cp_attachments: pic.cp_attachments,
         cp_profile_picture: pic.cp_profile_picture
       }))
-
+      console.log(this.customerForm.value)
       if(this.customerForm.valid){
 
         const body = {
@@ -356,34 +356,54 @@ export class AddCustomerModalComponent implements OnInit {
           postal_code: this.customerForm.get('postal_code')?.value,
           province: this.customerForm.get('province')?.value.toString(),
           city: this.customerForm.get('city')?.value.toString(),
-          country: this.customerForm.get('country')?.value
+          country: this.customerForm.get('country')?.value,
+          contactPerson: this.contactPersonComplete
         };
 
         const formData = new FormData();
 
         //append basic information
         Object.keys(body).forEach(key => {
-          if(typeof (body as any)[key] === 'object'){
+          if(typeof (body as any)[key] === 'object' && key !== 'contactPerson'){
             formData.append(key, JSON.stringify((body as any)[key]))
           } else {
             formData.append(key, ( body as any )[key]);
           }
         })
 
-        //append cp
-        Object.keys(this.contactPersonComplete).forEach(key => {
-          if(typeof (this.contactPersonComplete as any)[key] === 'object'){
-            formData.append(key, JSON.stringify((body as any)[key]))
-          } else {
-            formData.append(key, ( body as any )[key]);
+        this.contactPersonComplete.forEach((contactPerson: any, index: number) => {
+          // Append non-file data for contact persons
+          Object.keys(contactPerson).forEach(key => {
+            if (key !== 'cp_attachments' && key !== 'cp_profile_picture' && key !== 'cp_pic') {
+              formData.append(`contactPerson[${index}][${key}]`, contactPerson[key]);
+            }
+          });
+
+          if (contactPerson.cp_profile_picture && contactPerson.cp_profile_picture.length > 0) {
+            contactPerson.cp_profile_picture.forEach((file: File, fileIndex: number) => {
+              if (file instanceof File) {
+                formData.append(`contactPerson[${index}][cp_profile_picture][${fileIndex}]`, file);
+              }
+            });
           }
-        })
+
+          // Append cp_pic without stringifying it
+          formData.append(`contactPerson[${index}][cp_pic]`, JSON.stringify(contactPerson.cp_pic));
+
+          // Append cp_attachments as file(s)
+          if (contactPerson.cp_attachments && contactPerson.cp_attachments.length > 0) {
+            contactPerson.cp_attachments.forEach((file: any, fileIndex: number) => {
+              formData.append(`contactPerson[${index}][cp_attachments][${fileIndex}]`, file);
+            });
+          }
+
+        });
 
         //append attachment
         if (this.fileList.length > 0) {
-          for(let i = 0; i < this.fileList.length; i++){
-            formData.append('attachments[]', this.fileList[i] as any);
-          }
+          this.fileList.forEach((file: any, index: number) => {
+            formData.append('attachments[]', file);
+          });
         }
 
         this.apiSvc.createCustomer(formData).subscribe({
@@ -400,6 +420,8 @@ export class AddCustomerModalComponent implements OnInit {
       } else {
         Object.values(this.customerForm.controls).forEach(control => {
           if (control.invalid) {
+            console.log('Invalid Control:', control);
+            console.log('Errors:', control.errors);
             control.markAsDirty();
             control.updateValueAndValidity({ onlySelf: true });
           }
@@ -509,10 +531,10 @@ export class AddCustomerModalComponent implements OnInit {
     return (file: NzUploadFile): boolean => {
 
       const contactPersonForm = this.contactPerson.at(index);
-  
+
       const fileList = contactPersonForm.get('cp_attachments')?.value || [];
       contactPersonForm.get('cp_attachments')?.setValue([...fileList, file]);
-  
+
       return false;
     };
   }
@@ -523,7 +545,7 @@ export class AddCustomerModalComponent implements OnInit {
 
       const fileList = contactPersonForm.get('cp_profile_picture')?.value || [];
       contactPersonForm.get('cp_profile_picture')?.setValue([...fileList, file]);
-  
+
       return false;
     };
   }
@@ -538,5 +560,6 @@ export class AddCustomerModalComponent implements OnInit {
     this.previewImage = file.url || file['preview'];
     this.previewVisible = true;
   };
+
 
 }
