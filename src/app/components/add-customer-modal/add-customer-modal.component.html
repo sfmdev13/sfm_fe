@@ -244,29 +244,23 @@
                       <span nz-icon (click)="removeContactPerson(i)" class="remove-button" nzType="minus-circle" nzTheme="outline"></span>
                     </div>
                     <div class="row align-items-center ">
-                      <div class="col-4">
-                        <nz-form-item>
-                          <nz-form-label nzRequired>Contact Name</nz-form-label>
-                          <nz-form-control>
-                            <input nz-input formControlName="cp_name" />
-                          </nz-form-control>
-                        </nz-form-item>
-                      </div>
-                      <div class="col-4">
+                      <div class="col-12">
                         <nz-form-item>
                           <nz-form-label [nzRequired]="true">Upload Contact Photo</nz-form-label>
                           <nz-form-control>
                             <nz-upload
+                            [nzBeforeUpload]="beforeUploadCpProfile(i)"
                             class="avatar-uploader"
                             nzName="avatar"
                             nzListType="picture-card"
-                            (nzFileList)="contact.get('cp_attachments')?.value"
+                            [nzFileList]="getValidProfilePicture(contact.get('cp_profile_picture')?.value)"
                             [nzPreview]="handlePreview"
-                            [nzShowButton]="contact.get('cp_attachments')?.value.length < 3"
+                            [nzShowButton]="getValidProfilePicture(contact.get('cp_profile_picture')?.value).length <= 0"
+                            [nzRemove]="handleRemoveProfilePicture(i)"
                           >
                             <div>
                               <span nz-icon nzType="plus"></span>
-                              <div style="margin-top: 8px">Upload</div>
+                              <div style="margin-top: 8px"></div>
                             </div>
                           </nz-upload>
                           <nz-modal
@@ -279,6 +273,14 @@
                               <img [src]="previewImage" [ngStyle]="{ width: '100%' }" />
                             </ng-template>
                           </nz-modal>
+                          </nz-form-control>
+                        </nz-form-item>
+                      </div>
+                      <div class="col-4">
+                        <nz-form-item>
+                          <nz-form-label nzRequired>Contact Name</nz-form-label>
+                          <nz-form-control>
+                            <input nz-input formControlName="cp_name" />
                           </nz-form-control>
                         </nz-form-item>
                       </div>
