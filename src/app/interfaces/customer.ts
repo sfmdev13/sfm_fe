@@ -32,6 +32,7 @@ export interface IDataCustomer {
     customer_sector: IDataCategories
     customer_firm: IDataCategories
     wa_phone: string;
+    attachments: IAttachments[];
 
 }
 
@@ -59,9 +60,11 @@ export interface IContactPerson {
     city: string
     country: string
     postal_code: string
-    loyal_customer_program_id: number,
-    cp_loyal_customer: IDataCategories,
+    loyal_customer_program_id: number
+    cp_loyal_customer: IDataCategories
     pic: IPicCp[]
+    cp_attachments: IAttachments[]
+    cp_profile_picture: IAttachments[]
 }
 
 export interface IMetaResponse {
@@ -95,4 +98,13 @@ export interface IPagination{
     per_page: number;
     total: number;
     last_page: number
+}
+
+
+interface IAttachments{
+    id: string;
+    attachment_path: string;
+    type: string;
+    file_name: string;
+    file_url: string;
 }
