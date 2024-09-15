@@ -389,7 +389,7 @@ export class AddCustomerModalComponent implements OnInit {
 
     this.picComplete = this.customerForm.get('pic')!.value.map((pic_id: any) => ({
       pic_id: pic_id,
-      is_pic_internal: pic_id === this.customerForm.get('is_pic_internal')!.value
+      is_pic_internal: pic_id === this.customerForm.get('is_pic_internal')!.value ? 1 : 0
     }));
 
     if(this.modal_type === 'add'){
@@ -405,10 +405,10 @@ export class AddCustomerModalComponent implements OnInit {
         cp_city: pic.cp_city.toString(),
         cp_category_id: pic.cp_category_id,
         cp_nik: '123',
-        is_pic_company: pic.is_pic_company,
+        is_pic_company: pic.is_pic_company ? 1 : 0,
         cp_pic: pic.cp_pic.map((p: any) => ({
           pic_id: p,
-          is_pic_head: p === pic.cp_is_pic_head
+          is_pic_head: p === pic.cp_is_pic_head ? 1 : 0
         })),
         cp_loyal_customer_program_id: pic.cp_loyal_customer_program_id,
         cp_attachments: pic.cp_attachments,
@@ -705,11 +705,12 @@ export class AddCustomerModalComponent implements OnInit {
 
   beforeUploadProfile = (file: NzUploadFile): boolean => {
 
-    if(this.optionCustSelected === 'person'){
+    if(this.modal_type === 'update'){
       const contactPersonForm = this.contactPerson.at(0);
 
       contactPersonForm.get('cp_profile_picture')?.setValue(file);
     }
+
 
     this.getBase64(file, (img: string) => {
       file.url = img; // Set the base64 string as the file's URL for preview
