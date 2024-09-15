@@ -412,8 +412,7 @@ export class AddCustomerModalComponent implements OnInit {
         })),
         cp_loyal_customer_program_id: pic.cp_loyal_customer_program_id,
         cp_attachments: pic.cp_attachments,
-        cp_profile_picture: pic.cp_profile_picture,
-        cp_profile_pictureDeleteIds: pic.cp_profile_pictureDeleteIds
+        cp_profile_picture: pic.cp_profile_picture
       }))
 
       if(this.customerForm.valid){
@@ -583,7 +582,7 @@ export class AddCustomerModalComponent implements OnInit {
         //append cp
         this.contactPersonComplete.forEach((contactPerson: any, index: number) => {
           Object.keys(contactPerson).forEach(key => {
-            if (key !== 'cp_attachments' && key !== 'cp_profile_picture' && key !== 'cp_pic') {
+            if (!['cp_attachments','cp_profile_picture', 'cp_attachmentDeleteIds', 'cp_attachmentDeleteIds' ].includes(key)) {
               formData.append(`contactPerson[${index}][${key}]`, contactPerson[key]);
             }
           })
@@ -595,8 +594,6 @@ export class AddCustomerModalComponent implements OnInit {
               id: contactPerson.cp_profile_picture.hasOwnProperty('response') ? contactPerson.cp_profile_picture.uid : '',
               profile_picturefile: contactPerson.cp_profile_picture
             };
-
-            console.log(profilePictures)
             formData.append(`contactPerson[${index}][cp_profile_picture][0][id]`, profilePictures.id);
             formData.append(`contactPerson[${index}][cp_profile_picture][0][profile_picturefile]`, profilePictures.profile_picturefile);
           }
@@ -618,12 +615,12 @@ export class AddCustomerModalComponent implements OnInit {
               formData.append(`contactPerson[${index}][cp_attachments][${fileIndex}][attachment_file]`, attachment.attachment_file);
             }
           });
-          
-
+        
           //append cp pic
           formData.append(`contactPerson[${index}][cp_pic]`, JSON.stringify(contactPerson.cp_pic))
           formData.append(`contactPerson[${index}][cp_pic_new]`, JSON.stringify(contactPerson.cp_pic_new))
-          formData.append(`contactPerson[${index}][cp_attachmentDeleteIds]`, JSON.stringify(contactPerson.attachmentDeleteIds))
+          formData.append(`contactPerson[${index}][cp_attachmentDeleteIds]`, JSON.stringify(contactPerson.cp_attachmentDeleteIds))
+          formData.append(`contactPerson[${index}][cp_profile_pictureDeleteIds]`, JSON.stringify(contactPerson.cp_profile_pictureDeleteIds))
         })
         
 
@@ -707,6 +704,13 @@ export class AddCustomerModalComponent implements OnInit {
   };
 
   beforeUploadProfile = (file: NzUploadFile): boolean => {
+
+    if(this.optionCustSelected === 'person'){
+      const contactPersonForm = this.contactPerson.at(0);
+
+      contactPersonForm.get('cp_profile_picture')?.setValue(file);
+    }
+
     this.getBase64(file, (img: string) => {
       file.url = img; // Set the base64 string as the file's URL for preview
       this.fileImageList = [file]; // Replace the file list with the new file
@@ -820,4 +824,9 @@ export class AddCustomerModalComponent implements OnInit {
 
   }
 
+  removeProfilePersonHandler = (file: NzUploadFile): boolean => {
+    const contactPersonForm = this.contactPerson.at(0);
+    contactPersonForm.get('cp_profile_pictureDeleteIds')?.setValue([file.uid]);
+    return true; // Stop the auto upload
+  };
 }
