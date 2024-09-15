@@ -105,14 +105,14 @@
             </div>
             <div class="col-md-6">
               <nz-form-item>
-                <nz-form-label [nzRequired]="true">Upload Document File</nz-form-label>
+                <nz-form-label [nzRequired]="true" class="fw-semibold">Upload Document File</nz-form-label>
                 <nz-form-control>
                   <nz-upload
                     [(nzFileList)]="fileList"
                     [nzBeforeUpload]="beforeUpload"
                     [nzShowUploadList]="true"
                     [nzWithCredentials]="true"
-                    [nzLimit]="3"
+                    [nzShowButton]="fileList.length < 3"
                     [nzSize]="5000"
                   >
                     <button nz-button>
@@ -490,7 +490,7 @@
             <ng-container *ngIf="optionCustSelected === 'person'">
               <div class="row">
                 <nz-form-item>
-                  <nz-form-label [nzRequired]="true">Upload Customer Photo</nz-form-label>
+                  <nz-form-label [nzRequired]="true" class="fw-semibold">Upload Customer Photo</nz-form-label>
                   <nz-form-control>
                     <nz-upload
                       [(nzFileList)]="fileImageList"
@@ -503,7 +503,7 @@
                       nzName="avatar"
                       nzListType="picture-card"
                       [nzPreview]="handlePreview"
-                      [nzShowButton]="fileImageList.length >= 0"
+                      [nzShowButton]="fileImageList.length <= 0"
                     >
                       <div>
                         <span nz-icon nzType="plus"></span>
@@ -526,7 +526,7 @@
             </ng-container>
 
             <nz-form-item>
-              <nz-form-label nzFor="status" nzRequired>Status</nz-form-label>
+              <nz-form-label nzFor="status" nzRequired class="fw-semibold">Status</nz-form-label>
               <nz-form-control>
                 <nz-switch nzSize="default" id="status" formControlName="status" nzCheckedChildren="active" nzUnCheckedChildren="inactive"></nz-switch>
               </nz-form-control>
