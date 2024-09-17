@@ -158,9 +158,20 @@ export class ApiService {
       Authorization: `Bearer ${token}`,
     });
 
-    const url = `${this.apiUrl}/filter-supplier?type=${params.type}&status=${params.status}&sort_by=${params.sort_by}&page=${page}&per_page=${per_page}`
+    let httpParams = new HttpParams()
+    .set('type', params.type)
+    .set('status', params.status)
+    .set('sort_by', params.sort_by)
+    .set('supplier_product', params.supplier_product)
+    .set('supplier_source', params.supplier_source)
+    .set('province', params.province)
+    .set('city', params.city)
+    .set('page', page.toString())
+    .set('per_page', per_page.toString());
 
-    return this.http.post<IRootSupplier>(url, {}, { headers });
+    const url = `${this.apiUrl}/filter-supplier`
+
+    return this.http.post<IRootSupplier>(url, {}, { headers, params: httpParams });
   }
 
   filterEmployee(params: any, page: number, per_page: number): Observable<IRootEmployee>{
