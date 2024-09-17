@@ -1,6 +1,8 @@
 <div>
     <form nz-form nzLayout="vertical" [formGroup]="filterSupplierForm" (ngSubmit)="submitForm()">
-        <nz-form-item>
+      <div class="row">
+        <div class="col-md-6">
+          <nz-form-item>
             <nz-form-label nzFor="type">Type</nz-form-label>
             <nz-form-control>
               <nz-select
@@ -12,8 +14,10 @@
                 <nz-option nzValue=""  nzLabel="All Type"></nz-option>
               </nz-select>
             </nz-form-control>
-        </nz-form-item>
-        <nz-form-item>
+          </nz-form-item>
+        </div>
+        <div class="col-md-6">
+          <nz-form-item>
             <nz-form-label nzFor="status">Status</nz-form-label>
             <nz-form-control>
               <nz-select
@@ -25,8 +29,74 @@
                 <nz-option [nzValue]="0" nzLabel="Inactive"></nz-option>
               </nz-select>
             </nz-form-control>
-        </nz-form-item>
-        <nz-form-item>
+          </nz-form-item>
+        </div>
+        <div class="col-md-6">
+          <nz-form-item>
+            <nz-form-label nzRequired nzFor="supplier_product">Supplier Product</nz-form-label>
+            <nz-form-control>
+              <ng-container *ngIf="suppProduct$ | async as suppProduct; else prodLoad">
+                <nz-select nzPlaceHolder="Select Category" formControlName="supplier_product">
+                  <nz-option nzValue="" nzLabel="All" ></nz-option>
+                  <ng-container *ngFor="let cust of suppProduct.data">
+                    <nz-option [nzLabel]="cust.name" [nzValue]="cust.id"></nz-option>
+                  </ng-container>
+                </nz-select>
+              </ng-container>
+              <ng-template #prodLoad>
+                <nz-select nzDisabled nzPlaceHolder="Select Category" formControlName="supplier_product">
+                </nz-select>
+              </ng-template>
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+        <div class="col-md-6">
+          <nz-form-item>
+            <nz-form-label nzRequired nzFor="supplier_source">Supplier Source </nz-form-label>
+            <nz-form-control>
+              <ng-container *ngIf="suppSource$ | async as suppSource; else suppLoad">
+                <nz-select nzPlaceHolder="Select Category" formControlName="supplier_source">
+                  <nz-option nzValue="" nzLabel="All" ></nz-option>
+                  <ng-container *ngFor="let supp of suppSource.data">
+                    <nz-option [nzLabel]="supp.name" [nzValue]="supp.id"></nz-option>
+                  </ng-container>
+                </nz-select>
+              </ng-container>
+              <ng-template #suppLoad>
+                <nz-select nzDisabled nzPlaceHolder="Select Category" formControlName="supplier_source">
+                </nz-select>
+              </ng-template>
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+        <div class="col-md-6">
+          <nz-form-item>
+            <nz-form-label nzRequired nzFor="province">Province</nz-form-label>
+            <nz-form-control>
+                <nz-select nzPlaceHolder="Select Category" formControlName="province">
+                  <nz-option nzValue="" nzLabel="All" ></nz-option>
+                  <ng-container *ngFor="let prov of province_list">
+                    <nz-option [nzLabel]="prov.province" [nzValue]="prov.id"></nz-option>
+                  </ng-container>
+                </nz-select>
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+        <div class="col-md-6">
+          <nz-form-item>
+            <nz-form-label nzRequired nzFor="city">City</nz-form-label>
+            <nz-form-control>
+                <nz-select nzPlaceHolder="Select Category" formControlName="city">
+                  <nz-option nzValue="" nzLabel="All" ></nz-option>
+                  <ng-container *ngFor="let city of city_list">
+                    <nz-option [nzLabel]="city.regency" [nzValue]="city.id"></nz-option>
+                  </ng-container>
+                </nz-select>
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+        <div class="col-12">
+          <nz-form-item>
             <nz-form-label nzFor="sort_by">Sort by</nz-form-label>
             <nz-form-control >
                 <nz-radio-group id="sort_by" formControlName="sort_by" >
@@ -34,7 +104,9 @@
                     <label nz-radio nzValue="desc">DESC</label>
                 </nz-radio-group>
             </nz-form-control>
-        </nz-form-item>
+          </nz-form-item>
+        </div>
+      </div>
     </form>
 </div>
 

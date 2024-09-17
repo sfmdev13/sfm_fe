@@ -404,7 +404,7 @@ export class AddSupplierModalComponent implements OnInit {
 
     this.picComplete = this.supplierForm.get('pic')!.value.map((pic_id: any) => ({
       pic_id: pic_id,
-      is_pic_internal: pic_id === this.supplierForm.get('is_pic_internal')!.value
+      is_pic_internal: pic_id === this.supplierForm.get('is_pic_internal')!.value ? 1 : 0
     }));
 
     if(this.supplierForm.valid){
@@ -530,11 +530,11 @@ export class AddSupplierModalComponent implements OnInit {
           cp_province: pic.cp_province.toString(),
           cp_city: pic.cp_city.toString(),
           cp_nik: '123',
-          is_pic_company: pic.is_pic_company,
+          is_pic_company: pic.is_pic_company ? 1 : 0,     
           cp_pic: this.supplierDetail.contact_person.map(item => item.pic)[i],
           cp_pic_new: pic.cp_pic.map((p: any) => ({
             pic_id: p,
-            is_pic_head: p === pic.cp_is_pic_head
+            is_pic_head: p === pic.cp_is_pic_head ? 1 : 0
           })),
           cp_attachments: pic.cp_attachments,
           cp_attachmentDeleteIds: pic.cp_attachmentDeleteIds,
@@ -543,6 +543,7 @@ export class AddSupplierModalComponent implements OnInit {
         }))   
 
         const body = {
+          id: this.supplierForm.get('id')?.value,
           name: this.supplierForm.get('name')?.value,
           email: this.supplierForm.get('email')?.value,
           nib: this.supplierForm.get('nib')?.value,
@@ -554,7 +555,7 @@ export class AddSupplierModalComponent implements OnInit {
           website: this.supplierForm.get('website')?.value,
           maps_url: this.supplierForm.get('maps_url')?.value,
           contactPerson: this.contactPersonComplete,
-          pic: this.picComplete,
+          pic: this.supplierDetail.pic,
           pic_new: this.picComplete,
           supplier_product_id: this.supplierDetail.supplier_products.map(item => item.product_id),
           supplier_products_new: this.supplierForm.get('supplier_product_id')?.value,
