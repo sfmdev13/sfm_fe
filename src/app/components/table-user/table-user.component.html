@@ -137,7 +137,7 @@
                 <td>{{ data.email }}</td>
                 <td class="text-capitalize">{{ data.type }}</td>
                 <td>{{ data.phone }}</td>
-                <td>{{ data.address }}</td>
+                <td><a [href]="data.maps_url" target="_blank" rel="noopener noreferrer">{{ data.address }}</a></td>
                 <td>
                     <nz-tag [nzColor]="data.status ? '#1DA32C' : '#f50'">{{ data.status ? 'Active' : 'Inactive' }}</nz-tag>
                 </td>
@@ -145,7 +145,7 @@
                     <ng-container *ngFor="let pic of data.pic; last as isLast">{{ pic.name }}<span *ngIf="!isLast">, </span></ng-container>
                 </td>
                 <td>
-                    <ng-container *ngFor="let cp of data.contactPerson; last as isLast">{{ cp.name }}<span *ngIf="!isLast">, </span></ng-container>
+                    <ng-container *ngFor="let cp of data.contact_person; last as isLast">{{ cp.cp_name }}<span *ngIf="!isLast">, </span></ng-container>
                 </td>
                 <td>
                     <div class="d-flex gap-3">
