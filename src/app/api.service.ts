@@ -1,4 +1,4 @@
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, map, Observable, tap } from 'rxjs';
 import { environment } from 'src/environments/environment';
@@ -135,9 +135,21 @@ export class ApiService {
       Authorization: `Bearer ${token}`,
     });
 
-    const url = `${this.apiUrl}/filter-customer?type=${params.type}&status=${params.status}&sort_by=${params.sort_by}&page=${page}&per_page=${per_page}`
+    let httpParams = new HttpParams()
+    .set('type', params.type)
+    .set('status', params.status)
+    .set('sort_by', params.sort_by)
+    .set('loyal_customer', params.loyal_customer)
+    .set('customer_sector', params.customer_sector)
+    .set('customer_firm', params.customer_firm)
+    .set('province', params.province)
+    .set('city', params.city)
+    .set('page', page.toString())
+    .set('per_page', per_page.toString());
 
-    return this.http.post<IRootCustomer>(url, {}, { headers });
+    const url = `${this.apiUrl}/filter-customer`
+
+    return this.http.post<IRootCustomer>(url, {}, { headers, params: httpParams });
   }
 
   filterSupplier(params: any, page: number, per_page: number): Observable<IRootSupplier>{
