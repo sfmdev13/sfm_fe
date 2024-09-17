@@ -165,7 +165,7 @@ export class AddSupplierModalComponent implements OnInit {
 
       if(this.optionCustSelected === 'person'){
         //mapping image for person
-        const updateContactPerson = this.supplierDetail.contactPerson;
+        const updateContactPerson = this.supplierDetail.contact_person;
         const updateProfilePictue = updateContactPerson.map((cp) => cp.cp_profile_picture)[0];
         
         const newUpdateFileListImage: NzUploadFile[] = updateProfilePictue.map(attachment => ({
@@ -205,7 +205,7 @@ export class AddSupplierModalComponent implements OnInit {
         this.contactPerson.removeAt(0);
       }
 
-      this.supplierDetail.contactPerson.forEach((contact) => {
+      this.supplierDetail.contact_person.forEach((contact) => {
 
         //change cp attachments type
         const updatedCpAttachments: NzUploadFile[] = contact.cp_attachments.map((attachment) => ({
@@ -234,17 +234,17 @@ export class AddSupplierModalComponent implements OnInit {
 
 
         const updateCp = this.fb.group({
-          cp_name: [contact.name, Validators.required],
-          cp_email: [contact.email, Validators.required],
-          cp_phone: [contact.phone, Validators.required],
-          cp_address: [contact.address, Validators.required],
+          cp_name: [contact.cp_name, Validators.required],
+          cp_email: [contact.cp_email, Validators.required],
+          cp_phone: [contact.cp_phone, Validators.required],
+          cp_address: [contact.cp_address, Validators.required],
           is_pic_company: [contact.is_pic_company === 1 ? true : false, Validators.required],
-          cp_id: [contact.id],
-          cp_wa_phone: [contact.wa_phone, Validators.required],
-          cp_province: [parseInt(contact.province), Validators.required],
-          cp_city: [parseInt(contact.city), Validators.required],
-          cp_postal_code: [contact.postal_code, Validators.required],
-          cp_country: [contact.country, Validators.required],
+          cp_id: [contact.cp_id],
+          cp_wa_phone: [contact.cp_wa_phone, Validators.required],
+          cp_province: [parseInt(contact.cp_province), Validators.required],
+          cp_city: [parseInt(contact.cp_city), Validators.required],
+          cp_postal_code: [contact.cp_postal_code, Validators.required],
+          cp_country: [contact.cp_country, Validators.required],
           cp_pic: [contact.pic.map(item => item.pic_id), Validators.required],
           cp_is_pic_head: [contact.pic.filter(item => item.is_pic_head === 1)[0].pic_id, Validators.required],
           filteredCpListOfPic: [this.cpListOfPic],
@@ -266,7 +266,7 @@ export class AddSupplierModalComponent implements OnInit {
         updateCp.get('filteredCpListOfPic')?.setValue(filteredList);
 
 
-        this.apiSvc.getRegenciesByProvince(parseInt(contact.province)).subscribe((res) => {
+        this.apiSvc.getRegenciesByProvince(parseInt(contact.cp_province)).subscribe((res) => {
           updateCp.get('filteredCity')?.setValue(res, { emitEvent: false });
         })
     
@@ -285,7 +285,7 @@ export class AddSupplierModalComponent implements OnInit {
       });
 
       //extact supplier product id
-      const supplier_product_ids = this.supplierDetail.supplier_product.map(item => item.id)
+      const supplier_product_ids = this.supplierDetail.supplier_products.map(item => parseInt(item.product_id))
       this.supplierForm.patchValue({
         supplier_product_id: supplier_product_ids
       })
@@ -407,7 +407,7 @@ export class AddSupplierModalComponent implements OnInit {
       is_pic_internal: pic_id === this.supplierForm.get('is_pic_internal')!.value
     }));
 
-    // if(this.supplierForm.valid){
+    if(this.supplierForm.valid){
       if(this.modal_type === 'add'){
 
         this.contactPersonComplete = this.contactPerson.value.map((pic:any) => ({
@@ -531,7 +531,7 @@ export class AddSupplierModalComponent implements OnInit {
           cp_city: pic.cp_city.toString(),
           cp_nik: '123',
           is_pic_company: pic.is_pic_company,
-          cp_pic: this.supplierDetail.contactPerson.map(item => item.pic)[i],
+          cp_pic: this.supplierDetail.contact_person.map(item => item.pic)[i],
           cp_pic_new: pic.cp_pic.map((p: any) => ({
             pic_id: p,
             is_pic_head: p === pic.cp_is_pic_head
@@ -556,7 +556,7 @@ export class AddSupplierModalComponent implements OnInit {
           contactPerson: this.contactPersonComplete,
           pic: this.picComplete,
           pic_new: this.picComplete,
-          supplier_product_id: this.supplierDetail.supplier_product.map(item => item.id),
+          supplier_product_id: this.supplierDetail.supplier_products.map(item => item.product_id),
           supplier_products_new: this.supplierForm.get('supplier_product_id')?.value,
           supplier_source_id: this.supplierForm.get('supplier_source_id')?.value,
           postal_code: this.supplierForm.get('postal_code')?.value,
@@ -659,7 +659,7 @@ export class AddSupplierModalComponent implements OnInit {
           }
         })
       }
-    // }
+    }
   }
 
   // Prevent the default automatic upload behavior

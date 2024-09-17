@@ -20,7 +20,7 @@ export interface IDataSupplier {
     created_at: string
     updated_at: string
     pic: IPicSupplier[]
-    contactPerson: ContactPerson[]
+    contact_person: ContactPerson[]
     website: string
     maps_url: string
     city: string
@@ -29,7 +29,12 @@ export interface IDataSupplier {
     country: string
     wa_phone: string;
     attachments: IAttachments[];
-    supplier_product: IDataCategories[];
+    supplier_products: {
+        supplier_product_mapping_id: string;
+        product_id: string;
+        product_name: string;
+        product_description: string;
+    }[];
     supplier_source: IDataCategories;
 }
 
@@ -41,19 +46,18 @@ export interface IPicSupplier {
 }
 
 export interface ContactPerson {
-    id: string
-    name: string
-    supplier_id: string
-    email: string
-    nik: string
-    phone: string
-    address: string
+    cp_id: string
+    cp_name: string
+    cp_email: string
+    cp_nik: string
+    cp_phone: string
+    cp_address: string
     is_pic_company: number
-    wa_phone: string
-    province: string
-    city: string
-    country: string
-    postal_code: string
+    cp_wa_phone: string
+    cp_province: string
+    cp_city: string
+    cp_country: string
+    cp_postal_code: string
     pic: IPicCp[]
     cp_attachments: IAttachments[]
     cp_profile_picture: IAttachments[]
