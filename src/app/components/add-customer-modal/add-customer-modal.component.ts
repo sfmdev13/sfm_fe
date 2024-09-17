@@ -651,20 +651,17 @@ export class AddCustomerModalComponent implements OnInit {
           })
         }
 
-        console.log(this.contactPersonComplete);
-        console.log('masuk kesini')
-
-        // this.apiSvc.updateCustomer(formData).subscribe({
-        //   next: (response) => {
-        //     this.apiSvc.triggerRefreshCustomers();
-        //   },
-        //   error: (error) => {
-        //     console.log(error)
-        //   },
-        //   complete: () => {
-        //     this.modal.destroy();
-        //   }
-        // });
+        this.apiSvc.updateCustomer(formData).subscribe({
+          next: (response) => {
+            this.apiSvc.triggerRefreshCustomers();
+          },
+          error: (error) => {
+            console.log(error)
+          },
+          complete: () => {
+            this.modal.destroy();
+          }
+        });
       } else {
         Object.values(this.customerForm.controls).forEach(control => {
           if (control.invalid) {
