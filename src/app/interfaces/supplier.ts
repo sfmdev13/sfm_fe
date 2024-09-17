@@ -1,3 +1,4 @@
+import { IDataCategories } from "./categories"
 import { IMetaResponse } from "./customer"
 
 export interface IRootSupplier {
@@ -11,7 +12,7 @@ export interface IDataSupplier {
     supplier_pid: string
     name: string
     email: string
-    nik: string
+    nib: string
     phone: string
     type: string
     address: string
@@ -22,6 +23,14 @@ export interface IDataSupplier {
     contactPerson: ContactPerson[]
     website: string
     maps_url: string
+    city: string
+    province: string
+    postal_code: string
+    country: string
+    wa_phone: string;
+    attachments: IAttachments[];
+    supplier_product: IDataCategories[];
+    supplier_source: IDataCategories;
 }
 
 export interface IPicSupplier {
@@ -40,6 +49,14 @@ export interface ContactPerson {
     phone: string
     address: string
     is_pic_company: number
+    wa_phone: string
+    province: string
+    city: string
+    country: string
+    postal_code: string
+    pic: IPicCp[]
+    cp_attachments: IAttachments[]
+    cp_profile_picture: IAttachments[]
 }
 
 export interface Pagination {
@@ -54,14 +71,18 @@ export interface Meta {
     status_code: number
 }
 
-interface IEmployee{
+interface IAttachments{
     id: string;
-    user_id: string;
-    employee_pid: string;
-    name: string
-    nik: string
-    phone: string;
-    address: string;
-    status: number;
+    attachment_path: string;
+    type: string;
+    file_name: string;
+    file_url: string;
 }
+
+interface IPicCp{
+    pic_id: string;
+    is_pic_head: number;
+    name: string
+}
+
   
