@@ -167,7 +167,12 @@
                         <p class="fw-light text-capitalize">{{ c.is_pic_head === 1 ? 'Yes' : 'No' }}</p>
                     </div>
                 </div>
-
+            </div>
+            <div class="col-md-4" *ngFor="let att of contact.cp_attachments; let i = index">
+                <p class="m-0 p-0 fw-semibold">Attachment Document {{i + 1}} </p>
+                <a [href]="att.file_url" target="_blank" rel="noopener noreferrer">
+                    <p class="fw-light">{{att.file_name}}</p>
+                </a>
             </div>
         </div>
     </ng-container>
