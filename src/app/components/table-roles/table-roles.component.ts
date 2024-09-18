@@ -1,4 +1,5 @@
 import { Component, Input, OnInit, Output, EventEmitter } from '@angular/core';
+import { IDataRoles } from 'src/app/interfaces';
 
 @Component({
   selector: 'app-table-roles',
@@ -7,26 +8,36 @@ import { Component, Input, OnInit, Output, EventEmitter } from '@angular/core';
 })
 export class TableRolesComponent implements OnInit {
 
-  @Input() listOfDataRoles: any[] = []
+  @Input() listOfDataRoles: IDataRoles[] = []
+
+  @Input() totalAll: number = 0;
+  @Input() pageSize: number = 0;
+  @Input() currentPage: number = 0;
   
-  @Output() showUpdateModal = new EventEmitter<void>();
-  @Output() showDetailModal = new EventEmitter<void>();
-  @Output() showDeleteModal = new EventEmitter<void>();
+  @Output() showUpdateModal: EventEmitter<IDataRoles> = new EventEmitter<IDataRoles>();
+  @Output() showDetailModal: EventEmitter<IDataRoles> = new EventEmitter<IDataRoles>();
+  @Output() showDeleteModal: EventEmitter<IDataRoles> = new EventEmitter<IDataRoles>();
+
+  @Output() onPageIndexChange: EventEmitter<number> = new EventEmitter<number>();
 
   constructor() { }
 
   ngOnInit(): void {
   }
 
-  updateHandler(){
-    this.showUpdateModal.emit();
+  updateHandler(data: IDataRoles){
+    this.showUpdateModal.emit(data);
   }
 
-  detailHandler(){
-    this.showDetailModal.emit();
+  detailHandler(data: IDataRoles){
+    this.showDetailModal.emit(data);
   }
 
-  deleteHandler(){
-    this.showDeleteModal.emit();
+  deleteHandler(data: IDataRoles){
+    this.showDeleteModal.emit(data);
+  }
+
+  pageIndexChange(page: number){
+    this.onPageIndexChange.emit(page)
   }
 }

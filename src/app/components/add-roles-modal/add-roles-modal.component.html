@@ -1,13 +1,19 @@
 <div>
-    <div class="mb-4">
+    <div class="mb-2">
       <nz-form-label nzRequired nzFor="roleName" class="fw-bold">Role Name</nz-form-label>
       <nz-form-control>
         <input nz-input id="roleName" [(ngModel)]="roleName" />
       </nz-form-control>
     </div>
+    <div class="mb-4">
+      <nz-form-label nzFor="status" nzRequired class="fw-bold">Status</nz-form-label>
+      <nz-form-control>
+        <nz-switch nzSize="default" id="status" [(ngModel)]="status" nzCheckedChildren="active" nzUnCheckedChildren="inactive"></nz-switch>
+      </nz-form-control>
+    </div>
 
     <nz-tabset>
-      <nz-tab nzTitle="Access">
+      <nz-tab nzTitle="Action">
         <p class="fw-bold m-0 p-0">
           Access Rights
         </p>
@@ -56,45 +62,72 @@
           </nz-collapse>
         </div>
       </nz-tab>
-      <nz-tab nzTitle="Assign">
-
-        <div class="d-flex flex-column align-items-start gap-1">
-          <p class="fw-bold m-0 p-0">
-            Assign to Employee
-          </p>
-          <nz-input-group [nzSuffix]="suffixIconSearch" nzSize="default">
-              <input type="text" nz-input placeholder="search employee" />
-          </nz-input-group>
-          <ng-template #suffixIconSearch>
-              <span nz-icon nzType="search"></span>
-          </ng-template>
-        </div>
-
-        <nz-table #basicTable nzBordered [nzData]="listOfDataEmp" nzSize="small" class="mt-3">
-          <thead>
-              <tr>
-                  <th>Name</th>
-                  <th>Status</th>
-                  <th>Action</th>
-              </tr>
-          </thead>
+      <nz-tab *ngIf="modal_type === 'edit'" nzTitle="User">
+        <ng-container *ngIf="employee$ | async as employee; else tableLoading">
+          <div class="d-flex flex-column align-items-start gap-1">
+            <p class="fw-bold m-0 p-0">
+              Assign to Employee
+            </p>
+            <nz-input-group [nzSuffix]="suffixIconSearch" nzSize="default">
+                <input [(ngModel)]="searchEmp"  (ngModelChange)="searchEmpHandler($event)" type="text" nz-input placeholder="search employee" />
+            </nz-input-group>
+            <ng-template #suffixIconSearch>
+                <span nz-icon nzType="search"></span>
+            </ng-template>
+          </div>
           
-          <tbody>
-              <tr *ngFor="let data of basicTable.data">
-                  <td>{{data.name}}</td>
-                  <td>
-                      <nz-tag [nzColor]="data.assigned ? '#1DA32C' : '#f50'">{{ data.assigned ? 'Assign' : 'Unassigned' }}</nz-tag>
-                  </td>
-                  <td>
-                    <button nzSize="small" nz-button nzType="primary" class="text-capitalize" (click)="assignEmp(data)">
-                      {{ data.assigned ? 'Cancel' : 'Assign' }}
-                    </button>
-                  </td>
-              </tr>
-          </tbody>
-      </nz-table>
+          <nz-table 
+            #basicTable 
+            nzBordered 
+            [nzData]="employee.data" 
+            nzSize="small" 
+            class="mt-3"
+            nzShowPagination
+            [nzFrontPagination]="false"
+            [nzTotal]="totalAll"
+            [nzPageSize]="pageSize"
+            [nzPageIndex]="currentPage"
+            (nzPageIndexChange)="pageIndexChange($event)"
+          >
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            
+            <tbody>
+                <tr *ngFor="let data of basicTable.data">
+                    <td>{{data.name}}</td>
+                    <td>
+                        <nz-tag [nzColor]="data.status ? '#1DA32C' : '#f50'">{{ data.status ? 'Assign' : 'Unassigned' }}</nz-tag>
+                    </td>
+                    <td>
+                      <button [disabled]="data.status === 1 ? true : false" nzSize="small" nz-button nzType="primary" class="text-capitalize" (click)="assignEmp(data)">
+                        Assign
+                      </button>
+                    </td>
+                </tr>
+            </tbody>
+          </nz-table>
+        </ng-container>
+        <ng-template #tableLoading>
+          <nz-table #basicTable nzBordered>
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </nz-table>
+        </ng-template>
       </nz-tab>
     </nz-tabset>
+
 
 
 </div>

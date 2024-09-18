@@ -11,6 +11,8 @@ import { AddRolesModalModule } from 'src/app/components/add-roles-modal/add-role
 import { NzTabsModule } from 'ng-zorro-antd/tabs';
 import { DetailRolesModalModule } from 'src/app/components/detail-roles-modal/detail-roles-modal.module';
 import { DeleteRolesModalModule } from 'src/app/components/delete-roles-modal/delete-roles-modal.module';
+import { NzTableModule } from 'ng-zorro-antd/table';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 @NgModule({
   declarations: [RolesComponent],
@@ -24,7 +26,10 @@ import { DeleteRolesModalModule } from 'src/app/components/delete-roles-modal/de
     AddRolesModalModule,
     NzTabsModule,
     DetailRolesModalModule,
-    DeleteRolesModalModule
+    DeleteRolesModalModule,
+    NzTableModule,
+    ReactiveFormsModule,
+    FormsModule
   ],
   exports: [RolesComponent]
 })

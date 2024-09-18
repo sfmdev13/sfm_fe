@@ -1,25 +1,65 @@
 <div class="roles-wrapper">
-    <div class="d-flex align-items-center justify-content-between mb-4">
-        <h4 class="fw-bold">Manage Roles</h4>
-        <nz-input-group [nzSuffix]="suffixIconSearch" nzSize="large" style="width: 320px;">
-            <input type="text" nz-input placeholder="search roles" />
-        </nz-input-group>
-        <ng-template #suffixIconSearch>
-            <span nz-icon nzType="search"></span>
-        </ng-template>
-    </div>
-    <div class="d-flex align-items-center justify-content-between mb-3">
-        <span class="fw-light">Result of 5 Roles</span>
-        <div class="row">
-            <div class="text-end">
-                <button nzSize="default" nz-button nzType="primary" (click)="showAddModal()">Add New Roles</button>
+    <ng-container *ngIf="roles$ | async as role; else loading">
+        <div class="d-flex align-items-center justify-content-between mb-4">
+            <h4 class="fw-bold">Manage Roles</h4>
+            <nz-input-group [nzSuffix]="suffixIconSearch" nzSize="large" style="width: 320px;">
+                <input [(ngModel)]="searchRole" (ngModelChange)="searchHandler($event)" type="text" nz-input placeholder="search roles" />
+            </nz-input-group>
+            <ng-template #suffixIconSearch>
+                <span nz-icon nzType="search"></span>
+            </ng-template>
+        </div>
+        <div class="d-flex align-items-center justify-content-between mb-3">
+            <span class="fw-light">Result of {{ totalRole }} Roles</span>
+            <div class="row">
+                <div class="text-end">
+                    <button nzSize="default" nz-button nzType="primary" (click)="showAddModal()">Add New Roles</button>
+                </div>
             </div>
         </div>
-    </div>
-    <app-table-roles 
-        [listOfDataRoles]="listOfDataRole"
-        (showUpdateModal)="showUpdateModal()"
-        (showDetailModal)="showDetailModal()"
-        (showDeleteModal)="showDeleteModal()"
-    ></app-table-roles>
+        <app-table-roles 
+            [listOfDataRoles]="role.data"
+            [totalAll]="totalAll"
+            [pageSize]="pageSize"
+            [currentPage]="currentPage"
+            (showUpdateModal)="showUpdateModal($event)"
+            (showDetailModal)="showDetailModal($event)"
+            (showDeleteModal)="showDeleteModal($event)"
+            (onPageIndexChange)="onPageIndexChange($event)"
+        ></app-table-roles>
+    </ng-container>
+    <ng-template #loading>
+        <div class="d-flex align-items-center justify-content-between mb-4">
+            <h4 class="fw-bold">Manage Roles</h4>
+            <nz-input-group [nzSuffix]="suffixIconSearch" nzSize="large" style="width: 320px;">
+                <input disabled type="text" nz-input placeholder="search role" />
+            </nz-input-group>
+            <ng-template #suffixIconSearch>
+                <span nz-icon nzType="search"></span>
+            </ng-template>
+        </div>
+        <div class="d-flex align-items-center justify-content-between mb-3">
+            <p class="placeholder-glow" style="width: 500px;">
+                <span class="placeholder col-4"></span>
+            </p>
+            <div class="row">
+                <div class="text-end">
+                    <button class="me-2 filter-icon" nz-button nzType="default" nzSize="default" disabled><span nz-icon nzType="reload"></span></button>
+                    <button class="me-2 filter-icon" nz-button nzType="default" nzSize="default" disabled><span nz-icon nzType="filter"></span></button>
+                    <button nzSize="default" nz-button nzType="primary" disabled>Add New Role</button>
+                </div>
+            </div>
+        </div>
+        <nz-table #basicTable nzBordered>
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </nz-table>
+    </ng-template>
 </div>

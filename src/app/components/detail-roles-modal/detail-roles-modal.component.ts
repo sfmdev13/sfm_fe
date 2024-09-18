@@ -1,8 +1,11 @@
-import { AfterViewInit, Component, OnInit } from '@angular/core';
+import { AfterViewInit, Component, Input, OnInit } from '@angular/core';
 import { NzTreeFlatDataSource, NzTreeFlattener } from 'ng-zorro-antd/tree-view';
 import { FlatTreeControl } from '@angular/cdk/tree';
 import { SelectionModel } from '@angular/cdk/collections';
-
+import { IDataRoles, IRootAccessRights, IRootUserByRole } from 'src/app/interfaces';
+import { accessRights } from '../../constants/access-rights.contanst';
+import { ApiService } from 'src/app/api.service';
+import { debounceTime, distinctUntilChanged, Observable, Subject, tap } from 'rxjs';
 
 interface TreeNode {
   name: string;
@@ -15,15 +18,23 @@ interface FlatNode {
   level: number;
 }
 
-
-
-
 @Component({
   selector: 'app-detail-roles-modal',
   templateUrl: './detail-roles-modal.component.html',
   styleUrls: ['./detail-roles-modal.component.scss']
 })
 export class DetailRolesModalComponent implements OnInit, AfterViewInit {
+
+  @Input() roleDetail: IDataRoles = {} as IDataRoles
+
+  employee$!: Observable<IRootUserByRole>
+
+  totalAll: number = 0;
+  pageSize: number = 5;
+  currentPage: number = 0;
+
+  searchEmp: string = '';
+  private searchEmpSubject = new Subject<string>();
 
   private transformer = (node: TreeNode, level: number): FlatNode => ({
     expandable: !!node.children && node.children.length > 0,
@@ -72,37 +83,6 @@ export class DetailRolesModalComponent implements OnInit, AfterViewInit {
     },
   ];
   
-  accessRights = [
-    {
-      nav_name: 'users',
-      nav_section: [
-        {
-          section_name: 'employee',
-          section_action: [
-            { name: 'Add New Employee' },
-            { name: 'Detail Employee' },
-            { name: 'Edit Employee' }
-          ]
-        },
-        {
-          section_name: 'customer',
-          section_action: [
-            { name: 'Add New Customer' },
-            { name: 'Detail Customer' },
-            { name: 'Edit Customer' }
-          ]
-        },
-        {
-          section_name: 'supplier',
-          section_action: [
-            { name: 'Add New Supplier' },
-            { name: 'Detail Supplier' },
-            { name: 'Edit Supplier' }
-          ]
-        }
-      ]
-    }
-  ];
 
   listOfDataEmp= [
     {
@@ -115,18 +95,62 @@ export class DetailRolesModalComponent implements OnInit, AfterViewInit {
     }
   ]
   
-  constructor() {
-    
-    const data = this.transformToTreeData(this.accessRights)
+  constructor(private apiSvc: ApiService) {}
+
+  ngOnInit(): void {
+    const filteredAccessRights = this.filterAccessRights(accessRights);
+    const data = this.transformToTreeData(filteredAccessRights)
     this.dataSource.setData(data);
+
+    this.searchEmpSubject.pipe(
+      debounceTime(300),
+      distinctUntilChanged()
+    ).subscribe(search => {
+      this.employee$ = this.apiSvc.searchUserByRole(search, this.roleDetail.id.toString() ,this.currentPage, this.pageSize).pipe(
+        tap(res => {
+          this.currentPage = res.pagination.current_page;
+          this.totalAll = res.pagination.total;
+        })
+      )
+    })
+
+    this.getEmployee();
+  }
+
+  pageIndexChange(page: number){
+    this.currentPage = page;
+
+    this.getEmployee();
+  }
+
+  searchEmpHandler(search: string): void{
+    this.searchEmpSubject.next(search);
+  }
+
+  getEmployee(){
+    this.employee$ = this.apiSvc.getUserByRole(this.roleDetail.id.toString(),this.currentPage, this.pageSize).pipe(
+      tap(res => {
+        this.currentPage = res.pagination.current_page;
+        this.totalAll = res.pagination.total
+      })
+    )
+  }
+
+  filterAccessRights(accessRights: IRootAccessRights[]) {
+    const actionSlugs = new Set(this.roleDetail.actions.map(action => action.slug));
+
+    return accessRights.map(nav => ({
+      ...nav,
+      nav_section: nav.nav_section
+        .map((section: any) => ({
+          ...section,
+          section_action: section.section_action.filter((action: any) => actionSlugs.has(action.slug))
+        }))
+        .filter((section: any) => section.section_action.length > 0 || actionSlugs.has(section.slug))
+    })).filter(nav => nav.nav_section.length > 0 || actionSlugs.has(nav.slug));
   }
 
   hasChild = (_: number, node: FlatNode): boolean => node.expandable;
-
-
-  ngOnInit(): void {
-
-  }
 
   ngAfterViewInit(): void {
     this.treeControl.expandAll();
