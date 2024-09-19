@@ -70,6 +70,10 @@ export class ApiService {
     this.refreshGetCategories.next();
   }
 
+  triggerRefreshEmployee(){
+    this.refreshGetEmployee.next();
+  }
+
   triggerRefreshRoles(){
     this.refreshGetRoles.next();
   }
@@ -610,5 +614,15 @@ export class ApiService {
 
     const url = `${this.apiUrl}/delete-role?id=${id}`;
     return this.http.post<any>(url, {} ,{ headers })
+  }
+
+  createEmployee(body: any): Observable<any>{
+    const token = localStorage.getItem('authToken');
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+    });
+
+    const url = `${this.apiUrl}/cognito/register`;
+    return this.http.post<any>(url, body ,{ headers })
   }
 }
