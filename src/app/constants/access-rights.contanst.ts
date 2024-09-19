@@ -13,7 +13,8 @@ export const accessRights: IRootAccessRights[] = [
           section_action: [
             { name: 'Add New Employee', slug: 'add_new_employee', selected: false },
             { name: 'Detail Employee', slug: 'detail_employee', selected: false },
-            { name: 'Edit Employee', slug: 'edit_employee', selected: false }
+            { name: 'Edit Employee', slug: 'edit_employee', selected: false },
+            { name: 'Delete Employee', slug: 'delete_employee', selected: false }
           ]
         },
         {
@@ -23,7 +24,8 @@ export const accessRights: IRootAccessRights[] = [
           section_action: [
             { name: 'Add New Customer', slug: 'add_new_customer',selected: false },
             { name: 'Detail Customer', slug: 'detail_customer',selected: false },
-            { name: 'Edit Customer', slug: 'edit_customer',selected: false }
+            { name: 'Edit Customer', slug: 'edit_customer',selected: false },
+            { name: 'Delete Customer', slug: 'delete_customer', selected: false}
           ]
         },
         {
@@ -33,7 +35,8 @@ export const accessRights: IRootAccessRights[] = [
           section_action: [
             { name: 'Add New Supplier', slug: 'add_new_supplier', selected: false },
             { name: 'Detail Supplier', slug: 'detail_supplier', selected: false },
-            { name: 'Edit Supplier', slug: 'edit_supplier', selected: false }
+            { name: 'Edit Supplier', slug: 'edit_supplier', selected: false },
+            { name: 'Delete Supplier', slug: 'delete_supplier', selected: false }
           ]
         }
       ]
@@ -46,7 +49,7 @@ export const accessRights: IRootAccessRights[] = [
     },
     {
       nav_name: 'inventory',
-      slug: 'view_inventories',
+      slug: 'view_inventory',
       selected: false,
       nav_section: []
     },
@@ -76,6 +79,12 @@ export const accessRights: IRootAccessRights[] = [
         {
           section_name: 'Delete Role',
           slug: 'delete_role',
+          selected: false,
+          section_action: []
+        },
+        {
+          section_name: 'Detail Role',
+          slug: 'detail_role',
           selected: false,
           section_action: []
         }

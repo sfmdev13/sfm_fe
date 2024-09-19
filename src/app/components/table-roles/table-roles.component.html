@@ -24,9 +24,9 @@
             </td>
             <td>
                 <div class="d-flex gap-3">
-                    <span (click)="detailHandler(data)"  nz-icon nzType="eye" nzTheme="twotone"></span>
-                    <span (click)="updateHandler(data)" nz-icon nzType="edit" nzTheme="twotone"></span>
-                    <span (click)="deleteHandler(data)" nz-icon nzType="delete" nzTheme="twotone"></span>
+                    <span *ngIf="authSvc.hasAction('detail_role')" (click)="detailHandler(data)"  nz-icon nzType="eye" nzTheme="twotone"></span>
+                    <span *ngIf="authSvc.hasAction('edit_role')" (click)="updateHandler(data)" nz-icon nzType="edit" nzTheme="twotone"></span>
+                    <span *ngIf="authSvc.hasAction('delete_role')" (click)="deleteHandler(data)" nz-icon nzType="delete" nzTheme="twotone"></span>
                 </div>
             </td>
         </tr>

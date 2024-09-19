@@ -1,13 +1,13 @@
 <div class="user-wrapper">
     <div class="row">
         <nz-radio-group [(ngModel)]="user_type" (ngModelChange)="tabChange($event)">
-            <label nz-radio-button nzValue="employee"><span>Employee</span></label>
-            <label nz-radio-button nzValue="customer"><span>Customer</span></label>
-            <label nz-radio-button nzValue="supplier"><span>Supplier</span></label>
+            <label *ngIf="authSvc.hasAction('view_employee')" nz-radio-button nzValue="employee"><span>Employee</span></label>
+            <label *ngIf="authSvc.hasAction('view_customer')" nz-radio-button nzValue="customer"><span>Customer</span></label>
+            <label *ngIf="authSvc.hasAction('view_supplier')" nz-radio-button nzValue="supplier"><span>Supplier</span></label>
         </nz-radio-group>
     </div>
     <div class="row mt-5">
-        <ng-container *ngIf="user_type === 'employee'">
+        <ng-container *ngIf="user_type === 'employee' && authSvc.hasAction('view_employee')">
             <ng-container *ngIf="employees$ | async as employee; else employeeLoading">
                 <div class="d-flex align-items-center justify-content-between mb-4">
                     <h4 class="fw-bold">Data Employee</h4>
@@ -24,7 +24,7 @@
                         <div class="text-end">
                             <button (click)="refreshTableEmp()" class="me-2 filter-icon" nz-button nzType="default" nzSize="default"><span nz-icon nzType="reload"></span></button>
                             <button  (click)="showFilter()" class="me-2 filter-icon" nz-button nzType="default" nzSize="default"><span nz-icon nzType="filter"></span></button>
-                            <button nzSize="default" nz-button nzType="primary" (click)="showAddModal()">Add New Employee</button>
+                            <button *ngIf="authSvc.hasAction('add_new_employee')" nzSize="default" nz-button nzType="primary" (click)="showAddModal()">Add New Employee</button>
                         </div>
                     </div>
                 </div>
@@ -58,7 +58,7 @@
                         <div class="text-end">
                             <button class="me-2 filter-icon" nz-button nzType="default" nzSize="default" disabled><span nz-icon nzType="reload"></span></button>
                             <button class="me-2 filter-icon" nz-button nzType="default" nzSize="default" disabled><span nz-icon nzType="filter"></span></button>
-                            <button nzSize="default" nz-button nzType="primary" disabled>Add New Employee</button>
+                            <button *ngIf="authSvc.hasAction('add_new_employee')" nzSize="default" nz-button nzType="primary" disabled>Add New Employee</button>
                         </div>
                     </div>
                 </div>
@@ -82,7 +82,7 @@
             </ng-template>
         </ng-container>
     
-        <ng-container *ngIf="user_type === 'customer'">
+        <ng-container *ngIf="user_type === 'customer' && authSvc.hasAction('view_customer')">
             <ng-container *ngIf="customers$ | async as customers; else customerLoading">
                 <div class="d-flex align-items-center justify-content-between mb-4">
                     <h4 class="fw-bold">Data Customer</h4>
@@ -99,7 +99,7 @@
                         <div class="text-end">
                             <button (click)="refreshTableCust()" class="me-2 filter-icon" nz-button nzType="default" nzSize="default"><span nz-icon nzType="reload"></span></button>
                             <button (click)="showFilter()" class="me-2 filter-icon" nz-button nzType="default" nzSize="default"><span nz-icon nzType="filter"></span></button>
-                            <button nzSize="default" nz-button nzType="primary" (click)="showAddModal()">Add New Customer</button>
+                            <button  *ngIf="authSvc.hasAction('add_new_customer')" nzSize="default" nz-button nzType="primary" (click)="showAddModal()">Add New Customer</button>
                         </div>
                     </div>
                 </div>
@@ -133,7 +133,7 @@
                         <div class="text-end">
                             <button class="me-2 filter-icon" nz-button nzType="default" nzSize="default" disabled><span nz-icon nzType="reload"></span></button>
                             <button class="me-2 filter-icon" nz-button nzType="default" nzSize="default" disabled><span nz-icon nzType="filter"></span></button>
-                            <button nzSize="default" nz-button nzType="primary" disabled>Add New Customer</button>
+                            <button *ngIf="authSvc.hasAction('add_new_customer')" nzSize="default" nz-button nzType="primary" disabled>Add New Customer</button>
                         </div>
                     </div>
                 </div>
@@ -159,7 +159,7 @@
             </ng-template>
         </ng-container>
     
-        <ng-container *ngIf="user_type === 'supplier'">
+        <ng-container *ngIf="user_type === 'supplier' && authSvc.hasAction('view_supplier')">
             <ng-container *ngIf="suppliers$ | async as suppliers; else supplierLoading">
                 <div class="d-flex align-items-center justify-content-between mb-4">
                     <h4 class="fw-bold">Data Supplier</h4>
@@ -176,7 +176,7 @@
                         <div class="text-end">
                             <button (click)="refreshTableSupp()" class="me-2 filter-icon" nz-button nzType="default" nzSize="default"><span nz-icon nzType="reload"></span></button>
                             <button (click)="showFilter()" class="me-2 filter-icon" nz-button nzType="default" nzSize="default"><span nz-icon nzType="filter"></span></button>
-                            <button nzSize="default" nz-button nzType="primary" (click)="showAddModal()">Add New Supplier</button>
+                            <button *ngIf="authSvc.hasAction('add_new_supplier')" nzSize="default" nz-button nzType="primary" (click)="showAddModal()">Add New Supplier</button>
                         </div>
                     </div>
                 </div>
@@ -210,7 +210,7 @@
                         <div class="text-end">
                             <button class="me-2 filter-icon" nz-button nzType="default" nzSize="default" disabled><span nz-icon nzType="reload"></span></button>
                             <button class="me-2 filter-icon" nz-button nzType="default" nzSize="default" disabled><span nz-icon nzType="filter"></span></button>
-                            <button nzSize="default" nz-button nzType="primary" disabled>Add New Supplier</button>
+                            <button *ngIf="authSvc.hasAction('add_new_supplier')" nzSize="default" nz-button nzType="primary" disabled>Add New Supplier</button>
                         </div>
                     </div>
                 </div>

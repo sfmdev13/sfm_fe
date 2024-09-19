@@ -10,9 +10,12 @@
                 routerLink="/dashboard"
             />
         </li>
-        <li nz-menu-item *ngFor="let nav of navigation" [routerLink]="'/'+nav.path" routerLinkActive="ant-menu-item-selected" [routerLinkActiveOptions]="{ exact: false }">
-            <p class="p-0 m-0 fw-bold text-uppercase">{{ nav.title }}</p>
-        </li>
+        <ng-container *ngFor="let nav of navigation">
+            <li *ngIf="authService.hasAction(nav.slug)" nz-menu-item [routerLink]="'/'+nav.path" routerLinkActive="ant-menu-item-selected" [routerLinkActiveOptions]="{ exact: false }">
+                <p class="p-0 m-0 fw-bold text-uppercase">{{ nav.title }}</p>
+            </li>
+        </ng-container>
+
         <li class="ms-auto float-end" >
             <a class="profile-dropdown" nz-dropdown nzTrigger="click" [nzDropdownMenu]="menu">
                 <span nz-dropdown nzTrigger="click" [nzDropdownMenu]="menu" nz-icon nzType="user" nzTheme="outline"></span>

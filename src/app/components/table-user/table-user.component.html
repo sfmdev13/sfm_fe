@@ -37,9 +37,9 @@
                     <nz-tag [nzColor]="data.status === 1 ? '#1DA32C' : '#f50'">{{ data.status === 1 ? 'Active' : 'Inactive' }}</nz-tag>
                 <td>
                     <div class="d-flex gap-3">
-                        <span (click)="detailHandler(data)"  nz-icon nzType="eye" nzTheme="twotone"></span>
-                        <span (click)="updateHandler(data)" nz-icon nzType="edit" nzTheme="twotone"></span>
-                        <span (click)="deleteHandler(data.user_id)" nz-icon nzType="delete" nzTheme="twotone"></span>
+                        <span *ngIf="authSvc.hasAction('detail_employee')" (click)="detailHandler(data)"  nz-icon nzType="eye" nzTheme="twotone"></span>
+                        <span *ngIf="authSvc.hasAction('edit_employee')" (click)="updateHandler(data)" nz-icon nzType="edit" nzTheme="twotone"></span>
+                        <span *ngIf="authSvc.hasAction('delete_employee')" (click)="deleteHandler(data.user_id)" nz-icon nzType="delete" nzTheme="twotone"></span>
                     </div>
                 </td>
             </tr>
@@ -94,9 +94,9 @@
                 </td>
                 <td>
                     <div class="d-flex gap-3">
-                        <span (click)="detailCustHandler(data)"  nz-icon nzType="eye" nzTheme="twotone"></span>
-                        <span (click)="updateCustHandler(data)" nz-icon nzType="edit" nzTheme="twotone"></span>
-                        <span (click)="deleteCustHandler(data.id)" nz-icon nzType="delete" nzTheme="twotone"></span>
+                        <span *ngIf="authSvc.hasAction('detail_customer')" (click)="detailCustHandler(data)"  nz-icon nzType="eye" nzTheme="twotone"></span>
+                        <span *ngIf="authSvc.hasAction('edit_customer')" (click)="updateCustHandler(data)" nz-icon nzType="edit" nzTheme="twotone"></span>
+                        <span *ngIf="authSvc.hasAction('delete_customer')" (click)="deleteCustHandler(data.id)" nz-icon nzType="delete" nzTheme="twotone"></span>
                     </div>
                 </td>
             </tr>
@@ -149,9 +149,9 @@
                 </td>
                 <td>
                     <div class="d-flex gap-3">
-                        <span (click)="detailSuppHandler(data)"  nz-icon nzType="eye" nzTheme="twotone"></span>
-                        <span (click)="updateSuppHandler(data)" nz-icon nzType="edit" nzTheme="twotone"></span>
-                        <span (click)="deleteSuppHandler(data.id)" nz-icon nzType="delete" nzTheme="twotone"></span>
+                        <span *ngIf="authSvc.hasAction('detail_supplier')" (click)="detailSuppHandler(data)"  nz-icon nzType="eye" nzTheme="twotone"></span>
+                        <span *ngIf="authSvc.hasAction('edit_supplier')" (click)="updateSuppHandler(data)" nz-icon nzType="edit" nzTheme="twotone"></span>
+                        <span *ngIf="authSvc.hasAction('delete_supplier')" (click)="deleteSuppHandler(data.id)" nz-icon nzType="delete" nzTheme="twotone"></span>
                     </div>
                 </td>
             </tr>

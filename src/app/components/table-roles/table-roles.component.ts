@@ -1,4 +1,5 @@
 import { Component, Input, OnInit, Output, EventEmitter } from '@angular/core';
+import { AuthService } from 'src/app/auth.service';
 import { IDataRoles } from 'src/app/interfaces';
 
 @Component({
@@ -20,7 +21,7 @@ export class TableRolesComponent implements OnInit {
 
   @Output() onPageIndexChange: EventEmitter<number> = new EventEmitter<number>();
 
-  constructor() { }
+  constructor( public authSvc: AuthService ) { }
 
   ngOnInit(): void {
   }

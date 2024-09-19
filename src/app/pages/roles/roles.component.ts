@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { NzModalService } from 'ng-zorro-antd/modal';
 import { debounceTime, distinctUntilChanged, Observable, Subject, tap } from 'rxjs';
 import { ApiService } from 'src/app/api.service';
+import { AuthService } from 'src/app/auth.service';
 import { AddRolesModalComponent } from 'src/app/components/add-roles-modal/add-roles-modal.component';
 import { DeleteRolesModalComponent } from 'src/app/components/delete-roles-modal/delete-roles-modal.component';
 import { DetailRolesModalComponent } from 'src/app/components/detail-roles-modal/detail-roles-modal.component';
@@ -26,7 +27,8 @@ export class RolesComponent implements OnInit {
 
   constructor(
     private modalService: NzModalService,
-    private apiSvc: ApiService
+    private apiSvc: ApiService,
+    public authSvc: AuthService
   ) { }
 
   ngOnInit(): void {

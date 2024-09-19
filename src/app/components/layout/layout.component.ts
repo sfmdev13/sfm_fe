@@ -15,32 +15,38 @@ export class LayoutComponent implements OnInit {
   navigation = [
     {
       title: 'users',
-      path: 'user'
+      path: 'user',
+      slug: 'view_users'
     },
     {
       title: 'projects',
-      path: 'projects'
+      path: 'projects',
+      slug: 'view_projects'
     },
     {
       title: 'inventory',
-      path: 'inventories'
+      path: 'inventories',
+      slug: 'view_inventory'
     },
     {
       title: 'reports',
-      path: 'reports'
+      path: 'reports',
+      slug: 'view_reports'
     },
     {
       title: 'roles',
-      path: 'roles'
+      path: 'roles',
+      slug: 'view_roles'
     },
     {
       title: 'settings',
-      path: 'settings'
+      path: 'settings',
+      slug: 'view_settings'
     }
   ]
 
   constructor(
-    private authService: AuthService,
+    public authService: AuthService,
     private apiSvc: ApiService
   ) { }
 
@@ -48,7 +54,11 @@ export class LayoutComponent implements OnInit {
     this.apiSvc.getProfile().subscribe(
       (profile) => {
         this.profileName = profile.data.name
+
+        const userRole =  profile.data.role.actions.map((action: any) => action.slug)
         localStorage.setItem('pic_id', profile.data.id)
+        localStorage.setItem('actions', JSON.stringify(userRole))
+        this.authService.setUserRoles(userRole);
       }
     )
   }

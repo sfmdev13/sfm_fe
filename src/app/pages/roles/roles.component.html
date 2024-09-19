@@ -13,7 +13,7 @@
             <span class="fw-light">Result of {{ totalRole }} Roles</span>
             <div class="row">
                 <div class="text-end">
-                    <button nzSize="default" nz-button nzType="primary" (click)="showAddModal()">Add New Roles</button>
+                    <button *ngIf="authSvc.hasAction('add_new_role')" nzSize="default" nz-button nzType="primary" (click)="showAddModal()">Add New Roles</button>
                 </div>
             </div>
         </div>
@@ -44,8 +44,6 @@
             </p>
             <div class="row">
                 <div class="text-end">
-                    <button class="me-2 filter-icon" nz-button nzType="default" nzSize="default" disabled><span nz-icon nzType="reload"></span></button>
-                    <button class="me-2 filter-icon" nz-button nzType="default" nzSize="default" disabled><span nz-icon nzType="filter"></span></button>
                     <button nzSize="default" nz-button nzType="primary" disabled>Add New Role</button>
                 </div>
             </div>
