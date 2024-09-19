@@ -14,7 +14,7 @@ import { DetailSupplierModalComponent } from 'src/app/components/detail-supplier
 import { FilterCustomerModalComponent } from 'src/app/components/filter-customer-modal/filter-customer-modal.component';
 import { FilterEmployeeModalComponent } from 'src/app/components/filter-employee-modal/filter-employee-modal.component';
 import { FilterSupplierModalComponent } from 'src/app/components/filter-supplier-modal/filter-supplier-modal.component';
-import { IDataCustomer, IDataSupplier, IRootCustomer, IRootEmployee, IRootSupplier } from 'src/app/interfaces';
+import { IDataCustomer, IDataEmployee, IDataSupplier, IRootCustomer, IRootEmployee, IRootSupplier } from 'src/app/interfaces';
 
 @Component({
   selector: 'app-user',
@@ -202,17 +202,16 @@ export class UserComponent implements OnInit {
 
   }
 
-  showUpdateModal(){
-    if(this.user_type === 'employee'){
-      this.modalService.create({
-        nzTitle: 'Update Employee',
-        nzContent: AddEmployeeModalComponent,
-        nzComponentParams: {
-          modal_type: 'update'
-        },
-        nzCentered: true
-      });
-    }
+  showUpdateModal(data: IDataEmployee){
+    this.modalService.create({
+      nzTitle: 'Update Employee',
+      nzContent: AddEmployeeModalComponent,
+      nzComponentParams: {
+        modal_type: 'update',
+        data
+      },
+      nzCentered: true
+    });
   }
 
   showDetailModal(){

@@ -27,7 +27,7 @@ export class TableUserComponent implements OnInit {
   @Input() pageSizeEmployee: number = 0;
   @Input() currentPageEmployee: number = 0;
 
-  @Output() showUpdateModal = new EventEmitter<void>();
+  @Output() showUpdateModal: EventEmitter<IDataEmployee> = new EventEmitter<IDataEmployee>();
   @Output() showDetailModal = new EventEmitter<void>();
   @Output() showDeleteModal = new EventEmitter<void>();
 
@@ -48,8 +48,8 @@ export class TableUserComponent implements OnInit {
   ngOnInit(): void {
   }
 
-  updateHandler(){
-    this.showUpdateModal.emit();
+  updateHandler(data: IDataEmployee){
+    this.showUpdateModal.emit(data);
   }
 
   detailHandler(){
