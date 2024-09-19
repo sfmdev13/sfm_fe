@@ -28,7 +28,7 @@ export class TableUserComponent implements OnInit {
   @Input() currentPageEmployee: number = 0;
 
   @Output() showUpdateModal: EventEmitter<IDataEmployee> = new EventEmitter<IDataEmployee>();
-  @Output() showDetailModal = new EventEmitter<void>();
+  @Output() showDetailModal: EventEmitter<IDataEmployee> = new EventEmitter<IDataEmployee>();
   @Output() showDeleteModal = new EventEmitter<void>();
 
   @Output() showDetailModalCust: EventEmitter<IDataCustomer> = new EventEmitter<IDataCustomer>();
@@ -52,8 +52,8 @@ export class TableUserComponent implements OnInit {
     this.showUpdateModal.emit(data);
   }
 
-  detailHandler(){
-    this.showDetailModal.emit();
+  detailHandler(data: IDataEmployee){
+    this.showDetailModal.emit(data);
   }
 
   deleteHandler(){

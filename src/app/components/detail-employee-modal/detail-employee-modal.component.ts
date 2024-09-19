@@ -1,5 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { NzModalRef } from 'ng-zorro-antd/modal';
+import { IDataEmployee } from 'src/app/interfaces';
 
 @Component({
   selector: 'app-detail-employee-modal',
@@ -7,6 +8,8 @@ import { NzModalRef } from 'ng-zorro-antd/modal';
   styleUrls: ['./detail-employee-modal.component.scss']
 })
 export class DetailEmployeeModalComponent implements OnInit {
+
+  @Input() data: IDataEmployee = {} as IDataEmployee
 
   status: boolean = true;
 

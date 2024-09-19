@@ -214,14 +214,15 @@ export class UserComponent implements OnInit {
     });
   }
 
-  showDetailModal(){
-    if(this.user_type === 'employee'){
-      this.modalService.create({
-        nzTitle: 'Detail Employee',
-        nzContent: DetailEmployeeModalComponent,
-        nzCentered: true
-      });
-    }
+  showDetailModal(data: IDataEmployee){
+    this.modalService.create({
+      nzTitle: 'Detail Employee',
+      nzContent: DetailEmployeeModalComponent,
+      nzCentered: true,
+      nzComponentParams: {
+        data
+      }
+    });
   }
 
   showDeleteModal(){
