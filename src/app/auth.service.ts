@@ -13,6 +13,8 @@ export class AuthService {
   private readonly TOKEN_EXPIRY_TIME = 2 * 60 * 60 * 1000;
 
   private apiUrl = environment.apiUrl;
+  
+  private userRoles: string[] = []
 
   constructor(
     private http: HttpClient, 
@@ -20,7 +22,15 @@ export class AuthService {
     private modal: NzModalService
   ) {}
 
-  // Example function to simulate login and store token
+  hasAction(action: string): boolean {
+    this.userRoles = localStorage.getItem('actions') as unknown as string[]
+    return this.userRoles.includes(action);
+  }
+
+  setUserRoles(roles: string[]): void {
+    this.userRoles = roles;
+  }
+
   login(email: string, password: string): Observable<any> {
     const url = `${this.apiUrl}/cognito/login?email=${email}&password=${password}`;
     localStorage.setItem('loginTime', new Date().getTime().toString());

@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { NzModalService } from 'ng-zorro-antd/modal';
 import { debounceTime, distinctUntilChanged, Observable, Subject, switchMap, tap } from 'rxjs';
 import { ApiService } from 'src/app/api.service';
+import { AuthService } from 'src/app/auth.service';
 import { AddCustomerModalComponent } from 'src/app/components/add-customer-modal/add-customer-modal.component';
 import { AddEmployeeModalComponent } from 'src/app/components/add-employee-modal/add-employee-modal.component';
 import { AddSupplierModalComponent } from 'src/app/components/add-supplier-modal/add-supplier-modal.component';
@@ -23,7 +24,7 @@ import { IDataCustomer, IDataEmployee, IDataSupplier, IRootCustomer, IRootEmploy
 })
 export class UserComponent implements OnInit {
 
-  user_type: string = 'employee';
+  user_type: string = '';
   
   listOfDataEmp: any[] = [];
 
@@ -72,10 +73,13 @@ export class UserComponent implements OnInit {
 
   constructor(
     private modalService: NzModalService,
-    private apiSvc: ApiService
+    private apiSvc: ApiService,
+    public authSvc: AuthService
   ) { }
 
   ngOnInit(): void {
+
+    this.checkTabAction();
 
     //for the first load
     this.getEmployee();
@@ -134,6 +138,32 @@ export class UserComponent implements OnInit {
         })
       )
     })
+  }
+
+  checkTabAction(){
+    if(!this.authSvc.hasAction('view_employee')){
+      this.user_type = 'customer'
+    }
+
+    if(!this.authSvc.hasAction('view_customer')){
+      this.user_type = 'supplier'
+    }
+
+    if(!this.authSvc.hasAction('view_supplier')){
+      this.user_type = 'employee'
+    }
+
+    if(!this.authSvc.hasAction('view_employee') && !this.authSvc.hasAction('view_customer')){
+      this.user_type = 'supplier'
+    }
+
+    if(!this.authSvc.hasAction('view_supplier') && !this.authSvc.hasAction('view_customer')){
+      this.user_type = 'employee'
+    }
+
+    if(!this.authSvc.hasAction('view_employee') && !this.authSvc.hasAction('view_supplier')){
+      this.user_type = 'customer'
+    }
   }
 
   tabChange(value: string){

@@ -13,12 +13,14 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { LayoutModule } from './components/layout/layout.module';
 import { AuthInterceptor } from './auth.interceptor';
 import { NzModalModule } from 'ng-zorro-antd/modal';
+import { UnauthorizedComponent } from './components/unauthorized/unauthorized.component';
 
 registerLocaleData(en);
 
 @NgModule({
   declarations: [
     AppComponent,
+    UnauthorizedComponent,
   ],
   imports: [
     BrowserModule,

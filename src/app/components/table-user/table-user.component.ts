@@ -1,4 +1,5 @@
 import { Component, Input, OnInit, Output, EventEmitter } from '@angular/core';
+import { AuthService } from 'src/app/auth.service';
 import { IDataCustomer, IDataEmployee, IDataSupplier } from 'src/app/interfaces';
 
 
@@ -43,7 +44,7 @@ export class TableUserComponent implements OnInit {
   @Output() onPageIndexChangeSupp: EventEmitter<number> = new EventEmitter<number>();
   @Output() onPageIndexChangeEmp: EventEmitter<number> = new EventEmitter<number>();
 
-  constructor() { }
+  constructor(public authSvc: AuthService) { }
 
   ngOnInit(): void {
   }
