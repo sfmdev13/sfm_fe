@@ -34,9 +34,9 @@
                     [totalAllEmployee]="totalAllEmployee"
                     [pageSizeEmployee]="pageSizeEmployee"
                     [currentPageEmployee]="currentPageEmployee"
-                    (showUpdateModal)="showUpdateModal()" 
-                    (showDetailModal)="showDetailModal()"
-                    (showDeleteModal)="showDeleteModal()"
+                    (showUpdateModal)="showUpdateModal($event)" 
+                    (showDetailModal)="showDetailModal($event)"
+                    (showDeleteModal)="showDeleteModal($event)"
                     (onPageIndexChangeEmp)="onPageIndexChangeEmp($event)"
                 ></app-table-user>
             </ng-container>

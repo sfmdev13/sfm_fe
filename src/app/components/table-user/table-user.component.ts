@@ -27,9 +27,9 @@ export class TableUserComponent implements OnInit {
   @Input() pageSizeEmployee: number = 0;
   @Input() currentPageEmployee: number = 0;
 
-  @Output() showUpdateModal = new EventEmitter<void>();
-  @Output() showDetailModal = new EventEmitter<void>();
-  @Output() showDeleteModal = new EventEmitter<void>();
+  @Output() showUpdateModal: EventEmitter<IDataEmployee> = new EventEmitter<IDataEmployee>();
+  @Output() showDetailModal: EventEmitter<IDataEmployee> = new EventEmitter<IDataEmployee>();
+  @Output() showDeleteModal: EventEmitter<string> = new EventEmitter<string>();
 
   @Output() showDetailModalCust: EventEmitter<IDataCustomer> = new EventEmitter<IDataCustomer>();
   @Output() showUpdateModalCust: EventEmitter<IDataCustomer> = new EventEmitter<IDataCustomer>();
@@ -48,16 +48,16 @@ export class TableUserComponent implements OnInit {
   ngOnInit(): void {
   }
 
-  updateHandler(){
-    this.showUpdateModal.emit();
+  updateHandler(data: IDataEmployee){
+    this.showUpdateModal.emit(data);
   }
 
-  detailHandler(){
-    this.showDetailModal.emit();
+  detailHandler(data: IDataEmployee){
+    this.showDetailModal.emit(data);
   }
 
-  deleteHandler(){
-    this.showDeleteModal.emit();
+  deleteHandler(id: string){
+    this.showDeleteModal.emit(id);
   }
 
   detailCustHandler(dataCust: IDataCustomer){

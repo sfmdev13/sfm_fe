@@ -22,6 +22,18 @@
     }
 }
 
+.custom-checkbox {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+}
+  
+
+.collapse-role{
+    width: 100%;
+}
+
 .action-tag{
     cursor: pointer;
     height: 60px;
