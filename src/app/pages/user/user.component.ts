@@ -225,23 +225,15 @@ export class UserComponent implements OnInit {
     });
   }
 
-  showDeleteModal(){
-    if(this.user_type === 'employee'){
-      this.modalService.create({
-        nzTitle: 'Delete Employee',
-        nzContent: DeleteEmployeeModalComponent,
-        nzCentered: true
-      });
-    }
-
-    if(this.user_type === 'supplier'){
-      this.modalService.create({
-        nzTitle: 'Delete Supplier',
-        nzContent: DeleteSupplierModalComponent,
-        nzCentered: true
-      })
-    }
-
+  showDeleteModal(id: string){
+    this.modalService.create({
+      nzTitle: 'Delete Employee',
+      nzContent: DeleteEmployeeModalComponent,
+      nzCentered: true,
+      nzComponentParams: {
+        id
+      }
+    });
   }
 
   showFilter(){

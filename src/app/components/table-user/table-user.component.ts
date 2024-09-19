@@ -29,7 +29,7 @@ export class TableUserComponent implements OnInit {
 
   @Output() showUpdateModal: EventEmitter<IDataEmployee> = new EventEmitter<IDataEmployee>();
   @Output() showDetailModal: EventEmitter<IDataEmployee> = new EventEmitter<IDataEmployee>();
-  @Output() showDeleteModal = new EventEmitter<void>();
+  @Output() showDeleteModal: EventEmitter<string> = new EventEmitter<string>();
 
   @Output() showDetailModalCust: EventEmitter<IDataCustomer> = new EventEmitter<IDataCustomer>();
   @Output() showUpdateModalCust: EventEmitter<IDataCustomer> = new EventEmitter<IDataCustomer>();
@@ -56,8 +56,8 @@ export class TableUserComponent implements OnInit {
     this.showDetailModal.emit(data);
   }
 
-  deleteHandler(){
-    this.showDeleteModal.emit();
+  deleteHandler(id: string){
+    this.showDeleteModal.emit(id);
   }
 
   detailCustHandler(dataCust: IDataCustomer){

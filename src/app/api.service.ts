@@ -635,4 +635,14 @@ export class ApiService {
     const url = `${this.apiUrl}/update-employee`;
     return this.http.post<any>(url, body ,{ headers })
   }
+
+  deleteEmployee(id: string): Observable<any>{
+    const token = localStorage.getItem('authToken');
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+    });
+
+    const url = `${this.apiUrl}/cognito/delete-employee?employee_id=${id}`;
+    return this.http.post<any>(url, {} , { headers })
+  }
 }
