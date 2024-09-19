@@ -17,50 +17,88 @@
         <p class="fw-bold m-0 p-0">
           Access Rights
         </p>
-    
-        <div nz-row>
-          <nz-collapse nzGhost>
-            <ng-container *ngFor="let access of accessRights; let accessIndex = index">
-              <nz-collapse-panel class="text-capitalize" [nzHeader]="access.nav_name" [nzActive]="false" [nzExtra]="extraAccessTemplate">
-                <!-- Checkbox for Main Access -->
-                <ng-template #extraAccessTemplate>
-                  <label nz-checkbox [(ngModel)]="access.selected" (ngModelChange)="toggleAccess(accessIndex)"></label>
-                </ng-template>
         
-                <!-- Nested Sections -->
-                <nz-collapse nzGhost>
-                  <ng-container *ngFor="let section of access.nav_section; let sectionIndex = index">
-                    <div style="padding-left: 24px;padding-right: 24px;">
-                      <nz-collapse-panel class="section-panel text-capitalize mb-3" [nzHeader]="section.section_name" [nzActive]="false" [nzExtra]="extraSectionTemplate">
-                        <!-- Checkbox for Section -->
-                        <ng-template #extraSectionTemplate>
-                          <label nz-checkbox [nzDisabled]="isSectionDisabled(sectionIndex, accessIndex)" [(ngModel)]="section.selected" (ngModelChange)="toggleSection(accessIndex, sectionIndex)"></label>
-                        </ng-template>
+        <ng-container *ngFor="let access of newAccessRights; let accessIndex = index">
+          <div nz-row>
+            <ng-container *ngIf="access.nav_section.length > 0; else noCollapse">
+              <nz-collapse class="collapse-role" nzGhost>
+                <nz-collapse-panel class="text-capitalize" [nzHeader]="access.nav_name" [nzActive]="access.nav_section.length > 0" [nzExtra]="extraCheckbox">
+                  <ng-template #extraCheckbox>
+                    <label 
+                      nz-checkbox 
+                      [(ngModel)]="access.selected"
+                      (ngModelChange)="access.selected === false && resetChildSelections(access)"
+                    ></label>
+                  </ng-template>
         
-                        <!-- Section Actions -->
-                        <div class="px-2">
-                          <div class="row">
-                            <div class="col-4"  *ngFor="let action of section.section_action; let actionIndex = index">
-                              <nz-tag 
-                                [nzColor]="action.selected ? 'blue' : 'default'" 
-                                (click)="!isActionDisabled(accessIndex, actionIndex) && toggleAction(action)"
-                                [ngClass]="getTagClass(accessIndex, actionIndex)"
-                                class="action-tag w-100"
-                              >
-                                {{ action.name }}
-                              </nz-tag>
+                  <nz-collapse nzGhost>
+                    <ng-container *ngFor="let section of access.nav_section; let sectionIndex = index">
+                      <div style="padding-left: 24px;padding-right: 24px;">
+                        <!-- Check if section_action is empty, render nz-tag -->
+                        <ng-container *ngIf="section.section_action.length > 0; else emptySectionTag">
+                          <nz-collapse-panel class="section-panel text-capitalize mb-3" [nzHeader]="section.section_name" [nzActive]="section.section_action.length > 0" [nzExtra]="extraCheckbox">
+                            <ng-template #extraCheckbox>
+                              <label 
+                                nz-checkbox 
+                                [(ngModel)]="section.selected" 
+                                [disabled]="!access.selected"
+                                (ngModelChange)="section.selected === false && resetSectionActions(section)"
+                              ></label>
+                            </ng-template>
+        
+                            <div class="px-2">
+                              <div class="row">
+                                <div class="col-4" *ngFor="let action of section.section_action; let actionIndex = index">
+                                  <nz-tag
+                                    [nzColor]="action.selected ? 'blue' : 'default'"
+                                    (click)="!(!section.selected || !access.selected) && toggleAction(action)"
+                                    class="action-tag w-100"
+                                    [ngClass]="!section.selected || !access.selected ? 'disabled-tag' : 'active-tag'"
+                                  >
+                                    {{ action.name }}
+                                  </nz-tag>
+                                </div>
+                              </div>
+                            </div>
+                          </nz-collapse-panel>
+                        </ng-container>
+        
+                        <!-- Display horizontally aligned nz-tag if section_action is empty -->
+                        <ng-template #emptySectionTag>
+                          <div *ngIf="sectionIndex === 0" class="px-2">
+                            <div class="row">
+                              <div class="col-4" *ngFor="let sectionWithoutActions of access.nav_section" [hidden]="sectionWithoutActions.section_action.length > 0">
+                                <nz-tag 
+                                  [nzColor]="sectionWithoutActions.selected ? 'blue' : 'default'"
+                                  class="action-tag w-100"
+                                  (click)="access.selected && sectionWithoutActions.selected = !sectionWithoutActions.selected"
+                                  [ngClass]="!access.selected ? 'disabled-tag' : 'active-tag'"
+                                >
+                                  {{ sectionWithoutActions.section_name }}
+                                </nz-tag>
+                              </div>
                             </div>
                           </div>
-    
-                        </div>
-                      </nz-collapse-panel>
-                    </div>
-                  </ng-container>
-                </nz-collapse>
-              </nz-collapse-panel>
+                        </ng-template>
+                      </div>
+                    </ng-container>
+                  </nz-collapse>
+                </nz-collapse-panel>
+              </nz-collapse>
             </ng-container>
-          </nz-collapse>
-        </div>
+        
+            <ng-template #noCollapse>
+              <label class="custom-checkbox px-3 my-4">
+                <span class="checkbox-text text-capitalize">{{ access.nav_name }}</span>
+                <label 
+                  nz-checkbox
+                  [(ngModel)]="access.selected"
+                  (ngModelChange)="access.selected === false && resetChildSelections(access)"
+                ></label>
+              </label>
+            </ng-template>
+          </div>
+        </ng-container>
       </nz-tab>
       <nz-tab *ngIf="modal_type === 'edit'" nzTitle="User">
         <ng-container *ngIf="employee$ | async as employee; else tableLoading">

@@ -3,7 +3,8 @@ import { FormBuilder, Validators } from '@angular/forms';
 import { NzModalRef } from 'ng-zorro-antd/modal';
 import { debounceTime, distinctUntilChanged, Observable, Subject, tap } from 'rxjs';
 import { ApiService } from 'src/app/api.service';
-import { IDataRoles, IRootEmployee, IRootUserByRole } from 'src/app/interfaces';
+import { IDataRoles, IRootAccessRights, IRootEmployee, IRootUserByRole } from 'src/app/interfaces';
+import { accessRights } from 'src/app/constants/access-rights.contanst';
 
 @Component({
   selector: 'app-add-roles-modal',
@@ -27,129 +28,7 @@ export class AddRolesModalComponent implements OnInit {
   searchEmp: string = '';
   private searchEmpSubject = new Subject<string>();
 
-
-  disabledState: { [key: string]: boolean } = {};
-
-  accessRights = [
-    {
-      nav_name: 'users',
-      slug: 'view_users',
-      selected: false,
-      nav_section: [
-        {
-          section_name: 'employee',
-          slug: 'view_employee',
-          selected: false,
-          section_action: [
-            {
-              name: 'Add New Employee',
-              slug: 'add_new_employee',
-              selected: false
-            },
-            {
-              name: 'Detail Employee',
-              slug: 'detail_employee',
-              selected: false
-            },
-            {
-              name: 'Edit Employee',
-              slug: 'edit_employee',
-              selected: false
-            }
-          ]
-        },
-        {
-          section_name: 'customer',
-          slug: 'view_customer',
-          selected: false,
-          section_action: [
-            {
-              name: 'Add New Customer',
-              slug: 'add_new_customer',
-              selected: false
-            },
-            {
-              name: 'Detail Customer',
-              slug: 'detail_customer',
-              selected: false
-            },
-            {
-              name: 'Edit Customer',
-              slug: 'edit_customer',
-              selected: false
-            }
-          ]
-        },
-        {
-          section_name: 'supplier',
-          slug: 'view_supplier',
-          selected: false,
-          section_action: [
-            {
-              name: 'Add New Supplier',
-              slug: 'add_new_supplier',
-              selected: false
-            },
-            {
-              name: 'Detail Supplier',
-              slug: 'detail_supplier',
-              selected: false
-            },
-            {
-              name: 'Edit Supplier',
-              slug: 'edit_supplier',
-              selected: false
-            }
-          ]
-        }
-      ]
-    },
-    {
-      nav_name: 'projects',
-      slug: 'view_projects',
-      selected: false,
-      nav_section: []
-    },
-    {
-      nav_name: 'inventory',
-      slug: 'view_inventory',
-      selected: false,
-      nav_section: []
-    },
-    {
-      nav_name: 'reports',
-      slug: 'view_reports',
-      selected: false,
-      nav_section: []
-    },
-    {
-      nav_name: 'roles',
-      slug: 'view_roles',
-      selected: false,
-      nav_section: [
-        {
-          section_name: 'Add New Role',
-          slug: 'add_new_role',
-          selected: false,
-          section_action : []
-        },
-        {
-          section_name:'Edit Role',
-          slug: 'edit_role',
-          selected: false,
-          section_action : []
-        },
-        {
-          section_name: 'Delete Role',
-          slug: 'delete_role',
-          selected: false,
-          section_action : []
-        }
-      ]
-    }
-  ]
-
-  
+  newAccessRights = accessRights;
 
   constructor(
     private modal: NzModalRef,
@@ -180,8 +59,26 @@ export class AddRolesModalComponent implements OnInit {
 
       this.status = this.roleDetail.status === 1 ? true : false;
 
-      this.setSelectedBasedOnActions(this.accessRights, this.roleDetail.actions)
+      this.setSelectedBasedOnActions(this.newAccessRights, this.roleDetail.actions)
     }
+  }
+
+  resetChildSelections(access: any) {
+    // Loop through each section and reset its selected state
+    access.nav_section.forEach((section: any) => {
+      section.selected = false;
+      
+      // Loop through each action and reset its selected state
+      section.section_action.forEach((action: any) => {
+        action.selected = false;
+      });
+    });
+  }
+
+  resetSectionActions(section: any) {
+    section.section_action.forEach((action: any) => {
+      action.selected = false;
+    });
   }
 
   searchEmpHandler(search: string): void{
@@ -209,8 +106,7 @@ export class AddRolesModalComponent implements OnInit {
   
   submitForm(){
 
-    const selectedSlugs = this.getSelectedSlugs(this.accessRights);
-
+    const selectedSlugs = this.getSelectedSlugs(this.newAccessRights);
 
     if(this.modal_type === 'add'){
       const body = {
@@ -236,7 +132,7 @@ export class AddRolesModalComponent implements OnInit {
         id: this.roleDetail.id,
         title: this.roleName,
         status: this.status ? 1 : 0,
-        action_slug:  this.roleDetail.actions,
+        action_slug:  this.roleDetail.actions.map(role => role.slug),
         action_slug_new: selectedSlugs
       }
 
@@ -258,78 +154,8 @@ export class AddRolesModalComponent implements OnInit {
 
   toggleAction(action: any): void {
     action.selected = !action.selected;
-    
   }
 
-  toggleAccess(accessIndex: number): void {
-
-    const access = this.accessRights[accessIndex];
-
-    if (!access.selected) {
-      access.nav_section.forEach((section: any, sectionIndex: number) => {
-        const sectionKey = `section_${accessIndex}_${sectionIndex}`;
-        this.disabledState[sectionKey] =  true
-
-        section.selected = false;
-        section.section_action.forEach((action: any, actionIndex: number) => {
-          const actionKey = `section_${accessIndex}_action_${actionIndex}`
-          this.disabledState[actionKey] = true
-
-
-          action.selected = false;
-        });
-      });
-    }
-
-    if (access.selected) {
-      access.nav_section.forEach((section: any, sectionIndex: number) => {
-        const sectionKey = `section_${accessIndex}_${sectionIndex}`;
-        this.disabledState[sectionKey] =  false
-        
-        section.selected = true;
-        section.section_action.forEach((action: any, actionIndex: number) => {
-          const actionKey = `section_${accessIndex}_action_${actionIndex}`
-          this.disabledState[actionKey] = false
-
-          action.selected = true;
-        });
-      });
-    }
-  }
-
-  toggleSection(accessIndex: number, sectionIndex: number){
-    const access_section = this.accessRights[accessIndex].nav_section[sectionIndex];
-
-    if(!access_section.selected){
-      access_section.section_action.forEach((action: any, actionIndex: number) => {
-        const actionKey = `section_${accessIndex}_action_${actionIndex}`
-        this.disabledState[actionKey] = true;
-
-        action.selected = false;
-      });
-    }
-
-    if(access_section.selected){
-      access_section.section_action.forEach((action: any, actionIndex: number) => {
-        const actionKey = `section_${accessIndex}_action_${actionIndex}`
-        this.disabledState[actionKey] = false;
-
-        action.selected = true;
-      });
-    }
-  }
-
-  isSectionDisabled(sectionIndex: number, accessIndex: number): boolean {
-    return this.disabledState[`section_${accessIndex}_${sectionIndex}`] || false;
-  }
-
-  isActionDisabled(sectionIndex: number, actionIndex: number): boolean {
-    return this.disabledState[`section_${sectionIndex}_action_${actionIndex}`] || false;
-  }
-
-  getTagClass(sectionIndex: number, actionIndex: number): string {
-    return this.isActionDisabled(sectionIndex, actionIndex) ? 'disabled-tag' : 'active-tag';
-  }
 
   assignEmp(data: any): void{
 
@@ -348,7 +174,7 @@ export class AddRolesModalComponent implements OnInit {
     })
   }
 
-  getSelectedSlugs(accessRights: any[]): string[] {
+  getSelectedSlugs(accessRights: IRootAccessRights[]): string[] {
     const selectedSlugs: string[] = [];
   
     accessRights.forEach(nav => {
