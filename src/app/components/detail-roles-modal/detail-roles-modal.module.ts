@@ -9,6 +9,7 @@ import { NzTableModule } from 'ng-zorro-antd/table';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzTagModule } from 'ng-zorro-antd/tag';
 import { NzInputModule } from 'ng-zorro-antd/input';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 @NgModule({
   declarations: [DetailRolesModalComponent],
@@ -21,7 +22,9 @@ import { NzInputModule } from 'ng-zorro-antd/input';
     NzTableModule,
     NzButtonModule,
     NzTagModule,
-    NzInputModule
+    NzInputModule,
+    FormsModule,
+    ReactiveFormsModule
   ],
   exports: [DetailRolesModalComponent]
 })

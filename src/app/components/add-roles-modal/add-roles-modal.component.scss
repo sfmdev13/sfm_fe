@@ -1,4 +1,11 @@
 ::ng-deep{
+
+    .ant-modal-body{
+        max-height: 80vh;
+        overflow-y: auto;
+    }
+
+
     .section-panel{
         .ant-collapse-header{
             display: flex;
@@ -21,6 +28,9 @@
     padding: 8px;
     text-wrap: balance;
     text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .disabled-tag {

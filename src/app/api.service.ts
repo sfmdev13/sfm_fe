@@ -2,7 +2,7 @@ import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, map, Observable, tap } from 'rxjs';
 import { environment } from 'src/environments/environment';
-import { ICategories, IRootAllRoles, IRootCatContact, IRootCustomer, IRootEmployee, IRootSupplier } from './interfaces';
+import { ICategories, IRootAllRoles, IRootCatContact, IRootCustomer, IRootEmployee, IRootSupplier, IRootUserByRole } from './interfaces';
 
 @Injectable({
   providedIn: 'root'
@@ -37,6 +37,9 @@ export class ApiService {
   private refreshGetCategories = new BehaviorSubject<void>(undefined);
   refreshGetCategories$ = this.refreshGetCategories.asObservable();
 
+  private refreshGetRoles = new BehaviorSubject<void>(undefined);
+  refreshGetRoles$ = this.refreshGetRoles.asObservable();
+
   getProfile(): Observable<any> {
     const token = localStorage.getItem('authToken');
     const headers = new HttpHeaders({
@@ -65,6 +68,10 @@ export class ApiService {
 
   triggerRefreshCategories(){
     this.refreshGetCategories.next();
+  }
+
+  triggerRefreshRoles(){
+    this.refreshGetRoles.next();
   }
 
   setFilteredCustomerData(data: IRootCustomer) {
@@ -531,5 +538,77 @@ export class ApiService {
         observer.complete();
       });
     });
+  }
+
+  createRole(body: any): Observable<any> {
+    const token = localStorage.getItem('authToken');
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+    });
+
+    const url = `${this.apiUrl}/create-role`;
+    return this.http.post<any>(url, body ,{ headers })
+  }
+
+  searchRole(status: string, page: number, per_page: number): Observable<IRootAllRoles>{
+    const token = localStorage.getItem('authToken');
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+    });
+
+    const url = `${this.apiUrl}/search-roles?search=${status}&page=${page}&per_page=${per_page}`
+
+    return this.http.post<IRootAllRoles>(url, {}, { headers });
+  }
+
+  editRole(body: any): Observable<any> {
+    const token = localStorage.getItem('authToken');
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+    });
+
+    const url = `${this.apiUrl}/edit-role`;
+    return this.http.post<any>(url, body ,{ headers })
+  }
+
+  getUserByRole(roleId: string, page: number, per_page: number): Observable<IRootUserByRole> {
+    const token = localStorage.getItem('authToken');
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+    });
+
+    const url = `${this.apiUrl}/user-byrole?role_id=${roleId}&page=${page}&per_page=${per_page}`;
+    return this.http.get<IRootUserByRole>(url, { headers })
+  }
+
+  searchUserByRole(search: string, roleId: string, page: number, per_page: number): Observable<IRootUserByRole>{
+    const token = localStorage.getItem('authToken');
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+    });
+
+    const url = `${this.apiUrl}/search/user-byrole?search=${search}&role_id=${roleId}&page=${page}&per_page=${per_page}`;
+    return this.http.post<IRootUserByRole>(url, { headers })
+  }
+
+
+  assignRole(body: any): Observable<any>{
+    const token = localStorage.getItem('authToken');
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+    });
+
+    const url = `${this.apiUrl}/assign-role`;
+    return this.http.post<IRootUserByRole>(url, body ,{ headers })
+  }
+
+  deleteRole(id: number): Observable<any>{
+    const token = localStorage.getItem('authToken');
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+    });
+
+    const url = `${this.apiUrl}/delete-role?id=${id}`;
+    return this.http.post<any>(url, {} ,{ headers })
   }
 }
