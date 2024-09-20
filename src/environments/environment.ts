@@ -4,7 +4,7 @@
 
 export const environment = {
   production: false,
-  apiUrl: 'http://34.230.59.242/api/v1'
+  apiUrl: 'https://d30ip51tzu2azu.cloudfront.net/api/v1'
 };
 
 /*
