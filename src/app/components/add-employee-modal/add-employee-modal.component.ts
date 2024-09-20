@@ -121,7 +121,7 @@ export class AddEmployeeModalComponent implements OnInit {
 
             this.spinnerSvc.hide();
 
-            this.modalSvc.success({
+            this.modalSvc.error({
               nzTitle: 'Unable to Update Employee',
               nzContent: error.error.meta.message,
               nzOkText: 'Ok',
@@ -138,7 +138,7 @@ export class AddEmployeeModalComponent implements OnInit {
     } else {
       this.spinnerSvc.hide();
 
-      this.modalSvc.success({
+      this.modalSvc.error({
         nzTitle: 'Unable to Submit',
         nzContent: 'Need to fill all the input',
         nzOkText: 'Ok',
