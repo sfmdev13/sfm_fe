@@ -526,18 +526,26 @@ export class ApiService {
     return this.http.delete<any>(url, { headers })
   }
 
-  getProvinces(): Observable<any> {
-    return this.http.get(this.provinceUrl);
+  getProvinces(): Observable<any[]> {
+    return this.http.get<any[]>(this.provinceUrl).pipe(
+      map((provinces: any[]) => 
+        provinces.sort((a, b) => a.province.localeCompare(b.province))
+      )
+    );
   }
   
-  getRegencies(): Observable<any> {
-    return this.http.get(this.regencyUrl);
+  getRegencies(): Observable<any[]> {
+    return this.http.get<any[]>(this.regencyUrl).pipe(
+      map((regencies: any[]) => 
+        regencies.sort((a, b) => a.regency.localeCompare(b.regency))
+      )
+    );
   }
 
   getRegenciesByProvince(provinceId: number): Observable<any> {
     return new Observable(observer => {
       this.getRegencies().subscribe((regencies: any[]) => {
-        const filteredRegencies = regencies.filter(regency => regency.province_id === provinceId);
+        const filteredRegencies = regencies.filter(regency => regency.province_id === provinceId).sort((a, b) => a.regency.localeCompare(b.regency));
         observer.next(filteredRegencies);
         observer.complete();
       });
