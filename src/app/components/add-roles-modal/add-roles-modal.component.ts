@@ -1,10 +1,11 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
-import { NzModalRef } from 'ng-zorro-antd/modal';
+import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
 import { debounceTime, distinctUntilChanged, Observable, Subject, tap } from 'rxjs';
 import { ApiService } from 'src/app/api.service';
 import { IDataRoles, IRootAccessRights, IRootEmployee, IRootUserByRole } from 'src/app/interfaces';
 import { accessRights } from 'src/app/constants/access-rights.contanst';
+import { SpinnerService } from 'src/app/spinner.service';
 
 @Component({
   selector: 'app-add-roles-modal',
@@ -32,7 +33,9 @@ export class AddRolesModalComponent implements OnInit {
 
   constructor(
     private modal: NzModalRef,
-    private apiSvc: ApiService
+    private apiSvc: ApiService,
+    private spinnerSvc: SpinnerService,
+    private modalSvc: NzModalService
   ) {}
 
   ngOnInit(): void {
@@ -106,6 +109,8 @@ export class AddRolesModalComponent implements OnInit {
   
   submitForm(){
 
+    this.spinnerSvc.show();
+
     const selectedSlugs = this.getSelectedSlugs(this.newAccessRights);
 
     if(this.modal_type === 'add'){
@@ -116,10 +121,28 @@ export class AddRolesModalComponent implements OnInit {
       }
       this.apiSvc.createRole(body).subscribe({
         next: ()=>{
+          this.spinnerSvc.hide();
+
+          this.modalSvc.success({
+            nzTitle: 'Success',
+            nzContent: 'Successfully Add Role',
+            nzOkText: 'Ok',
+            nzCentered: true
+          })
+
+
           this.apiSvc.triggerRefreshRoles()
         },
         error: (error)=>{
-          console.log(error)
+          this.spinnerSvc.hide();
+
+          this.modalSvc.error({
+            nzTitle: 'Unable to Add Role',
+            nzContent: error.error.meta.message,
+            nzOkText: 'Ok',
+            nzCentered: true
+          })
+
         },
         complete: () => {
           this.modal.destroy()
@@ -138,10 +161,29 @@ export class AddRolesModalComponent implements OnInit {
 
       this.apiSvc.editRole(body).subscribe({
         next: () => {
+
+          this.spinnerSvc.hide();
+
+          this.modalSvc.success({
+            nzTitle: 'Success',
+            nzContent: 'Successfully Update Roles',
+            nzOkText: 'Ok',
+            nzCentered: true
+          })
+
+
           this.apiSvc.triggerRefreshRoles()
         },
         error: (error) => {
-          console.log(error)
+          this.spinnerSvc.hide();
+
+          this.modalSvc.success({
+            nzTitle: 'Unable to Update Role',
+            nzContent: error.error.meta.message,
+            nzOkText: 'Ok',
+            nzCentered: true
+          })
+
         },
         complete: () => {
           this.modal.destroy()
