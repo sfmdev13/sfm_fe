@@ -24,7 +24,7 @@ import { IDataCustomer, IDataEmployee, IDataSupplier, IRootCustomer, IRootEmploy
 })
 export class UserComponent implements OnInit {
 
-  user_type: string = '';
+  user_type: string = 'employee';
   
   listOfDataEmp: any[] = [];
 
