@@ -113,6 +113,9 @@ export class LoyalCustomerComponent implements OnInit {
         }
       })
     }
+
+    
+    this.spinnerSvc.hide();
   }
 
   handleSubmitAdd(): void{
@@ -148,6 +151,9 @@ export class LoyalCustomerComponent implements OnInit {
         }
       })
     }
+
+    
+    this.spinnerSvc.hide();
   }
 
   handleSubmitDelete(): void{

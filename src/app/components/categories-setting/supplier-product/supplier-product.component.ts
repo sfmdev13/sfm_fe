@@ -146,6 +146,9 @@ export class SupplierProductComponent implements OnInit {
         }
       })
     }
+
+    
+    this.spinnerSvc.hide();
   }
 
   handleSubmitDelete(): void{
