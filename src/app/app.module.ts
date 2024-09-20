@@ -14,6 +14,8 @@ import { LayoutModule } from './components/layout/layout.module';
 import { AuthInterceptor } from './auth.interceptor';
 import { NzModalModule } from 'ng-zorro-antd/modal';
 import { UnauthorizedComponent } from './components/unauthorized/unauthorized.component';
+import { SpinnerComponent } from './components/spinner/spinner.component';
+import { NzSpinModule } from 'ng-zorro-antd/spin';
 
 registerLocaleData(en);
 
@@ -21,6 +23,7 @@ registerLocaleData(en);
   declarations: [
     AppComponent,
     UnauthorizedComponent,
+    SpinnerComponent,
   ],
   imports: [
     BrowserModule,
@@ -29,7 +32,8 @@ registerLocaleData(en);
     HttpClientModule,
     BrowserAnimationsModule,
     LayoutModule,
-    NzModalModule
+    NzModalModule,
+    NzSpinModule
   ],
   providers: [
     { provide: NZ_I18N, useValue: en_US },

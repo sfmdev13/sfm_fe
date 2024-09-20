@@ -1,8 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import { NzModalService } from 'ng-zorro-antd/modal';
 import { ApiService } from 'src/app/api.service';
 import { AuthService } from 'src/app/auth.service';
+import { SpinnerService } from 'src/app/spinner.service';
 
 @Component({
   selector: 'app-login',
@@ -10,7 +12,6 @@ import { AuthService } from 'src/app/auth.service';
   styleUrls: ['./login.component.scss'],
 })
 export class LoginComponent implements OnInit {
-
   passwordVisible = false;
 
   validateForm= this.fb.group({
@@ -22,7 +23,9 @@ export class LoginComponent implements OnInit {
     private fb: FormBuilder,
     private authService: AuthService,
     private router: Router,
-    private apiSvc: ApiService
+    private apiSvc: ApiService,
+    private modal: NzModalService,
+    private spinnerSvc: SpinnerService
   ) { }
 
   ngOnInit(): void {
@@ -30,6 +33,7 @@ export class LoginComponent implements OnInit {
 
   submitForm(): void {
     if (this.validateForm.valid) {
+      this.spinnerSvc.show();
       this.authService.login(this.validateForm.value.email, this.validateForm.value.password).subscribe({
         next: (response) => {
           if(response.data.status === 'NEW_PASSWORD_REQUIRED'){
@@ -59,12 +63,21 @@ export class LoginComponent implements OnInit {
           }
         },
         error: (error) => {
-          console.log(error)
+          this.modal.error({
+            nzTitle: 'Login Failed',
+            nzContent: error.error.meta.message,
+            nzOkText: 'Ok',
+            nzCentered: true
+          });
         },
         complete: () => {
 
         }
       })
+
+      this.spinnerSvc.hide();
+
+      console.log('keluar')
     } else {
       Object.values(this.validateForm.controls).forEach(control => {
         if (control.invalid) {
