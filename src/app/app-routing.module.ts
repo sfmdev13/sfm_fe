@@ -64,13 +64,13 @@ const routes: Routes = [
         path: 'settings',
         loadChildren: () => import('./pages/settings/settings.module').then(m => m.SettingsModule),
         canActivate: [ActionGuard],
-        data:  { action: '' }
+        data:  { action: 'view_settings' }
       },
       {
         path: 'settings/categories-setting',
         loadChildren: () => import('./pages/categories-setting/categories-setting.module').then(m => m.CategoriesSettingModule),
         canActivate: [ActionGuard],
-        data:  { action: '' }
+        data:  { action: 'view_settings' }
       },
       {
         path: 'unauthorized',
