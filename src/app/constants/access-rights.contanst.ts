@@ -89,6 +89,12 @@ export const accessRights: IRootAccessRights[] = [
           section_action: []
         }
       ]
+    },
+    {
+      nav_name: 'settings',
+      slug: 'view_settings',
+      selected: false,
+      nav_section: []
     }
   ];
   
