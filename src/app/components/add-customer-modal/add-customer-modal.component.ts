@@ -560,11 +560,11 @@ export class AddCustomerModalComponent implements OnInit {
         cp_city: pic.cp_city.toString(),
         cp_category_id: pic.cp_category_id,
         cp_nik: '123',
-        is_pic_company: pic.is_pic_company,
+        is_pic_company: pic.is_pic_company ? 1 : 0,
         cp_pic: this.customerDetail.contactPerson.map(item => item.pic)[i],
         cp_pic_new: pic.cp_pic.map((p: any) => ({
           pic_id: p,
-          is_pic_head: p === pic.cp_is_pic_head
+          is_pic_head: p === pic.cp_is_pic_head ? 1 : 0
         })),
         cp_loyal_customer_program_id: pic.cp_loyal_customer_program_id,
         cp_attachments: pic.cp_attachments,
@@ -700,7 +700,7 @@ export class AddCustomerModalComponent implements OnInit {
             this.spinnerSvc.hide();
 
             this.modalSvc.error({
-              nzTitle: 'Unable to add customer',
+              nzTitle: 'Unable to update customer',
               nzContent: error.error.meta.message,
               nzOkText: 'Ok',
               nzCentered: true

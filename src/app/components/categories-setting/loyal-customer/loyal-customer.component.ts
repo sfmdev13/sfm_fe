@@ -1,8 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
+import { NzModalService } from 'ng-zorro-antd/modal';
 import { Observable, tap } from 'rxjs';
 import { ApiService } from 'src/app/api.service';
 import { ICategories, IDataCategories } from 'src/app/interfaces';
+import { SpinnerService } from 'src/app/spinner.service';
 
 @Component({
   selector: 'app-loyal-customer',
@@ -37,7 +39,9 @@ export class LoyalCustomerComponent implements OnInit {
 
   constructor(
     private apiSvc: ApiService,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private modalSvc: NzModalService,
+    private spinnerSvc: SpinnerService
   ) { }
 
   ngOnInit(): void {
@@ -79,13 +83,29 @@ export class LoyalCustomerComponent implements OnInit {
   }
 
   handleSubmitEdit(): void {
-    
+
+    this.spinnerSvc.show()
+
     if(this.categoryFormEdit.valid){
       this.apiSvc.editLoyalCustomer(this.categoryFormEdit.value.id,this.categoryFormEdit.value.name, this.categoryFormEdit.value.description).subscribe({
         next: () => {
+          this.spinnerSvc.hide();
+          this.modalSvc.success({
+            nzTitle: 'Success',
+            nzContent: 'Successfully Update Category',
+            nzOkText: 'Ok',
+            nzCentered: true
+          })
           this.apiSvc.triggerRefreshCategories()
         },
         error: (error) => {
+          this.spinnerSvc.hide();
+          this.modalSvc.error({
+            nzTitle: 'Unable to Update Category',
+            nzContent: error.error.meta.message,
+            nzOkText: 'Ok',
+            nzCentered: true
+          })
           console.log(error)
         },
         complete: () => {
@@ -96,14 +116,32 @@ export class LoyalCustomerComponent implements OnInit {
   }
 
   handleSubmitAdd(): void{
+
+    this.spinnerSvc.show();
+    
     if(this.categoryForm.valid){
       this.apiSvc.createLoyalCustomer(this.categoryForm.value.name, this.categoryForm.value.description).subscribe({
         next: () => {
+          this.spinnerSvc.hide();
+          this.modalSvc.success({
+            nzTitle: 'Success',
+            nzContent: 'Successfully Add Category',
+            nzOkText: 'Ok',
+            nzCentered: true
+          })
+
+
           this.apiSvc.triggerRefreshCategories()
           this.isVisibleAdd = false;
         },
         error: (error) => {
-          console.log(error)
+          this.spinnerSvc.hide();
+          this.modalSvc.error({
+            nzTitle: 'Unable to Add Category',
+            nzContent: error.error.data.message,
+            nzOkText: 'Ok',
+            nzCentered: true
+          })
         },
         complete: () => {
           this.categoryForm.reset()

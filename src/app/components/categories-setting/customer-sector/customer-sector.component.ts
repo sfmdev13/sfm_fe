@@ -1,8 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { Validators, FormBuilder, FormGroup } from '@angular/forms';
+import { NzModalService } from 'ng-zorro-antd/modal';
 import { Observable, tap } from 'rxjs';
 import { ApiService } from 'src/app/api.service';
 import { ICategories, IDataCategories } from 'src/app/interfaces';
+import { SpinnerService } from 'src/app/spinner.service';
 
 @Component({
   selector: 'app-customer-sector',
@@ -32,7 +34,9 @@ export class CustomerSectorComponent implements OnInit {
 
   constructor(
     private apiSvc: ApiService,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private spinnerSvc: SpinnerService,
+    private modalSvc: NzModalService
   ) { 
     this.categoryForm = this.fb.group({
       id: [''],
@@ -80,14 +84,30 @@ export class CustomerSectorComponent implements OnInit {
   }
 
   handleSubmitEdit(): void {
-    
+
+    this.spinnerSvc.show();
+
     if(this.categoryFormEdit.valid){
       this.apiSvc.editCustomerSector(this.categoryFormEdit.value.id,this.categoryFormEdit.value.name, this.categoryFormEdit.value.description).subscribe({
         next: () => {
+          this.spinnerSvc.hide();
+          this.modalSvc.success({
+            nzTitle: 'Success',
+            nzContent: 'Successfully Update Category',
+            nzOkText: 'Ok',
+            nzCentered: true
+          })
+
           this.apiSvc.triggerRefreshCategories()
         },
         error: (error) => {
-          console.log(error)
+          this.spinnerSvc.hide();
+          this.modalSvc.error({
+            nzTitle: 'Unable to Update Category',
+            nzContent: error.error.meta.message,
+            nzOkText: 'Ok',
+            nzCentered: true
+          })
         },
         complete: () => {
           this.isVisibleEdit = false;
@@ -97,14 +117,32 @@ export class CustomerSectorComponent implements OnInit {
   }
 
   handleSubmitAdd(): void{
+
+    this.spinnerSvc.show();
+
     if(this.categoryForm.valid){
       this.apiSvc.createCustomerSector(this.categoryForm.value.name, this.categoryForm.value.description).subscribe({
         next: () => {
+          this.spinnerSvc.hide();
+          this.modalSvc.success({
+            nzTitle: 'Success',
+            nzContent: 'Successfully Add Category',
+            nzOkText: 'Ok',
+            nzCentered: true
+          })
+
+
           this.apiSvc.triggerRefreshCategories()
           this.isVisibleAdd = false;
         },
         error: (error) => {
-          console.log(error)
+          this.spinnerSvc.hide();
+          this.modalSvc.error({
+            nzTitle: 'Unable to Add Category',
+            nzContent: error.error.meta.message,
+            nzOkText: 'Ok',
+            nzCentered: true
+          })
         },
         complete: () => {
           this.categoryForm.reset();
