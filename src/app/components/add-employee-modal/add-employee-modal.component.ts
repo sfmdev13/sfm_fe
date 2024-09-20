@@ -1,9 +1,10 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
-import { NzModalRef } from 'ng-zorro-antd/modal';
+import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
 import { Observable } from 'rxjs';
 import { ApiService } from 'src/app/api.service';
 import { IDataEmployee, IRootAllRoles } from 'src/app/interfaces';
+import { SpinnerService } from 'src/app/spinner.service';
 
 @Component({
   selector: 'app-add-employee-modal',
@@ -31,7 +32,9 @@ export class AddEmployeeModalComponent implements OnInit {
   constructor(
     private modal: NzModalRef,
     private fb: FormBuilder,
-    private apiSvc: ApiService
+    private apiSvc: ApiService,
+    private spinnerSvc: SpinnerService,
+    private modalSvc: NzModalService
   ) {}
 
   ngOnInit(): void {
@@ -65,15 +68,34 @@ export class AddEmployeeModalComponent implements OnInit {
 
   submitForm(){
 
+    this.spinnerSvc.show();
+
     if(this.employeeForm.valid){
 
       if(this.modal_type === 'add'){
         this.apiSvc.createEmployee(this.employeeForm.value).subscribe({
           next: () => {
+            this.spinnerSvc.hide();
+
+            this.modalSvc.success({
+              nzTitle: 'Success',
+              nzContent: 'Successfully Add Employee',
+              nzOkText: 'Ok',
+              nzCentered: true
+            })
+
+
             this.apiSvc.triggerRefreshEmployee();
           },
           error: (error) => {
-            console.log(error)
+            this.spinnerSvc.hide();
+
+            this.modalSvc.error({
+              nzTitle: 'Unable to Add Employee',
+              nzContent: error.error.meta.message,
+              nzOkText: 'Ok',
+              nzCentered: true
+            })
           },
           complete: () => {
             this.modal.destroy();
@@ -84,16 +106,44 @@ export class AddEmployeeModalComponent implements OnInit {
       if(this.modal_type === 'update'){
         this.apiSvc.udpateEmployee(this.employeeForm.value).subscribe({
           next: () => {
+            this.spinnerSvc.hide();
+
+            this.modalSvc.success({
+              nzTitle: 'Success',
+              nzContent: 'Successfully Update Employee',
+              nzOkText: 'Ok',
+              nzCentered: true
+            })
+
             this.apiSvc.triggerRefreshEmployee();
           },
           error: (error) => {
-            console.log(error)
+
+            this.spinnerSvc.hide();
+
+            this.modalSvc.success({
+              nzTitle: 'Unable to Update Employee',
+              nzContent: error.error.meta.message,
+              nzOkText: 'Ok',
+              nzCentered: true
+            })
+
           },
           complete: () => {
             this.modal.destroy();
           }
         })
       }
+
+    } else {
+      this.spinnerSvc.hide();
+
+      this.modalSvc.success({
+        nzTitle: 'Unable to Submit',
+        nzContent: 'Need to fill all the input',
+        nzOkText: 'Ok',
+        nzCentered: true
+      })
 
     }
   }

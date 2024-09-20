@@ -1,10 +1,11 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { AbstractControl, FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { NzModalRef } from 'ng-zorro-antd/modal';
+import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
 import { NzUploadFile } from 'ng-zorro-antd/upload';
 import { filter, Observable, tap } from 'rxjs';
 import { ApiService } from 'src/app/api.service';
 import { IDataSupplier, IRootCatContact } from 'src/app/interfaces';
+import { SpinnerService } from 'src/app/spinner.service';
 
 const getBase64 = (file: File): Promise<string | ArrayBuffer | null> =>
   new Promise((resolve, reject) => {
@@ -88,7 +89,9 @@ export class AddSupplierModalComponent implements OnInit {
   constructor(
     private modal: NzModalRef,
     private fb: FormBuilder,
-    private apiSvc: ApiService
+    private apiSvc: ApiService,
+    private spinnerSvc: SpinnerService,
+    private modalSvc: NzModalService
   ) { }
 
   ngOnInit(): void {
@@ -402,6 +405,8 @@ export class AddSupplierModalComponent implements OnInit {
 
   submitForm(){
 
+    this.spinnerSvc.show();
+
     this.picComplete = this.supplierForm.get('pic')!.value.map((pic_id: any) => ({
       pic_id: pic_id,
       is_pic_internal: pic_id === this.supplierForm.get('is_pic_internal')!.value ? 1 : 0
@@ -505,10 +510,28 @@ export class AddSupplierModalComponent implements OnInit {
         
         this.apiSvc.createSupplier(formData).subscribe({
           next:() => {
+
+            this.spinnerSvc.hide();
+
+            this.modalSvc.success({
+              nzTitle: 'Success',
+              nzContent: 'Successfully add supplier',
+              nzOkText: 'Ok',
+              nzCentered: true
+            });
+
             this.apiSvc.triggerRefreshSuppliers();
           },
           error: (error) => {
-            console.log(error);
+
+            this.spinnerSvc.hide();
+
+            this.modalSvc.error({
+              nzTitle: 'Unable to Add Supplier',
+              nzContent: error.error.meta.message,
+              nzOkText: 'Ok',
+              nzCentered: true
+            });
           },
           complete: () => {
             this.modal.destroy();
@@ -650,16 +673,43 @@ export class AddSupplierModalComponent implements OnInit {
 
         this.apiSvc.updateSupplier(formData).subscribe({
           next:() => {
+            this.spinnerSvc.hide();
+
+            this.modalSvc.success({
+              nzTitle: 'Success',
+              nzContent: 'Successfully Update Supplier',
+              nzOkText: 'Ok',
+              nzCentered: true
+            });
+
             this.apiSvc.triggerRefreshSuppliers();
           },
           error: (error) => {
-            console.log(error);
+
+            this.spinnerSvc.hide();
+
+            this.modalSvc.error({
+              nzTitle: 'Unable to Update Supplier',
+              nzContent: error.error.meta.message,
+              nzOkText: 'Ok',
+              nzCentered: true
+            });
+
           },
           complete: () => {
             this.modal.destroy();
           }
         })
       }
+    }else {
+      this.spinnerSvc.hide();
+
+      this.modalSvc.error({
+        nzTitle: 'Unable to Update Supplier',
+        nzContent: 'Need to fill all the input',
+        nzOkText: 'Ok',
+        nzCentered: true
+      })
     }
   }
 

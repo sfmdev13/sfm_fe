@@ -9,6 +9,7 @@ import { NzFormModule } from 'ng-zorro-antd/form';
 import { NzInputModule } from 'ng-zorro-antd/input';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzIconModule } from 'ng-zorro-antd/icon';
+import { NzSpinModule } from 'ng-zorro-antd/spin';
 
 @NgModule({
   declarations: [LoginComponent],
@@ -20,7 +21,8 @@ import { NzIconModule } from 'ng-zorro-antd/icon';
     NzInputModule,
     NzButtonModule,
     ReactiveFormsModule,
-    NzIconModule
+    NzIconModule,
+    NzSpinModule
   ],
   exports: [LoginComponent]
 })

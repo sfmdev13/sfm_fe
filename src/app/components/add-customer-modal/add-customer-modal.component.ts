@@ -1,10 +1,11 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { AbstractControl, FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
-import { NzModalRef } from 'ng-zorro-antd/modal';
+import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
 import { NzUploadFile } from 'ng-zorro-antd/upload';
 import { Observable, tap } from 'rxjs';
 import { ApiService } from 'src/app/api.service';
 import { IDataCustomer, IRootCatContact } from 'src/app/interfaces';
+import { SpinnerService } from 'src/app/spinner.service';
 
 const getBase64 = (file: File): Promise<string | ArrayBuffer | null> =>
   new Promise((resolve, reject) => {
@@ -89,7 +90,9 @@ export class AddCustomerModalComponent implements OnInit {
   constructor(
     private modal: NzModalRef,
     private fb: FormBuilder,
-    private apiSvc: ApiService
+    private apiSvc: ApiService,
+    private spinnerSvc: SpinnerService,
+    private modalSvc: NzModalService
   ) {}
 
   ngOnInit(): void { 
@@ -386,6 +389,8 @@ export class AddCustomerModalComponent implements OnInit {
   
 
   submitForm(){
+    
+    this.spinnerSvc.show();
 
     this.picComplete = this.customerForm.get('pic')!.value.map((pic_id: any) => ({
       pic_id: pic_id,
@@ -492,10 +497,28 @@ export class AddCustomerModalComponent implements OnInit {
 
         this.apiSvc.createCustomer(formData).subscribe({
           next: (response) => {
+            this.spinnerSvc.hide();
+
+            this.modalSvc.success({
+              nzTitle: 'Success',
+              nzContent: 'Successfully Add Customer',
+              nzOkText: 'Ok',
+              nzCentered: true
+            });
+
             this.apiSvc.triggerRefreshCustomers();
           },
           error: (error) => {
-            console.log(error)
+            this.spinnerSvc.hide();
+
+            this.modalSvc.error({
+              nzTitle: 'Unable to Add Customer',
+              nzContent: error.error.meta.message,
+              nzOkText: 'Ok',
+              nzCentered: true
+            });
+
+            this.apiSvc.triggerRefreshCustomers();
           },
           complete: () => {
             this.modal.destroy();
@@ -509,6 +532,15 @@ export class AddCustomerModalComponent implements OnInit {
             control.markAsDirty();
             control.updateValueAndValidity({ onlySelf: true });
           }
+        });
+
+        this.spinnerSvc.hide();
+
+        this.modalSvc.error({
+          nzTitle: 'Unable to add customer',
+          nzContent: 'Need to fill all the input',
+          nzOkText: 'Ok',
+          nzCentered: true
         });
       }
     }
@@ -653,10 +685,26 @@ export class AddCustomerModalComponent implements OnInit {
 
         this.apiSvc.updateCustomer(formData).subscribe({
           next: (response) => {
+            this.spinnerSvc.hide();
+
+            this.modalSvc.success({
+              nzTitle: 'Success',
+              nzContent: 'Successfully update customer',
+              nzOkText: 'Ok',
+              nzCentered: true
+            });
+
             this.apiSvc.triggerRefreshCustomers();
           },
           error: (error) => {
-            console.log(error)
+            this.spinnerSvc.hide();
+
+            this.modalSvc.error({
+              nzTitle: 'Unable to add customer',
+              nzContent: error.error.meta.message,
+              nzOkText: 'Ok',
+              nzCentered: true
+            });
           },
           complete: () => {
             this.modal.destroy();
@@ -669,6 +717,16 @@ export class AddCustomerModalComponent implements OnInit {
             control.updateValueAndValidity({ onlySelf: true });
           }
         });
+
+        this.spinnerSvc.hide();
+
+        this.modalSvc.error({
+          nzTitle: 'Unable to Update Customer',
+          nzContent: 'Need to fill all the input',
+          nzOkText: 'Ok',
+          nzCentered: true
+        });
+
       }
     }
   }
