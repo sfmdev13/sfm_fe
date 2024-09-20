@@ -113,6 +113,9 @@ export class SupplierSourceComponent implements OnInit {
         }
       })
     }
+
+    
+    this.spinnerSvc.hide();
   }
 
   handleSubmitAdd(): void{
@@ -147,6 +150,9 @@ export class SupplierSourceComponent implements OnInit {
         }
       })
     }
+
+    
+    this.spinnerSvc.hide();
   }
 
   handleSubmitDelete(): void{

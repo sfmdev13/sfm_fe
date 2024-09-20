@@ -55,7 +55,7 @@
     </ng-container>
     <ng-container *nzModalFooter>
         <button nz-button nzType="default" (click)="handleCancelEdit()">Cancel</button>
-        <button nz-button nzType="primary" class="text-capitalize" (click)="handleSubmitEdit()">Submit</button>
+        <button nz-button nzType="primary" class="text-capitalize" (click)="handleSubmitEdit()" [disabled]="!this.categoryFormEdit.valid">Submit</button>
     </ng-container>
 </nz-modal>
 
@@ -65,7 +65,7 @@
     </ng-container>
     <ng-container *nzModalFooter>
         <button nz-button nzType="default" (click)="handleCancelAdd()">Cancel</button>
-        <button nz-button nzType="primary" class="text-capitalize" (click)="handleSubmitAdd()">Submit</button>
+        <button nz-button nzType="primary" class="text-capitalize" (click)="handleSubmitAdd()" [disabled]="!this.categoryForm.valid">Submit</button>
     </ng-container>
 </nz-modal>
 

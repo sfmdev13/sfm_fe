@@ -168,8 +168,6 @@ export class CustomerFirmComponent implements OnInit {
 
   handleSubmitDelete(): void{
 
-    this.spinnerSvc.show();
-
     this.apiSvc.deleteCustomerFirm(this.selectedIdDelete).subscribe({
       next:() => {
 
