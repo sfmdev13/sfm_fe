@@ -163,7 +163,7 @@
                   <nz-form-item>
                     <nz-form-label nzRequired class="fw-semibold" nzFor="province" nzRequired>Province</nz-form-label>
                     <nz-form-control>
-                        <nz-select nzPlaceHolder="Select Province" formControlName="province">
+                        <nz-select  nzShowSearch nzPlaceHolder="Select Province" formControlName="province">
                         <ng-container *ngFor="let p of province">
                           <nz-option [nzLabel]="p.province" [nzValue]="p.id"></nz-option>
                         </ng-container>
@@ -188,7 +188,7 @@
                   <nz-form-item>
                     <nz-form-label nzRequired class="fw-semibold" nzFor="city" nzRequired>City</nz-form-label>
                     <nz-form-control>
-                        <nz-select nzPlaceHolder="Select city" formControlName="city">
+                        <nz-select  nzShowSearch nzPlaceHolder="Select city" formControlName="city">
                         <ng-container *ngFor="let c of city">
                           <nz-option [nzLabel]="c.regency" [nzValue]="c.id"></nz-option>
                         </ng-container>
@@ -351,7 +351,7 @@
                             <nz-form-item>
                               <nz-form-label nzRequired nzFor="cp_province" nzRequired>Province</nz-form-label>
                               <nz-form-control>
-                                  <nz-select nzPlaceHolder="Select Province" formControlName="cp_province">
+                                  <nz-select  nzShowSearch  nzPlaceHolder="Select Province" formControlName="cp_province">
                                   <ng-container *ngFor="let p of province">
                                     <nz-option [nzLabel]="p.province" [nzValue]="p.id"></nz-option>
                                   </ng-container>
@@ -376,7 +376,7 @@
                             <nz-form-item>
                               <nz-form-label nzRequired  nzFor="cp_city" nzRequired>City</nz-form-label>
                               <nz-form-control>
-                                  <nz-select nzPlaceHolder="Select city" formControlName="cp_city">
+                                  <nz-select  nzShowSearch  nzPlaceHolder="Select city" formControlName="cp_city">
                                   <ng-container *ngFor="let c of contact.get('filteredCity')?.value">
                                     <nz-option [nzLabel]="c.regency" [nzValue]="c.id"></nz-option>
                                   </ng-container>

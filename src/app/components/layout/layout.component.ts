@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Route } from '@angular/router';
+import { error } from 'console';
 import { ApiService } from 'src/app/api.service';
 import { AuthService } from 'src/app/auth.service';
 
@@ -59,6 +60,9 @@ export class LayoutComponent implements OnInit {
         localStorage.setItem('pic_id', profile.data.id)
         localStorage.setItem('actions', JSON.stringify(userRole))
         this.authService.setUserRoles(userRole);
+      },
+      (error) => {
+        this.logoutHandler();
       }
     )
   }

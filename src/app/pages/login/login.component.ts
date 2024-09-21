@@ -32,8 +32,8 @@ export class LoginComponent implements OnInit {
   }
 
   submitForm(): void {
+    this.spinnerSvc.show();
     if (this.validateForm.valid) {
-      this.spinnerSvc.show();
       this.authService.login(this.validateForm.value.email, this.validateForm.value.password).subscribe({
         next: (response) => {
           if(response.data.status === 'NEW_PASSWORD_REQUIRED'){
@@ -63,6 +63,7 @@ export class LoginComponent implements OnInit {
           }
         },
         error: (error) => {
+          this.spinnerSvc.hide();
           this.modal.error({
             nzTitle: 'Login Failed',
             nzContent: error.error.meta.message,
@@ -71,13 +72,11 @@ export class LoginComponent implements OnInit {
           });
         },
         complete: () => {
-
+          this.spinnerSvc.hide();
         }
       })
 
-      this.spinnerSvc.hide();
 
-      console.log('keluar')
     } else {
       Object.values(this.validateForm.controls).forEach(control => {
         if (control.invalid) {
