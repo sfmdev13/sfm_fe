@@ -1,7 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { Validators, FormBuilder } from '@angular/forms';
 import { Router } from '@angular/router';
+import { NzModalService } from 'ng-zorro-antd/modal';
 import { AuthService } from 'src/app/auth.service';
+import { SpinnerService } from 'src/app/spinner.service';
 
 @Component({
   selector: 'app-register',
@@ -23,7 +25,9 @@ export class RegisterComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private authService: AuthService,
-    private router: Router
+    private router: Router,
+    private spinnerSvc: SpinnerService,
+    private modalSvc: NzModalService
   ) { }
 
   ngOnInit(): void {
@@ -33,9 +37,12 @@ export class RegisterComponent implements OnInit {
   }
 
   submitForm(): void {
+
+    this.spinnerSvc.show();
+
     if (this.validateForm.valid) {
-      this.authService.setPassword(this.validateForm.getRawValue().email, this.validateForm.getRawValue().password, this.sessionToken).subscribe(
-        (response) => {
+      this.authService.setPassword(this.validateForm.getRawValue().email, this.validateForm.getRawValue().password, this.sessionToken).subscribe({
+        next: (response) => {
           const token = response?.auth_token;
           if(token){
             this.authService.storeToken(token);
@@ -44,10 +51,22 @@ export class RegisterComponent implements OnInit {
             console.log('error')
           }
         },
-        (error) => {
-          console.log(error);
+        error: (error) => {
+          
+          this.spinnerSvc.hide();
+          this.modalSvc.error({
+            nzTitle: 'Failed to register',
+            nzContent: error.error.meta.message,
+            nzOkText: 'Ok',
+            nzCentered: true
+          });
+          
+        },
+        complete: () => {
+          this.spinnerSvc.hide();
         }
-      )
+      })
+
     } else {
       Object.values(this.validateForm.controls).forEach(control => {
         if (control.invalid) {
@@ -55,6 +74,8 @@ export class RegisterComponent implements OnInit {
           control.updateValueAndValidity({ onlySelf: true });
         }
       });
+
+      this.spinnerSvc.hide();
     }
   }
 
