@@ -611,6 +611,9 @@ export class AddCustomerModalComponent implements OnInit {
           }
         })
 
+
+        const promises: any[] = [];
+
         //append cp
         this.contactPersonComplete.forEach((contactPerson: any, index: number) => {
           Object.keys(contactPerson).forEach(key => {
@@ -631,21 +634,33 @@ export class AddCustomerModalComponent implements OnInit {
           }
 
           //append cp attachment
-          const attachments: { id: string; attachment_file: any }[] = [];
+          const cp_attachments: { id: string; attachment_file: any }[] = [];
 
           contactPerson.cp_attachments.forEach((file: any) => {
-            attachments.push({
+            cp_attachments.push({
               id: file.hasOwnProperty('response') ? file.uid : '',
               attachment_file: file
             });
           });
           
           // Append the attachments array to formData
-          attachments.forEach((attachment, fileIndex) => {
-            formData.append(`contactPerson[${index}][cp_attachments][${fileIndex}][id]`, attachment.id);
-            if (attachment.attachment_file) {
-              formData.append(`contactPerson[${index}][cp_attachments][${fileIndex}][attachment_file]`, attachment.attachment_file);
+          cp_attachments.forEach((attachment, fileIndex) => {
+            if(attachment.id === ''){
+              formData.append(`contactPerson[${index}][cp_attachments][${fileIndex}][id]`, attachment.id);
+              if (attachment.attachment_file) {
+                formData.append(`contactPerson[${index}][cp_attachments][${fileIndex}][attachment_file]`, attachment.attachment_file);
+              }
+
+              Promise.resolve(); // Resolves immediately if there's no conversion needed
+            } else {
+              const promise = this.convertToFile(attachment.attachment_file).then(file => {
+                formData.append(`contactPerson[${index}][cp_attachments][${fileIndex}][id]`, attachment.id);
+                formData.append(`contactPerson[${index}][cp_attachments][${fileIndex}][attachment_file]`, file);
+              });
+              promises.push(promise);
             }
+
+            
           });
         
           //append cp pic
@@ -668,48 +683,72 @@ export class AddCustomerModalComponent implements OnInit {
           });
         }
 
-        // Append the attachments array to formData
-        attachments.forEach((attachment, index) => {
-          formData.append(`attachments[${index}][id]`, attachment.id);
-          if (attachment.attachment_file) {
-            formData.append(`attachments[${index}][attachment_file]`, attachment.attachment_file);
-          }
-        });
-
-        //append profile picture person
-        if(this.fileImageList.length > 0){
+        // Append profile picture
+        if (this.fileImageList.length > 0) {
           this.fileImageList.forEach((file: any) => {
             formData.append('profile_picture[]', file);
-          })
+          });
         }
 
-        this.apiSvc.updateCustomer(formData).subscribe({
-          next: (response) => {
-            this.spinnerSvc.hide();
 
-            this.modalSvc.success({
-              nzTitle: 'Success',
-              nzContent: 'Successfully update customer',
-              nzOkText: 'Ok',
-              nzCentered: true
+        attachments.map((attachment, index) => {
+          if (attachment.id === "") {
+            formData.append(`attachments[${index}][id]`, attachment.id);
+            if (attachment.attachment_file) {
+              formData.append(`attachments[${index}][attachment_file]`, attachment.attachment_file);
+            }
+            Promise.resolve(); // Resolves immediately if there's no conversion needed
+          } else {
+            const promise = this.convertToFile(attachment.attachment_file).then(file => {
+              formData.append(`attachments[${index}][id]`, attachment.id);
+              formData.append(`attachments[${index}][attachment_file]`, file);
             });
-
-            this.apiSvc.triggerRefreshCustomers();
-          },
-          error: (error) => {
-            this.spinnerSvc.hide();
-
-            this.modalSvc.error({
-              nzTitle: 'Unable to update customer',
-              nzContent: error.error.meta.message,
-              nzOkText: 'Ok',
-              nzCentered: true
-            });
-          },
-          complete: () => {
-            this.modal.destroy();
+            promises.push(promise);
           }
         });
+
+        
+        Promise.all(promises)
+          .then(() => {
+            // All conversions are done, now trigger the update API
+            this.apiSvc.updateCustomer(formData).subscribe({
+              next: (response) => {
+                this.spinnerSvc.hide();
+        
+                this.modalSvc.success({
+                  nzTitle: 'Success',
+                  nzContent: 'Successfully update customer',
+                  nzOkText: 'Ok',
+                  nzCentered: true
+                });
+        
+                this.apiSvc.triggerRefreshCustomers();
+              },
+              error: (error) => {
+                this.spinnerSvc.hide();
+        
+                this.modalSvc.error({
+                  nzTitle: 'Unable to update customer',
+                  nzContent: error.error.meta.message,
+                  nzOkText: 'Ok',
+                  nzCentered: true
+                });
+              },
+              complete: () => {
+                this.modal.destroy();
+              }
+            });
+          })
+          .catch((error) => {
+            // Handle any errors that occurred during the conversion process
+            this.spinnerSvc.hide();
+            this.modalSvc.error({
+              nzTitle: 'Error',
+              nzContent: 'An error occurred during file conversion.',
+              nzOkText: 'Ok',
+              nzCentered: true
+            });
+          });
       } else {
         Object.values(this.customerForm.controls).forEach(control => {
           if (control.invalid) {
@@ -885,4 +924,23 @@ export class AddCustomerModalComponent implements OnInit {
     contactPersonForm.get('cp_profile_pictureDeleteIds')?.setValue([file.uid]);
     return true; // Stop the auto upload
   };
+
+  async convertToFile(attachment: any): Promise<File> {
+    // Fetch the file from the URL
+    const response = await fetch(attachment.url, {
+      method: 'GET',
+      headers: {
+          'Content-Type': 'application/octet-stream',  // Set appropriate headers
+      },
+      mode: 'cors'  // Make sure mode is "cors" to allow cross-origin requests
+      });
+    
+    // Get the file blob from the response
+    const blob = await response.blob();
+    
+    // Create a File object with the same name and MIME type (if available)
+    const file = new File([blob], attachment.name, { type: blob.type });
+    
+    return file;
+  }
 }
