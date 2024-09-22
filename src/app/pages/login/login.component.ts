@@ -31,6 +31,14 @@ export class LoginComponent implements OnInit {
   ngOnInit(): void {
   }
 
+  redirectUser():void {
+    if(this.authService.hasAction('view_users')) this.router.navigate(['/user']);
+    if(this.authService.hasAction('view_projects')) this.router.navigate(['/projects']);
+    if(this.authService.hasAction('view_reports')) this.router.navigate(['/reports']);
+    if(this.authService.hasAction('view_roles')) this.router.navigate(['/roles']);
+    if(this.authService.hasAction('view_settings')) this.router.navigate(['/settings']);
+  }
+
   submitForm(): void {
     this.spinnerSvc.show();
     if (this.validateForm.valid) {
@@ -52,13 +60,19 @@ export class LoginComponent implements OnInit {
                   localStorage.setItem('pic_id', profile.data.id)
                   localStorage.setItem('actions', JSON.stringify(userRole))
                   this.authService.setUserRoles(userRole);
-                  
-                  this.router.navigate(['/user']);
+
+                  this.redirectUser();
                 }
               )
 
             } else {
-              console.log('error')
+              this.spinnerSvc.hide();
+              this.modal.error({
+                nzTitle: 'Login Failed',
+                nzContent: 'Account error',
+                nzOkText: 'Ok',
+                nzCentered: true
+              });
             }
           }
         },
