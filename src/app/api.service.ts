@@ -2,7 +2,7 @@ import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, map, Observable, tap } from 'rxjs';
 import { environment } from 'src/environments/environment';
-import { ICategories, IRootAllRoles, IRootCatContact, IRootCustomer, IRootEmployee, IRootSupplier, IRootUserByRole } from './interfaces';
+import { ICategories, IRootAllRoles, IRootCatContact, IRootCustomer, IRootDivision, IRootEmployee, IRootSupplier, IRootUserByRole } from './interfaces';
 
 @Injectable({
   providedIn: 'root'
@@ -40,6 +40,9 @@ export class ApiService {
   private refreshGetRoles = new BehaviorSubject<void>(undefined);
   refreshGetRoles$ = this.refreshGetRoles.asObservable();
 
+  private refreshGetDivision = new BehaviorSubject<void>(undefined);
+  refreshGetDivision$ = this.refreshGetDivision.asObservable();
+
   getProfile(): Observable<any> {
     const token = localStorage.getItem('authToken');
     const headers = new HttpHeaders({
@@ -76,6 +79,10 @@ export class ApiService {
 
   triggerRefreshRoles(){
     this.refreshGetRoles.next();
+  }
+
+  triggerRefreshDivision(){
+    this.refreshGetDivision.next();
   }
 
   setFilteredCustomerData(data: IRootCustomer) {
@@ -741,6 +748,48 @@ export class ApiService {
     });
 
     const url = `${this.apiUrl}/delete/customer-category?id=${id}`;
+    return this.http.delete<any>(url, { headers })
+  }
+
+  getDivision(page: number, per_page: number): Observable<IRootDivision>{
+    const token = localStorage.getItem('authToken');
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+    });
+
+    const url = `${this.apiUrl}/role-division?&page=${page}&per_page=${per_page}`;
+    return this.http.get<any>(url, { headers })
+  }
+  
+  createDivision(name: string, description: string): Observable<any>{
+    const token = localStorage.getItem('authToken');
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+    })
+
+    const url = `${this.apiUrl}/create-division?name=${name}&description=${description}`
+
+    return this.http.post<any>(url, {} , { headers })
+  }
+
+  editDivision(id: string, name: string, description: string): Observable<any>{
+    const token = localStorage.getItem('authToken');
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+    })
+
+    const url = `${this.apiUrl}/edit-division?id=${id}&name=${name}&description=${description}`
+
+    return this.http.post<any>(url, {} , { headers })
+  }
+
+  deleteDivision(id: number): Observable<any>{
+    const token = localStorage.getItem('authToken');
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+    });
+
+    const url = `${this.apiUrl}/delete-division?id=${id}`;
     return this.http.delete<any>(url, { headers })
   }
 }

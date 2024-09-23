@@ -1,0 +1,26 @@
+::ng-deep {
+
+    .ant-modal-header{
+        display: none;
+    }
+
+    .ant-modal-body{
+        padding-bottom: 12px;
+    }
+
+    .ant-result{
+        padding: 0;
+    }
+
+    .ant-result-icon{
+        margin-bottom: 0;
+
+        i{
+            font-size: 60px;
+        }
+    }
+
+    .ant-result-title{
+        font-size: 20px;
+    }
+}

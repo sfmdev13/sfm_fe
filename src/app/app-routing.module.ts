@@ -73,6 +73,10 @@ const routes: Routes = [
         data:  { action: 'view_settings' }
       },
       {
+        path: 'settings/divisions-setting',
+        loadChildren: () => import('./pages/divisions-setting/divisions-setting.module').then(m => m.DivisionsSettingModule)
+      },
+      {
         path: 'unauthorized',
         component: UnauthorizedComponent, // Component for unauthorized access
       }
