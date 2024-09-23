@@ -7,6 +7,7 @@ import { AddRolesModalComponent } from 'src/app/components/add-roles-modal/add-r
 import { DeleteRolesModalComponent } from 'src/app/components/delete-roles-modal/delete-roles-modal.component';
 import { DetailRolesModalComponent } from 'src/app/components/detail-roles-modal/detail-roles-modal.component';
 import { IDataRoles, IRootAllRoles } from 'src/app/interfaces';
+import { SpinnerService } from 'src/app/spinner.service';
 
 @Component({
   selector: 'app-roles',
@@ -28,10 +29,13 @@ export class RolesComponent implements OnInit {
   constructor(
     private modalService: NzModalService,
     private apiSvc: ApiService,
-    public authSvc: AuthService
+    public authSvc: AuthService,
+    private spinnerSvc: SpinnerService
   ) { }
 
   ngOnInit(): void {
+
+    this.spinnerSvc.hide();
 
     this.getRole()
 

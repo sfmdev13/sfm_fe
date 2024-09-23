@@ -16,6 +16,7 @@ import { FilterCustomerModalComponent } from 'src/app/components/filter-customer
 import { FilterEmployeeModalComponent } from 'src/app/components/filter-employee-modal/filter-employee-modal.component';
 import { FilterSupplierModalComponent } from 'src/app/components/filter-supplier-modal/filter-supplier-modal.component';
 import { IDataCustomer, IDataEmployee, IDataSupplier, IRootCustomer, IRootEmployee, IRootSupplier } from 'src/app/interfaces';
+import { SpinnerService } from 'src/app/spinner.service';
 
 @Component({
   selector: 'app-user',
@@ -74,10 +75,13 @@ export class UserComponent implements OnInit {
   constructor(
     private modalService: NzModalService,
     private apiSvc: ApiService,
-    public authSvc: AuthService
+    public authSvc: AuthService,
+    private spinnerSvc: SpinnerService
   ) { }
 
   ngOnInit(): void {
+
+    this.spinnerSvc.hide();
 
     this.checkTabAction();
 

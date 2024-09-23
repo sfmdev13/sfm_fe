@@ -86,7 +86,6 @@ export class LoginComponent implements OnInit {
           });
         },
         complete: () => {
-          this.spinnerSvc.hide();
         }
       })
 
