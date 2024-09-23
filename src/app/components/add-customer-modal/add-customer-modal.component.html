@@ -5,7 +5,7 @@
 
             <nz-form-item class="mb-4">
               <nz-form-label nzRequired nzFor="pic" class="fw-semibold">PIC SFM</nz-form-label>
-                  <nz-select nzMode="tags" nzPlaceHolder="Select PIC" formControlName="pic">
+                  <nz-select nzShowSearch nzMode="tags" nzPlaceHolder="Select PIC" formControlName="pic">
                       <nz-option
                       *ngFor="let pic of listOfPic"
                           [nzLabel]="pic.name" 
@@ -18,7 +18,7 @@
           <nz-form-item>
               <nz-form-label nzRequired class="fw-semibold" nzFor="is_pic_internal" nzRequired>Head of PIC SFM</nz-form-label>
               <nz-form-control>
-                  <nz-select nzPlaceHolder="Select Head" formControlName="is_pic_internal">
+                  <nz-select nzShowSearch nzPlaceHolder="Select Head" formControlName="is_pic_internal">
                   <ng-container *ngFor="let pic of filteredListOfPic">
                     <nz-option [nzLabel]="pic.name" [nzValue]="pic.pic_id"></nz-option>
                   </ng-container>
@@ -47,7 +47,7 @@
                     <nz-form-label nzRequired nzFor="customer_firm_id" class="fw-semibold">Category Firm</nz-form-label>
                     <nz-form-control>
                       <ng-container *ngIf="customerFirm$ | async as customerFirm; else firmLoad">
-                        <nz-select nzPlaceHolder="Select Category Firm" formControlName="customer_firm_id">
+                        <nz-select nzShowSearch nzPlaceHolder="Select Category Firm" formControlName="customer_firm_id">
                           <ng-container *ngFor="let cust of customerFirm.data">
                             <nz-option [nzLabel]="cust.name" [nzValue]="cust.id"></nz-option>
                           </ng-container>
@@ -65,7 +65,7 @@
                     <nz-form-label nzRequired nzFor="loyal_customer_program_id" class="fw-semibold">Loyal Customer Program</nz-form-label>
                     <nz-form-control>
                       <ng-container *ngIf="loyalCustCat$ | async as loyalCustCat; else loyalLoad">
-                        <nz-select nzPlaceHolder="Select Category" formControlName="loyal_customer_program_id">
+                        <nz-select nzShowSearch nzPlaceHolder="Select Category" formControlName="loyal_customer_program_id">
                           <ng-container *ngFor="let cust of loyalCustCat.data">
                             <nz-option [nzLabel]="cust.name" [nzValue]="cust.id"></nz-option>
                           </ng-container>
@@ -83,7 +83,7 @@
                     <nz-form-label nzRequired nzFor="customer_sector_id" class="fw-semibold">Customer Sector</nz-form-label>
                     <nz-form-control>
                       <ng-container *ngIf="customerSector$ | async as customerSector; else firmLoad">
-                        <nz-select nzPlaceHolder="Select Category Sector" formControlName="customer_sector_id">
+                        <nz-select nzShowSearch nzPlaceHolder="Select Category Sector" formControlName="customer_sector_id">
                           <ng-container *ngFor="let cust of customerSector.data">
                             <nz-option [nzLabel]="cust.name" [nzValue]="cust.id"></nz-option>
                           </ng-container>
@@ -116,6 +116,7 @@
                       [nzShowButton]="fileList.length < 3"
                       [nzSize]="5000"
                       [nzRemove]="removeDocument"
+                      [nzAccept]="'.pdf'"
                     >
                       <button nz-button>
                         <i nz-icon nzType="upload"></i>
@@ -259,6 +260,7 @@
                               [nzPreview]="handlePreview"
                               [nzShowButton]="getValidProfilePicture(contact.get('cp_profile_picture')?.value).length <= 0"
                               [nzRemove]="handleRemoveProfilePicture(i)"
+                              [nzAccept]="'.jpg,.jpeg,.png'"
                             >
                               <div>
                                 <span nz-icon nzType="plus"></span>
@@ -291,7 +293,7 @@
                             <nz-form-item>
                               <nz-form-label nzRequired>Contact Type</nz-form-label>
                               <nz-form-control>
-                                <nz-select nzPlaceHolder="Select Category" formControlName="cp_category_id">
+                                <nz-select nzShowSearch nzPlaceHolder="Select Category" formControlName="cp_category_id">
                                   <ng-container *ngFor="let cat of catContact.data">
                                     <nz-option [nzLabel]="cat.name" [nzValue]="cat.id"></nz-option>
                                   </ng-container>
@@ -303,7 +305,7 @@
                             <nz-form-item>
                               <nz-form-label nzRequired>Contact Type</nz-form-label>
                               <nz-form-control>
-                                <nz-select nzDisabled nzPlaceHolder="Loading..." formControlName="cp_category_id">
+                                <nz-select  nzDisabled nzPlaceHolder="Loading..." formControlName="cp_category_id">
                                   <nz-option nzLabel="disable"></nz-option>
                                 </nz-select>
                               </nz-form-control>
@@ -315,7 +317,7 @@
                               <nz-form-label nzRequired nzFor="cp_loyal_customer_program_id">Loyal Customer Program</nz-form-label>
                               <nz-form-control>
                                 <ng-container *ngIf="loyalCustCat$ | async as loyalCustCat; else loyalLoad">
-                                  <nz-select nzPlaceHolder="Select Category" formControlName="cp_loyal_customer_program_id">
+                                  <nz-select nzShowSearch nzPlaceHolder="Select Category" formControlName="cp_loyal_customer_program_id">
                                     <ng-container *ngFor="let cust of loyalCustCat.data">
                                       <nz-option [nzLabel]="cust.name" [nzValue]="cust.id"></nz-option>
                                     </ng-container>
@@ -351,7 +353,7 @@
                             <nz-form-item>
                               <nz-form-label nzRequired nzFor="cp_province" nzRequired>Province</nz-form-label>
                               <nz-form-control>
-                                  <nz-select  nzShowSearch  nzPlaceHolder="Select Province" formControlName="cp_province">
+                                  <nz-select   nzShowSearch  nzPlaceHolder="Select Province" formControlName="cp_province">
                                   <ng-container *ngFor="let p of province">
                                     <nz-option [nzLabel]="p.province" [nzValue]="p.id"></nz-option>
                                   </ng-container>
@@ -433,6 +435,7 @@
                                 [nzLimit]="3"
                                 [nzSize]="5000"
                                 [nzRemove]="handleRemoveAttachmentCp(i)"
+                                [nzAccept]="'.pdf'"
                               >
                                 <button nz-button>
                                   <i nz-icon nzType="upload"></i>
@@ -447,7 +450,7 @@
                         <div class="col-6 mt-4">
                           <nz-form-item class="mb-4">
                             <nz-form-label nzRequired nzFor="cp_pic">Contact PIC</nz-form-label>
-                                <nz-select nzMode="tags" nzPlaceHolder="Tag Mode" formControlName="cp_pic">
+                                <nz-select nzShowSearch nzMode="tags" nzPlaceHolder="Tag Mode" formControlName="cp_pic">
                                     <nz-option
                                     *ngFor="let pic of cpListOfPic"
                                         [nzLabel]="pic.name" 
@@ -460,7 +463,7 @@
                           <nz-form-item>
                             <nz-form-label nzRequired nzFor="cp_is_pic_head" nzRequired>Head of Contact PIC</nz-form-label>
                             <nz-form-control>
-                                <nz-select nzPlaceHolder="Select Head" formControlName="cp_is_pic_head">
+                                <nz-select nzShowSearch nzPlaceHolder="Select Head" formControlName="cp_is_pic_head">
                                 <ng-container *ngFor="let pic of contact.get('filteredCpListOfPic')?.value">
                                   <nz-option [nzLabel]="pic.name" [nzValue]="pic.pic_id"></nz-option>
                                 </ng-container>
@@ -485,7 +488,7 @@
     
                 <div class="col-md-3 mx-auto mt-4">
                   <nz-form-item>
-                    <button nz-button nzType="primary" (click)="addContactPerson()">Add Person</button>
+                    <button nz-button nzType="primary" (click)="addContactPerson()">Add Contact Person</button>
                   </nz-form-item>
                 </div>
               </ng-container>
@@ -508,6 +511,7 @@
                         [nzPreview]="handlePreview"
                         [nzShowButton]="fileImageList.length <= 0"
                         [nzRemove]="removeProfilePersonHandler"
+                        [nzAccept]="'.jpg,.jpeg,.png'"
                       >
                         <div>
                           <span nz-icon nzType="plus"></span>
@@ -543,7 +547,25 @@
   <div *nzModalFooter>
     <nz-form-item>
       <button nz-button nzType="default" (click)="destroyModal()">Cancel</button>
-      <button nz-button nzType="primary" class="text-capitalize" (click)="submitForm()">{{ modal_type }} Customer</button>
+      <ng-container *ngIf="!isLoadingProvince && !isLoadingLoyal && !isLoadingCustSector && !isLoadingCustFirm && !isLoadingCatContact; else Loading">
+        <button 
+        nz-button 
+        nzType="primary" 
+        class="text-capitalize" 
+        (click)="submitForm()">
+          {{ modal_type }} Customer
+        </button>
+      </ng-container>
+      <ng-template #Loading>
+        <nz-spin class="ms-2">
+          <button 
+          nz-button 
+          nzType="primary" 
+          class="text-capitalize">
+            {{ modal_type }} Customer
+          </button>
+        </nz-spin>
+      </ng-template>
     </nz-form-item>
   </div>
 </nz-spin>

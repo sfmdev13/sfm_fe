@@ -1,5 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { AbstractControl, FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
 import { NzUploadFile } from 'ng-zorro-antd/upload';
 import { Observable, tap } from 'rxjs';
@@ -87,12 +88,19 @@ export class AddCustomerModalComponent implements OnInit {
 
   attachmentDeletedIds: string[] = [];
 
+  isLoadingProvince: boolean = true;
+  isLoadingCatContact: boolean = true;
+  isLoadingLoyal: boolean = true;
+  isLoadingCustSector: boolean = true;
+  isLoadingCustFirm: boolean = true;
+
   constructor(
     private modal: NzModalRef,
     private fb: FormBuilder,
     private apiSvc: ApiService,
     private spinnerSvc: SpinnerService,
-    private modalSvc: NzModalService
+    private modalSvc: NzModalService,
+    private nzMsgSvc: NzMessageService
   ) {}
 
   ngOnInit(): void { 
@@ -100,13 +108,32 @@ export class AddCustomerModalComponent implements OnInit {
     this.provinces$ = this.apiSvc.getProvinces().pipe(
       tap(p => {
         this.provinceList = p;
+
+        this.isLoadingProvince = false;
       })
     );
     
-    this.catContact$ = this.apiSvc.getCategoryCP();
-    this.loyalCustCat$ = this.apiSvc.getLoyalCustomer();
-    this.customerSector$ = this.apiSvc.getCustomerSector();
-    this.customerFirm$ = this.apiSvc.getCustomerFirm();
+    this.catContact$ = this.apiSvc.getCategoryCP().pipe(
+      tap(res => {
+        console.log('klear')
+        this.isLoadingCatContact = false;
+      })
+    );
+    this.loyalCustCat$ = this.apiSvc.getLoyalCustomer().pipe(
+      tap(res => {
+        this.isLoadingLoyal = false;
+      })
+    );
+    this.customerSector$ = this.apiSvc.getCustomerSector().pipe(
+      tap(res => {
+        this.isLoadingCustSector = false;
+      })
+    );
+    this.customerFirm$ = this.apiSvc.getCustomerFirm().pipe(
+      tap(res => {
+        this.isLoadingCustFirm = false;
+      })
+    );
 
     this.filteredListOfPic = this.listOfPic.filter((p) => p.pic_id === this.pic_id);
 
@@ -630,18 +657,8 @@ export class AddCustomerModalComponent implements OnInit {
               profile_picturefile: contactPerson.cp_profile_picture
             };
 
-            if(profilePictures.id === ''){
-              formData.append(`contactPerson[${index}][cp_profile_picture][0][id]`, profilePictures.id);
-              formData.append(`contactPerson[${index}][cp_profile_picture][0][profile_picturefile]`, profilePictures.profile_picturefile);
-              
-              Promise.resolve(); // Resolves immediately if there's no conversion needed
-            } else {
-              const promise = this.convertToFile(profilePictures.profile_picturefile).then(file => {
-                formData.append(`contactPerson[${index}][cp_profile_picture][0][id]`, profilePictures.id);
-                formData.append(`contactPerson[${index}][cp_profile_picture][0][profile_picturefile]`, file);
-              });
-              promises.push(promise);
-            }
+            formData.append(`contactPerson[${index}][cp_profile_picture][0][id]`, profilePictures.id);
+            formData.append(`contactPerson[${index}][cp_profile_picture][0][profile_picturefile]`, profilePictures.profile_picturefile);
 
 
           }
@@ -658,22 +675,8 @@ export class AddCustomerModalComponent implements OnInit {
           
           // Append the attachments array to formData
           cp_attachments.forEach((attachment, fileIndex) => {
-            if(attachment.id === ''){
-              formData.append(`contactPerson[${index}][cp_attachments][${fileIndex}][id]`, attachment.id);
-              if (attachment.attachment_file) {
-                formData.append(`contactPerson[${index}][cp_attachments][${fileIndex}][attachment_file]`, attachment.attachment_file);
-              }
-
-              Promise.resolve(); // Resolves immediately if there's no conversion needed
-            } else {
-              const promise = this.convertToFile(attachment.attachment_file).then(file => {
-                formData.append(`contactPerson[${index}][cp_attachments][${fileIndex}][id]`, attachment.id);
-                formData.append(`contactPerson[${index}][cp_attachments][${fileIndex}][attachment_file]`, file);
-              });
-              promises.push(promise);
-            }
-
-            
+            formData.append(`contactPerson[${index}][cp_attachments][${fileIndex}][id]`, attachment.id);
+            formData.append(`contactPerson[${index}][cp_attachments][${fileIndex}][attachment_file]`, attachment.attachment_file);            
           });
         
           //append cp pic
@@ -705,63 +708,40 @@ export class AddCustomerModalComponent implements OnInit {
 
 
         attachments.map((attachment, index) => {
-          if (attachment.id === "") {
             formData.append(`attachments[${index}][id]`, attachment.id);
             if (attachment.attachment_file) {
               formData.append(`attachments[${index}][attachment_file]`, attachment.attachment_file);
             }
-            Promise.resolve(); // Resolves immediately if there's no conversion needed
-          } else {
-            const promise = this.convertToFile(attachment.attachment_file).then(file => {
-              formData.append(`attachments[${index}][id]`, attachment.id);
-              formData.append(`attachments[${index}][attachment_file]`, file);
-            });
-            promises.push(promise);
-          }
         });
 
         
-        Promise.all(promises)
-          .then(() => {
-            // All conversions are done, now trigger the update API
-            this.apiSvc.updateCustomer(formData).subscribe({
-              next: (response) => {
-                this.spinnerSvc.hide();
-        
-                this.modalSvc.success({
-                  nzTitle: 'Success',
-                  nzContent: 'Successfully update customer',
-                  nzOkText: 'Ok',
-                  nzCentered: true
-                });
-        
-                this.apiSvc.triggerRefreshCustomers();
-              },
-              error: (error) => {
-                this.spinnerSvc.hide();
-        
-                this.modalSvc.error({
-                  nzTitle: 'Unable to update customer',
-                  nzContent: error.error.meta.message,
-                  nzOkText: 'Ok',
-                  nzCentered: true
-                });
-              },
-              complete: () => {
-                this.modal.destroy();
-              }
-            });
-          })
-          .catch((error) => {
-            // Handle any errors that occurred during the conversion process
+        this.apiSvc.updateCustomer(formData).subscribe({
+          next: (response) => {
             this.spinnerSvc.hide();
-            this.modalSvc.error({
-              nzTitle: 'Error',
-              nzContent: 'An error occurred during file conversion.',
+    
+            this.modalSvc.success({
+              nzTitle: 'Success',
+              nzContent: 'Successfully update customer',
               nzOkText: 'Ok',
               nzCentered: true
             });
-          });
+    
+            this.apiSvc.triggerRefreshCustomers();
+          },
+          error: (error) => {
+            this.spinnerSvc.hide();
+    
+            this.modalSvc.error({
+              nzTitle: 'Unable to update customer',
+              nzContent: error.error.meta.message,
+              nzOkText: 'Ok',
+              nzCentered: true
+            });
+          },
+          complete: () => {
+            this.modal.destroy();
+          }
+        });
       } else {
         Object.values(this.customerForm.controls).forEach(control => {
           if (control.invalid) {
@@ -806,11 +786,36 @@ export class AddCustomerModalComponent implements OnInit {
 
   // Prevent the default automatic upload behavior
   beforeUpload = (file: NzUploadFile): boolean => {
+
+    if (file.type !== 'application/pdf') {
+      
+      this.nzMsgSvc.error('You can only upload PDF file!');
+      return false;
+    }
+
+    const isLt5M = file.size! / 1024 / 1024 < 5;
+    if (!isLt5M) {
+      this.nzMsgSvc.error('Image must be smaller than 5MB!');
+      return false;
+    }
+
     this.fileList = this.fileList.concat(file);
     return false; // Stop the auto upload
   };
 
   beforeUploadProfile = (file: NzUploadFile): boolean => {
+
+    const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png' || file.type === 'image/jpg';
+    if (!isJpgOrPng) {
+      
+      this.nzMsgSvc.error('You can only upload JPG/PNG file!');
+      return false;
+    }
+    const isLt5M = file.size! / 1024 / 1024 < 5;
+    if (!isLt5M) {
+      this.nzMsgSvc.error('Image must be smaller than 5MB!');
+      return false;
+    }
 
     if(this.modal_type === 'update'){
       const contactPersonForm = this.contactPerson.at(0);
@@ -830,6 +835,17 @@ export class AddCustomerModalComponent implements OnInit {
   beforeUploadCp(index: number) {
     return (file: NzUploadFile): boolean => {
 
+      if (file.type !== 'application/pdf') {
+        
+        this.nzMsgSvc.error('You can only upload PDF file!');
+        return false;
+      }
+      const isLt5M = file.size! / 1024 / 1024 < 5;
+      if (!isLt5M) {
+        this.nzMsgSvc.error('Image must be smaller than 5MB!');
+        return false;
+      }
+
       const contactPersonForm = this.contactPerson.at(index);
   
       const fileList = contactPersonForm.get('cp_attachments')?.value || [];
@@ -841,6 +857,19 @@ export class AddCustomerModalComponent implements OnInit {
 
   beforeUploadCpProfile(index: number) {
     return (file: NzUploadFile): boolean => {
+
+      const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png' || file.type === 'image/jpg';
+      if (!isJpgOrPng) {
+        
+        this.nzMsgSvc.error('You can only upload JPG/PNG file!');
+        return false;
+      }
+      const isLt5M = file.size! / 1024 / 1024 < 5;
+      if (!isLt5M) {
+        this.nzMsgSvc.error('Image must be smaller than 5MB!');
+        return false;
+      }
+
       const contactPersonForm = this.contactPerson.at(index);
 
       const reader = new FileReader();
@@ -933,27 +962,13 @@ export class AddCustomerModalComponent implements OnInit {
   }
 
   removeProfilePersonHandler = (file: NzUploadFile): boolean => {
-    const contactPersonForm = this.contactPerson.at(0);
-    contactPersonForm.get('cp_profile_pictureDeleteIds')?.setValue([file.uid]);
+
+    if(this.modal_type === 'update'){
+      const contactPersonForm = this.contactPerson.at(0);
+      contactPersonForm.get('cp_profile_pictureDeleteIds')?.setValue([file.uid]);
+    }
+
+    this.fileImageList = []
     return true; // Stop the auto upload
   };
-
-  async convertToFile(attachment: any): Promise<File> {
-    // Fetch the file from the URL
-    const response = await fetch(attachment.url, {
-      method: 'GET',
-      headers: {
-          'Content-Type': 'application/octet-stream',  // Set appropriate headers
-      },
-      mode: 'no-cors'  // Make sure mode is "cors" to allow cross-origin requests
-      });
-    
-    // Get the file blob from the response
-    const blob = await response.blob();
-    
-    // Create a File object with the same name and MIME type (if available)
-    const file = new File([blob], attachment.name, { type: blob.type });
-    
-    return file;
-  }
 }
