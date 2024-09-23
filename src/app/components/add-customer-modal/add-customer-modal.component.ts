@@ -657,18 +657,8 @@ export class AddCustomerModalComponent implements OnInit {
               profile_picturefile: contactPerson.cp_profile_picture
             };
 
-            if(profilePictures.id === ''){
-              formData.append(`contactPerson[${index}][cp_profile_picture][0][id]`, profilePictures.id);
-              formData.append(`contactPerson[${index}][cp_profile_picture][0][profile_picturefile]`, profilePictures.profile_picturefile);
-              
-              Promise.resolve(); // Resolves immediately if there's no conversion needed
-            } else {
-              const promise = this.convertToFile(profilePictures.profile_picturefile).then(file => {
-                formData.append(`contactPerson[${index}][cp_profile_picture][0][id]`, profilePictures.id);
-                formData.append(`contactPerson[${index}][cp_profile_picture][0][profile_picturefile]`, file);
-              });
-              promises.push(promise);
-            }
+            formData.append(`contactPerson[${index}][cp_profile_picture][0][id]`, profilePictures.id);
+            formData.append(`contactPerson[${index}][cp_profile_picture][0][profile_picturefile]`, profilePictures.profile_picturefile);
 
 
           }
@@ -685,22 +675,8 @@ export class AddCustomerModalComponent implements OnInit {
           
           // Append the attachments array to formData
           cp_attachments.forEach((attachment, fileIndex) => {
-            if(attachment.id === ''){
-              formData.append(`contactPerson[${index}][cp_attachments][${fileIndex}][id]`, attachment.id);
-              if (attachment.attachment_file) {
-                formData.append(`contactPerson[${index}][cp_attachments][${fileIndex}][attachment_file]`, attachment.attachment_file);
-              }
-
-              Promise.resolve(); // Resolves immediately if there's no conversion needed
-            } else {
-              const promise = this.convertToFile(attachment.attachment_file).then(file => {
-                formData.append(`contactPerson[${index}][cp_attachments][${fileIndex}][id]`, attachment.id);
-                formData.append(`contactPerson[${index}][cp_attachments][${fileIndex}][attachment_file]`, file);
-              });
-              promises.push(promise);
-            }
-
-            
+            formData.append(`contactPerson[${index}][cp_attachments][${fileIndex}][id]`, attachment.id);
+            formData.append(`contactPerson[${index}][cp_attachments][${fileIndex}][attachment_file]`, attachment.attachment_file);            
           });
         
           //append cp pic
@@ -732,63 +708,40 @@ export class AddCustomerModalComponent implements OnInit {
 
 
         attachments.map((attachment, index) => {
-          if (attachment.id === "") {
             formData.append(`attachments[${index}][id]`, attachment.id);
             if (attachment.attachment_file) {
               formData.append(`attachments[${index}][attachment_file]`, attachment.attachment_file);
             }
-            Promise.resolve(); // Resolves immediately if there's no conversion needed
-          } else {
-            const promise = this.convertToFile(attachment.attachment_file).then(file => {
-              formData.append(`attachments[${index}][id]`, attachment.id);
-              formData.append(`attachments[${index}][attachment_file]`, file);
-            });
-            promises.push(promise);
-          }
         });
 
         
-        Promise.all(promises)
-          .then(() => {
-            // All conversions are done, now trigger the update API
-            this.apiSvc.updateCustomer(formData).subscribe({
-              next: (response) => {
-                this.spinnerSvc.hide();
-        
-                this.modalSvc.success({
-                  nzTitle: 'Success',
-                  nzContent: 'Successfully update customer',
-                  nzOkText: 'Ok',
-                  nzCentered: true
-                });
-        
-                this.apiSvc.triggerRefreshCustomers();
-              },
-              error: (error) => {
-                this.spinnerSvc.hide();
-        
-                this.modalSvc.error({
-                  nzTitle: 'Unable to update customer',
-                  nzContent: error.error.meta.message,
-                  nzOkText: 'Ok',
-                  nzCentered: true
-                });
-              },
-              complete: () => {
-                this.modal.destroy();
-              }
-            });
-          })
-          .catch((error) => {
-            // Handle any errors that occurred during the conversion process
+        this.apiSvc.updateCustomer(formData).subscribe({
+          next: (response) => {
             this.spinnerSvc.hide();
-            this.modalSvc.error({
-              nzTitle: 'Error',
-              nzContent: 'An error occurred during file conversion.',
+    
+            this.modalSvc.success({
+              nzTitle: 'Success',
+              nzContent: 'Successfully update customer',
               nzOkText: 'Ok',
               nzCentered: true
             });
-          });
+    
+            this.apiSvc.triggerRefreshCustomers();
+          },
+          error: (error) => {
+            this.spinnerSvc.hide();
+    
+            this.modalSvc.error({
+              nzTitle: 'Unable to update customer',
+              nzContent: error.error.meta.message,
+              nzOkText: 'Ok',
+              nzCentered: true
+            });
+          },
+          complete: () => {
+            this.modal.destroy();
+          }
+        });
       } else {
         Object.values(this.customerForm.controls).forEach(control => {
           if (control.invalid) {
