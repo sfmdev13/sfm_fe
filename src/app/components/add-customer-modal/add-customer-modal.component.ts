@@ -629,8 +629,21 @@ export class AddCustomerModalComponent implements OnInit {
               id: contactPerson.cp_profile_picture.hasOwnProperty('response') ? contactPerson.cp_profile_picture.uid : '',
               profile_picturefile: contactPerson.cp_profile_picture
             };
-            formData.append(`contactPerson[${index}][cp_profile_picture][0][id]`, profilePictures.id);
-            formData.append(`contactPerson[${index}][cp_profile_picture][0][profile_picturefile]`, profilePictures.profile_picturefile);
+
+            if(profilePictures.id === ''){
+              formData.append(`contactPerson[${index}][cp_profile_picture][0][id]`, profilePictures.id);
+              formData.append(`contactPerson[${index}][cp_profile_picture][0][profile_picturefile]`, profilePictures.profile_picturefile);
+              
+              Promise.resolve(); // Resolves immediately if there's no conversion needed
+            } else {
+              const promise = this.convertToFile(profilePictures.profile_picturefile).then(file => {
+                formData.append(`contactPerson[${index}][cp_profile_picture][0][id]`, profilePictures.id);
+                formData.append(`contactPerson[${index}][cp_profile_picture][0][profile_picturefile]`, file);
+              });
+              promises.push(promise);
+            }
+
+
           }
 
           //append cp attachment
@@ -932,7 +945,7 @@ export class AddCustomerModalComponent implements OnInit {
       headers: {
           'Content-Type': 'application/octet-stream',  // Set appropriate headers
       },
-      mode: 'cors'  // Make sure mode is "cors" to allow cross-origin requests
+      mode: 'no-cors'  // Make sure mode is "cors" to allow cross-origin requests
       });
     
     // Get the file blob from the response
