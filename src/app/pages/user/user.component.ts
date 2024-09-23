@@ -201,7 +201,9 @@ export class UserComponent implements OnInit {
           modal_type: 'add',
         },
         nzCentered: true,
-
+        nzClosable: false,
+        nzMaskClosable: false,
+        nzWidth: '900px'
       });
     }
 
@@ -244,7 +246,10 @@ export class UserComponent implements OnInit {
         modal_type: 'update',
         data
       },
-      nzCentered: true
+      nzClosable: false,
+      nzMaskClosable: false,
+      nzCentered: true,
+      nzWidth: '900px'
     });
   }
 

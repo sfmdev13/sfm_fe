@@ -1,13 +1,15 @@
 import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, DatePipe } from '@angular/common';
 import { AddEmployeeModalComponent } from './add-employee-modal.component';
 import { NzModalModule } from 'ng-zorro-antd/modal';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzFormModule } from 'ng-zorro-antd/form';
-import { ReactiveFormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NzInputModule } from 'ng-zorro-antd/input';
 import { NzSelectModule } from 'ng-zorro-antd/select';
 import { NzSwitchModule } from 'ng-zorro-antd/switch';
+import { NzDatePickerModule } from 'ng-zorro-antd/date-picker';
+import { NzSpinModule } from 'ng-zorro-antd/spin';
 
 @NgModule({
   declarations: [AddEmployeeModalComponent],
@@ -19,8 +21,12 @@ import { NzSwitchModule } from 'ng-zorro-antd/switch';
     ReactiveFormsModule,
     NzInputModule,
     NzSelectModule,
-    NzSwitchModule
+    NzSwitchModule,
+    NzDatePickerModule,
+    NzSpinModule,
+    FormsModule
   ],
-  exports: [AddEmployeeModalComponent]
+  exports: [AddEmployeeModalComponent],
+  providers: [DatePipe]
 })
 export class AddEmployeeModalModule { }

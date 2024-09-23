@@ -792,4 +792,25 @@ export class ApiService {
     const url = `${this.apiUrl}/delete-division?id=${id}`;
     return this.http.delete<any>(url, { headers })
   }
+
+  getRoleByDivision(id: number): Observable<any>{
+    const token = localStorage.getItem('authToken');
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+    });
+
+    const url = `${this.apiUrl}/division/${id}`;
+    return this.http.get<any>(url, { headers })
+  }
+
+  getDivisionList(): Observable<any>{
+    const token = localStorage.getItem('authToken');
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+    });
+
+    const url = `${this.apiUrl}/division-list`;
+    return this.http.get<any>(url, { headers })
+
+  }
 }
