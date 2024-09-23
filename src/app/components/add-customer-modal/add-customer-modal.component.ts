@@ -971,23 +971,4 @@ export class AddCustomerModalComponent implements OnInit {
     this.fileImageList = []
     return true; // Stop the auto upload
   };
-
-  async convertToFile(attachment: any): Promise<File> {
-    // Fetch the file from the URL
-    const response = await fetch(attachment.url, {
-      method: 'GET',
-      headers: {
-          'Content-Type': 'application/octet-stream',  // Set appropriate headers
-      },
-      mode: 'no-cors'  // Make sure mode is "cors" to allow cross-origin requests
-      });
-    
-    // Get the file blob from the response
-    const blob = await response.blob();
-    
-    // Create a File object with the same name and MIME type (if available)
-    const file = new File([blob], attachment.name, { type: blob.type });
-    
-    return file;
-  }
 }
