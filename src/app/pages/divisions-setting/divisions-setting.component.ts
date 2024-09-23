@@ -183,7 +183,12 @@ export class DivisionsSettingComponent implements OnInit {
         this.isVisibleDelete = false;
       },
       error:(error) => {
-        console.log(error)
+        this.modalSvc.error({
+          nzTitle: 'Failed to Delete Division',
+          nzContent: error.error.meta.message,
+          nzOkText: 'Ok',
+          nzCentered: true
+        })
       }
     })
   }
