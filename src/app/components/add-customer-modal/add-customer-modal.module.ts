@@ -15,6 +15,7 @@ import { NzCheckboxModule } from 'ng-zorro-antd/checkbox';
 import { NzRadioModule } from 'ng-zorro-antd/radio';
 import { NzUploadModule } from 'ng-zorro-antd/upload';
 import { NzSpinModule } from 'ng-zorro-antd/spin';
+import { NzMessageModule } from 'ng-zorro-antd/message';
 
 @NgModule({
   declarations: [AddCustomerModalComponent],
@@ -35,7 +36,8 @@ import { NzSpinModule } from 'ng-zorro-antd/spin';
     NzCheckboxModule,
     NzRadioModule,
     NzUploadModule,
-    NzSpinModule
+    NzSpinModule,
+    NzMessageModule
   ],
   exports: [AddCustomerModalComponent]
 })

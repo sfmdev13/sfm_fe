@@ -116,6 +116,7 @@
                       [nzShowButton]="fileList.length < 3"
                       [nzSize]="5000"
                       [nzRemove]="removeDocument"
+                      [nzAccept]="'.pdf'"
                     >
                       <button nz-button>
                         <i nz-icon nzType="upload"></i>
@@ -259,6 +260,7 @@
                               [nzPreview]="handlePreview"
                               [nzShowButton]="getValidProfilePicture(contact.get('cp_profile_picture')?.value).length <= 0"
                               [nzRemove]="handleRemoveProfilePicture(i)"
+                              [nzAccept]="'.jpg,.jpeg,.png'"
                             >
                               <div>
                                 <span nz-icon nzType="plus"></span>
@@ -433,6 +435,7 @@
                                 [nzLimit]="3"
                                 [nzSize]="5000"
                                 [nzRemove]="handleRemoveAttachmentCp(i)"
+                                [nzAccept]="'.pdf'"
                               >
                                 <button nz-button>
                                   <i nz-icon nzType="upload"></i>
@@ -485,7 +488,7 @@
     
                 <div class="col-md-3 mx-auto mt-4">
                   <nz-form-item>
-                    <button nz-button nzType="primary" (click)="addContactPerson()">Add Person</button>
+                    <button nz-button nzType="primary" (click)="addContactPerson()">Add Contact Person</button>
                   </nz-form-item>
                 </div>
               </ng-container>
@@ -508,6 +511,7 @@
                         [nzPreview]="handlePreview"
                         [nzShowButton]="fileImageList.length <= 0"
                         [nzRemove]="removeProfilePersonHandler"
+                        [nzAccept]="'.jpg,.jpeg,.png'"
                       >
                         <div>
                           <span nz-icon nzType="plus"></span>
@@ -543,7 +547,25 @@
   <div *nzModalFooter>
     <nz-form-item>
       <button nz-button nzType="default" (click)="destroyModal()">Cancel</button>
-      <button nz-button nzType="primary" class="text-capitalize" (click)="submitForm()">{{ modal_type }} Customer</button>
+      <ng-container *ngIf="!isLoadingProvince && !isLoadingLoyal && !isLoadingCustSector && !isLoadingCustFirm && !isLoadingCatContact; else Loading">
+        <button 
+        nz-button 
+        nzType="primary" 
+        class="text-capitalize" 
+        (click)="submitForm()">
+          {{ modal_type }} Customer
+        </button>
+      </ng-container>
+      <ng-template #Loading>
+        <nz-spin class="ms-2">
+          <button 
+          nz-button 
+          nzType="primary" 
+          class="text-capitalize">
+            {{ modal_type }} Customer
+          </button>
+        </nz-spin>
+      </ng-template>
     </nz-form-item>
   </div>
 </nz-spin>

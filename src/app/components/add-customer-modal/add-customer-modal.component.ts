@@ -1,5 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { AbstractControl, FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
 import { NzUploadFile } from 'ng-zorro-antd/upload';
 import { Observable, tap } from 'rxjs';
@@ -87,12 +88,19 @@ export class AddCustomerModalComponent implements OnInit {
 
   attachmentDeletedIds: string[] = [];
 
+  isLoadingProvince: boolean = true;
+  isLoadingCatContact: boolean = true;
+  isLoadingLoyal: boolean = true;
+  isLoadingCustSector: boolean = true;
+  isLoadingCustFirm: boolean = true;
+
   constructor(
     private modal: NzModalRef,
     private fb: FormBuilder,
     private apiSvc: ApiService,
     private spinnerSvc: SpinnerService,
-    private modalSvc: NzModalService
+    private modalSvc: NzModalService,
+    private nzMsgSvc: NzMessageService
   ) {}
 
   ngOnInit(): void { 
@@ -100,13 +108,32 @@ export class AddCustomerModalComponent implements OnInit {
     this.provinces$ = this.apiSvc.getProvinces().pipe(
       tap(p => {
         this.provinceList = p;
+
+        this.isLoadingProvince = false;
       })
     );
     
-    this.catContact$ = this.apiSvc.getCategoryCP();
-    this.loyalCustCat$ = this.apiSvc.getLoyalCustomer();
-    this.customerSector$ = this.apiSvc.getCustomerSector();
-    this.customerFirm$ = this.apiSvc.getCustomerFirm();
+    this.catContact$ = this.apiSvc.getCategoryCP().pipe(
+      tap(res => {
+        console.log('klear')
+        this.isLoadingCatContact = false;
+      })
+    );
+    this.loyalCustCat$ = this.apiSvc.getLoyalCustomer().pipe(
+      tap(res => {
+        this.isLoadingLoyal = false;
+      })
+    );
+    this.customerSector$ = this.apiSvc.getCustomerSector().pipe(
+      tap(res => {
+        this.isLoadingCustSector = false;
+      })
+    );
+    this.customerFirm$ = this.apiSvc.getCustomerFirm().pipe(
+      tap(res => {
+        this.isLoadingCustFirm = false;
+      })
+    );
 
     this.filteredListOfPic = this.listOfPic.filter((p) => p.pic_id === this.pic_id);
 
@@ -806,11 +833,36 @@ export class AddCustomerModalComponent implements OnInit {
 
   // Prevent the default automatic upload behavior
   beforeUpload = (file: NzUploadFile): boolean => {
+
+    if (file.type !== 'application/pdf') {
+      
+      this.nzMsgSvc.error('You can only upload PDF file!');
+      return false;
+    }
+
+    const isLt5M = file.size! / 1024 / 1024 < 5;
+    if (!isLt5M) {
+      this.nzMsgSvc.error('Image must be smaller than 5MB!');
+      return false;
+    }
+
     this.fileList = this.fileList.concat(file);
     return false; // Stop the auto upload
   };
 
   beforeUploadProfile = (file: NzUploadFile): boolean => {
+
+    const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png' || file.type === 'image/jpg';
+    if (!isJpgOrPng) {
+      
+      this.nzMsgSvc.error('You can only upload JPG/PNG file!');
+      return false;
+    }
+    const isLt5M = file.size! / 1024 / 1024 < 5;
+    if (!isLt5M) {
+      this.nzMsgSvc.error('Image must be smaller than 5MB!');
+      return false;
+    }
 
     if(this.modal_type === 'update'){
       const contactPersonForm = this.contactPerson.at(0);
@@ -830,6 +882,17 @@ export class AddCustomerModalComponent implements OnInit {
   beforeUploadCp(index: number) {
     return (file: NzUploadFile): boolean => {
 
+      if (file.type !== 'application/pdf') {
+        
+        this.nzMsgSvc.error('You can only upload PDF file!');
+        return false;
+      }
+      const isLt5M = file.size! / 1024 / 1024 < 5;
+      if (!isLt5M) {
+        this.nzMsgSvc.error('Image must be smaller than 5MB!');
+        return false;
+      }
+
       const contactPersonForm = this.contactPerson.at(index);
   
       const fileList = contactPersonForm.get('cp_attachments')?.value || [];
@@ -841,6 +904,19 @@ export class AddCustomerModalComponent implements OnInit {
 
   beforeUploadCpProfile(index: number) {
     return (file: NzUploadFile): boolean => {
+
+      const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png' || file.type === 'image/jpg';
+      if (!isJpgOrPng) {
+        
+        this.nzMsgSvc.error('You can only upload JPG/PNG file!');
+        return false;
+      }
+      const isLt5M = file.size! / 1024 / 1024 < 5;
+      if (!isLt5M) {
+        this.nzMsgSvc.error('Image must be smaller than 5MB!');
+        return false;
+      }
+
       const contactPersonForm = this.contactPerson.at(index);
 
       const reader = new FileReader();
@@ -933,8 +1009,13 @@ export class AddCustomerModalComponent implements OnInit {
   }
 
   removeProfilePersonHandler = (file: NzUploadFile): boolean => {
-    const contactPersonForm = this.contactPerson.at(0);
-    contactPersonForm.get('cp_profile_pictureDeleteIds')?.setValue([file.uid]);
+
+    if(this.modal_type === 'update'){
+      const contactPersonForm = this.contactPerson.at(0);
+      contactPersonForm.get('cp_profile_pictureDeleteIds')?.setValue([file.uid]);
+    }
+
+    this.fileImageList = []
     return true; // Stop the auto upload
   };
 
