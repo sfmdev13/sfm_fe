@@ -7,13 +7,15 @@ import { DeleteDivisionComponent } from './delete-division/delete-division.compo
 import { NzResultModule } from 'ng-zorro-antd/result';
 import { NzFormModule } from 'ng-zorro-antd/form';
 import { NzInputModule } from 'ng-zorro-antd/input';
+import { DetailDivisionComponent } from './detail-division/detail-division.component';
 
 
 
 @NgModule({
   declarations: [
     EditDivisionComponent,
-    DeleteDivisionComponent
+    DeleteDivisionComponent,
+    DetailDivisionComponent
   ],
   imports: [
     CommonModule,
@@ -26,7 +28,8 @@ import { NzInputModule } from 'ng-zorro-antd/input';
   ],
   exports: [
     EditDivisionComponent,
-    DeleteDivisionComponent
+    DeleteDivisionComponent,
+    DetailDivisionComponent
   ]
 })
 export class DivisionSettingModule { }

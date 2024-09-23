@@ -18,6 +18,7 @@ export class DivisionsSettingComponent implements OnInit {
   isVisibleEdit = false;
   isVisibleAdd = false;
   isVisibleDelete = false;
+  isVisibleDetail = false;
 
   modal_type = 'Add';
 
@@ -40,6 +41,8 @@ export class DivisionsSettingComponent implements OnInit {
   totalAll: number = 0;
   pageSize: number = 10;
   currentPage: number = 1;
+
+  detailData: IDataDivision = {} as IDataDivision
 
   constructor(
     private apiSvc: ApiService,
@@ -92,6 +95,11 @@ export class DivisionsSettingComponent implements OnInit {
   showModalDelete(id: number): void{
     this.selectedIdDelete = id;
     this.isVisibleDelete = true;
+  }
+
+  showModalDetail(data: IDataDivision): void{
+    this.detailData = data;
+    this.isVisibleDetail = true;
   }
 
   handleSubmitEdit(): void {
@@ -190,5 +198,9 @@ export class DivisionsSettingComponent implements OnInit {
 
   handleCancelDelete(): void{
     this.isVisibleDelete = false;
+  }
+
+  handleCloseDetail(): void{
+    this.isVisibleDetail = false;
   }
 }

@@ -33,6 +33,7 @@
               <td>{{ data.description }}</td>
             <td>
                 <div class="d-flex gap-3">
+                    <span (click)="showModalDetail(data)" nz-icon nzType="eye" nzTheme="twotone"></span>
                     <span (click)="showModalEdit(data)" nz-icon nzType="edit" nzTheme="twotone"></span>
                     <span (click)="showModalDelete(data.id)" nz-icon nzType="delete" nzTheme="twotone"></span>
                 </div>
@@ -83,5 +84,15 @@
     <ng-container *nzModalFooter>
         <button nz-button nzType="default" nzDanger (click)="handleCancelDelete()">Cancel</button>
         <button nz-button nzType="primary" nzDanger (click)="handleSubmitDelete()">Delete Division</button>
+    </ng-container>
+</nz-modal>
+
+<nz-modal nzCentered [(nzVisible)]="isVisibleDetail" nzTitle="Division Details" (nzOnCancel)="handleCloseDetail()">
+    <ng-container *nzModalContent>
+        <app-detail-division [data]="detailData"></app-detail-division>
+    </ng-container>
+    <ng-container *nzModalFooter>
+        <button nz-button nzType="default" nzDanger (click)="handleCloseDetail()">Cancel</button>
+        <button nz-button nzType="primary" nzDanger (click)="handleCloseDetail()">Ok</button>
     </ng-container>
 </nz-modal>
