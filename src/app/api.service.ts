@@ -654,6 +654,51 @@ export class ApiService {
     return this.http.post<any>(url, {} , { headers })
   }
 
+  getEmployeeContract(): Observable<ICategories>{
+    const token = localStorage.getItem('authToken');
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+    });
+
+    
+    const url = `${this.apiUrl}/employee-contract`;
+    return this.http.get<ICategories>(url, { headers })
+
+  }
+
+
+  createEmployeeContract(name: string, description: string): Observable<any>{
+    const token = localStorage.getItem('authToken');
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+    })
+
+    const url = `${this.apiUrl}/create/employee-contract?name=${name}&description=${description}`
+
+    return this.http.post<any>(url, {} , { headers })
+  }
+
+  editEmployeeContract(id: string, name: string, description: string): Observable<any>{
+    const token = localStorage.getItem('authToken');
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+    })
+
+    const url = `${this.apiUrl}/edit/employee-contract?id=${id}&name=${name}&description=${description}`
+
+    return this.http.post<any>(url, {} , { headers })
+  }
+
+  deleteEmployeeContract(id: number): Observable<any>{
+    const token = localStorage.getItem('authToken');
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+    });
+
+    const url = `${this.apiUrl}/delete/employee-contract?id=${id}`;
+    return this.http.delete<any>(url, { headers })
+  }
+
   getContactType(): Observable<ICategories>{
     const token = localStorage.getItem('authToken');
     const headers = new HttpHeaders({
