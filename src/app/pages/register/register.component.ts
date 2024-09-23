@@ -31,6 +31,9 @@ export class RegisterComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
+
+    this.spinnerSvc.hide();
+
     this.validateForm.patchValue({
       email: this.emailTemp,
     });
