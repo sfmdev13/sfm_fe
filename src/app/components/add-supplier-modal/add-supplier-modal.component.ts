@@ -1,5 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { AbstractControl, FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
 import { NzUploadFile } from 'ng-zorro-antd/upload';
 import { filter, Observable, tap } from 'rxjs';
@@ -86,12 +87,17 @@ export class AddSupplierModalComponent implements OnInit {
 
   attachmentDeletedIds: string[] = [];
 
+  isLoadingProvince: boolean = true;
+  isLoadingSuppProd: boolean = true;
+  isLoadingSuppSource: boolean = true;
+
   constructor(
     private modal: NzModalRef,
     private fb: FormBuilder,
     private apiSvc: ApiService,
     private spinnerSvc: SpinnerService,
-    private modalSvc: NzModalService
+    private modalSvc: NzModalService,
+    private nzMsgSvc: NzMessageService
   ) { }
 
   ngOnInit(): void {
@@ -99,11 +105,20 @@ export class AddSupplierModalComponent implements OnInit {
     this.provinces$ = this.apiSvc.getProvinces().pipe(
       tap(p => {
         this.provinceList = p;
+        this.isLoadingProvince = false
       })
     );
 
-    this.suppProduct$ = this.apiSvc.getSupplierProduct();
-    this.suppSource$ = this.apiSvc.getSupplierSource();
+    this.suppProduct$ = this.apiSvc.getSupplierProduct().pipe(
+      tap(res => {
+        this.isLoadingSuppProd = false
+      })
+    );
+    this.suppSource$ = this.apiSvc.getSupplierSource().pipe(
+      tap(res => {
+        this.isLoadingSuppSource = false
+      })
+    );
 
     this.filteredListOfPic = this.listOfPic.filter((p) => p.pic_id === this.pic_id);
 
@@ -715,11 +730,36 @@ export class AddSupplierModalComponent implements OnInit {
 
   // Prevent the default automatic upload behavior
   beforeUpload = (file: NzUploadFile): boolean => {
+
+    if (file.type !== 'application/pdf') {
+      
+      this.nzMsgSvc.error('You can only upload PDF file!');
+      return false;
+    }
+
+    const isLt5M = file.size! / 1024 / 1024 < 5;
+    if (!isLt5M) {
+      this.nzMsgSvc.error('Image must be smaller than 5MB!');
+      return false;
+    }
+
     this.fileList = this.fileList.concat(file);
     return false; // Stop the auto upload
   };
 
   beforeUploadProfile = (file: NzUploadFile): boolean => {
+
+    const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png' || file.type === 'image/jpg';
+    if (!isJpgOrPng) {
+      
+      this.nzMsgSvc.error('You can only upload JPG/PNG file!');
+      return false;
+    }
+    const isLt5M = file.size! / 1024 / 1024 < 5;
+    if (!isLt5M) {
+      this.nzMsgSvc.error('Image must be smaller than 5MB!');
+      return false;
+    }
 
     if(this.modal_type === 'update'){
       const contactPersonForm = this.contactPerson.at(0);
@@ -739,6 +779,17 @@ export class AddSupplierModalComponent implements OnInit {
   beforeUploadCp(index: number) {
     return (file: NzUploadFile): boolean => {
 
+      if (file.type !== 'application/pdf') {
+        
+        this.nzMsgSvc.error('You can only upload PDF file!');
+        return false;
+      }
+      const isLt5M = file.size! / 1024 / 1024 < 5;
+      if (!isLt5M) {
+        this.nzMsgSvc.error('Image must be smaller than 5MB!');
+        return false;
+      }
+
       const contactPersonForm = this.contactPerson.at(index);
   
       const fileList = contactPersonForm.get('cp_attachments')?.value || [];
@@ -750,6 +801,19 @@ export class AddSupplierModalComponent implements OnInit {
 
   beforeUploadCpProfile(index: number) {
     return (file: NzUploadFile): boolean => {
+
+      const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png' || file.type === 'image/jpg';
+      if (!isJpgOrPng) {
+        
+        this.nzMsgSvc.error('You can only upload JPG/PNG file!');
+        return false;
+      }
+      const isLt5M = file.size! / 1024 / 1024 < 5;
+      if (!isLt5M) {
+        this.nzMsgSvc.error('Image must be smaller than 5MB!');
+        return false;
+      }
+
       const contactPersonForm = this.contactPerson.at(index);
 
       const reader = new FileReader();
