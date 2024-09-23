@@ -20,7 +20,7 @@
             <div class="col-md-6">
               <ng-container *ngIf="empContract$ | async as emp; else loadingEmp">
                 <nz-form-item>
-                  <nz-form-label nzFor="employee_contract_id" nzRequired>Employee Contract</nz-form-label>
+                  <nz-form-label nzFor="employee_contract_id" nzRequired class="fw-semibold">Employee Contract</nz-form-label>
                   <nz-form-control>
                     <nz-select
                       id="employee_contract_id"
@@ -35,7 +35,7 @@
               </ng-container>
               <ng-template #loadingEmp>
                 <nz-form-item>
-                  <nz-form-label nzFor="employee_contract_id" nzRequired>Employee Contract</nz-form-label>
+                  <nz-form-label nzFor="employee_contract_id" nzRequired class="fw-semibold">Employee Contract</nz-form-label>
                   <nz-form-control>
                     <nz-select
                       id="employee_contract_id"
@@ -52,7 +52,7 @@
             <div class="col-md-6">
               <ng-container *ngIf="divisionList$ | async as div; else loadingDiv">
                 <nz-form-item>
-                  <nz-form-label nzFor="division_id" nzRequired>Division</nz-form-label>
+                  <nz-form-label nzFor="division_id" nzRequired class="fw-semibold">Division</nz-form-label>
                   <nz-form-control>
                     <nz-select
                       id="division_id"
@@ -67,7 +67,7 @@
               </ng-container>
               <ng-template #loadingDiv>
                 <nz-form-item>
-                  <nz-form-label nzFor="division_id" nzRequired>Select Division</nz-form-label>
+                  <nz-form-label nzFor="division_id" nzRequired class="fw-semibold">Division</nz-form-label>
                   <nz-form-control>
                     <nz-select
                       id="division_id"
@@ -84,7 +84,7 @@
             <div class="col-md-6">
               <ng-container *ngIf="roleList.length > 0; else loadingRoleList">
                 <nz-form-item>
-                  <nz-form-label nzRequired class="fw-semibold" nzFor="role_id" nzRequired>Role</nz-form-label>
+                  <nz-form-label nzRequired class="fw-semibold" nzFor="role_id" nzRequired class="fw-semibold">Role</nz-form-label>
                   <nz-form-control>
                       <nz-select  nzShowSearch nzPlaceHolder="Select Role" formControlName="role_id">
                       <ng-container *ngFor="let r of roleList">
@@ -96,7 +96,7 @@
               </ng-container>
               <ng-template #loadingRoleList>
                 <nz-form-item>
-                  <nz-form-label nzRequired class="fw-semibold" nzFor="role_id" nzRequired>Role</nz-form-label>
+                  <nz-form-label nzRequired class="fw-semibold" nzFor="role_id" nzRequired class="fw-semibold">Role</nz-form-label>
                   <nz-form-control>
                       <nz-select nzDisabled nzPlaceHolder="Select division first" formControlName="role_id">
                       </nz-select>

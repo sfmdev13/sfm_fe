@@ -198,7 +198,7 @@ export class ApiService {
       Authorization: `Bearer ${token}`,
     });
 
-    const url = `${this.apiUrl}/filter-employee?role_id=${params.role_id}&status=${params.status}&sort_by=${params.sort_by}&page=${page}&per_page=${per_page}`
+    const url = `${this.apiUrl}/filter-employee?role_id=${params.role_id}&status=${params.status}&sort_by=${params.sort_by}&division_id=${params.division_id}&page=${page}&per_page=${per_page}`
 
     return this.http.post<IRootEmployee>(url, {}, { headers });
   }

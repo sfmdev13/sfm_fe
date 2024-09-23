@@ -1,34 +1,56 @@
 <div>
     <form nz-form nzLayout="vertical" [formGroup]="filterEmpForm" (ngSubmit)="submitForm()">
-        <ng-container *ngIf="allRoles$ | async as allRole; else loadingRole">
+        <ng-container *ngIf="division$ | async as div; else loadingDiv">
           <nz-form-item>
-              <nz-form-label nzFor="role_id">Role</nz-form-label>
-              <nz-form-control>
-                <nz-select
-                  id="role_id"
-                  formControlName="role_id"
-                  nzPlaceHolder="Select Role"
-                >
-                  <nz-option nzValue="" nzLabel="All Role"></nz-option>
-                  <nz-option *ngFor="let role of allRole.data" [nzValue]="role.id" [nzLabel]="role.title"></nz-option>
-                </nz-select>
-              </nz-form-control>
-          </nz-form-item>
-        </ng-container>
-        <ng-template #loadingRole>
-          <nz-form-item>
-            <nz-form-label nzFor="role_id">Role</nz-form-label>
+            <nz-form-label nzFor="division_id" class="fw-semibold" nzRequired>Division</nz-form-label>
             <nz-form-control>
               <nz-select
-                id="role_id"
-                formControlName="role_id"
+                id="division_id"
+                formControlName="division_id"
+                nzPlaceHolder="Select Division"
+              >
+
+                <nz-option class="text-capitalize" *ngFor="let r of div.data" [nzValue]="r.id" [nzLabel]="r.name"></nz-option>
+              </nz-select>
+            </nz-form-control>
+          </nz-form-item>
+        </ng-container>
+        <ng-template #loadingDiv>
+          <nz-form-item>
+            <nz-form-label nzFor="division_id" class="fw-semibold" nzRequired>Division</nz-form-label>
+            <nz-form-control>
+              <nz-select
+                id="division_id"
+                formControlName="division_id"
                 nzPlaceHolder="Loading..."
                 nzDisabled
               >
-                <nz-option></nz-option>
+                <nz-option nzValue="" nzLabel="...loading"></nz-option>
               </nz-select>
             </nz-form-control>
-        </nz-form-item>
+          </nz-form-item>             
+        </ng-template>
+
+        <ng-container *ngIf="roleList.length > 0; else loadingRoleList">
+          <nz-form-item>
+            <nz-form-label nzRequired class="fw-semibold" nzFor="role_id" nzRequired>Role</nz-form-label>
+            <nz-form-control>
+                <nz-select  nzShowSearch nzPlaceHolder="Select Role" formControlName="role_id">
+                <ng-container *ngFor="let r of roleList">
+                  <nz-option [nzLabel]="r.title" [nzValue]="r.id"></nz-option>
+                </ng-container>
+                </nz-select>
+            </nz-form-control>
+          </nz-form-item>
+        </ng-container>
+        <ng-template #loadingRoleList>
+          <nz-form-item>
+            <nz-form-label nzRequired class="fw-semibold" nzFor="role_id" nzRequired>Role</nz-form-label>
+            <nz-form-control>
+                <nz-select nzDisabled nzPlaceHolder="Select division first" formControlName="role_id">
+                </nz-select>
+            </nz-form-control>
+          </nz-form-item>
         </ng-template>
         
         <nz-form-item>
