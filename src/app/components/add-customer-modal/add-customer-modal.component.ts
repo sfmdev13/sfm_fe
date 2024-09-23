@@ -793,9 +793,9 @@ export class AddCustomerModalComponent implements OnInit {
       return false;
     }
 
-    const isLt5M = file.size! / 1024 / 1024 < 5;
+    const isLt5M = file.size! / 1024 / 1024 < 1;
     if (!isLt5M) {
-      this.nzMsgSvc.error('Image must be smaller than 5MB!');
+      this.nzMsgSvc.error('Image must be smaller than 1MB!');
       return false;
     }
 
@@ -811,9 +811,9 @@ export class AddCustomerModalComponent implements OnInit {
       this.nzMsgSvc.error('You can only upload JPG/PNG file!');
       return false;
     }
-    const isLt5M = file.size! / 1024 / 1024 < 5;
+    const isLt5M = file.size! / 1024 / 1024 < 1;
     if (!isLt5M) {
-      this.nzMsgSvc.error('Image must be smaller than 5MB!');
+      this.nzMsgSvc.error('Image must be smaller than 1MB!');
       return false;
     }
 
@@ -840,9 +840,9 @@ export class AddCustomerModalComponent implements OnInit {
         this.nzMsgSvc.error('You can only upload PDF file!');
         return false;
       }
-      const isLt5M = file.size! / 1024 / 1024 < 5;
+      const isLt5M = file.size! / 1024 / 1024 < 1
       if (!isLt5M) {
-        this.nzMsgSvc.error('Image must be smaller than 5MB!');
+        this.nzMsgSvc.error('Image must be smaller than 1MB!');
         return false;
       }
 
@@ -864,9 +864,9 @@ export class AddCustomerModalComponent implements OnInit {
         this.nzMsgSvc.error('You can only upload JPG/PNG file!');
         return false;
       }
-      const isLt5M = file.size! / 1024 / 1024 < 5;
+      const isLt5M = file.size! / 1024 / 1024 < 1;
       if (!isLt5M) {
-        this.nzMsgSvc.error('Image must be smaller than 5MB!');
+        this.nzMsgSvc.error('Image must be smaller than 1MB!');
         return false;
       }
 
