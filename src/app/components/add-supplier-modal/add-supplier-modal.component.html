@@ -3,7 +3,7 @@
         <div class="row">
           <nz-form-item class="mb-4">
             <nz-form-label nzRequired nzFor="pic" class="fw-semibold">PIC SFM</nz-form-label>
-                <nz-select nzMode="tags" nzPlaceHolder="Select PIC" formControlName="pic">
+                <nz-select nzShowSearch nzMode="tags" nzPlaceHolder="Select PIC" formControlName="pic">
                     <nz-option
                     *ngFor="let pic of listOfPic"
                         [nzLabel]="pic.name" 
@@ -15,7 +15,7 @@
           <nz-form-item>
             <nz-form-label nzRequired class="fw-semibold" nzFor="is_pic_internal" nzRequired>Head of PIC SFM</nz-form-label>
             <nz-form-control>
-                <nz-select nzPlaceHolder="Select Head" formControlName="is_pic_internal">
+                <nz-select nzShowSearch nzPlaceHolder="Select Head" formControlName="is_pic_internal">
                 <ng-container *ngFor="let pic of filteredListOfPic">
                   <nz-option [nzLabel]="pic.name" [nzValue]="pic.pic_id"></nz-option>
                 </ng-container>
@@ -44,7 +44,7 @@
                   <nz-form-label nzRequired nzFor="supplier_product_id" class="fw-semibold">Supplier Product</nz-form-label>
                   <nz-form-control>
                     <ng-container *ngIf="suppProduct$ | async as suppProduct; else prodLoad">
-                      <nz-select nzMode="tags" nzPlaceHolder="Select Supplier Product" formControlName="supplier_product_id">
+                      <nz-select nzShowSearch nzMode="tags" nzPlaceHolder="Select Supplier Product" formControlName="supplier_product_id">
                         <ng-container *ngFor="let supp of suppProduct.data">
                           <nz-option [nzLabel]="supp.name" [nzValue]="supp.id"></nz-option>
                         </ng-container>
@@ -62,7 +62,7 @@
                   <nz-form-label nzRequired nzFor="supplier_source_id" class="fw-semibold">Supplier Source</nz-form-label>
                   <nz-form-control>
                     <ng-container *ngIf="suppSource$ | async as suppSource; else sourceLoad">
-                      <nz-select nzPlaceHolder="Select Supplier Source" formControlName="supplier_source_id">
+                      <nz-select nzShowSearch nzPlaceHolder="Select Supplier Source" formControlName="supplier_source_id">
                         <ng-container *ngFor="let cust of suppSource.data">
                           <nz-option [nzLabel]="cust.name" [nzValue]="cust.id"></nz-option>
                         </ng-container>
@@ -386,7 +386,7 @@
                       <div class="col-6 mt-4">
                         <nz-form-item class="mb-4">
                           <nz-form-label nzRequired nzFor="cp_pic">Contact PIC</nz-form-label>
-                              <nz-select nzMode="tags" nzPlaceHolder="Tag Mode" formControlName="cp_pic">
+                              <nz-select nzShowSearch nzMode="tags" nzPlaceHolder="Tag Mode" formControlName="cp_pic">
                                   <nz-option
                                   *ngFor="let pic of cpListOfPic"
                                       [nzLabel]="pic.name" 
@@ -399,7 +399,7 @@
                         <nz-form-item>
                           <nz-form-label nzRequired nzFor="cp_is_pic_head" nzRequired>Head of Contact PIC</nz-form-label>
                           <nz-form-control>
-                              <nz-select nzPlaceHolder="Select Head" formControlName="cp_is_pic_head">
+                              <nz-select nzShowSearch nzPlaceHolder="Select Head" formControlName="cp_is_pic_head">
                               <ng-container *ngFor="let pic of contact.get('filteredCpListOfPic')?.value">
                                 <nz-option [nzLabel]="pic.name" [nzValue]="pic.pic_id"></nz-option>
                               </ng-container>
