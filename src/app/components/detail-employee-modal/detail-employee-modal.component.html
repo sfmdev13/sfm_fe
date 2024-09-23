@@ -5,6 +5,10 @@
         <p class="fw-light">{{ data.name }}</p>
     </div>
     <div>
+        <p class="m-0 p-0 fw-semibold">Division</p>
+        <p class="fw-light">{{ data.user.role.division.name}}</p>
+    </div>
+    <div>
         <p class="m-0 p-0 fw-semibold">Role</p>
         <p class="fw-light">{{ data.user.role.title }}</p>
     </div>
@@ -19,6 +23,14 @@
     <div>
         <p class="m-0 p-0 fw-semibold">Address</p>
         <p class="fw-light">{{ data.address }}</p>
+    </div>
+    <div>
+        <p class="m-0 p-0 fw-semibold">Contract</p>
+        <p class="fw-light">{{ data.contract.name }}</p>
+    </div>
+    <div>
+        <p class="m-0 p-0 fw-semibold">Join Date</p>
+        <p class="fw-light">{{ data.join_date}}</p>
     </div>
     <div>
         <p class="m-0 p-0 fw-semibold">Status</p>

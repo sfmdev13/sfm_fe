@@ -15,7 +15,7 @@ export interface IDataEmployee {
     address: string
     status: number
     user: User
-    contact: Contract
+    contract: Contract
     employee_contract_id: number
     join_date: string | number
 }

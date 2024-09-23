@@ -17,10 +17,14 @@ export class FilterEmployeeModalComponent implements OnInit {
   filterEmpForm = this.fb.group({
     role_id: [''],
     status: [''],
-    sort_by: ['']
+    sort_by: [''],
+    division_id: ['']
   })
 
   allRoles$!: Observable<IRootAllRoles>;
+  division$!: Observable<any>;
+
+  roleList: any[] = [];
 
   constructor(
     private modal: NzModalRef,
@@ -29,7 +33,17 @@ export class FilterEmployeeModalComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
+
+    this.division$ = this.apiSvc.getDivisionList();
+
     this.allRoles$ = this.apiSvc.getAllRole();
+
+    this.filterEmpForm.get('division_id')?.valueChanges.subscribe((value) => {
+      this.apiSvc.getRoleByDivision(value).subscribe((res) => {
+        this.roleList = res.data.roles;
+      })
+
+    })
 
     if (this.filteredEmp) {
       const filterItem = JSON.parse(localStorage.getItem('filterItemsEmp')!);
@@ -37,7 +51,8 @@ export class FilterEmployeeModalComponent implements OnInit {
       this.filterEmpForm.patchValue({
         role_id: filterItem.role_id,
         status: filterItem.status,
-        sort_by: filterItem.sort_by
+        sort_by: filterItem.sort_by,
+        division_id: filterItem.division_id
       })
     } 
   }
@@ -50,7 +65,8 @@ export class FilterEmployeeModalComponent implements OnInit {
     const paramsUrl = {
       role_id: this.filterEmpForm.value.role_id,
       status: this.filterEmpForm.value.status,
-      sort_by: this.filterEmpForm.value.sort_by
+      sort_by: this.filterEmpForm.value.sort_by,
+      division_id: this.filterEmpForm.value.division_id
     }
 
     this.modal.close(paramsUrl)
