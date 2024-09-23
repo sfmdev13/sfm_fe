@@ -653,4 +653,49 @@ export class ApiService {
     const url = `${this.apiUrl}/cognito/delete-employee?employee_id=${id}`;
     return this.http.post<any>(url, {} , { headers })
   }
+
+  getContactType(): Observable<ICategories>{
+    const token = localStorage.getItem('authToken');
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+    });
+
+    
+    const url = `${this.apiUrl}/customer-category`;
+    return this.http.get<ICategories>(url, { headers })
+
+  }
+
+
+  createContactType(name: string, description: string): Observable<any>{
+    const token = localStorage.getItem('authToken');
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+    })
+
+    const url = `${this.apiUrl}/create/customer-category?name=${name}&description=${description}`
+
+    return this.http.post<any>(url, {} , { headers })
+  }
+
+  editContactType(id: string, name: string, description: string): Observable<any>{
+    const token = localStorage.getItem('authToken');
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+    })
+
+    const url = `${this.apiUrl}/edit/customer-category?id=${id}&name=${name}&description=${description}`
+
+    return this.http.post<any>(url, {} , { headers })
+  }
+
+  deleteContactType(id: number): Observable<any>{
+    const token = localStorage.getItem('authToken');
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+    });
+
+    const url = `${this.apiUrl}/delete/customer-category?id=${id}`;
+    return this.http.delete<any>(url, { headers })
+  }
 }
