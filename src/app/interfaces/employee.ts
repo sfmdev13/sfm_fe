@@ -15,6 +15,15 @@ export interface IDataEmployee {
     address: string
     status: number
     user: User
+    contact: Contract
+    employee_contract_id: number
+    join_date: string | number
+}
+
+interface Contract{
+  id: number;
+  name: string;
+  description: string;
 }
   
   export interface User {
@@ -30,6 +39,11 @@ export interface IDataEmployee {
     id: number
     title: string
     slug: string
+    division: {
+      id: number 
+      name: string
+      description: string
+    }
   }
   
   export interface Pagination {

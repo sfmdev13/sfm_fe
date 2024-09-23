@@ -1,6 +1,17 @@
-<nz-card nzHoverable style="width:240px" [nzCover]="coverTemplate" [routerLink]="'/settings/categories-setting'">
-    <nz-card-meta nzTitle="Categories" nzDescription="Change Categories"></nz-card-meta>
-</nz-card>
+<div class="d-flex gap-4">
+    <nz-card nzHoverable style="width:240px" [nzCover]="coverTemplate" [routerLink]="'/settings/categories-setting'">
+        <nz-card-meta nzTitle="Categories" nzDescription="Add or Edit Categories"></nz-card-meta>
+    </nz-card>
+
+    <nz-card nzHoverable style="width:240px" [nzCover]="coverDivision" [routerLink]="'/settings/divisions-setting'">
+        <nz-card-meta nzTitle="Divison" nzDescription="Add or Edit Division"></nz-card-meta>
+    </nz-card>
+</div>
+
 <ng-template #coverTemplate>
     <img alt="example" src="/assets/images/setting.png" />
+</ng-template>
+
+<ng-template #coverDivision>
+    <img alt="division" src="/assets/images/division.png" />
 </ng-template>

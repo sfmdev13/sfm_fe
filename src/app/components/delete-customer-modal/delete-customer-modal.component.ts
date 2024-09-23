@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { NzModalRef } from 'ng-zorro-antd/modal';
+import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
 import { ApiService } from 'src/app/api.service';
 
 @Component({
@@ -13,7 +13,8 @@ export class DeleteCustomerModalComponent implements OnInit {
 
   constructor(
     private modal: NzModalRef,
-    private apiSvc: ApiService
+    private apiSvc: ApiService,
+    private modalSvc: NzModalService
   ) { }
 
   ngOnInit(): void {
@@ -29,7 +30,12 @@ export class DeleteCustomerModalComponent implements OnInit {
         this.apiSvc.triggerRefreshCustomers();
       },
       error: (error) => {
-        console.log(error)
+        this.modalSvc.error({
+          nzTitle: 'Failed to Delete Customer',
+          nzContent: error.error.meta.message,
+          nzOkText: 'Ok',
+          nzCentered: true
+        })
       },
       complete: () => {
         this.modal.destroy()

@@ -11,6 +11,10 @@ export interface IRootAllRoles {
     status: number
     actions: Action[]
     employees: Employee[]
+    division: {
+      id: number
+      name: string
+    }
   }
   
   export interface Action {

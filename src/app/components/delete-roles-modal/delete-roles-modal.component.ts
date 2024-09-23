@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { NzModalRef } from 'ng-zorro-antd/modal';
+import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
 import { ApiService } from 'src/app/api.service';
 
 @Component({
@@ -11,7 +11,7 @@ export class DeleteRolesModalComponent implements OnInit {
 
   @Input() id: number = 0
 
-  constructor(private modal: NzModalRef, private apiSvc: ApiService) { }
+  constructor(private modal: NzModalRef, private apiSvc: ApiService, private modalSvc: NzModalService) { }
 
   ngOnInit(): void {
   }
@@ -26,7 +26,12 @@ export class DeleteRolesModalComponent implements OnInit {
         this.apiSvc.triggerRefreshRoles();
       },
       error: (error) => {
-        console.log(error);
+        this.modalSvc.error({
+          nzTitle: 'Failed to Delete Role',
+          nzContent: error.error.meta.message,
+          nzOkText: 'Ok',
+          nzCentered: true
+        })
       },
       complete: () => {
         this.modal.destroy();

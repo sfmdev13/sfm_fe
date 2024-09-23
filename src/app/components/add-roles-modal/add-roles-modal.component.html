@@ -5,12 +5,40 @@
         <input nz-input id="roleName" [(ngModel)]="roleName" />
       </nz-form-control>
     </div>
+    <div class="mb-2">
+      <ng-container *ngIf="division$ | async as division; else loadingDivision">
+      <nz-form-label nzFor="status" nzRequired class="fw-bold">Division</nz-form-label>
+          <nz-form-control>
+            <nz-select
+              id="division_id"
+              nzPlaceHolder="Select Role"
+              [(ngModel)]="division_id"
+            >
+
+              <nz-option class="text-capitalize" *ngFor="let r of division.data" [nzValue]="r.id" [nzLabel]="r.name"></nz-option>
+            </nz-select>
+          </nz-form-control>
+      </ng-container>
+      <ng-template #loadingDivision>
+          <nz-form-label nzFor="division_id" nzRequired>Division</nz-form-label>
+          <nz-form-control>
+            <nz-select
+              id="division_id"
+              nzPlaceHolder="Loading..."
+              nzDisabled
+            >
+              <nz-option nzValue="" nzLabel="...loading"></nz-option>
+            </nz-select>
+          </nz-form-control>           
+      </ng-template>
+    </div>
     <div class="mb-4">
       <nz-form-label nzFor="status" nzRequired class="fw-bold">Status</nz-form-label>
       <nz-form-control>
         <nz-switch nzSize="default" id="status" [(ngModel)]="status" nzCheckedChildren="active" nzUnCheckedChildren="inactive"></nz-switch>
       </nz-form-control>
     </div>
+
 
     <nz-tabset>
       <nz-tab nzTitle="Action">
@@ -170,7 +198,11 @@
 
 </div>
 
-<div *nzModalFooter>
+<div *nzModalFooter class="d-flex gap-2">
     <button nz-button nzType="default" (click)="destroyModal()">Cancel</button>
-    <button nz-button nzType="primary" class="text-capitalize"  (click)="submitForm()">{{ modal_type }} Roles</button>
+    <div>
+      <nz-spin [nzSpinning]="isLoadingDivision">
+        <button nz-button nzType="primary" class="text-capitalize"  (click)="submitForm()" [disabled]="isLoadingDivision">{{ modal_type }} Roles</button>
+      </nz-spin>
+    </div>
 </div>

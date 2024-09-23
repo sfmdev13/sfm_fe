@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { SpinnerService } from 'src/app/spinner.service';
 
 @Component({
   selector: 'app-settings',
@@ -6,9 +7,12 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./settings.component.scss']
 })
 export class SettingsComponent implements OnInit {
-  constructor() { }
+  constructor(
+    private spinnerSvc: SpinnerService
+  ) { }
 
   ngOnInit(): void {
+    this.spinnerSvc.hide();
   }
 
 }

@@ -22,6 +22,10 @@ export class CategoriesSettingComponent implements OnInit {
         {
           name: 'Customer Firm',
           slug: 'customer_firm'
+        },
+        {
+          name: 'Contact Type',
+          slug: 'contact_type'
         }
       ]
     },
@@ -35,6 +39,15 @@ export class CategoriesSettingComponent implements OnInit {
         {
           name: 'Supplier Product',
           slug: 'supplier_product'
+        }
+      ]
+    },
+    {
+      name: 'Employee Category',
+      sub_menu : [
+        {
+          name: 'Employee Contract',
+          slug: 'employee_contract'
         }
       ]
     }

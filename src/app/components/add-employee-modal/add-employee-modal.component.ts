@@ -1,9 +1,10 @@
+import { DatePipe } from '@angular/common';
 import { Component, Input, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
-import { Observable } from 'rxjs';
+import { Observable, tap } from 'rxjs';
 import { ApiService } from 'src/app/api.service';
-import { IDataEmployee, IRootAllRoles } from 'src/app/interfaces';
+import { ICategories, IDataEmployee, IRootAllRoles } from 'src/app/interfaces';
 import { SpinnerService } from 'src/app/spinner.service';
 
 @Component({
@@ -18,6 +19,15 @@ export class AddEmployeeModalComponent implements OnInit {
 
   roles$!: Observable<IRootAllRoles>
 
+  empContract$!: Observable<ICategories>;
+
+  divisionList$!: Observable<any>;
+
+  isLoadingEmpContract: boolean = true;
+  isLoadingDivision: boolean = true;
+
+  roleList: any[] = [];
+
   employeeForm = this.fb.group({
     id: [''],
     name: ['', [Validators.required]],
@@ -26,7 +36,10 @@ export class AddEmployeeModalComponent implements OnInit {
     phone: ['', [Validators.required]],
     address: ['', [Validators.required, Validators.maxLength(200)]],
     status: [1, [Validators.required]],
-    role_id: ['', [Validators.required]]
+    role_id: ['', [Validators.required]],
+    join_date: ['', [Validators.required]],
+    employee_contract_id: ['', [Validators.required]],
+    division_id: ['', [Validators.required]]
   })
 
   constructor(
@@ -34,10 +47,35 @@ export class AddEmployeeModalComponent implements OnInit {
     private fb: FormBuilder,
     private apiSvc: ApiService,
     private spinnerSvc: SpinnerService,
-    private modalSvc: NzModalService
+    private modalSvc: NzModalService,
+    private datePipe: DatePipe
   ) {}
 
   ngOnInit(): void {
+
+    this.employeeForm.get('join_date')?.valueChanges.subscribe((value) => {
+      const formattedDate = this.datePipe.transform(new Date(value), 'yyyy-MM-dd') || '';
+
+      this.employeeForm.patchValue({join_date: formattedDate})
+    })
+
+    this.employeeForm.get('division_id')?.valueChanges.subscribe((value) => {
+      this.apiSvc.getRoleByDivision(value).subscribe((res) => {
+        this.roleList = res.data.roles;
+      })
+    })
+
+    this.empContract$ = this.apiSvc.getEmployeeContract().pipe(
+      tap(res => {
+        this.isLoadingEmpContract = false
+      })
+    )
+
+    this.divisionList$ = this.apiSvc.getDivisionList().pipe(
+      tap(res => {
+        this.isLoadingDivision = false
+      })
+    )
 
     this.roles$ = this.apiSvc.getAllRole();
 
@@ -54,7 +92,10 @@ export class AddEmployeeModalComponent implements OnInit {
         phone: this.data.phone,
         address: this.data.address,
         status: this.data.status,
-        role_id: this.data.user.role_id
+        role_id: this.data.user.role_id,
+        join_date: this.data.join_date,
+        employee_contract_id: this.data.employee_contract_id,
+        division_id: this.data.user.role.division.id
       })
 
       this.employeeForm.controls['email'].disable();
@@ -69,6 +110,8 @@ export class AddEmployeeModalComponent implements OnInit {
   submitForm(){
 
     this.spinnerSvc.show();
+
+    console.log(this.employeeForm.value);
 
     if(this.employeeForm.valid){
 

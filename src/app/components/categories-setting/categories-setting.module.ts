@@ -16,6 +16,8 @@ import { CustomerSectorComponent } from './customer-sector/customer-sector.compo
 import { CustomerFirmComponent } from './customer-firm/customer-firm.component';
 import { SupplierProductComponent } from './supplier-product/supplier-product.component';
 import { SupplierSourceComponent } from './supplier-source/supplier-source.component';
+import { ContactTypeComponent } from './contact-type/contact-type.component';
+import { EmployeeContractComponent } from './employee-contract/employee-contract.component';
 
 
 @NgModule({
@@ -26,7 +28,9 @@ import { SupplierSourceComponent } from './supplier-source/supplier-source.compo
     CustomerSectorComponent,
     CustomerFirmComponent,
     SupplierProductComponent,
-    SupplierSourceComponent
+    SupplierSourceComponent,
+    ContactTypeComponent,
+    EmployeeContractComponent
   ],
   imports: [
     CommonModule,
@@ -47,7 +51,9 @@ import { SupplierSourceComponent } from './supplier-source/supplier-source.compo
     CustomerSectorComponent,
     CustomerFirmComponent,
     SupplierProductComponent,
-    SupplierSourceComponent
+    SupplierSourceComponent,
+    ContactTypeComponent,
+    EmployeeContractComponent
   ]
 })
 export class CategoriesSettingTableModule { }
