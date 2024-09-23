@@ -13,6 +13,8 @@ import { NzTagModule } from 'ng-zorro-antd/tag';
 import { NzTabsModule } from 'ng-zorro-antd/tabs';
 import { NzTableModule } from 'ng-zorro-antd/table';
 import { NzIconModule } from 'ng-zorro-antd/icon';
+import { NzSelectModule } from 'ng-zorro-antd/select';
+import { NzSpinModule } from 'ng-zorro-antd/spin';
 
 @NgModule({
   declarations: [AddRolesModalComponent],
@@ -31,6 +33,8 @@ import { NzIconModule } from 'ng-zorro-antd/icon';
     NzTabsModule,
     NzTableModule,
     NzIconModule,
+    NzSelectModule,
+    NzSpinModule
   ],
   exports: [AddRolesModalComponent]
 })

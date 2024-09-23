@@ -3,7 +3,7 @@ import { FormBuilder, Validators } from '@angular/forms';
 import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
 import { debounceTime, distinctUntilChanged, Observable, Subject, tap } from 'rxjs';
 import { ApiService } from 'src/app/api.service';
-import { IDataRoles, IRootAccessRights, IRootEmployee, IRootUserByRole } from 'src/app/interfaces';
+import { IDataRoles, IRootAccessRights, IRootDivision, IRootEmployee, IRootUserByRole } from 'src/app/interfaces';
 import { accessRights } from 'src/app/constants/access-rights.contanst';
 import { SpinnerService } from 'src/app/spinner.service';
 
@@ -19,6 +19,7 @@ export class AddRolesModalComponent implements OnInit {
 
   roleName = '';
   status = true;
+  division_id = 0;
 
   employee$!: Observable<IRootUserByRole>;
 
@@ -31,6 +32,10 @@ export class AddRolesModalComponent implements OnInit {
 
   newAccessRights = accessRights;
 
+  division$!: Observable<IRootDivision>;
+
+  isLoadingDivision: boolean = true;
+
   constructor(
     private modal: NzModalRef,
     private apiSvc: ApiService,
@@ -40,7 +45,11 @@ export class AddRolesModalComponent implements OnInit {
 
   ngOnInit(): void {
 
-
+    this.division$ = this.apiSvc.getDivisionList().pipe(
+      tap(res => {
+        this.isLoadingDivision = false;
+      })
+    )
 
     if(this.modal_type === 'edit'){
 
@@ -61,6 +70,9 @@ export class AddRolesModalComponent implements OnInit {
       this.roleName = this.roleDetail.title
 
       this.status = this.roleDetail.status === 1 ? true : false;
+
+      this.division_id = this.roleDetail.division.id
+      
 
       this.setSelectedBasedOnActions(this.newAccessRights, this.roleDetail.actions)
     }
@@ -117,8 +129,10 @@ export class AddRolesModalComponent implements OnInit {
       const body = {
         title: this.roleName,
         status: this.status ? 1 : 0,
-        action_slug: selectedSlugs
+        action_slug: selectedSlugs,
+        division_id: this.division_id
       }
+
       this.apiSvc.createRole(body).subscribe({
         next: ()=>{
           this.spinnerSvc.hide();
@@ -155,6 +169,7 @@ export class AddRolesModalComponent implements OnInit {
         id: this.roleDetail.id,
         title: this.roleName,
         status: this.status ? 1 : 0,
+        division_id: this.division_id,
         action_slug:  this.roleDetail.actions.map(role => role.slug),
         action_slug_new: selectedSlugs
       }
@@ -191,7 +206,7 @@ export class AddRolesModalComponent implements OnInit {
       })
     }
 
-
+    this.spinnerSvc.show();
   }
 
   toggleAction(action: any): void {
