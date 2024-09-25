@@ -7,3 +7,4 @@ export { ICategories, IDataCategories } from "./categories"
 export { IRootUserByRole } from "./userbyrole";
 export { IRootAccessRights } from "./access-rights";
 export { IRootDivision, IDataDivision } from "./division";
+export { IRootUnit, IDataUnit } from "./unit-measurement";

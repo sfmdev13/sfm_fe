@@ -18,6 +18,7 @@ import { SupplierProductComponent } from './supplier-product/supplier-product.co
 import { SupplierSourceComponent } from './supplier-source/supplier-source.component';
 import { ContactTypeComponent } from './contact-type/contact-type.component';
 import { EmployeeContractComponent } from './employee-contract/employee-contract.component';
+import { UnitOfMeasurementComponent } from './unit-of-measurement/unit-of-measurement.component';
 
 
 @NgModule({
@@ -30,7 +31,8 @@ import { EmployeeContractComponent } from './employee-contract/employee-contract
     SupplierProductComponent,
     SupplierSourceComponent,
     ContactTypeComponent,
-    EmployeeContractComponent
+    EmployeeContractComponent,
+    UnitOfMeasurementComponent
   ],
   imports: [
     CommonModule,
@@ -53,7 +55,8 @@ import { EmployeeContractComponent } from './employee-contract/employee-contract
     SupplierProductComponent,
     SupplierSourceComponent,
     ContactTypeComponent,
-    EmployeeContractComponent
+    EmployeeContractComponent,
+    UnitOfMeasurementComponent
   ]
 })
 export class CategoriesSettingTableModule { }

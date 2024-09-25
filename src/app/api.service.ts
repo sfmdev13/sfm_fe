@@ -2,7 +2,7 @@ import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, map, Observable, tap } from 'rxjs';
 import { environment } from 'src/environments/environment';
-import { ICategories, IRootAllRoles, IRootCatContact, IRootCustomer, IRootDivision, IRootEmployee, IRootSupplier, IRootUserByRole } from './interfaces';
+import { ICategories, IRootAllRoles, IRootCatContact, IRootCustomer, IRootDivision, IRootEmployee, IRootSupplier, IRootUnit, IRootUserByRole } from './interfaces';
 
 @Injectable({
   providedIn: 'root'
@@ -812,5 +812,37 @@ export class ApiService {
     const url = `${this.apiUrl}/division-list`;
     return this.http.get<any>(url, { headers })
 
+  }
+
+  createUnitMeasurement(body: any): Observable<any>{
+    const token = localStorage.getItem('authToken');
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+    });
+    
+    
+    const url = `${this.apiUrl}/create-unit`;
+    return this.http.post<any>(url, body ,{ headers })
+  }
+
+  getUnitMeasurement(): Observable<IRootUnit>{
+    const token = localStorage.getItem('authToken');
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+    });
+    
+    const url = `${this.apiUrl}/units`;
+    return this.http.get<any>(url, { headers })
+  }
+
+  updateUnitMeasurment(body: any): Observable<any>{
+    const token = localStorage.getItem('authToken');
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+    });
+    
+    
+    const url = `${this.apiUrl}/update-unit`;
+    return this.http.post<any>(url, body ,{ headers })
   }
 }

@@ -50,6 +50,15 @@ export class CategoriesSettingComponent implements OnInit {
           slug: 'employee_contract'
         }
       ]
+    },
+    {
+      name: 'Miscellaneous',
+      sub_menu: [
+        {
+          name: 'Unit of Measurement',
+          slug: 'uom'
+        }
+      ]
     }
   ]
 
