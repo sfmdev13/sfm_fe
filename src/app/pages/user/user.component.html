@@ -20,12 +20,17 @@
                 </div>
                 <div class="d-flex align-items-center justify-content-between mb-3">
                     <span class="fw-light">Result of {{ totalEmployee }} Employees</span>
-                    <div class="row">
-                        <div class="text-end">
-                            <button (click)="refreshTableEmp()" class="me-2 filter-icon" nz-button nzType="default" nzSize="default"><span nz-icon nzType="reload"></span></button>
-                            <button  (click)="showFilter()" class="me-2 filter-icon" nz-button nzType="default" nzSize="default"><span nz-icon nzType="filter"></span></button>
-                            <button *ngIf="authSvc.hasAction('add_new_employee')" nzSize="default" nz-button nzType="primary" (click)="showAddModal()">Add New Employee</button>
+                    <div class="d-flex">
+                        <div class="me-2">
+                            Rows per page: 
+                            <nz-select [(ngModel)]="pageSizeEmployee" (ngModelChange)="getEmployee()">
+                                <nz-option nzLabel="5" [nzValue]="5"></nz-option>
+                                <nz-option nzLabel="10" [nzValue]="10"></nz-option>
+                                </nz-select>
                         </div>
+                        <button (click)="refreshTableCust()" class="me-2 filter-icon" nz-button nzType="default" nzSize="default"><span nz-icon nzType="reload"></span></button>
+                        <button (click)="showFilter()" class="me-2 filter-icon" nz-button nzType="default" nzSize="default"><span nz-icon nzType="filter"></span></button>
+                        <button  *ngIf="authSvc.hasAction('add_new_employee')" nzSize="default" nz-button nzType="primary" (click)="showAddModal()">Add New Employee</button>
                     </div>
                 </div>
                 <app-table-user 
@@ -54,12 +59,15 @@
                     <p class="placeholder-glow" style="width: 500px;">
                         <span class="placeholder col-4"></span>
                     </p>
-                    <div class="row">
-                        <div class="text-end">
-                            <button class="me-2 filter-icon" nz-button nzType="default" nzSize="default" disabled><span nz-icon nzType="reload"></span></button>
-                            <button class="me-2 filter-icon" nz-button nzType="default" nzSize="default" disabled><span nz-icon nzType="filter"></span></button>
-                            <button *ngIf="authSvc.hasAction('add_new_employee')" nzSize="default" nz-button nzType="primary" disabled>Add New Employee</button>
+                    <div class="d-flex">
+                        <div class="me-2">
+                            Rows per page: 
+                            <nz-select [(ngModel)]="pageSizeEmployee" disabled>
+                            </nz-select>
                         </div>
+                        <button class="me-2 filter-icon" nz-button nzType="default" nzSize="default" disabled><span nz-icon nzType="reload"></span></button>
+                        <button class="me-2 filter-icon" nz-button nzType="default" nzSize="default" disabled><span nz-icon nzType="filter"></span></button>
+                        <button *ngIf="authSvc.hasAction('add_new_employee')" nzSize="default" nz-button nzType="primary" disabled>Add New Employee</button>
                     </div>
                 </div>
                 <nz-table #basicTable nzBordered>
@@ -93,14 +101,19 @@
                         <span nz-icon nzType="search"></span>
                     </ng-template>
                 </div>
-                <div class="d-flex align-items-center justify-content-between mb-3">
+                <div class="mb-3 d-flex align-items justify-content-between">
                     <span class="fw-light">Result of {{ totalCustomer }} customers</span>
-                    <div class="row">
-                        <div class="text-end">
-                            <button (click)="refreshTableCust()" class="me-2 filter-icon" nz-button nzType="default" nzSize="default"><span nz-icon nzType="reload"></span></button>
-                            <button (click)="showFilter()" class="me-2 filter-icon" nz-button nzType="default" nzSize="default"><span nz-icon nzType="filter"></span></button>
-                            <button  *ngIf="authSvc.hasAction('add_new_customer')" nzSize="default" nz-button nzType="primary" (click)="showAddModal()">Add New Customer</button>
+                    <div class="d-flex">
+                        <div class="me-2">
+                            Rows per page: 
+                            <nz-select [(ngModel)]="pageSizeCustomer" (ngModelChange)="getCustomer()">
+                                <nz-option nzLabel="5" [nzValue]="5"></nz-option>
+                                <nz-option nzLabel="10" [nzValue]="10"></nz-option>
+                                </nz-select>
                         </div>
+                        <button (click)="refreshTableCust()" class="me-2 filter-icon" nz-button nzType="default" nzSize="default"><span nz-icon nzType="reload"></span></button>
+                        <button (click)="showFilter()" class="me-2 filter-icon" nz-button nzType="default" nzSize="default"><span nz-icon nzType="filter"></span></button>
+                        <button  *ngIf="authSvc.hasAction('add_new_customer')" nzSize="default" nz-button nzType="primary" (click)="showAddModal()">Add New Customer</button>
                     </div>
                 </div>
                 <app-table-user 
@@ -129,12 +142,15 @@
                     <p class="placeholder-glow" style="width: 500px;">
                         <span class="placeholder col-4"></span>
                     </p>
-                    <div class="row">
-                        <div class="text-end">
-                            <button class="me-2 filter-icon" nz-button nzType="default" nzSize="default" disabled><span nz-icon nzType="reload"></span></button>
-                            <button class="me-2 filter-icon" nz-button nzType="default" nzSize="default" disabled><span nz-icon nzType="filter"></span></button>
-                            <button *ngIf="authSvc.hasAction('add_new_customer')" nzSize="default" nz-button nzType="primary" disabled>Add New Customer</button>
+                    <div class="d-flex">
+                        <div class="me-2">
+                            Rows per page: 
+                            <nz-select [(ngModel)]="pageSizeCustomer" disabled>
+                            </nz-select>
                         </div>
+                        <button class="me-2 filter-icon" nz-button nzType="default" nzSize="default" disabled><span nz-icon nzType="reload"></span></button>
+                        <button class="me-2 filter-icon" nz-button nzType="default" nzSize="default" disabled><span nz-icon nzType="filter"></span></button>
+                        <button *ngIf="authSvc.hasAction('add_new_customer')" nzSize="default" nz-button nzType="primary" disabled>Add New Customer</button>
                     </div>
                 </div>
                 <nz-table #basicTable nzBordered>
@@ -172,12 +188,17 @@
                 </div>
                 <div class="d-flex align-items-center justify-content-between mb-3">
                     <span class="fw-light">Result of {{ totalSupplier }} suppliers</span>
-                    <div class="row">
-                        <div class="text-end">
-                            <button (click)="refreshTableSupp()" class="me-2 filter-icon" nz-button nzType="default" nzSize="default"><span nz-icon nzType="reload"></span></button>
-                            <button (click)="showFilter()" class="me-2 filter-icon" nz-button nzType="default" nzSize="default"><span nz-icon nzType="filter"></span></button>
-                            <button *ngIf="authSvc.hasAction('add_new_supplier')" nzSize="default" nz-button nzType="primary" (click)="showAddModal()">Add New Supplier</button>
+                    <div class="d-flex">
+                        <div class="me-2">
+                            Rows per page: 
+                            <nz-select [(ngModel)]="pageSizeSupplier" (ngModelChange)="getSupplier()">
+                                <nz-option nzLabel="5" [nzValue]="5"></nz-option>
+                                <nz-option nzLabel="10" [nzValue]="10"></nz-option>
+                                </nz-select>
                         </div>
+                        <button (click)="refreshTableCust()" class="me-2 filter-icon" nz-button nzType="default" nzSize="default"><span nz-icon nzType="reload"></span></button>
+                        <button (click)="showFilter()" class="me-2 filter-icon" nz-button nzType="default" nzSize="default"><span nz-icon nzType="filter"></span></button>
+                        <button  *ngIf="authSvc.hasAction('add_new_supplier')" nzSize="default" nz-button nzType="primary" (click)="showAddModal()">Add New Supplier</button>
                     </div>
                 </div>
                 <app-table-user 
@@ -206,12 +227,15 @@
                     <p class="placeholder-glow" style="width: 500px;">
                         <span class="placeholder col-4"></span>
                     </p>
-                    <div class="row">
-                        <div class="text-end">
-                            <button class="me-2 filter-icon" nz-button nzType="default" nzSize="default" disabled><span nz-icon nzType="reload"></span></button>
-                            <button class="me-2 filter-icon" nz-button nzType="default" nzSize="default" disabled><span nz-icon nzType="filter"></span></button>
-                            <button *ngIf="authSvc.hasAction('add_new_supplier')" nzSize="default" nz-button nzType="primary" disabled>Add New Supplier</button>
+                    <div class="d-flex">
+                        <div class="me-2">
+                            Rows per page: 
+                            <nz-select [(ngModel)]="pageSizeSupplier" disabled>
+                            </nz-select>
                         </div>
+                        <button class="me-2 filter-icon" nz-button nzType="default" nzSize="default" disabled><span nz-icon nzType="reload"></span></button>
+                        <button class="me-2 filter-icon" nz-button nzType="default" nzSize="default" disabled><span nz-icon nzType="filter"></span></button>
+                        <button *ngIf="authSvc.hasAction('add_new_supplier')" nzSize="default" nz-button nzType="primary" disabled>Add New Supplier</button>
                     </div>
                 </div>
                 <nz-table #basicTable nzBordered>
