@@ -55,6 +55,12 @@ const routes: Routes = [
         data: { action: 'view_inventory' }
       },
       {
+        path: 'inventories/inventory-list',
+        loadChildren: () => import('./pages/inventories-list/inventories-list.module').then(m => m.InventoriesListModule),
+        canActivate: [ActionGuard],
+        data: { action: 'view_inventory' }
+      },
+      {
         path: 'roles',
         loadChildren: () => import('./pages/roles/roles.module').then(m => m.RolesModule),
         canActivate: [ActionGuard],
@@ -74,7 +80,9 @@ const routes: Routes = [
       },
       {
         path: 'settings/divisions-setting',
-        loadChildren: () => import('./pages/divisions-setting/divisions-setting.module').then(m => m.DivisionsSettingModule)
+        loadChildren: () => import('./pages/divisions-setting/divisions-setting.module').then(m => m.DivisionsSettingModule),
+        canActivate: [ActionGuard],
+        data:  { action: 'view_settings' }
       },
       {
         path: 'unauthorized',

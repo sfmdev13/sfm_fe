@@ -1,1 +1,9 @@
-<p>inventories works!</p>
+<div class="d-flex gap-4">
+    <nz-card nzHoverable style="width:240px" [nzCover]="coverTemplate" [routerLink]="'/inventories/inventory-list'">
+        <nz-card-meta nzTitle="Inventory List" nzDescription="Add or Edit Inventories"></nz-card-meta>
+    </nz-card>
+</div>
+
+<ng-template #coverTemplate>
+    <img alt="example" src="/assets/images/inventory-list.png" />
+</ng-template>
