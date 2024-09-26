@@ -1,0 +1,447 @@
+<div class="d-flex align-items-center justify-content-between mb-4">
+    <h4 class="fw-bold">Data Inventories</h4>
+    <nz-input-group [nzSuffix]="suffixIconSearch" nzSize="large" style="width: 320px;">
+        <!-- <input [(ngModel)]="searchEmp"  (ngModelChange)="searchEmpHandler($event)" type="text" nz-input placeholder="search employee" /> -->
+        <input [(ngModel)]="searchEmp" type="text" nz-input placeholder="Search Inventory" />
+    </nz-input-group>
+    <ng-template #suffixIconSearch>
+        <span nz-icon nzType="search"></span>
+    </ng-template>
+</div>
+<div class="d-flex align-items-center justify-content-between mb-3">
+    <span class="fw-light">Result of {{ totalInventories}} Inventories</span>
+    <div class="d-flex">
+        <div class="me-2">
+            Rows per page: 
+            <nz-select [(ngModel)]="pageSize">
+                <nz-option nzLabel="5" [nzValue]="5"></nz-option>
+                <nz-option nzLabel="10" [nzValue]="10"></nz-option>
+                </nz-select>
+        </div>
+        <!-- <button (click)="refreshTableCust()" class="me-2 filter-icon" nz-button nzType="default" nzSize="default"><span nz-icon nzType="reload"></span></button> -->
+        <button class="me-2 filter-icon" nz-button nzType="default" nzSize="default"><span nz-icon nzType="reload"></span></button>
+        <!-- <button (click)="showFilter()" class="me-2 filter-icon" nz-button nzType="default" nzSize="default"><span nz-icon nzType="filter"></span></button> -->
+        <button class="me-2 filter-icon" nz-button nzType="default" nzSize="default"><span nz-icon nzType="filter"></span></button>
+        <button  *ngIf="authSvc.hasAction('add_new_employee')" nzSize="default" nz-button nzType="primary" (click)="showModalAdd()">Add New Inventory</button>
+    </div>
+</div>
+<ng-container *ngIf="contactType$ | async as cust; else loading">
+    <nz-table 
+        #basicTable 
+        [nzData]="cust.data"         
+        [nzShowPagination]="false" 
+        nzBordered
+    >
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Product Category</th>
+            <th>Selling Price</th>
+            <th>Qty</th>
+            <th>Status</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let data of basicTable.data">
+              <td>I001002</td>
+              <td>{{ data.name }}</td>
+              <td>Kategori Kocak</td>
+              <td>Rp. 1,000,000</td>
+              <td>12</td>
+              <td>
+                <nz-tag [nzColor]="status === 1 ? '#1DA32C' : '#f50'">{{ status === 1 ? 'Active' : 'Inactive' }}</nz-tag>
+              </td>
+            <td>
+                <div class="d-flex gap-3">
+                    <span (click)="showModalEdit(data)" nz-icon nzType="edit" nzTheme="twotone"></span>
+                    <span (click)="showModalDelete(data.id)" nz-icon nzType="delete" nzTheme="twotone"></span>
+                </div>
+            </td>
+            </tr>
+        </tbody>
+      </nz-table>
+</ng-container>
+
+<ng-template #loading>
+    <nz-table #basicTable nzBordered>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Product Category</th>
+            <th>Selling Price</th>
+            <th>Qty</th>
+            <th>Status</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+        </tbody>
+      </nz-table>
+</ng-template>
+
+<nz-modal nzCentered nzWidth="900px" [(nzVisible)]="isVisibleEdit" [nzTitle]="modal_type + ' Category'" (nzOnCancel)="handleCancelEdit()">
+    <ng-container *nzModalContent>
+        <div>
+            <form nz-form nzLayout="vertical" [formGroup]="inventoryForm">
+                <div class="row">
+                    
+                  <nz-form-item class="mb-4">
+                    <nz-form-label nzRequired nzFor="pic" class="fw-semibold">PIC SFM</nz-form-label>
+                        <ng-container *ngIf="pic$ | async as pic; else picLoad">
+                            <nz-select nzShowSearch nzMode="tags" nzPlaceHolder="Select PIC" formControlName="pic">
+                                <nz-option
+                                *ngFor="let p of pic"
+                                    [nzLabel]="p.name" 
+                                    [nzValue]="p.pic_id"
+                                ></nz-option>
+                            </nz-select>
+                        </ng-container>
+                        <ng-template #picLoad>
+                            <nz-select nzShowSearch nzMode="tags" nzPlaceHolder="Select PIC" formControlName="pic" nzDisabled>
+                                <nz-option></nz-option>
+                            </nz-select>
+                        </ng-template>
+                </nz-form-item>
+      
+                  
+                <nz-form-item>
+                    <nz-form-label nzRequired class="fw-semibold" nzFor="is_pic_internal" nzRequired>Head of PIC SFM</nz-form-label>
+                    <nz-form-control>
+                        <nz-select nzShowSearch nzPlaceHolder="Select Head" formControlName="is_pic_internal">
+                        <ng-container *ngFor="let pic of filteredListOfPic">
+                          <nz-option [nzLabel]="pic.name" [nzValue]="pic.pic_id"></nz-option>
+                        </ng-container>
+                        </nz-select>
+                    </nz-form-control>
+                </nz-form-item>
+      
+                    <div class="col-md-6">
+                        <nz-form-item class="mb-4">
+                            <nz-form-label nzRequired nzFor="name" class="fw-semibold">Company Name</nz-form-label>
+                            <nz-form-control>
+                            <input nz-input formControlName="name" id="name" />
+                            </nz-form-control>
+                        </nz-form-item>
+                    </div>
+                    <div class="col-md-6">
+                        <nz-form-item class="mb-4">
+                            <nz-form-label nzRequired nzFor="email" class="fw-semibold">Company Email</nz-form-label>
+                            <nz-form-control>
+                            <input nz-input formControlName="email" id="email"  />
+                            </nz-form-control>
+                        </nz-form-item>
+                    </div>
+                    <!-- <div class="col-md-6">
+                      <nz-form-item>
+                          <nz-form-label nzRequired nzFor="customer_firm_id" class="fw-semibold">Category Firm</nz-form-label>
+                          <nz-form-control>
+                            <ng-container *ngIf="customerFirm$ | async as customerFirm; else firmLoad">
+                              <nz-select nzShowSearch nzPlaceHolder="Select Category Firm" formControlName="customer_firm_id">
+                                <ng-container *ngFor="let cust of customerFirm.data">
+                                  <nz-option [nzLabel]="cust.name" [nzValue]="cust.id"></nz-option>
+                                </ng-container>
+                              </nz-select>
+                            </ng-container>
+                            <ng-template #firmLoad>
+                              <nz-select nzDisabled nzPlaceHolder="Select Category Firm" formControlName="customer_firm_id">
+                              </nz-select>
+                            </ng-template>
+                          </nz-form-control>
+                      </nz-form-item>
+                    </div> -->
+                    <!-- <div class="col-md-6">
+                      <nz-form-item>
+                          <nz-form-label nzRequired nzFor="customer_sector_id" class="fw-semibold">Customer Sector</nz-form-label>
+                          <nz-form-control>
+                            <ng-container *ngIf="customerSector$ | async as customerSector; else firmLoad">
+                              <nz-select nzShowSearch nzPlaceHolder="Select Category Sector" formControlName="customer_sector_id">
+                                <ng-container *ngFor="let cust of customerSector.data">
+                                  <nz-option [nzLabel]="cust.name" [nzValue]="cust.id"></nz-option>
+                                </ng-container>
+                              </nz-select>
+                            </ng-container>
+                            <ng-template #firmLoad>
+                              <nz-select nzDisabled nzPlaceHolder="Select Category Sector" formControlName="customer_sector_id">
+                              </nz-select>
+                            </ng-template>
+                          </nz-form-control>
+                      </nz-form-item>
+                    </div> -->
+                    <div class="col-md-6">
+                        <nz-form-item>
+                            <nz-form-label nzRequired nzFor="nib" class="fw-semibold">NIB</nz-form-label>
+                            <nz-form-control>
+                              <input nz-input formControlName="nib" id="nib"  />
+                            </nz-form-control>
+                        </nz-form-item>
+                    </div>
+                    <div class="col-md-6">
+                        <nz-form-item>
+                            <nz-form-label nzRequired nzFor="phone" class="fw-semibold">Company Phone</nz-form-label>
+                            <nz-form-control>
+                              <input nz-input formControlName="phone" id="phone"  />
+                            </nz-form-control>
+                        </nz-form-item>
+                    </div>
+                    <div class="col-md-6">
+                      <nz-form-item>
+                          <nz-form-label nzRequired nzFor="wa_phone" class="fw-semibold">Registered Whatsapp Number</nz-form-label>
+                          <nz-form-control>
+                            <input nz-input formControlName="wa_phone" id="wa_phone"  />
+                          </nz-form-control>
+                      </nz-form-item>
+                    </div>
+                    <div class="col-md-6">
+                      <nz-form-item>
+                          <nz-form-label nzRequired nzFor="website" class="fw-semibold">Website</nz-form-label>
+                          <nz-form-control>
+                            <input nz-input formControlName="website" id="website"  />
+                          </nz-form-control>
+                      </nz-form-item>
+                    </div>
+                    <div class="col-md-6">
+                      <nz-form-item>
+                        <nz-form-label nzRequired nzFor="maps_url" class="fw-semibold">Link Maps</nz-form-label>
+                        <nz-form-control>
+                          <input nz-input formControlName="maps_url" id="maps_url"  />
+                        </nz-form-control>
+                      </nz-form-item>
+                    </div>
+      
+                    <div class="col-md-6">
+                      <nz-form-item>
+                        <nz-form-label nzRequired nzFor="postal_code" class="fw-semibold">Postal Code</nz-form-label>
+                        <nz-form-control>
+                          <input nz-input formControlName="postal_code" id="postal_code"  />
+                        </nz-form-control>
+                      </nz-form-item>
+                    </div>
+                    <nz-form-item>
+                        <nz-form-label nzRequired nzFor="address" class="fw-semibold">Company Full Address</nz-form-label>
+                        <nz-form-control>
+                          <nz-textarea-count [nzMaxCharacterCount]="200">
+                            <textarea rows="4" formControlName="address" nz-input></textarea>
+                          </nz-textarea-count>
+                        </nz-form-control>
+                    </nz-form-item>
+      
+                    <nz-form-item>
+                      <nz-form-label nzFor="status" nzRequired class="fw-semibold">Status</nz-form-label>
+                      <nz-form-control>
+                        <nz-switch nzSize="default" id="status" formControlName="status" nzCheckedChildren="active" nzUnCheckedChildren="inactive"></nz-switch>
+                      </nz-form-control>
+                  </nz-form-item>
+                </div>
+            </form>
+        </div>
+    </ng-container>
+    <ng-container *nzModalFooter>
+        <button nz-button nzType="default" (click)="handleCancelEdit()">Cancel</button>
+        <!-- <button nz-button nzType="primary" class="text-capitalize" (click)="handleSubmitEdit()" [disabled]="!this.categoryFormEdit.valid">Submit</button> -->
+    </ng-container>
+</nz-modal>
+
+<nz-modal 
+    nzCentered 
+    nzWidth="900px" 
+    [(nzVisible)]="isVisibleAdd" [nzTitle]="modal_type + ' Inventory'" 
+    (nzOnCancel)="handleCancelAdd()"
+    [nzClosable] = 'false'
+    [nzMaskClosable] = 'false'
+>
+    <ng-container *nzModalContent>
+        <div>
+            <form nz-form nzLayout="vertical" [formGroup]="inventoryForm">
+                <div class="row">
+                    
+                    <nz-form-item class="mb-4">
+                        <nz-form-label nzRequired nzFor="pic" class="fw-semibold">PIC SFM</nz-form-label>
+                        <ng-container *ngIf="pic$ | async as pic; else picLoad">
+                            <nz-select nzShowSearch nzMode="tags" nzPlaceHolder="Select PIC" formControlName="pic">
+                                <nz-option
+                                *ngFor="let p of pic"
+                                    [nzLabel]="p.name" 
+                                    [nzValue]="p.pic_id"
+                                ></nz-option>
+                            </nz-select>
+                        </ng-container>
+                        <ng-template #picLoad>
+                            <nz-select nzShowSearch nzMode="tags" nzPlaceHolder="Select PIC" nzDisabled>
+                                <nz-option></nz-option>
+                            </nz-select>
+                        </ng-template>
+                    </nz-form-item>
+      
+                  
+                    <nz-form-item>
+                        <nz-form-label nzRequired class="fw-semibold" nzFor="is_pic_internal" nzRequired>Head of PIC SFM</nz-form-label>
+                        <nz-form-control>
+                            <nz-select nzShowSearch nzPlaceHolder="Select Head" formControlName="is_pic_internal">
+                            <ng-container *ngFor="let pic of filteredListOfPic">
+                            <nz-option [nzLabel]="pic.name" [nzValue]="pic.pic_id"></nz-option>
+                            </ng-container>
+                            </nz-select>
+                        </nz-form-control>
+                    </nz-form-item>
+      
+                    <div class="col-md-6">
+                        <nz-form-item class="mb-4">
+                            <nz-form-label nzRequired nzFor="name" class="fw-semibold">Product Name</nz-form-label>
+                            <nz-form-control>
+                                <input nz-input formControlName="name" id="name" />
+                            </nz-form-control>
+                        </nz-form-item>
+                    </div>
+                    <div class="col-md-6">
+                        <nz-form-item class="mb-4">
+                            <nz-form-label nzRequired nzFor="code" class="fw-semibold">Product Code</nz-form-label>
+                            <nz-form-control>
+                                <input nz-input formControlName="code" id="code"  />
+                            </nz-form-control>
+                        </nz-form-item>
+                    </div>
+                    <div class="col-md-6">
+                        <nz-form-item class="mb-4">
+                            <nz-form-label nzRequired nzFor="description" class="fw-semibold">Product Description</nz-form-label>
+                            <nz-form-control>
+                                <input nz-input formControlName="description" id="description"  />
+                            </nz-form-control>
+                        </nz-form-item>
+                    </div>
+                    <div class="col-md-3">
+                        <nz-form-item class="mb-4">
+                            <nz-form-label nzRequired nzFor="unit_id" class="fw-semibold">Unit of Measurement</nz-form-label>
+                            <ng-container *ngIf="unit$ | async as unit; else unitLoad">
+                                <nz-select nzShowSearch nzPlaceHolder="Select Unit" formControlName="unit_id">
+                                    <nz-option
+                                        *ngFor="let u of unit.data"
+                                        [nzValue]="u.id"
+                                        [nzLabel]="u.name"
+                                    >
+                                    </nz-option>
+                                </nz-select>
+                            </ng-container>
+                            <ng-template #unitLoad>
+                                <nz-select nzShowSearch nzPlaceHolder="Select Unit" nzDisabled>
+                                    <nz-option></nz-option>
+                                </nz-select>
+                            </ng-template>
+                        </nz-form-item>
+                    </div>
+                    <div class="col-md-3">
+                        <nz-form-item>
+                            <nz-form-label nzFor="code" class="fw-semibold">Unit Code</nz-form-label>
+                            <nz-form-control>
+                                <p class="m-0 p-0" [innerHTML]="formattedLabel ? formattedLabel : '-' "></p>
+                            </nz-form-control>                        
+                        </nz-form-item>
+                    </div>
+                    <div class="col-md-6">
+                        <nz-form-item class="mb-4">
+                            <nz-form-label nzRequired nzFor="product_cost" class="fw-semibold">Product Cost</nz-form-label>
+                            <nz-form-control>
+                                <nz-space nzDirection="vertical" style="width: 100%">
+                                    <nz-input-number-group *nzSpaceItem nzPrefix="Rp. " style="width: 100%">
+                                        <nz-input-number     
+                                        [ngModel]="formattedValueCost"
+                                        (ngModelChange)="updateFormattedValue($event)"
+                                        formControlName="product_cost"
+                                        [nzFormatter]="formatter"
+                                        ></nz-input-number>
+                                    </nz-input-number-group>
+                                </nz-space>
+                            </nz-form-control>
+                        </nz-form-item>
+                    </div>
+                    <div class="col-md-6">
+                        <nz-form-item class="mb-4">
+                            <nz-form-label nzRequired nzFor="selling_price" class="fw-semibold">Selling Price</nz-form-label>
+                            <nz-form-control>
+                                <nz-space nzDirection="vertical" style="width: 100%">
+                                    <nz-input-number-group *nzSpaceItem nzPrefix="Rp. " style="width: 100%">
+                                        <nz-input-number     
+                                        [ngModel]="formattedValueSelling"
+                                        (ngModelChange)="updateFormattedValueSelling($event)"
+                                        formControlName="selling_price"
+                                        [nzFormatter]="formatter"
+                                        ></nz-input-number>
+                                    </nz-input-number-group>
+                                </nz-space>
+                            </nz-form-control>
+                        </nz-form-item>
+                    </div>
+                    <div class="col-md-6">
+                        <nz-form-item>
+                            <nz-form-label nzRequired nzFor="supplier_product_id" class="fw-semibold">Product Category</nz-form-label>
+                            <nz-form-control>
+                              <ng-container *ngIf="productCat$ | async as prod; else prodLoad">
+                                <nz-select nzShowSearch nzPlaceHolder="Select Category Firm" formControlName="supplier_product_id">
+                                  <ng-container *ngFor="let prod of prod.data">
+                                    <nz-option [nzLabel]="prod.name" [nzValue]="prod.id"></nz-option>
+                                  </ng-container>
+                                </nz-select>
+                              </ng-container>
+                              <ng-template #prodLoad>
+                                <nz-select nzDisabled nzPlaceHolder="Select Product Category" formControlName="supplier_product_id">
+                                </nz-select>
+                              </ng-template>
+                            </nz-form-control>
+                        </nz-form-item>
+                      </div>
+                    <div class="col-md-6">
+                      <nz-form-item>
+                          <nz-form-label nzRequired nzFor="supplier_id" class="fw-semibold">Supplier</nz-form-label>
+                          <nz-form-control>
+                            <ng-container *ngIf="supplier$ | async as supplier; else suppLoad">
+                              <nz-select nzShowSearch nzPlaceHolder="Select Category Firm" formControlName="supplier_id">
+                                <ng-container *ngFor="let supp of supplier.data">
+                                  <nz-option [nzLabel]="supp.name" [nzValue]="supp.id"></nz-option>
+                                </ng-container>
+                              </nz-select>
+                            </ng-container>
+                            <ng-template #suppLoad>
+                              <nz-select nzDisabled nzPlaceHolder="Select Product Category First" formControlName="supplier_id">
+                              </nz-select>
+                            </ng-template>
+                          </nz-form-control>
+                      </nz-form-item>
+                    </div>
+                    <div class="col-md-6">
+                        <nz-form-item class="mb-4">
+                            <nz-form-label nzRequired nzFor="qty" class="fw-semibold">Quantity</nz-form-label>
+                            <nz-form-control>
+                                <input nz-input formControlName="qty" id="qty"  />
+                            </nz-form-control>
+                        </nz-form-item>
+                    </div>
+                    <div class="col-md-6">
+                        <nz-form-item>
+                            <nz-form-label nzFor="status" nzRequired class="fw-semibold">Status</nz-form-label>
+                            <nz-form-control>
+                              <nz-switch nzSize="default" id="status" formControlName="status" nzCheckedChildren="active" nzUnCheckedChildren="inactive"></nz-switch>
+                            </nz-form-control>
+                        </nz-form-item>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </ng-container>
+    <ng-container *nzModalFooter>
+        <button nz-button nzType="default" (click)="handleCancelAdd()">Cancel</button>
+        <button nz-button nzType="primary" class="text-capitalize" (click)="handleSubmitAdd()" [disabled]="!this.inventoryForm.valid">Submit</button>
+    </ng-container>
+</nz-modal>
+
+
+<nz-modal class="delete-modal" nzCentered [(nzVisible)]="isVisibleDelete" nzTitle="Delete Category" (nzOnCancel)="handleCancelDelete()">
+    <ng-container *nzModalContent>
+        <!-- <app-delete-categories-modal></app-delete-categories-modal> -->
+    </ng-container>
+    <ng-container *nzModalFooter>
+        <button nz-button nzType="default" nzDanger (click)="handleCancelDelete()">Cancel</button>
+        <button nz-button nzType="primary" nzDanger (click)="handleSubmitDelete()">Delete Category</button>
+    </ng-container>
+</nz-modal>
