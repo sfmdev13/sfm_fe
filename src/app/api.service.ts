@@ -2,7 +2,7 @@ import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, map, Observable, tap } from 'rxjs';
 import { environment } from 'src/environments/environment';
-import { ICategories, IRootAllRoles, IRootCatContact, IRootCustomer, IRootDivision, IRootEmployee, IRootSupplier, IRootUnit, IRootUserByRole } from './interfaces';
+import { ICategories, IRootAllRoles, IRootCatContact, IRootCustomer, IRootDivision, IRootEmployee, IRootInventory, IRootSupplier, IRootUnit, IRootUserByRole } from './interfaces';
 
 @Injectable({
   providedIn: 'root'
@@ -42,6 +42,9 @@ export class ApiService {
 
   private refreshGetDivision = new BehaviorSubject<void>(undefined);
   refreshGetDivision$ = this.refreshGetDivision.asObservable();
+
+  private refreshGetInventory = new BehaviorSubject<void>(undefined);
+  refreshGetInventory$ = this.refreshGetInventory.asObservable();
 
   getProfile(): Observable<any> {
     const token = localStorage.getItem('authToken');
@@ -83,6 +86,10 @@ export class ApiService {
 
   triggerRefreshDivision(){
     this.refreshGetDivision.next();
+  }
+
+  triggerRefreshInventory(){
+    this.refreshGetInventory.next();
   }
 
   setFilteredCustomerData(data: IRootCustomer) {
@@ -866,7 +873,7 @@ export class ApiService {
     return this.http.post<any>(url, body , { headers })
   }
 
-  getInventory(page: number, per_page: number): Observable<any>{
+  getInventory(page: number, per_page: number): Observable<IRootInventory>{
     const token = localStorage.getItem('authToken');
     const headers = new HttpHeaders({
       Authorization: `Bearer ${token}`,
@@ -874,6 +881,17 @@ export class ApiService {
 
     const url = `${this.apiUrl}/inventory?page=${page}&per_page=${per_page}`
 
-    return this.http.get<any>(url, { headers } )
+    return this.http.get<IRootInventory>(url, { headers } )
+  }
+
+  updateInventory(body: any): Observable<any>{
+    const token = localStorage.getItem('authToken');
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+    });
+
+    const url = `${this.apiUrl}/update-inventory`
+
+    return this.http.post<any>(url, body ,{ headers } )
   }
 }

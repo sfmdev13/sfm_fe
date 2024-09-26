@@ -15,6 +15,7 @@ import { NzFormModule } from 'ng-zorro-antd/form';
 import { NzInputNumberModule } from 'ng-zorro-antd/input-number';
 import { NzSpaceModule } from 'ng-zorro-antd/space';
 import { NzSwitchModule } from 'ng-zorro-antd/switch';
+import { NzDividerModule } from 'ng-zorro-antd/divider';
 
 @NgModule({
   declarations: [InventoriesListComponent],
@@ -33,7 +34,8 @@ import { NzSwitchModule } from 'ng-zorro-antd/switch';
     NzFormModule,
     NzInputNumberModule,
     NzSpaceModule,
-    NzSwitchModule
+    NzSwitchModule,
+    NzDividerModule
   ],
   exports: [
     InventoriesListComponent

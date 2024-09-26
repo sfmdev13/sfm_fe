@@ -1,11 +1,10 @@
-import { DecimalPipe } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, Validators, FormBuilder } from '@angular/forms';
 import { NzModalService } from 'ng-zorro-antd/modal';
-import { Observable, tap } from 'rxjs';
+import { Observable, Subject, tap } from 'rxjs';
 import { ApiService } from 'src/app/api.service';
 import { AuthService } from 'src/app/auth.service';
-import { ICategories, IDataCategories, IRootSupplier, IRootUnit } from 'src/app/interfaces';
+import { ICategories, IDataCategories, IDataInventory, IRootInventory, IRootUnit } from 'src/app/interfaces';
 import { SpinnerService } from 'src/app/spinner.service';
 
 @Component({
@@ -14,11 +13,12 @@ import { SpinnerService } from 'src/app/spinner.service';
   styleUrls: ['./inventories-list.component.scss']
 })
 export class InventoriesListComponent implements OnInit {
-  contactType$!: Observable<ICategories>
+  inventory$!: Observable<IRootInventory>
 
   isVisibleEdit = false;
   isVisibleAdd = false;
   isVisibleDelete = false;
+  isVisibleDetail = false;
 
   modal_type = 'Add';
 
@@ -26,25 +26,9 @@ export class InventoriesListComponent implements OnInit {
 
   inventoryForm: FormGroup;
 
-  inventoryFormEdit = this.fb.group({
-    id: [''],
-    name: ['', Validators.required],
-    code: ['', Validators.required],
-    description: ['', Validators.required],
-    unit_id: ['', Validators.required],
-    product_cost: ['', Validators.required],
-    selling_price: ['', Validators.required],
-    qty: [{value: '', disabled: true}],
-    pic: [[''], [Validators.required]],
-    is_pic_internal: ['', [Validators.required]],
-    supplier_id: ['', [Validators.required]]
-  })
-
   selectedIdDelete: number = 0;
 
   searchEmp: string = '';
-
-  pageSize: number = 5;
 
   status: number = 1;
 
@@ -68,6 +52,15 @@ export class InventoriesListComponent implements OnInit {
   supplier$!: Observable<any>;
   productCat$!: Observable<ICategories>;
 
+  total: number = 0;
+  totalAll: number = 0;
+  pageSize: number = 5;
+  currentPage: number = 1;
+
+  search: string = '';
+  private searchSubject = new Subject<string>();
+
+  dataDetail: IDataInventory = {} as IDataInventory;
 
   constructor(
     private apiSvc: ApiService,
@@ -132,14 +125,43 @@ export class InventoriesListComponent implements OnInit {
       })
     )
 
-    this.getContactType();
+    this.getInventory();
 
-    this.apiSvc.refreshGetCategories$.subscribe(() => {
-      this.getContactType();
+    this.apiSvc.refreshGetInventory$.subscribe(() => {
+      this.getInventory();
     })
+
+    // this.searchSubject.pipe(
+    //   debounceTime(300),
+    //   distinctUntilChanged()
+    // ).subscribe(search => {
+    //   this.inventory$ = this.apiSvc.search(search, this.currentPageSupplier, this.pageSizeSupplier).pipe(
+    //     tap(res => {
+    //       this.totalSupplier = res.data.length;
+    //       this.currentPageSupplier = res.pagination.current_page;
+    //       this.totalAllSupplier = res.pagination.total;
+    //     })
+    //   );
+    // });
   }
 
-  // Formatter function to display formatted value in the input
+  handleCancelDetail(): void {
+    this.isVisibleDetail = false;
+  }
+
+  showModalDetail(data: IDataInventory){
+    this.dataDetail = data;
+
+    this.isVisibleDetail = true;
+  }
+
+
+  pageIndexChange(page: number){
+    this.currentPage = page;
+
+    this.getInventory();
+  }
+
   formatter = (value: number | null): string => {
     return value !== null ? `${value.toLocaleString('en-US')}` : '';
   };
@@ -162,22 +184,43 @@ export class InventoriesListComponent implements OnInit {
     this.formattedLabel =  `${measurement}`;
   }
 
-  getContactType(): void{
-    this.contactType$ = this.apiSvc.getContactType().pipe(
+  getInventory(): void{
+    this.inventory$ = this.apiSvc.getInventory(this.currentPage, this.pageSize).pipe(
       tap(res => {
-        this.totalInventories = res.data.length
+        this.totalInventories = res.data.length;
+        this.currentPage = res.pagination.current_page;
+        this.totalAll = res.pagination.total
       })
     );
   }
 
-  showModalEdit(data: IDataCategories): void {
+  showModalEdit(data: IDataInventory): void {
     this.modal_type = 'Edit'
 
     this.inventoryForm.patchValue({
       id: data.id,
       name: data.name,
-      description: data.description
+      code: data.code,
+      description: data.description,
+      unit_id: data.unit_id,
+      product_cost: data.product_cost,
+      selling_price: data.selling_price,
+      qty: data.qty,
+      supplier_product_id: data.supplier_product_id,
+      supplier_id: data.supplier_id,
+      status:data.status
     })
+
+    //extract pic id
+    const picIds = data.pic.map(item => item.pic_id);
+
+    //find pic internal id
+    const isPicInternalId = data.pic.filter(item => item.is_pic_internal === 1);
+
+    this.inventoryForm.patchValue({
+      pic: picIds,
+      is_pic_internal: isPicInternalId[0].pic_id
+    });
 
     this.isVisibleEdit = true;
   }
@@ -187,8 +230,8 @@ export class InventoriesListComponent implements OnInit {
     this.isVisibleAdd = true;
   }
 
-  showModalDelete(id: number): void{
-    this.selectedIdDelete = id;
+  showModalDelete(id: string): void{
+    this.selectedIdDelete = parseInt(id);
     this.isVisibleDelete = true;
   }
 
@@ -197,21 +240,41 @@ export class InventoriesListComponent implements OnInit {
     this.spinnerSvc.show();
     
     if(this.inventoryForm.valid){
-      this.apiSvc.editContactType(this.inventoryForm.value.id,this.inventoryForm.value.name, this.inventoryForm.value.description).subscribe({
+      const picComplete = this.inventoryForm.get('pic')!.value.map((pic_id: any) => ({
+        pic_id: pic_id,
+        is_pic_internal: pic_id === this.inventoryForm.get('is_pic_internal')!.value ? 1 : 0
+      }));
+  
+
+      let body = {
+        id: this.inventoryForm.get('id')?.value,
+        name: this.inventoryForm.get('name')?.value,
+        code: this.inventoryForm.get('code')?.value,
+        description: this.inventoryForm.get('description')?.value,
+        unit_id: this.inventoryForm.get('unit_id')?.value,
+        supplier_product_id: this.inventoryForm.get('supplier_product_id')?.value,
+        supplier_id: this.inventoryForm.get('supplier_id')?.value,
+        product_cost: this.inventoryForm.get('product_cost')?.value,
+        selling_price: this.inventoryForm.get('selling_price')?.value,
+        status: this.inventoryForm.get('status')?.value,
+        pic_new: picComplete
+      }
+
+      this.apiSvc.updateInventory(body).subscribe({
         next: () => {
           this.spinnerSvc.hide();
           this.modalSvc.success({
             nzTitle: 'Success',
-            nzContent: 'Successfully Update Category',
+            nzContent: 'Successfully Update Inventory',
             nzOkText: 'Ok',
             nzCentered: true
           })
-          this.apiSvc.triggerRefreshCategories()
+          this.apiSvc.triggerRefreshInventory()
         },
         error: (error) => {
           this.spinnerSvc.hide();
           this.modalSvc.error({
-            nzTitle: 'Unable to Update',
+            nzTitle: 'Unable to Update Inventory',
             nzContent: error.error.meta.message,
             nzOkText: 'Ok',
             nzCentered: true
@@ -263,17 +326,17 @@ export class InventoriesListComponent implements OnInit {
           this.spinnerSvc.hide();
           this.modalSvc.success({
             nzTitle: 'Success',
-            nzContent: 'Successfully Add Category',
+            nzContent: 'Successfully Add Inventory',
             nzOkText: 'Ok',
             nzCentered: true
           })
-          this.apiSvc.triggerRefreshCategories()
+          this.apiSvc.triggerRefreshInventory()
           this.isVisibleAdd = false;
         },
         error: (error) => {
           this.spinnerSvc.hide();
           this.modalSvc.error({
-            nzTitle: 'Unable to Add Category',
+            nzTitle: 'Unable to Add Inventory',
             nzContent: error.error.meta.message,
             nzOkText: 'Ok',
             nzCentered: true
