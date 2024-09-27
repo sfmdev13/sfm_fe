@@ -922,4 +922,14 @@ export class ApiService {
 
     return this.http.post<IRootInventory>(url, {}, { headers, params: httpParams });
   }
+
+  deleteUnit(id: number): Observable<any>{
+    const token = localStorage.getItem('authToken');
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+    });
+
+    const url = `${this.apiUrl}/delete-unit?id=${id}`;
+    return this.http.delete<any>(url, { headers })
+  }
 }

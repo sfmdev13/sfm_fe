@@ -175,7 +175,9 @@ export class UnitOfMeasurementComponent implements OnInit {
 
   handleSubmitDelete(): void{
 
-    this.apiSvc.deleteCustomerFirm(this.selectedIdDelete).subscribe({
+    this.spinnerSvc.show();
+
+    this.apiSvc.deleteUnit(this.selectedIdDelete).subscribe({
       next:() => {
 
         this.spinnerSvc.hide();
