@@ -894,4 +894,32 @@ export class ApiService {
 
     return this.http.post<any>(url, body ,{ headers } )
   }
+
+  searchInventory(search: string, page: number, per_page: number): Observable<IRootInventory>{
+    const token = localStorage.getItem('authToken');
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+    });
+
+    const url = `${this.apiUrl}/search-inventory?search=${search}&page=${page}&per_page=${per_page}`;
+    return this.http.post<IRootInventory>(url, { headers })
+  }
+
+  filterInventory(params: any, page: number, per_page: number): Observable<IRootInventory>{
+    const token = localStorage.getItem('authToken');
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+    });
+
+    let httpParams = new HttpParams()
+    .set('supplier_product', params.supplier_product)
+    .set('status', params.status)
+    .set('sort_by', params.sort_by)
+    .set('page', page.toString())
+    .set('per_page', per_page.toString());
+
+    const url = `${this.apiUrl}/filter-inventory`
+
+    return this.http.post<IRootInventory>(url, {}, { headers, params: httpParams });
+  }
 }
