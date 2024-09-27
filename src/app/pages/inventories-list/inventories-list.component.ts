@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, Validators, FormBuilder } from '@angular/forms';
 import { NzModalService } from 'ng-zorro-antd/modal';
-import { Observable, Subject, tap } from 'rxjs';
+import { debounceTime, distinctUntilChanged, Observable, Subject, tap } from 'rxjs';
 import { ApiService } from 'src/app/api.service';
 import { AuthService } from 'src/app/auth.service';
 import { ICategories, IDataCategories, IDataInventory, IRootInventory, IRootUnit } from 'src/app/interfaces';
@@ -19,6 +19,7 @@ export class InventoriesListComponent implements OnInit {
   isVisibleAdd = false;
   isVisibleDelete = false;
   isVisibleDetail = false;
+  isVisibleFilter = false;
 
   modal_type = 'Add';
 
@@ -52,7 +53,6 @@ export class InventoriesListComponent implements OnInit {
   supplier$!: Observable<any>;
   productCat$!: Observable<ICategories>;
 
-  total: number = 0;
   totalAll: number = 0;
   pageSize: number = 5;
   currentPage: number = 1;
@@ -61,6 +61,10 @@ export class InventoriesListComponent implements OnInit {
   private searchSubject = new Subject<string>();
 
   dataDetail: IDataInventory = {} as IDataInventory;
+
+  filterForm: FormGroup;
+
+  filtered: boolean = false;
 
   constructor(
     private apiSvc: ApiService,
@@ -84,6 +88,12 @@ export class InventoriesListComponent implements OnInit {
       status: [1, [Validators.required]],
       supplier_product_id: ['', [Validators.required]]
     })
+
+    this.filterForm = this.fb.group({
+      status: [''],
+      supplier_product: [''],
+      sort_by: ['']
+    })
    }
 
   ngOnInit(): void {
@@ -99,8 +109,12 @@ export class InventoriesListComponent implements OnInit {
     this.productCat$ = this.apiSvc.getSupplierProduct();
 
     this.inventoryForm.get('unit_id')?.valueChanges.subscribe((value) => {
-      const selectedUnit = this.unitList.data.filter(u => u.id === value);
-      this.getFormattedLabel(selectedUnit[0].measurement, selectedUnit[0].unit)
+
+      if(value){
+        const selectedUnit = this.unitList.data.filter(u => u.id === value);
+        this.getFormattedLabel(selectedUnit[0].measurement, selectedUnit[0].unit)
+      }
+
     })
 
     this.unit$ = this.apiSvc.getUnitMeasurement().pipe(
@@ -110,11 +124,14 @@ export class InventoriesListComponent implements OnInit {
     );
     
     this.inventoryForm.get('pic')?.valueChanges.subscribe((value) => {
-      this.filteredListOfPic = this.listOfPic.filter((pic: any) => value.includes(pic.pic_id));
+      if(value){
+        this.filteredListOfPic = this.listOfPic.filter((pic: any) => value.includes(pic.pic_id));
 
-      if(!value.includes(this.inventoryForm.get('is_pic_internal')?.value)){
-        this.inventoryForm.patchValue({is_pic_internal: ''})
+        if(!value.includes(this.inventoryForm.get('is_pic_internal')?.value)){
+          this.inventoryForm.patchValue({is_pic_internal: ''})
+        }
       }
+
     })
 
 
@@ -131,18 +148,54 @@ export class InventoriesListComponent implements OnInit {
       this.getInventory();
     })
 
-    // this.searchSubject.pipe(
-    //   debounceTime(300),
-    //   distinctUntilChanged()
-    // ).subscribe(search => {
-    //   this.inventory$ = this.apiSvc.search(search, this.currentPageSupplier, this.pageSizeSupplier).pipe(
-    //     tap(res => {
-    //       this.totalSupplier = res.data.length;
-    //       this.currentPageSupplier = res.pagination.current_page;
-    //       this.totalAllSupplier = res.pagination.total;
-    //     })
-    //   );
-    // });
+    this.searchSubject.pipe(
+      debounceTime(300),
+      distinctUntilChanged()
+    ).subscribe(search => {
+      this.inventory$ = this.apiSvc.searchInventory(search, this.currentPage, this.pageSize).pipe(
+        tap(res => {
+          this.totalInventories = res.data.length;
+          this.currentPage = res.pagination.current_page;
+          this.totalAll = res.pagination.total;
+        })
+      );
+    });
+  }
+
+  refreshTable(): void{
+    this.filtered = false;
+    this.pageSize = 5;
+    this.currentPage = 1;
+    this.inventoryForm.reset();
+    this.getInventory();
+  }
+
+  submitFilter(): void{
+    this.getFilteredInventory();
+    this.isVisibleFilter=false;
+  }
+
+  getFilteredInventory(){
+    this.inventory$ = this.apiSvc.filterInventory(this.filterForm.value, this.currentPage, this.pageSize).pipe(
+      tap(res => {
+        this.totalInventories = res.data.length;
+        this.currentPage = res.pagination.current_page;
+        this.totalAll = res.pagination.total
+        this.filtered = true
+      })
+    )
+  }
+
+  showFilter(): void{
+    this.isVisibleFilter = true;
+  }
+
+  handleCancelFilter(): void {
+    this.isVisibleFilter = false;
+  }
+
+  searchHandler(search: string){
+    this.searchSubject.next(search);
   }
 
   handleCancelDetail(): void {
@@ -159,7 +212,12 @@ export class InventoriesListComponent implements OnInit {
   pageIndexChange(page: number){
     this.currentPage = page;
 
-    this.getInventory();
+    if(this.filtered){
+      this.getFilteredInventory();
+    } else {
+      this.getInventory();
+    }
+
   }
 
   formatter = (value: number | null): string => {

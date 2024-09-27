@@ -16,6 +16,7 @@ import { NzInputNumberModule } from 'ng-zorro-antd/input-number';
 import { NzSpaceModule } from 'ng-zorro-antd/space';
 import { NzSwitchModule } from 'ng-zorro-antd/switch';
 import { NzDividerModule } from 'ng-zorro-antd/divider';
+import { NzRadioModule } from 'ng-zorro-antd/radio';
 
 @NgModule({
   declarations: [InventoriesListComponent],
@@ -35,7 +36,8 @@ import { NzDividerModule } from 'ng-zorro-antd/divider';
     NzInputNumberModule,
     NzSpaceModule,
     NzSwitchModule,
-    NzDividerModule
+    NzDividerModule,
+    NzRadioModule
   ],
   exports: [
     InventoriesListComponent

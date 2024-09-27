@@ -2,7 +2,7 @@
     <h4 class="fw-bold">Data Inventories</h4>
     <nz-input-group [nzSuffix]="suffixIconSearch" nzSize="large" style="width: 320px;">
         <!-- <input [(ngModel)]="searchEmp"  (ngModelChange)="searchEmpHandler($event)" type="text" nz-input placeholder="search employee" /> -->
-        <input [(ngModel)]="searchEmp" type="text" nz-input placeholder="Search Inventory" />
+        <input [(ngModel)]="search" (ngModelChange)="searchHandler($event)" type="text" nz-input placeholder="Search Inventory" />
     </nz-input-group>
     <ng-template #suffixIconSearch>
         <span nz-icon nzType="search"></span>
@@ -18,10 +18,8 @@
                 <nz-option nzLabel="10" [nzValue]="10"></nz-option>
                 </nz-select>
         </div>
-        <!-- <button (click)="refreshTableCust()" class="me-2 filter-icon" nz-button nzType="default" nzSize="default"><span nz-icon nzType="reload"></span></button> -->
-        <button class="me-2 filter-icon" nz-button nzType="default" nzSize="default"><span nz-icon nzType="reload"></span></button>
-        <!-- <button (click)="showFilter()" class="me-2 filter-icon" nz-button nzType="default" nzSize="default"><span nz-icon nzType="filter"></span></button> -->
-        <button class="me-2 filter-icon" nz-button nzType="default" nzSize="default"><span nz-icon nzType="filter"></span></button>
+        <button (click)="refreshTable()" class="me-2 filter-icon" nz-button nzType="default" nzSize="default"><span nz-icon nzType="reload"></span></button>
+        <button (click)="showFilter()" class="me-2 filter-icon" nz-button nzType="default" nzSize="default"><span nz-icon nzType="filter"></span></button>
         <button  nzSize="default" nz-button nzType="primary" (click)="showModalAdd()">Add New Inventory</button>
     </div>
 </div>
@@ -87,6 +85,68 @@
       </nz-table>
 </ng-template>
 
+
+<!-- filter modal -->
+<nz-modal nzCentered [(nzVisible)]="isVisibleFilter" [nzTitle]="'Filter Inventory'" (nzOnCancel)="handleCancelFilter()">
+    <ng-container *nzModalContent>
+        <form nz-form nzLayout="vertical" [formGroup]="filterForm">
+
+            <nz-form-item>
+                <nz-form-label nzFor="supplier_product">Product Category</nz-form-label>
+                <nz-form-control>
+                    <ng-container *ngIf="productCat$ | async as prod; else loadProdCatFilter">
+                        <nz-select
+                            id="supplier_product"
+                            formControlName="supplier_product"
+                            nzPlaceHolder="Select Product Category"
+                        >
+                            <nz-option *ngFor="let p of prod.data" [nzLabel]="p.name" [nzValue]="p.id"></nz-option>
+                        </nz-select>
+                    </ng-container>
+                    <ng-template #loadProdCatFilter>
+                        <nz-select
+                            id="supplier_product"
+                            formControlName="supplier_product"
+                            nzPlaceHolder="loading"
+                            nzDisabled
+                        >
+                        </nz-select>
+                    </ng-template>
+                </nz-form-control>
+            </nz-form-item>
+
+            <nz-form-item>
+                <nz-form-label nzFor="status">Status</nz-form-label>
+                <nz-form-control>
+                  <nz-select
+                    id="status"
+                    formControlName="status"
+                    nzPlaceHolder="Select Role"
+                  >
+                    <nz-option nzValue="" nzLabel="All"></nz-option>
+                    <nz-option [nzValue]="1" nzLabel="Active"></nz-option>
+                    <nz-option [nzValue]="0" nzLabel="Inactive"></nz-option>
+                  </nz-select>
+                </nz-form-control>
+            </nz-form-item>
+            <nz-form-item>
+                <nz-form-label nzFor="sort_by">Sort by</nz-form-label>
+                <nz-form-control>
+                    <nz-radio-group id="sort_by" formControlName="sort_by">
+                        <label nz-radio nzValue="asc">ASC</label>
+                        <label nz-radio nzValue="desc">DESC</label>
+                    </nz-radio-group>
+                </nz-form-control>
+            </nz-form-item>
+        </form>
+    </ng-container>
+    <ng-container *nzModalFooter>
+        <button nz-button nzType="default" (click)="handleCancelFilter()">Cancel</button>
+        <button nz-button nzType="primary" class="text-capitalize" (click)="submitFilter()">Filter Inventory</button>        
+    </ng-container>
+</nz-modal>
+
+<!-- detail modal -->
 <nz-modal nzCentered [(nzVisible)]="isVisibleDetail" [nzTitle]="'Detail Inventory'" (nzOnCancel)="handleCancelDetail()">
   <ng-container *nzModalContent>
     <div class="d-flex flex-column gap-2">
@@ -166,6 +226,7 @@
   </ng-container>
 </nz-modal>
 
+<!-- edit modal -->
 <nz-modal nzCentered nzWidth="900px" [(nzVisible)]="isVisibleEdit" [nzTitle]="modal_type + ' Inventory'" (nzOnCancel)="handleCancelEdit()">
     <ng-container *nzModalContent>
       <div>
@@ -346,6 +407,7 @@
     </ng-container>
 </nz-modal>
 
+<!-- add modal -->
 <nz-modal 
     nzCentered 
     nzWidth="900px" 
@@ -537,7 +599,7 @@
     </ng-container>
 </nz-modal>
 
-
+<!-- delete modal -->
 <nz-modal class="delete-modal" nzCentered [(nzVisible)]="isVisibleDelete" nzTitle="Delete Category" (nzOnCancel)="handleCancelDelete()">
     <ng-container *nzModalContent>
         <!-- <app-delete-categories-modal></app-delete-categories-modal> -->
