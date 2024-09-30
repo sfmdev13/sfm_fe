@@ -2,8 +2,16 @@
     <nz-card nzHoverable style="width:240px" [nzCover]="coverTemplate" [routerLink]="'/inventories/inventory-list'">
         <nz-card-meta nzTitle="Inventory List" nzDescription="Add or Edit Inventories"></nz-card-meta>
     </nz-card>
+
+    <nz-card nzHoverable style="width:240px" [nzCover]="coverPurchase" [routerLink]="'/inventories/purchase-order'">
+        <nz-card-meta nzTitle="Purchase Order" nzDescription="Purchase inventory"></nz-card-meta>
+    </nz-card>
 </div>
 
 <ng-template #coverTemplate>
     <img alt="example" src="/assets/images/inventory-list.png" />
+</ng-template>
+
+<ng-template #coverPurchase>
+    <img alt="example" src="/assets/images/purchase-order.png" />
 </ng-template>

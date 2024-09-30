@@ -932,4 +932,34 @@ export class ApiService {
     const url = `${this.apiUrl}/delete-unit?id=${id}`;
     return this.http.delete<any>(url, { headers })
   }
+
+  getInventoryBySupplier(id: any): Observable<any>{
+    const token = localStorage.getItem('authToken');
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+    });
+
+    const url = `${this.apiUrl}/inventory-bysupplier/${id}`;
+    return this.http.get<any>(url, { headers })
+  }
+
+  supplierList(): Observable<any>{
+    const token = localStorage.getItem('authToken');
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+    });
+    
+    const url = `${this.apiUrl}/supplier-list`;
+    return this.http.get<any>(url, { headers })
+  }
+
+  addPurchaseOrder(body: any): Observable<any>{
+    const token = localStorage.getItem('authToken');
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+    });
+
+    const url = `${this.apiUrl}/create/po-inventory`;
+    return this.http.post<any>(url, body ,{ headers })
+  }
 }
