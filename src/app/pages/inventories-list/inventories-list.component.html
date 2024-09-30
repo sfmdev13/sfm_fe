@@ -1,7 +1,6 @@
 <div class="d-flex align-items-center justify-content-between mb-4">
     <h4 class="fw-bold">Data Inventories</h4>
     <nz-input-group [nzSuffix]="suffixIconSearch" nzSize="large" style="width: 320px;">
-        <!-- <input [(ngModel)]="searchEmp"  (ngModelChange)="searchEmpHandler($event)" type="text" nz-input placeholder="search employee" /> -->
         <input [(ngModel)]="search" (ngModelChange)="searchHandler($event)" type="text" nz-input placeholder="Search Inventory" />
     </nz-input-group>
     <ng-template #suffixIconSearch>
@@ -68,7 +67,7 @@
 </ng-container>
 
 <ng-template #loading>
-    <nz-table #basicTable nzBordered>
+    <nz-table #basicTable nzBordered [nzLoading]="true">
         <thead>
           <tr>
             <th>Name</th>
@@ -201,8 +200,20 @@
               </ng-template>
           </div>
           <div class="col-md-4">
+            <p class="m-0 p-0 fw-semibold">Price List</p>
+            <p class="fw-light text-capitalize">{{ dataDetail.price_list | currency:'Rp. ':'symbol':'1.0-0' }}</p>
+          </div>
+          <div class="col-md-4">
+            <p class="m-0 p-0 fw-semibold">Discount</p>
+            <p class="fw-light text-capitalize">{{ dataDetail.discount }} %</p>
+          </div>
+          <div class="col-md-4">
               <p class="m-0 p-0 fw-semibold">Product Cost</p>
               <p class="fw-light text-capitalize">{{ dataDetail.product_cost | currency:'Rp. ':'symbol':'1.0-0' }}</p>
+          </div>
+          <div class="col-md-4">
+            <p class="m-0 p-0 fw-semibold">Price Factor</p>
+            <p class="fw-light text-capitalize">{{ dataDetail.price_factor }}</p>
           </div>
           <div class="col-md-4">
               <p class="m-0 p-0 fw-semibold">Selling Price</p>
@@ -227,7 +238,14 @@
 </nz-modal>
 
 <!-- edit modal -->
-<nz-modal nzCentered nzWidth="900px" [(nzVisible)]="isVisibleEdit" [nzTitle]="modal_type + ' Inventory'" (nzOnCancel)="handleCancelEdit()">
+<nz-modal 
+    nzCentered 
+    nzWidth="900px" 
+    [(nzVisible)]="isVisibleEdit" 
+    [nzTitle]="modal_type + ' Inventory'" (nzOnCancel)="handleCancelEdit()"
+    [nzClosable]= "false"
+    [nzMaskClosable]= "false"
+    >
     <ng-container *nzModalContent>
       <div>
         <form nz-form nzLayout="vertical" [formGroup]="inventoryForm">
@@ -315,14 +333,53 @@
                         </nz-form-control>                        
                     </nz-form-item>
                 </div>
-                <div class="col-md-6">
+                <div class="col-md-4">
+                    <nz-form-item>
+                        <nz-form-label nzRequired nzFor="price_list" class="fw-semibold">Price List</nz-form-label>
+                        <nz-space nzDirection="vertical" class="w-100">
+                            <nz-input-number-group *nzSpaceItem nzPrefix="Rp. " class="w-100">
+                                <nz-input-number 
+                                    class="w-100" 
+                                    formControlName="price_list"
+                                    [nzFormatter]="formatter">
+                                </nz-input-number>
+                            </nz-input-number-group>
+                        </nz-space>
+
+                    </nz-form-item>
+                </div>
+                <div class="col-md-4">
+                    <nz-form-item>
+                        <nz-form-label nzRequired nzFor="discount" class="fw-semibold">Discount</nz-form-label>
+                        <nz-input-number-group nzAddOnAfter="%">
+                            <nz-input-number formControlName="discount"></nz-input-number>
+                        </nz-input-number-group>
+                    </nz-form-item>
+                </div>
+                <div class="col-md-4">
                     <nz-form-item class="mb-4">
-                        <nz-form-label nzRequired nzFor="product_cost" class="fw-semibold">Product Cost</nz-form-label>
+                        <nz-form-label  nzFor="product_cost" class="fw-semibold">Product Cost</nz-form-label>
                         <nz-form-control>
                             <nz-space nzDirection="vertical" style="width: 100%">
                                 <nz-input-number-group *nzSpaceItem nzPrefix="Rp. " style="width: 100%">
                                     <nz-input-number     
                                     formControlName="product_cost"
+                                    [nzFormatter]="formatter"
+                                    ></nz-input-number>
+                                </nz-input-number-group>
+                            </nz-space>
+                        </nz-form-control>
+                    </nz-form-item>
+                </div>
+                <div class="col-md-6">
+                    <nz-form-item class="mb-4">
+                        <nz-form-label nzRequired nzFor="price_factor" class="fw-semibold">Price Factor</nz-form-label>
+                        <nz-form-control>
+                            <nz-space nzDirection="vertical" style="width: 100%">
+                                <nz-input-number-group *nzSpaceItem style="width: 100%">
+                                    <nz-input-number     
+                                    class="w-100"
+                                    formControlName="price_factor"
                                     [nzFormatter]="formatter"
                                     ></nz-input-number>
                                 </nz-input-number-group>
@@ -403,7 +460,7 @@
     </ng-container>
     <ng-container *nzModalFooter>
         <button nz-button nzType="default" (click)="handleCancelEdit()">Cancel</button>
-        <button nz-button nzType="primary" class="text-capitalize" (click)="handleSubmitEdit()" [disabled]="!this.inventoryForm.valid">Submit</button>
+        <button nz-button nzType="primary" class="text-capitalize" (click)="handleSubmitEdit()" [disabled]="!this.inventoryForm.valid">Update Inventory</button>
     </ng-container>
 </nz-modal>
 
@@ -503,16 +560,53 @@
                             </nz-form-control>                        
                         </nz-form-item>
                     </div>
-                    <div class="col-md-6">
+                    <div class="col-md-4">
+                        <nz-form-item>
+                            <nz-form-label nzRequired nzFor="price_list" class="fw-semibold">Price List</nz-form-label>
+                            <nz-space nzDirection="vertical" class="w-100">
+                                <nz-input-number-group *nzSpaceItem nzPrefix="Rp. " class="w-100">
+                                    <nz-input-number 
+                                        class="w-100" 
+                                        formControlName="price_list"
+                                        [nzFormatter]="formatter">
+                                    </nz-input-number>
+                                </nz-input-number-group>
+                            </nz-space>
+
+                        </nz-form-item>
+                    </div>
+                    <div class="col-md-4">
+                        <nz-form-item>
+                            <nz-form-label nzRequired nzFor="discount" class="fw-semibold">Discount</nz-form-label>
+                            <nz-input-number-group nzAddOnAfter="%">
+                                <nz-input-number formControlName="discount"></nz-input-number>
+                            </nz-input-number-group>
+                        </nz-form-item>
+                    </div>
+                    <div class="col-md-4">
                         <nz-form-item class="mb-4">
-                            <nz-form-label nzRequired nzFor="product_cost" class="fw-semibold">Product Cost</nz-form-label>
+                            <nz-form-label  nzFor="product_cost" class="fw-semibold">Product Cost</nz-form-label>
                             <nz-form-control>
                                 <nz-space nzDirection="vertical" style="width: 100%">
                                     <nz-input-number-group *nzSpaceItem nzPrefix="Rp. " style="width: 100%">
                                         <nz-input-number     
-                                        [ngModel]="formattedValueCost"
-                                        (ngModelChange)="updateFormattedValue($event)"
                                         formControlName="product_cost"
+                                        [nzFormatter]="formatter"
+                                        ></nz-input-number>
+                                    </nz-input-number-group>
+                                </nz-space>
+                            </nz-form-control>
+                        </nz-form-item>
+                    </div>
+                    <div class="col-md-6">
+                        <nz-form-item class="mb-4">
+                            <nz-form-label nzRequired nzFor="price_factor" class="fw-semibold">Price Factor</nz-form-label>
+                            <nz-form-control>
+                                <nz-space nzDirection="vertical" style="width: 100%">
+                                    <nz-input-number-group *nzSpaceItem style="width: 100%">
+                                        <nz-input-number     
+                                        class="w-100"
+                                        formControlName="price_factor"
                                         [nzFormatter]="formatter"
                                         ></nz-input-number>
                                     </nz-input-number-group>
@@ -527,8 +621,6 @@
                                 <nz-space nzDirection="vertical" style="width: 100%">
                                     <nz-input-number-group *nzSpaceItem nzPrefix="Rp. " style="width: 100%">
                                         <nz-input-number     
-                                        [ngModel]="formattedValueSelling"
-                                        (ngModelChange)="updateFormattedValueSelling($event)"
                                         formControlName="selling_price"
                                         [nzFormatter]="formatter"
                                         ></nz-input-number>
@@ -595,7 +687,7 @@
     </ng-container>
     <ng-container *nzModalFooter>
         <button nz-button nzType="default" (click)="handleCancelAdd()">Cancel</button>
-        <button nz-button nzType="primary" class="text-capitalize" (click)="handleSubmitAdd()" [disabled]="!this.inventoryForm.valid">Submit</button>
+        <button nz-button nzType="primary" class="text-capitalize" (click)="handleSubmitAdd()" [disabled]="!this.inventoryForm.valid">Add Inventory</button>
     </ng-container>
 </nz-modal>
 
