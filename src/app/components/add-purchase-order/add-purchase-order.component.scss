@@ -1,0 +1,31 @@
+.ant-divider{
+    border-top: 3px solid rgba(0, 0, 0, 0.06);
+}
+
+.table-order{
+    thead {
+        position: sticky;
+        top: 0;
+        z-index: 1;
+    }
+    tbody{
+        tr{
+            td{
+                padding: 16px;
+            }
+        }
+    }    
+}
+
+.total-children{
+    border-top: 3px solid rgba(0, 0, 0, 0.1);
+    padding-top: 12px;
+}
+
+.footer{
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    padding-right: 20px;
+    padding-bottom: 20px;
+}

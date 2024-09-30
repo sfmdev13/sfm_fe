@@ -61,6 +61,12 @@ const routes: Routes = [
         data: { action: 'view_inventory' }
       },
       {
+        path: 'inventories/purchase-order',
+        loadChildren: () => import('./pages/purchase-order/purchase-order.module').then(m => m.PurchaseOrderModule),
+        canActivate: [ActionGuard],
+        data: { action: 'view_inventory' }
+      },
+      {
         path: 'roles',
         loadChildren: () => import('./pages/roles/roles.module').then(m => m.RolesModule),
         canActivate: [ActionGuard],
