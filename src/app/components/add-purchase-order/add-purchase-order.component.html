@@ -113,7 +113,7 @@
                             </td>
                             <td>
                                 <nz-form-control>
-                                    <nz-input-number formControlName="qty" ></nz-input-number>
+                                    <nz-input-number formControlName="qty" [nzMin]="0"></nz-input-number>
                                 </nz-form-control>  
                             </td>
                             <td>
@@ -123,6 +123,7 @@
                                             <nz-input-number     
                                             formControlName="product_cost"
                                             [nzFormatter]="formatter"
+                                            [nzMin]="0"
                                             ></nz-input-number>
                                         </nz-input-number-group>
                                     </nz-space>
@@ -155,6 +156,7 @@
                             <nz-input-number     
                             formControlName="additional_cost"
                             [nzFormatter]="formatter"
+                            [nzMin]="0"
                             ></nz-input-number>
                         </nz-input-number-group>
                     </nz-space>                
