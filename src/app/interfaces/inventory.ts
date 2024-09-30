@@ -20,6 +20,9 @@ export interface IRootInventory {
     unit: Unit
     supplier_product: SupplierProduct
     supplier: Supplier
+    discount: string
+    price_factor: string
+    price_list: string
   }
   
   export interface Pic {

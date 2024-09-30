@@ -46,10 +46,6 @@ export class InventoriesListComponent implements OnInit {
 
   formattedLabel: string = '';
 
-  formattedValueCost: number | null = 0;
-
-  formattedValueSelling: number | null = 0;
-
   supplier$!: Observable<any>;
   productCat$!: Observable<ICategories>;
 
@@ -79,8 +75,11 @@ export class InventoriesListComponent implements OnInit {
       code: ['', Validators.required],
       description: ['', Validators.required],
       unit_id: ['', Validators.required],
-      product_cost: ['', Validators.required],
-      selling_price: ['', Validators.required],
+      price_list: ['', Validators.required],
+      discount: ['', Validators.required],
+      price_factor: ['', Validators.required],
+      product_cost: [{value: 0, disabled: true}],
+      selling_price: [{value: 0, disabled: true}],
       qty: [{value: 0, disabled: true}],
       pic: [[this.pic_id], [Validators.required]],
       is_pic_internal: ['', [Validators.required]],
@@ -108,37 +107,37 @@ export class InventoriesListComponent implements OnInit {
 
     this.productCat$ = this.apiSvc.getSupplierProduct();
 
-    this.inventoryForm.get('unit_id')?.valueChanges.subscribe((value) => {
-
-      if(value){
-        const selectedUnit = this.unitList.data.filter(u => u.id === value);
-        this.getFormattedLabel(selectedUnit[0].measurement, selectedUnit[0].unit)
-      }
-
-    })
-
     this.unit$ = this.apiSvc.getUnitMeasurement().pipe(
-      tap(res => {
+      tap((res) => {
         this.unitList = res;
+    
+        this.inventoryForm.get('unit_id')?.valueChanges.subscribe((value) => {
+          if (this.unitList?.data && value) {
+            const selectedUnit = this.unitList.data.filter((u) => u.id === value);
+            if (selectedUnit.length > 0) {
+              this.getFormattedLabel(selectedUnit[0].measurement, selectedUnit[0].unit);
+            }
+          }
+        });
       })
     );
-    
-    this.inventoryForm.get('pic')?.valueChanges.subscribe((value) => {
-      if(value){
-        this.filteredListOfPic = this.listOfPic.filter((pic: any) => value.includes(pic.pic_id));
-
-        if(!value.includes(this.inventoryForm.get('is_pic_internal')?.value)){
-          this.inventoryForm.patchValue({is_pic_internal: ''})
-        }
-      }
-
-    })
 
 
     this.pic$ = this.apiSvc.getPic().pipe(
       tap(res => {
         this.listOfPic = res;
         this.filteredListOfPic = res.filter((p: any) => p.pic_id === this.pic_id);
+
+        this.inventoryForm.get('pic')?.valueChanges.subscribe((value) => {
+          if(value){
+            this.filteredListOfPic = this.listOfPic.filter((pic: any) => value.includes(pic.pic_id));
+    
+            if(!value.includes(this.inventoryForm.get('is_pic_internal')?.value)){
+              this.inventoryForm.patchValue({is_pic_internal: ''})
+            }
+          }
+    
+        })
       })
     )
 
@@ -160,7 +159,30 @@ export class InventoriesListComponent implements OnInit {
         })
       );
     });
+
+    //trigger update product cost
+    this.inventoryForm.get('discount')?.valueChanges.subscribe(() => this.updateProductCost());
+    this.inventoryForm.get('price_list')?.valueChanges.subscribe(() => this.updateProductCost());
+
+    //trigger update selling price
+    this.inventoryForm.get('price_factor')?.valueChanges.subscribe(() => this.updateSellingPrice());
+    this.inventoryForm.get('product_cost')?.valueChanges.subscribe(() => this.updateSellingPrice());
   }
+
+  updateSellingPrice(): void{
+    const productCost = this.inventoryForm.get('product_cost')?.value || 0;
+    const priceFactor = this.inventoryForm.get('price_factor')?.value || 0;
+    const totalSelling: number = parseInt(productCost) * parseFloat(priceFactor)
+    this.inventoryForm.get('selling_price')?.setValue(totalSelling, { emitEvent: false })
+  }
+
+  updateProductCost(): void {
+    const priceList = this.inventoryForm.get('price_list')?.value || 0;
+    const discount = this.inventoryForm.get('discount')?.value || 0;
+    const totalCost: number = parseInt(priceList) - (parseInt(priceList) * (parseFloat(discount)/100));
+    this.inventoryForm.get('product_cost')?.setValue(totalCost, { emitEvent: false });
+  }
+
 
   refreshTable(): void{
     this.filtered = false;
@@ -224,14 +246,6 @@ export class InventoriesListComponent implements OnInit {
     return value !== null ? `${value.toLocaleString('en-US')}` : '';
   };
 
-  updateFormattedValueSelling(value: number | null): void{
-    this.formattedValueSelling = value;
-  }
-
-  updateFormattedValue(value: number | null): void {
-    this.formattedValueCost = value;
-  }
-
   getFormattedLabel(measurement: string, unit: string): void {
 
     if(unit){
@@ -261,14 +275,19 @@ export class InventoriesListComponent implements OnInit {
       code: data.code,
       description: data.description,
       unit_id: data.unit_id,
-      product_cost: data.product_cost,
-      selling_price: data.selling_price,
+      product_cost: parseInt(data.product_cost),
+      selling_price: parseInt(data.selling_price),
       qty: data.qty,
       supplier_product_id: data.supplier_product_id,
       supplier_id: data.supplier_id,
-      status:data.status
+      status:data.status,
+      price_list: parseInt(data.price_list),
+      discount: parseFloat(data.discount),
+      price_factor: parseFloat(data.price_factor)
     })
 
+    this.getFormattedLabel(data.unit.measurement, data.unit.unit);
+    
     //extract pic id
     const picIds = data.pic.map(item => item.pic_id);
 
@@ -312,8 +331,9 @@ export class InventoriesListComponent implements OnInit {
         unit_id: this.inventoryForm.get('unit_id')?.value,
         supplier_product_id: this.inventoryForm.get('supplier_product_id')?.value,
         supplier_id: this.inventoryForm.get('supplier_id')?.value,
-        product_cost: this.inventoryForm.get('product_cost')?.value,
-        selling_price: this.inventoryForm.get('selling_price')?.value,
+        discount: this.inventoryForm.get('discount')?.value,
+        price_list: this.inventoryForm.get('price_list')?.value,
+        price_factor: this.inventoryForm.get('price_factor')?.value,
         status: this.inventoryForm.get('status')?.value,
         pic_new: picComplete
       }
@@ -372,8 +392,9 @@ export class InventoriesListComponent implements OnInit {
         unit_id: this.inventoryForm.get('unit_id')?.value,
         supplier_product_id: this.inventoryForm.get('supplier_product_id')?.value,
         supplier_id: this.inventoryForm.get('supplier_id')?.value,
-        product_cost: this.inventoryForm.get('product_cost')?.value,
-        selling_price: this.inventoryForm.get('selling_price')?.value,
+        discount: this.inventoryForm.get('discount')?.value,
+        price_list: this.inventoryForm.get('price_list')?.value,
+        price_factor: this.inventoryForm.get('price_factor')?.value,
         status: this.inventoryForm.get('status')?.value,
         pic: picComplete
       }
@@ -446,6 +467,7 @@ export class InventoriesListComponent implements OnInit {
   }
 
   handleCancelEdit(): void {
+    this.inventoryForm.reset();
     this.isVisibleEdit = false;
   }
 
