@@ -179,6 +179,8 @@ export class AddCustomerModalComponent implements OnInit {
 
     if(this.modal_type === 'update'){
 
+      this.isLoadingCatContact = false;
+
       this.optionCustSelected = this.customerDetail.type;
 
       const newUpdateFileList: NzUploadFile[] = this.customerDetail.attachments.map(attachment => ({
