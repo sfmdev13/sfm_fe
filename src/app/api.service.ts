@@ -46,6 +46,9 @@ export class ApiService {
   private refreshGetInventory = new BehaviorSubject<void>(undefined);
   refreshGetInventory$ = this.refreshGetInventory.asObservable();
 
+  private refreshGetPurchaseOrder = new BehaviorSubject<void>(undefined);
+  refreshGetPurchaseOrder$ = this.refreshGetPurchaseOrder.asObservable();
+
   getProfile(): Observable<any> {
     const token = localStorage.getItem('authToken');
     const headers = new HttpHeaders({
@@ -90,6 +93,10 @@ export class ApiService {
 
   triggerRefreshInventory(){
     this.refreshGetInventory.next();
+  }
+
+  triggerRefreshPurchaseOrder(){
+    this.refreshGetPurchaseOrder.next();
   }
 
   setFilteredCustomerData(data: IRootCustomer) {
@@ -960,6 +967,26 @@ export class ApiService {
     });
 
     const url = `${this.apiUrl}/create/po-inventory`;
+    return this.http.post<any>(url, body ,{ headers })
+  }
+
+  getPurchaseOrder(page: number, per_page: number): Observable<any>{
+    const token = localStorage.getItem('authToken');
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+    });
+    
+    const url = `${this.apiUrl}/po-inventory?page=${page}&per_page=${per_page}`;
+    return this.http.get<any>(url, { headers })
+  }
+
+  editPurchaseOrder(body: any): Observable<any>{
+    const token = localStorage.getItem('authToken');
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+    });
+
+    const url = `${this.apiUrl}/update/po-inventory`;
     return this.http.post<any>(url, body ,{ headers })
   }
 }
