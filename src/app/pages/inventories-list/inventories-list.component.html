@@ -341,6 +341,7 @@
                                 <nz-input-number 
                                     class="w-100" 
                                     formControlName="price_list"
+                                    [nzMin]="0"
                                     [nzFormatter]="formatter">
                                 </nz-input-number>
                             </nz-input-number-group>
@@ -352,7 +353,7 @@
                     <nz-form-item>
                         <nz-form-label nzRequired nzFor="discount" class="fw-semibold">Discount</nz-form-label>
                         <nz-input-number-group nzAddOnAfter="%">
-                            <nz-input-number formControlName="discount"></nz-input-number>
+                            <nz-input-number formControlName="discount" [nzMin]="0"></nz-input-number>
                         </nz-input-number-group>
                     </nz-form-item>
                 </div>
@@ -365,6 +366,7 @@
                                     <nz-input-number     
                                     formControlName="product_cost"
                                     [nzFormatter]="formatter"
+                                    [nzMin]="0"
                                     ></nz-input-number>
                                 </nz-input-number-group>
                             </nz-space>
@@ -381,6 +383,7 @@
                                     class="w-100"
                                     formControlName="price_factor"
                                     [nzFormatter]="formatter"
+                                    [nzMin]="0"
                                     ></nz-input-number>
                                 </nz-input-number-group>
                             </nz-space>
@@ -396,6 +399,7 @@
                                     <nz-input-number     
                                     formControlName="selling_price"
                                     [nzFormatter]="formatter"
+                                    [nzMin]="0"
                                     ></nz-input-number>
                                 </nz-input-number-group>
                             </nz-space>
