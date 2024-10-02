@@ -69,9 +69,13 @@
                           <span nz-icon nzType="edit" nzTheme="twotone"></span>
                           <p class="m-0 p-0">Edit</p>
                         </li>
-                        <li nz-menu-item class="gap-2 list-dropdown">
-                          <span (click)="showModalDelete(data.id)" nz-icon nzType="delete" nzTheme="twotone"></span>
-                          <p class="m-0 p-0">Delete</p>                
+                        <li (click)="showModalDuplicate(data)" nz-menu-item class="gap-2 list-dropdown">
+                          <span nz-icon nzType="copy" nzTheme="twotone" ></span>
+                          <p class="m-0 p-0">Duplicate</p>                
+                        </li>
+                        <li (click)="showModalDelete(data.id)" nz-menu-item class="gap-2 list-dropdown">
+                          <span nz-icon nzType="delete" nzTheme="twotone" [nzTwotoneColor]="'#f50'"></span>
+                          <p class="m-0 p-0" style="color: #f50;">Delete</p>                
                         </li>
                         <li nz-menu-divider></li>
                           <li nz-menu-item class="gap-2 list-dropdown">
