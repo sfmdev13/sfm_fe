@@ -35,7 +35,7 @@
     >
         <thead>
           <tr>
-            <th>Product Code</th>
+            <th>Part Number</th>
             <th>Product Description</th>
             <th>Product Category</th>
             <th>Supplier</th>
@@ -60,10 +60,34 @@
               </td>
             <td>
                 <div class="d-flex gap-3">
-                  <span (click)="showModalDetail(data)" nz-icon nzType="eye" nzTheme="twotone"></span>
-                    <span (click)="showModalEdit(data)" nz-icon nzType="edit" nzTheme="twotone"></span>
-                    <span (click)="showModalDelete(data.id)" nz-icon nzType="delete" nzTheme="twotone"></span>
-                </div>
+                    <a nz-dropdown nzTrigger="click" [nzDropdownMenu]="menu" [nzPlacement]="'bottomRight'" style="text-decoration: none;" >
+                      <div class="d-flex align-items-center">
+                        <i nz-icon nzType="more" nzTheme="outline"></i>
+                        <p class="m-0 p-0">More</p>                       
+                      </div>
+
+                    </a>
+                    <nz-dropdown-menu #menu="nzDropdownMenu">
+                      <ul nz-menu class="dropdown-wrapper">
+                        <li (click)="showModalDetail(data)" nz-menu-item class="gap-2 list-dropdown">
+                          <span nz-icon nzType="eye" nzTheme="twotone"></span>
+                          <p class="m-0 p-0">Detail</p>
+                        </li>
+                        <li nz-menu-item class="gap-2 list-dropdown" (click)="showModalEdit(data)">
+                          <span nz-icon nzType="edit" nzTheme="twotone"></span>
+                          <p class="m-0 p-0">Edit</p>
+                        </li>
+                        <li (click)="showModalDuplicate(data)" nz-menu-item class="gap-2 list-dropdown">
+                            <span nz-icon nzType="copy" nzTheme="twotone" ></span>
+                            <p class="m-0 p-0">Duplicate</p>                
+                        </li>
+                        <li (click)="showModalDelete(data.id)" nz-menu-item class="gap-2 list-dropdown">
+                          <span nz-icon nzType="delete" nzTheme="twotone" [nzTwotoneColor]="'#f50'"></span>
+                          <p class="m-0 p-0" style="color: #f50;">Delete</p>                
+                        </li>
+                      </ul>
+                    </nz-dropdown-menu>
+                  </div>
             </td>
             </tr>
         </tbody>
@@ -74,7 +98,7 @@
     <nz-table #basicTable nzBordered [nzLoading]="true">
         <thead>
           <tr>
-            <th>Product Code</th>
+            <th>Part Number</th>
             <th>Product Description</th>
             <th>Product Category</th>
             <th>Supplier</th>
@@ -297,7 +321,7 @@
                 </div>
                 <div class="col-md-6">
                     <nz-form-item class="mb-4">
-                        <nz-form-label nzRequired nzFor="code" class="fw-semibold">Product Code</nz-form-label>
+                        <nz-form-label nzRequired nzFor="code" class="fw-semibold">Part Number</nz-form-label>
                         <nz-form-control>
                             <input nz-input formControlName="code" id="code"  />
                         </nz-form-control>
@@ -478,7 +502,7 @@
 <nz-modal 
     nzCentered 
     nzWidth="900px" 
-    [(nzVisible)]="isVisibleAdd" [nzTitle]="modal_type + ' Inventory'" 
+    [(nzVisible)]="isVisibleAdd" [nzTitle]="modal_type === 'duplicate' ? 'Add' : modal_type + ' Inventory'" 
     (nzOnCancel)="handleCancelAdd()"
     [nzClosable] = 'false'
     [nzMaskClosable] = 'false'
@@ -528,7 +552,7 @@
                     </div>
                     <div class="col-md-6">
                         <nz-form-item class="mb-4">
-                            <nz-form-label nzRequired nzFor="code" class="fw-semibold">Product Code</nz-form-label>
+                            <nz-form-label nzRequired nzFor="code" class="fw-semibold">Part Number</nz-form-label>
                             <nz-form-control>
                                 <input nz-input formControlName="code" id="code"  />
                             </nz-form-control>

@@ -104,7 +104,7 @@ export class AddPurchaseOrderComponent implements OnInit {
 
     this.addOrder();
 
-    if(this.modal_type === 'edit'){
+    if(this.modal_type === 'edit' || this.modal_type === 'duplicate'){
 
       this.purchaseForm.patchValue({
         id: this.dataDetail.id,
@@ -214,7 +214,7 @@ export class AddPurchaseOrderComponent implements OnInit {
     }
 
 
-    if(this.modal_type === 'add'){
+    if(this.modal_type === 'add' || this.modal_type === 'duplicate'){
       let body = {
         id: this.purchaseForm.get('id')?.value,
         description: this.purchaseForm.get('description')?.value,

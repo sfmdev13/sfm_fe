@@ -210,6 +210,20 @@ export class PurchaseOrderComponent implements OnInit {
     });
   }
 
+  showModalDuplicate(data:IDataPurchaseOrder): void{
+    this.modal_type = 'duplicate'
+    this.drawerService.create({
+      nzTitle: 'Add Purchase',
+      nzContent: AddPurchaseOrderComponent,
+      nzPlacement: 'bottom',
+      nzHeight: '100vh',
+      nzContentParams: {
+        modal_type: this.modal_type,
+        dataDetail: data
+      }
+    });
+  }
+
   showModalAdd(): void {
     this.modal_type = 'add'
     this.drawerService.create({

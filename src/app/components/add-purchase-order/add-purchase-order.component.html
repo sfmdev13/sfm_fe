@@ -81,7 +81,7 @@
                 <thead>
                     <tr>
                         <th scope="col">Product Description</th>
-                        <th scope="col">Product Code</th>
+                        <th scope="col">Part Number</th>
                         <th scope="col">Qty</th>
                         <th scope="col">Unit</th>
                         <th scope="col">Product Cost</th>
@@ -190,7 +190,7 @@
     <div class="footer">
         <div class="d-flex gap-2">
             <button nz-button nzType="default" (click)="closeDrawer()">Cancel</button>
-            <button nz-button nzType="primary" (click)="submitPurchase()" [disabled]="!purchaseForm.valid">{{ modal_type === 'add' ? 'Purchaser Order' : 'Edit Purchase Order' }}</button>
+            <button nz-button nzType="primary" (click)="submitPurchase()" [disabled]="!purchaseForm.valid">{{ modal_type === 'add' || modal_type === 'duplicate' ? 'Purchaser Order' : 'Edit Purchase Order' }}</button>
         </div>
     </div>
 </div>

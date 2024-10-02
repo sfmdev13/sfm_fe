@@ -17,6 +17,7 @@ import { NzSpaceModule } from 'ng-zorro-antd/space';
 import { NzSwitchModule } from 'ng-zorro-antd/switch';
 import { NzDividerModule } from 'ng-zorro-antd/divider';
 import { NzRadioModule } from 'ng-zorro-antd/radio';
+import { NzDropDownModule } from 'ng-zorro-antd/dropdown';
 
 @NgModule({
   declarations: [InventoriesListComponent],
@@ -37,7 +38,8 @@ import { NzRadioModule } from 'ng-zorro-antd/radio';
     NzSpaceModule,
     NzSwitchModule,
     NzDividerModule,
-    NzRadioModule
+    NzRadioModule,
+    NzDropDownModule
   ],
   exports: [
     InventoriesListComponent
