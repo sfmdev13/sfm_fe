@@ -61,7 +61,7 @@ export class InventoriesListComponent implements OnInit {
   filterForm: FormGroup;
 
   filtered: boolean = false;
-
+  
   constructor(
     private apiSvc: ApiService,
     private fb: FormBuilder,
@@ -230,7 +230,6 @@ export class InventoriesListComponent implements OnInit {
     this.isVisibleDetail = true;
   }
 
-
   pageIndexChange(page: number){
     this.currentPage = page;
 
@@ -300,6 +299,43 @@ export class InventoriesListComponent implements OnInit {
     });
 
     this.isVisibleEdit = true;
+  }
+
+  showModalDuplicate(data: IDataInventory): void{
+
+    this.modal_type = 'duplicate'
+
+    this.inventoryForm.patchValue({
+      id: data.id,
+      name: data.name,
+      code: data.code,
+      description: data.description,
+      unit_id: data.unit_id,
+      product_cost: parseInt(data.product_cost),
+      selling_price: parseInt(data.selling_price),
+      qty: data.qty,
+      supplier_product_id: data.supplier_product_id,
+      supplier_id: data.supplier_id,
+      status:data.status,
+      price_list: parseInt(data.price_list),
+      discount: parseFloat(data.discount),
+      price_factor: parseFloat(data.price_factor)
+    })
+
+    this.getFormattedLabel(data.unit.measurement, data.unit.unit);
+    
+    //extract pic id
+    const picIds = data.pic.map(item => item.pic_id);
+
+    //find pic internal id
+    const isPicInternalId = data.pic.filter(item => item.is_pic_internal === 1);
+
+    this.inventoryForm.patchValue({
+      pic: picIds,
+      is_pic_internal: isPicInternalId[0].pic_id
+    });
+
+    this.isVisibleAdd = true;
   }
 
   showModalAdd(): void {
@@ -434,10 +470,8 @@ export class InventoriesListComponent implements OnInit {
         nzContent: 'Need to fill all input',
         nzOkText: 'Ok',
         nzCentered: true
-      })      
+      }) 
     }
-
-    this.inventoryForm.reset();
   }
 
   handleSubmitDelete(): void{
@@ -472,12 +506,14 @@ export class InventoriesListComponent implements OnInit {
 
   handleCancelEdit(): void {
     this.inventoryForm.reset();
+    this.modal_type = '';
     this.isVisibleEdit = false;
   }
 
   handleCancelAdd(): void{
-    this.isVisibleAdd = false;
     this.inventoryForm.reset();
+    this.modal_type = '';
+    this.isVisibleAdd = false;
   }
 
   handleCancelDelete(): void{
