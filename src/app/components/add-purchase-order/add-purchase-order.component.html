@@ -64,16 +64,6 @@
             </div>
 
             <div class="col-md-4">
-                <nz-form-item class="mb-4">
-                    <nz-form-label nzRequired nzFor="reference_no" class="fw-semibold">Reference No.</nz-form-label>
-                    <nz-form-control>
-                        <input nz-input formControlName="reference_no" id="reference_no" />
-                    </nz-form-control>
-                </nz-form-item>
-            </div>
-
-
-            <div class="col-md-4">
                 <nz-form-item>
                   <nz-form-label nzRequired nzFor="date" class="fw-semibold">Date</nz-form-label>
                   <nz-form-control>
@@ -90,11 +80,13 @@
             <table class="table table-striped table-order">
                 <thead>
                     <tr>
-                    <th scope="col">Item</th>
-                    <th scope="col" style="width: 10%;">Qty</th>
-                    <th scope="col" style="width: 20%;">Unit Price</th>
-                    <th scope="col" style="width: 40%;">Total</th>
-                    <th scope="col">#</th>
+                        <th scope="col">Product Description</th>
+                        <th scope="col">Product Code</th>
+                        <th scope="col">Qty</th>
+                        <th scope="col">Unit</th>
+                        <th scope="col">Product Cost</th>
+                        <th scope="col">Total</th>
+                        <th scope="col">#</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -105,7 +97,7 @@
                                     <nz-select nzShowSearch  nzPlaceHolder="Select Inventory" formControlName="inventory_id">
                                         <nz-option
                                         *ngFor="let p of inventoryList.data"
-                                            [nzLabel]="p.name" 
+                                            [nzLabel]="p.description" 
                                             [nzValue]="p.id"
                                         ></nz-option>
                                     </nz-select>
@@ -113,8 +105,18 @@
                             </td>
                             <td>
                                 <nz-form-control>
+                                    <input nz-input formControlName="product_code" />
+                                </nz-form-control>
+                            </td>
+                            <td>
+                                <nz-form-control>
                                     <nz-input-number formControlName="qty" [nzMin]="0"></nz-input-number>
                                 </nz-form-control>  
+                            </td>
+                            <td>
+                                <div>
+                                    <p class="m-0 p-0">{{ order.get('unit_measurement')?.value}} <sup>{{ order.get('unit_unit')?.value }}</sup> </p>
+                                </div>
                             </td>
                             <td>
                                 <nz-form-control>
@@ -139,7 +141,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <td colspan="5" class="text-center">
+                            <td colspan="7" class="text-center">
                                 <button (click)="addOrder()" nz-button nzType="primary" class="w-75">Add Item</button>
                             </td>
                         </tr>

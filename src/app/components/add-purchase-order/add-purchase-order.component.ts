@@ -5,7 +5,7 @@ import { NzDrawerRef } from 'ng-zorro-antd/drawer';
 import { NzModalService } from 'ng-zorro-antd/modal';
 import { combineLatest, Observable, startWith, tap } from 'rxjs';
 import { ApiService } from 'src/app/api.service';
-import { IDataPurchaseOrder, IRootInventory } from 'src/app/interfaces';
+import { IDataPurchaseOrder, IRootInvenSupplier, IRootInventory } from 'src/app/interfaces';
 import { SpinnerService } from 'src/app/spinner.service';
 
 @Component({
@@ -21,7 +21,6 @@ export class AddPurchaseOrderComponent implements OnInit {
 
   pic$!: Observable<any>;
   supplier$!: Observable<any>;
-  inventories$!: Observable<IRootInventory>;
 
   listOfPic: any[] = [];
   filteredListOfPic: any[] = [];
@@ -32,7 +31,6 @@ export class AddPurchaseOrderComponent implements OnInit {
     id: [null],
     supplier_id: ['', Validators.required],
     date: ['', Validators.required],
-    reference_no: ['', Validators.required],
     description: ['', Validators.required],
     pic: [[this.pic_id], [Validators.required]],
     is_pic_internal: ['', [Validators.required]],
@@ -41,7 +39,7 @@ export class AddPurchaseOrderComponent implements OnInit {
     order: this.fb.array([])
   })
 
-  inventoryList: IRootInventory = {} as IRootInventory;
+  inventoryList: IRootInvenSupplier = {} as IRootInvenSupplier;
 
   totalOrder: number = 0;
   totalGrandOrder: number = 0;
@@ -75,6 +73,7 @@ export class AddPurchaseOrderComponent implements OnInit {
 
 
     this.purchaseForm.get('pic')?.valueChanges.subscribe((value) => {
+      console.log('masuk')
       this.filteredListOfPic = this.listOfPic.filter(pic => value.includes(pic.pic_id));
 
       if(!value.includes(this.purchaseForm.get('is_pic_internal')?.value)){
@@ -97,6 +96,7 @@ export class AddPurchaseOrderComponent implements OnInit {
     this.pic$ = this.apiSvc.getPic().pipe(
       tap(res => {
         this.listOfPic = res;
+        this.filteredListOfPic = this.listOfPic.filter(pic => this.pic_id.includes(pic.pic_id));
       })
     )
 
@@ -110,9 +110,9 @@ export class AddPurchaseOrderComponent implements OnInit {
         id: this.dataDetail.id,
         supplier_id: this.dataDetail.supplier_id,
         date: this.dataDetail.date,
-        reference_no: this.dataDetail.po_number,
         description: this.dataDetail.description,
         additional_cost: parseInt(this.dataDetail.additional_cost),
+        tax: this.dataDetail.tax
       })
 
       //update PIC
@@ -141,7 +141,10 @@ export class AddPurchaseOrderComponent implements OnInit {
       this.dataDetail.po_items.forEach((order) => {
         const updateOrder = this.fb.group({
           inventory_id: order.inventory.id,
+          product_code: order.inventory.code,
           qty: parseInt(order.qty),
+          unit_measurement: order.inventory.unit.measurement,
+          unit_unit: order.inventory.unit.unit,
           product_cost: parseInt(order.product_cost),
           total_cost: parseInt(order.total_cost_per_product)
         })
@@ -173,13 +176,13 @@ export class AddPurchaseOrderComponent implements OnInit {
     if(this.modal_type === 'edit'){
       let body = {
         id: this.purchaseForm.get('id')?.value,
-        po_number: this.purchaseForm.get('reference_no')?.value,
         description: this.purchaseForm.get('description')?.value,
         supplier_id: this.purchaseForm.get('supplier_id')?.value,
         additional_cost: this.purchaseForm.get('additional_cost')?.value.toString(),
         date: this.purchaseForm.get('date')?.value,
         pic_new: picComplete,
-        inventories_new: inventoryComplete
+        inventories_new: inventoryComplete,
+        tax: this.purchaseForm.get('tax')?.value
       }
 
       this.apiSvc.editPurchaseOrder(body).subscribe({
@@ -214,13 +217,13 @@ export class AddPurchaseOrderComponent implements OnInit {
     if(this.modal_type === 'add'){
       let body = {
         id: this.purchaseForm.get('id')?.value,
-        po_number: this.purchaseForm.get('reference_no')?.value,
         description: this.purchaseForm.get('description')?.value,
         supplier_id: this.purchaseForm.get('supplier_id')?.value,
         additional_cost: this.purchaseForm.get('additional_cost')?.value.toString(),
         date: this.purchaseForm.get('date')?.value,
         pic: picComplete,
-        inventories: inventoryComplete
+        inventories: inventoryComplete,
+        tax: this.purchaseForm.get('tax')?.value.toString()
       }
       
       
@@ -277,7 +280,10 @@ export class AddPurchaseOrderComponent implements OnInit {
   cpValueChangeSubscriptions(control: FormGroup){
     control.get('inventory_id')?.valueChanges.subscribe(value => {
       const product = this.inventoryList.data.find(p => p.id === value);
-      control.get('product_cost')?.setValue(parseInt(product?.product_cost ?? '0', 10), { emit_event: false, onlySelf: true })
+      control.get('product_cost')?.setValue(parseInt(product?.product_cost ?? '0', 10), { emit_event: false, onlySelf: true });
+      control.get('product_code')?.setValue(product?.code, { emit_event: false });
+      control.get('unit_measurement')?.setValue(product?.unit.measurement);
+      control.get('unit_unit')?.setValue(product?.unit.unit);
     })
 
     control.get('qty')?.valueChanges.subscribe(() => this.updateTotalCost(control));
@@ -297,6 +303,9 @@ export class AddPurchaseOrderComponent implements OnInit {
       inventory_id: ['', Validators.required],
       qty: ['', Validators.required],
       product_cost: [{value: '', disabled: true}],
+      product_code: [''],
+      unit_measurement: [''],
+      unit_unit: [''],
       total_cost: ['']
     });
 
