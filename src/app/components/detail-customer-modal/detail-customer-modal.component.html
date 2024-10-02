@@ -152,8 +152,14 @@
                 <p class="fw-light">{{ contact.cp_loyal_customer.name}}</p>
             </div>
             <div class="col-md-4">
-                <p class="m-0 p-0 fw-semibold">PIC Company</p>
+                <p class="m-0 p-0 fw-semibold">Decision Maker</p>
                 <nz-tag [nzColor]="contact.is_pic_company === 1 ? '#1DA32C' : '#f50'">{{ contact.is_pic_company  === 1 ? 'Yes' : 'No' }}</nz-tag>
+            </div>
+            <div class="col-12" *ngFor="let att of contact.cp_attachments; let i = index">
+                <p class="m-0 p-0 fw-semibold">Attachment Document {{i + 1}} </p>
+                <a [href]="att.file_url" target="_blank" rel="noopener noreferrer">
+                    <p class="fw-light">{{att.file_name}}</p>
+                </a>
             </div>
             <div class="col-md-6 mt-2">
                 <p class="m-0 p-0 fw-semibold">Contact PIC</p>
@@ -163,17 +169,12 @@
                         <p class="fw-light text-capitalize">{{ c.name }}</p>
                     </div>
                     <div class="col-6">
-                        <p class="m-0 p-0 fw-semibold">Head PIC Contact</p>
-                        <p class="fw-light text-capitalize">{{ c.is_pic_head === 1 ? 'Yes' : 'No' }}</p>
+                        <p class="m-0 p-0 fw-semibold">Head of Contact PIC</p>
+                        <nz-tag [nzColor]="c.is_pic_head === 1 ? '#1DA32C' : '#f50'">{{ c.is_pic_head  === 1 ? 'Yes' : 'No' }}</nz-tag>
                     </div>
                 </div>
             </div>
-            <div class="col-md-4" *ngFor="let att of contact.cp_attachments; let i = index">
-                <p class="m-0 p-0 fw-semibold">Attachment Document {{i + 1}} </p>
-                <a [href]="att.file_url" target="_blank" rel="noopener noreferrer">
-                    <p class="fw-light">{{att.file_name}}</p>
-                </a>
-            </div>
+
         </div>
     </ng-container>
 
