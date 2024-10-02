@@ -61,7 +61,9 @@ export class LoginComponent implements OnInit {
                   localStorage.setItem('actions', JSON.stringify(userRole))
                   this.authService.setUserRoles(userRole);
 
-                  this.redirectUser();
+                  this.router.navigate(['/dashboard'])
+
+                  // this.redirectUser();
                 }
               )
 

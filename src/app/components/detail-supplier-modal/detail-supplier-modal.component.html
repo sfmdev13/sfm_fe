@@ -138,7 +138,7 @@
                 <p class="fw-light">{{ contact.cp_address }}</p>
             </div>
             <div class="col-md-4">
-                <p class="m-0 p-0 fw-semibold">PIC Company</p>
+                <p class="m-0 p-0 fw-semibold">Decision Maker</p>
                 <nz-tag [nzColor]="contact.is_pic_company === 1 ? '#1DA32C' : '#f50'">{{ contact.is_pic_company  === 1 ? 'Yes' : 'No' }}</nz-tag>
             </div>
             <div class="col-md-6 mt-2">
@@ -150,7 +150,7 @@
                     </div>
                     <div class="col-6">
                         <p class="m-0 p-0 fw-semibold">Head PIC Contact</p>
-                        <p class="fw-light text-capitalize">{{ c.is_pic_head === 1 ? 'Yes' : 'No' }}</p>
+                        <nz-tag [nzColor]=" c.is_pic_head === 1 ? '#1DA32C' : '#f50'">{{  c.is_pic_head  === 1 ? 'Yes' : 'No' }}</nz-tag>
                     </div>
                 </div>
 

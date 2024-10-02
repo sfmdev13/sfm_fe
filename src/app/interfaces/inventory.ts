@@ -1,3 +1,4 @@
+
 export interface IRootInventory {
     data: IDataInventory[]
     pagination: Pagination
@@ -48,6 +49,11 @@ export interface IRootInventory {
   }
   
   export interface Supplier {
+    supplier_source: {
+      id: string
+      name: string
+      description: string
+    }
     id: string
     supplier_pid: string
     name: string
@@ -80,4 +86,23 @@ export interface IRootInventory {
     message: string
     status_code: number
   }
+
+
+  export interface IRootInvenSupplier{
+    data: IInventSupplier[];
+    meta: Meta
+  }
   
+  interface IInventSupplier{
+    id: string;
+    name: string;
+    code: string;
+    product_cost: string;
+    description: string;
+    unit: {
+      id: number;
+      name: string;
+      measurement: string;
+      unit: string;
+    }
+  }

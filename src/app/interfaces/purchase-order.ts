@@ -1,3 +1,5 @@
+import { StringMap } from "@angular/compiler/src/compiler_facade_interface"
+
 export interface IRootPurchaseOrder {
     data: IDataPurchaseOrder[]
     pagination: Pagination
@@ -6,6 +8,7 @@ export interface IRootPurchaseOrder {
   
   export interface IDataPurchaseOrder {
     id: string
+    tax: string;
     po_number: string
     description: string
     additional_cost: string
@@ -69,6 +72,13 @@ export interface IRootPurchaseOrder {
     selling_price: string
     status: number
     qty: string
+    unit: {
+      id: number
+      name: string
+      measurement: string
+      unit: string
+      description: StringMap
+    }
   }
   
   export interface Pagination {
