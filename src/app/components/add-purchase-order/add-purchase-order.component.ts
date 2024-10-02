@@ -37,14 +37,14 @@ export class AddPurchaseOrderComponent implements OnInit {
     pic: [[this.pic_id], [Validators.required]],
     is_pic_internal: ['', [Validators.required]],
     additional_cost: [''],
+    tax: [0],
     order: this.fb.array([])
   })
 
   inventoryList: IRootInventory = {} as IRootInventory;
 
   totalOrder: number = 0;
-  totalOrderAfter: number = 0;
-  totalOrderOld: number = 0;
+  totalGrandOrder: number = 0;
 
   constructor(
     private fb: FormBuilder,
@@ -57,16 +57,23 @@ export class AddPurchaseOrderComponent implements OnInit {
 
   ngOnInit(): void {
 
-    combineLatest([
-      this.order.valueChanges.pipe(startWith(this.order.value)),
-      this.purchaseForm.get('additional_cost')?.valueChanges.pipe(startWith(this.purchaseForm.get('additional_cost')?.value)) || []
-    ]).subscribe(() => {
+    //used for calculate total order and total grand order
+    const orderChanges$ = this.order.valueChanges.pipe(startWith(this.order.value));
+    const additionalCostChanges$ = this.purchaseForm.get('additional_cost')?.valueChanges.pipe(startWith(this.purchaseForm.get('additional_cost')?.value)) || [];
+    const taxChanges$ = this.purchaseForm.get('tax')?.valueChanges.pipe(startWith(this.purchaseForm.get('tax')?.value)) || [];
+  
+    combineLatest([orderChanges$, additionalCostChanges$, taxChanges$]).subscribe(() => {
       // Recalculate the total order cost
       const totalSum = this.calculateTotalCost();
-      const additional_cost = this.purchaseForm.get('additional_cost')?.value;
+      const additional_cost = parseInt(this.purchaseForm.get('additional_cost')?.value || '0', 10);
+      const taxPercent = parseFloat(this.purchaseForm.get('tax')?.value || '0');
   
-      this.totalOrder = totalSum + parseInt(additional_cost || 0, 10);
+      this.totalOrder = totalSum + additional_cost;
+  
+      this.totalGrandOrder = this.totalOrder + (this.totalOrder * (taxPercent / 100));
     });
+
+
     this.purchaseForm.get('pic')?.valueChanges.subscribe((value) => {
       this.filteredListOfPic = this.listOfPic.filter(pic => value.includes(pic.pic_id));
 
