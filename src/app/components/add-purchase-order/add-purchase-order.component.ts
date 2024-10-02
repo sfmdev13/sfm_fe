@@ -3,7 +3,7 @@ import { Component, Input, OnInit } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { NzDrawerRef } from 'ng-zorro-antd/drawer';
 import { NzModalService } from 'ng-zorro-antd/modal';
-import { Observable, tap } from 'rxjs';
+import { combineLatest, Observable, startWith, tap } from 'rxjs';
 import { ApiService } from 'src/app/api.service';
 import { IDataPurchaseOrder, IRootInventory } from 'src/app/interfaces';
 import { SpinnerService } from 'src/app/spinner.service';
@@ -57,7 +57,16 @@ export class AddPurchaseOrderComponent implements OnInit {
 
   ngOnInit(): void {
 
-    
+    combineLatest([
+      this.order.valueChanges.pipe(startWith(this.order.value)),
+      this.purchaseForm.get('additional_cost')?.valueChanges.pipe(startWith(this.purchaseForm.get('additional_cost')?.value)) || []
+    ]).subscribe(() => {
+      // Recalculate the total order cost
+      const totalSum = this.calculateTotalCost();
+      const additional_cost = this.purchaseForm.get('additional_cost')?.value;
+  
+      this.totalOrder = totalSum + parseInt(additional_cost || 0, 10);
+    });
     this.purchaseForm.get('pic')?.valueChanges.subscribe((value) => {
       this.filteredListOfPic = this.listOfPic.filter(pic => value.includes(pic.pic_id));
 
@@ -72,19 +81,6 @@ export class AddPurchaseOrderComponent implements OnInit {
       this.purchaseForm.patchValue({date: formattedDate})
     })
 
-    this.purchaseForm.get('additional_cost')?.valueChanges.subscribe((res) => {
-      if(res){
-        this.totalOrder += res
-      }
-    })
-
-    this.order.valueChanges.subscribe(() => {
-      const totalSum = this.calculateTotalCost();
-      const additional_cost = this.purchaseForm.get('additional_cost')?.value;
-
-      this.totalOrder = totalSum + additional_cost
-    });
-
     this.purchaseForm.get('supplier_id')?.valueChanges.subscribe((res) => {      
       this.apiSvc.getInventoryBySupplier(res).subscribe(val => {
         this.inventoryList = val;
@@ -97,7 +93,7 @@ export class AddPurchaseOrderComponent implements OnInit {
       })
     )
 
-    this.supplier$ = this.apiSvc.supplierList(); // need supplier short without page
+    this.supplier$ = this.apiSvc.supplierList();
 
     this.addOrder();
 
