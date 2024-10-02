@@ -48,6 +48,11 @@ export interface IRootInventory {
   }
   
   export interface Supplier {
+    supplier_source: {
+      id: string
+      name: string
+      description: string
+    }
     id: string
     supplier_pid: string
     name: string

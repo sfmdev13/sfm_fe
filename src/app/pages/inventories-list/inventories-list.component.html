@@ -39,6 +39,7 @@
             <th>Product Description</th>
             <th>Product Category</th>
             <th>Supplier</th>
+            <th>Supplier Source</th>
             <th>Selling Price</th>
             <th>Qty</th>
             <th>Status</th>
@@ -51,6 +52,7 @@
               <td>{{ data.description }}</td>
               <td>{{ data.supplier_product.name }}</td>
               <td>{{ data.supplier.name }}</td>
+              <td>{{ data.supplier.supplier_source.name }}</td>
               <td>{{ data.selling_price | currency:'Rp. ':'symbol':'1.0-0' }}</td>
               <td>{{ data.qty }}</td>
               <td>
@@ -75,6 +77,8 @@
             <th>Product Code</th>
             <th>Product Description</th>
             <th>Product Category</th>
+            <th>Supplier</th>
+            <th>Supplier Source</th>
             <th>Selling Price</th>
             <th>Qty</th>
             <th>Status</th>
