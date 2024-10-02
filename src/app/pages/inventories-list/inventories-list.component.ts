@@ -371,6 +371,8 @@ export class InventoriesListComponent implements OnInit {
         nzCentered: true
       })
     }
+
+    this.inventoryForm.reset();
   }
 
   handleSubmitAdd(): void{
@@ -434,6 +436,8 @@ export class InventoriesListComponent implements OnInit {
         nzCentered: true
       })      
     }
+
+    this.inventoryForm.reset();
   }
 
   handleSubmitDelete(): void{

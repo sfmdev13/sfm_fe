@@ -35,9 +35,10 @@
     >
         <thead>
           <tr>
-            <th>Name</th>
-            <th>Code</th>
+            <th>Product Code</th>
+            <th>Product Description</th>
             <th>Product Category</th>
+            <th>Supplier</th>
             <th>Selling Price</th>
             <th>Qty</th>
             <th>Status</th>
@@ -46,9 +47,10 @@
         </thead>
         <tbody>
             <tr *ngFor="let data of basicTable.data">
-              <td>{{ data.name }}</td>
               <td>{{ data.code }}</td>
+              <td>{{ data.description }}</td>
               <td>{{ data.supplier_product.name }}</td>
+              <td>{{ data.supplier.name }}</td>
               <td>{{ data.selling_price | currency:'Rp. ':'symbol':'1.0-0' }}</td>
               <td>{{ data.qty }}</td>
               <td>
@@ -70,8 +72,8 @@
     <nz-table #basicTable nzBordered [nzLoading]="true">
         <thead>
           <tr>
-            <th>Name</th>
-            <th>Code</th>
+            <th>Product Code</th>
+            <th>Product Description</th>
             <th>Product Category</th>
             <th>Selling Price</th>
             <th>Qty</th>
