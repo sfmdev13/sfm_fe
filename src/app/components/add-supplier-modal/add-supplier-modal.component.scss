@@ -1,4 +1,23 @@
+.container {
+    display: flex;
+    flex-wrap: nowrap;
+    padding: 8px;
+}
+
+.add-item {
+    padding: 8px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
 ::ng-deep {
+    
+    .ant-modal-footer{
+        border-top: 2px solid #f0f0f0 !important;
+    }
+
+
     .ant-modal-body{
         max-height: 80vh;
         overflow-y: auto;

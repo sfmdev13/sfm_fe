@@ -103,18 +103,18 @@ export class PurchaseOrderComponent implements OnInit {
       this.getPurchaseOrder();
     })
 
-    // this.searchSubject.pipe(
-    //   debounceTime(300),
-    //   distinctUntilChanged()
-    // ).subscribe(search => {
-    //   this.inventory$ = this.apiSvc.searchInventory(search, this.currentPage, this.pageSize).pipe(
-    //     tap(res => {
-    //       this.totalInventories = res.data.length;
-    //       this.currentPage = res.pagination.current_page;
-    //       this.totalAll = res.pagination.total;
-    //     })
-    //   );
-    // });
+    this.searchSubject.pipe(
+      debounceTime(300),
+      distinctUntilChanged()
+    ).subscribe(search => {
+      this.purchaseOrder$ = this.apiSvc.searchPurchaseOrder(search, this.currentPage, this.pageSize).pipe(
+        tap(res => {
+          this.total = res.data.length;
+          this.currentPage = res.pagination.current_page;
+          this.totalAll = res.pagination.total;
+        })
+      );
+    });
   }
 
   refreshTable(): void{

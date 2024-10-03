@@ -16,6 +16,7 @@ import { NzRadioModule } from 'ng-zorro-antd/radio';
 import { NzUploadModule } from 'ng-zorro-antd/upload';
 import { NzSpinModule } from 'ng-zorro-antd/spin';
 import { NzMessageModule } from 'ng-zorro-antd/message';
+import { CategoriesSettingTableModule } from '../categories-setting/categories-setting.module';
 
 @NgModule({
   declarations: [AddCustomerModalComponent],
@@ -37,7 +38,8 @@ import { NzMessageModule } from 'ng-zorro-antd/message';
     NzRadioModule,
     NzUploadModule,
     NzSpinModule,
-    NzMessageModule
+    NzMessageModule,
+    CategoriesSettingTableModule
   ],
   exports: [AddCustomerModalComponent]
 })

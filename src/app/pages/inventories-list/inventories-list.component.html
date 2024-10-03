@@ -339,13 +339,22 @@
                     <nz-form-item class="mb-4">
                         <nz-form-label nzRequired nzFor="unit_id" class="fw-semibold">Unit of Measurement</nz-form-label>
                         <ng-container *ngIf="unit$ | async as unit; else unitLoad">
-                            <nz-select nzShowSearch nzPlaceHolder="Select Unit" formControlName="unit_id">
+                            <nz-select nzShowSearch nzPlaceHolder="Select Unit" formControlName="unit_id" [nzDropdownRender]="unitRender">
                                 <nz-option
                                     *ngFor="let u of unit.data"
                                     [nzValue]="u.id"
                                     [nzLabel]="u.name"
                                 >
                                 </nz-option>
+                                <ng-template #unitRender>
+                                    <nz-divider class="m-0"></nz-divider>
+                                    <div class="container">
+                                      <a class="add-item" (click)="showModalCategoryAdd('uom')">
+                                        <span nz-icon nzType="plus"></span>
+                                        Add Category
+                                      </a>
+                                    </div>
+                                </ng-template>
                             </nz-select>
                         </ng-container>
                         <ng-template #unitLoad>
@@ -570,13 +579,22 @@
                         <nz-form-item class="mb-4">
                             <nz-form-label nzRequired nzFor="unit_id" class="fw-semibold">Unit of Measurement</nz-form-label>
                             <ng-container *ngIf="unit$ | async as unit; else unitLoad">
-                                <nz-select nzShowSearch nzPlaceHolder="Select Unit" formControlName="unit_id">
+                                <nz-select nzShowSearch nzPlaceHolder="Select Unit" formControlName="unit_id" [nzDropdownRender]="unitRender">
                                     <nz-option
                                         *ngFor="let u of unit.data"
                                         [nzValue]="u.id"
                                         [nzLabel]="u.name"
                                     >
                                     </nz-option>
+                                    <ng-template #unitRender>
+                                        <nz-divider class="m-0"></nz-divider>
+                                        <div class="container">
+                                          <a class="add-item" (click)="showModalCategoryAdd('uom')">
+                                            <span nz-icon nzType="plus"></span>
+                                            Add Category
+                                          </a>
+                                        </div>
+                                    </ng-template>
                                 </nz-select>
                             </ng-container>
                             <ng-template #unitLoad>
@@ -668,7 +686,7 @@
                             <nz-form-label nzRequired nzFor="supplier_product_id" class="fw-semibold">Product Category</nz-form-label>
                             <nz-form-control>
                               <ng-container *ngIf="productCat$ | async as prod; else prodLoad">
-                                <nz-select nzShowSearch nzPlaceHolder="Select Category Firm" formControlName="supplier_product_id">
+                                <nz-select nzShowSearch nzPlaceHolder="Select Product Category" formControlName="supplier_product_id">
                                   <ng-container *ngFor="let prod of prod.data">
                                     <nz-option [nzLabel]="prod.name" [nzValue]="prod.id"></nz-option>
                                   </ng-container>
@@ -686,7 +704,7 @@
                           <nz-form-label nzRequired nzFor="supplier_id" class="fw-semibold">Supplier</nz-form-label>
                           <nz-form-control>
                             <ng-container *ngIf="supplier$ | async as supplier; else suppLoad">
-                              <nz-select nzShowSearch nzPlaceHolder="Select Category Firm" formControlName="supplier_id">
+                              <nz-select nzShowSearch nzPlaceHolder="Select Supplier" formControlName="supplier_id">
                                 <ng-container *ngFor="let supp of supplier.data">
                                   <nz-option [nzLabel]="supp.name" [nzValue]="supp.id"></nz-option>
                                 </ng-container>

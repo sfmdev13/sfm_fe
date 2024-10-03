@@ -44,10 +44,19 @@
                   <nz-form-label nzRequired nzFor="supplier_product_id" class="fw-semibold">Supplier Product</nz-form-label>
                   <nz-form-control>
                     <ng-container *ngIf="suppProduct$ | async as suppProduct; else prodLoad">
-                      <nz-select nzShowSearch nzMode="tags" nzPlaceHolder="Select Supplier Product" formControlName="supplier_product_id">
+                      <nz-select nzShowSearch nzMode="tags" nzPlaceHolder="Select Supplier Product" formControlName="supplier_product_id" [nzDropdownRender]="prodRender">
                         <ng-container *ngFor="let supp of suppProduct.data">
                           <nz-option [nzLabel]="supp.name" [nzValue]="supp.id"></nz-option>
                         </ng-container>
+                        <ng-template #prodRender>
+                          <nz-divider class="m-0"></nz-divider>
+                          <div class="container">
+                            <a class="add-item" (click)="showModalCategoryAdd('Supplier Product')">
+                              <span nz-icon nzType="plus"></span>
+                              Add Category
+                            </a>
+                          </div>
+                        </ng-template>
                       </nz-select>
                     </ng-container>
                     <ng-template #prodLoad>
@@ -62,10 +71,20 @@
                   <nz-form-label nzRequired nzFor="supplier_source_id" class="fw-semibold">Supplier Source</nz-form-label>
                   <nz-form-control>
                     <ng-container *ngIf="suppSource$ | async as suppSource; else sourceLoad">
-                      <nz-select nzShowSearch nzPlaceHolder="Select Supplier Source" formControlName="supplier_source_id">
+                      <nz-select nzShowSearch nzPlaceHolder="Select Supplier Source" formControlName="supplier_source_id" [nzDropdownRender]="suppRender">
                         <ng-container *ngFor="let cust of suppSource.data">
                           <nz-option [nzLabel]="cust.name" [nzValue]="cust.id"></nz-option>
                         </ng-container>
+
+                        <ng-template #suppRender>
+                          <nz-divider class="m-0"></nz-divider>
+                          <div class="container">
+                            <a class="add-item" (click)="showModalCategoryAdd('Supplier Source')">
+                              <span nz-icon nzType="plus"></span>
+                              Add Category
+                            </a>
+                          </div>
+                        </ng-template>
                       </nz-select>
                     </ng-container>
                     <ng-template #sourceLoad>
