@@ -5,6 +5,10 @@
         overflow-y: auto;
     }
 
+    .ant-modal-footer{
+        border-top: 2px solid #f0f0f0 !important;
+    }
+
     .ant-switch-checked{
         .ant-switch-inner{
             margin: -3px 27px 0px 12px;

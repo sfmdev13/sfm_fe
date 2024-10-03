@@ -22,6 +22,10 @@
 
 ::ng-deep {
 
+    .ant-modal-footer{
+        border-top: 2px solid #f0f0f0 !important;
+    }
+
     .ant-modal-body{
         max-height: 80vh;
         overflow-y: auto;
