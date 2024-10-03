@@ -1,9 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, Validators, FormBuilder } from '@angular/forms';
-import { NzModalService } from 'ng-zorro-antd/modal';
+import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
 import { debounceTime, distinctUntilChanged, Observable, Subject, tap } from 'rxjs';
 import { ApiService } from 'src/app/api.service';
 import { AuthService } from 'src/app/auth.service';
+import { EditCategoriesModalComponent } from 'src/app/components/categories-setting/edit-categories-modal/edit-categories-modal.component';
 import { ICategories, IDataCategories, IDataInventory, IRootInventory, IRootUnit } from 'src/app/interfaces';
 import { SpinnerService } from 'src/app/spinner.service';
 
@@ -61,7 +62,17 @@ export class InventoriesListComponent implements OnInit {
   filterForm: FormGroup;
 
   filtered: boolean = false;
-  
+
+  nestedModalRef?: NzModalRef;
+
+  categoryForm = this.fb.group({
+    id: [''],
+    name: ['', Validators.required],
+    measurement: ['', Validators.required],
+    unit: [''],
+    description: ['', Validators.required]
+  })
+
   constructor(
     private apiSvc: ApiService,
     private fb: FormBuilder,
@@ -96,6 +107,24 @@ export class InventoriesListComponent implements OnInit {
    }
 
   ngOnInit(): void {
+
+    this.apiSvc.refreshGetCategories$.subscribe(() => {
+      this.unit$ = this.apiSvc.getUnitMeasurement().pipe(
+        tap((res) => {
+          this.unitList = res;
+      
+          this.inventoryForm.get('unit_id')?.valueChanges.subscribe((value) => {
+            if (this.unitList?.data && value) {
+              const selectedUnit = this.unitList.data.filter((u) => u.id === value);
+              if (selectedUnit.length > 0) {
+                this.getFormattedLabel(selectedUnit[0].measurement, selectedUnit[0].unit);
+              }
+            }
+          });
+        })
+      );
+  
+    })
 
     this.inventoryForm.get('supplier_product_id')?.valueChanges.subscribe((value) => {
       this.supplier$ = this.apiSvc.getSupplierByProduct(value);
@@ -167,6 +196,81 @@ export class InventoriesListComponent implements OnInit {
     //trigger update selling price
     this.inventoryForm.get('price_factor')?.valueChanges.subscribe(() => this.updateSellingPrice());
     this.inventoryForm.get('product_cost')?.valueChanges.subscribe(() => this.updateSellingPrice());
+  }
+
+  showModalCategoryAdd(titleCat: string): void {
+
+    this.nestedModalRef = this.modalSvc.create({
+      nzTitle: ' Add Unit of Measurment',
+      nzContent: EditCategoriesModalComponent,
+      nzComponentParams: {
+        form: this.categoryForm,
+        type: titleCat
+      },
+      nzWidth: '500px',
+      nzFooter: [
+        {
+          label: 'Cancel',
+          onClick: () => this.handleCancelCategoryAdd(),
+          type: 'default'
+        },
+        {
+          label: 'Confirm',
+          onClick: () => this.handleCategorySubmitAdd(),
+          type: 'primary'
+        }
+      ]
+    });
+  }
+
+  handleCategorySubmitAdd(): void{
+
+    this.spinnerSvc.show();
+
+    if(this.categoryForm.valid){
+
+      this.apiSvc.createUnitMeasurement(this.categoryForm.value).subscribe({
+        next: () => {
+
+          this.spinnerSvc.hide();
+          this.modalSvc.success({
+            nzTitle: 'Success',
+            nzContent: 'Successfully Add Unit',
+            nzOkText: 'Ok',
+            nzCentered: true
+          })
+          this.apiSvc.triggerRefreshCategories()
+          this.nestedModalRef?.close();
+        },
+        error: (error) => {
+          this.spinnerSvc.hide();
+          this.modalSvc.error({
+            nzTitle: 'Unable to Add Unit',
+            nzContent: error.error.meta.message,
+            nzOkText: 'Ok',
+            nzCentered: true
+          })
+        },
+        complete: () => {
+          this.categoryForm.reset();
+        }
+      })
+    
+    } else {
+      this.spinnerSvc.hide();
+      this.modalSvc.error({
+        nzTitle: 'Unable to Add',
+        nzContent: 'Need to fill all input',
+        nzOkText: 'Ok',
+        nzCentered: true
+      })      
+    }
+  }
+
+  
+  handleCancelCategoryAdd(): void{
+    this.nestedModalRef?.close();
+    this.categoryForm.reset();
   }
 
   updateSellingPrice(): void{

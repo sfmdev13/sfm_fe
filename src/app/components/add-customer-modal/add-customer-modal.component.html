@@ -47,10 +47,19 @@
                     <nz-form-label nzRequired nzFor="customer_firm_id" class="fw-semibold">Category Firm</nz-form-label>
                     <nz-form-control>
                       <ng-container *ngIf="customerFirm$ | async as customerFirm; else firmLoad">
-                        <nz-select nzShowSearch nzPlaceHolder="Select Category Firm" formControlName="customer_firm_id">
+                        <nz-select nzShowSearch nzPlaceHolder="Select Category Firm" formControlName="customer_firm_id" [nzDropdownRender]="firmRender">
                           <ng-container *ngFor="let cust of customerFirm.data">
                             <nz-option [nzLabel]="cust.name" [nzValue]="cust.id"></nz-option>
                           </ng-container>
+                          <ng-template #firmRender>
+                            <nz-divider class="m-0"></nz-divider>
+                            <div class="container">
+                              <a class="add-item" (click)="showModalCategoryAdd('Firm')">
+                                <span nz-icon nzType="plus"></span>
+                                Add Category
+                              </a>
+                            </div>
+                          </ng-template>
                         </nz-select>
                       </ng-container>
                       <ng-template #firmLoad>
@@ -65,10 +74,19 @@
                     <nz-form-label nzRequired nzFor="loyal_customer_program_id" class="fw-semibold">Loyal Customer Program</nz-form-label>
                     <nz-form-control>
                       <ng-container *ngIf="loyalCustCat$ | async as loyalCustCat; else loyalLoad">
-                        <nz-select nzShowSearch nzPlaceHolder="Select Category" formControlName="loyal_customer_program_id">
+                        <nz-select nzShowSearch nzPlaceHolder="Select Category" formControlName="loyal_customer_program_id" [nzDropdownRender]="loyalRender">
                           <ng-container *ngFor="let cust of loyalCustCat.data">
                             <nz-option [nzLabel]="cust.name" [nzValue]="cust.id"></nz-option>
                           </ng-container>
+                          <ng-template #loyalRender>
+                            <nz-divider class="m-0"></nz-divider>
+                            <div class="container">
+                              <a class="add-item" (click)="showModalCategoryAdd('Loyal')">
+                                <span nz-icon nzType="plus"></span>
+                                Add Category
+                              </a>
+                            </div>
+                          </ng-template>
                         </nz-select>
                       </ng-container>
                       <ng-template #loyalLoad>
@@ -83,10 +101,19 @@
                     <nz-form-label nzRequired nzFor="customer_sector_id" class="fw-semibold">Customer Sector</nz-form-label>
                     <nz-form-control>
                       <ng-container *ngIf="customerSector$ | async as customerSector; else firmLoad">
-                        <nz-select nzShowSearch nzPlaceHolder="Select Category Sector" formControlName="customer_sector_id">
+                        <nz-select nzShowSearch nzPlaceHolder="Select Category Sector" formControlName="customer_sector_id"  [nzDropdownRender]="sectorRender">
                           <ng-container *ngFor="let cust of customerSector.data">
                             <nz-option [nzLabel]="cust.name" [nzValue]="cust.id"></nz-option>
                           </ng-container>
+                          <ng-template #sectorRender>
+                            <nz-divider class="m-0"></nz-divider>
+                            <div class="container">
+                              <a class="add-item" (click)="showModalCategoryAdd('Sector')">
+                                <span nz-icon nzType="plus"></span>
+                                Add Category
+                              </a>
+                            </div>
+                          </ng-template>
                         </nz-select>
                       </ng-container>
                       <ng-template #firmLoad>
@@ -293,10 +320,19 @@
                             <nz-form-item>
                               <nz-form-label nzRequired>Contact Type</nz-form-label>
                               <nz-form-control>
-                                <nz-select nzShowSearch nzPlaceHolder="Select Category" formControlName="cp_category_id">
+                                <nz-select nzShowSearch nzPlaceHolder="Select Category" formControlName="cp_category_id" [nzDropdownRender]="typeRender">
                                   <ng-container *ngFor="let cat of catContact.data">
                                     <nz-option [nzLabel]="cat.name" [nzValue]="cat.id"></nz-option>
                                   </ng-container>
+                                  <ng-template #typeRender>
+                                    <nz-divider class="m-0"></nz-divider>
+                                    <div class="container">
+                                      <a class="add-item" (click)="showModalCategoryAdd('Contact Type')">
+                                        <span nz-icon nzType="plus"></span>
+                                        Add Category
+                                      </a>
+                                    </div>
+                                  </ng-template>
                                 </nz-select>
                               </nz-form-control>
                             </nz-form-item>
@@ -317,10 +353,19 @@
                               <nz-form-label nzRequired nzFor="cp_loyal_customer_program_id">Loyal Customer Program</nz-form-label>
                               <nz-form-control>
                                 <ng-container *ngIf="loyalCustCat$ | async as loyalCustCat; else loyalLoad">
-                                  <nz-select nzShowSearch nzPlaceHolder="Select Category" formControlName="cp_loyal_customer_program_id">
+                                  <nz-select nzShowSearch nzPlaceHolder="Select Category" formControlName="cp_loyal_customer_program_id" [nzDropdownRender]="loyalCustRender">
                                     <ng-container *ngFor="let cust of loyalCustCat.data">
                                       <nz-option [nzLabel]="cust.name" [nzValue]="cust.id"></nz-option>
                                     </ng-container>
+                                    <ng-template #loyalCustRender>
+                                      <nz-divider class="m-0"></nz-divider>
+                                      <div class="container">
+                                        <a class="add-item" (click)="showModalCategoryAdd('Loyal')">
+                                          <span nz-icon nzType="plus"></span>
+                                          Add Category
+                                        </a>
+                                      </div>
+                                    </ng-template>
                                   </nz-select>
                                 </ng-container>
                                 <ng-template #loyalLoad>
@@ -544,30 +589,39 @@
   </div>
 
   
-  <div *nzModalFooter>
-    <nz-form-item>
-      <button nz-button nzType="default" (click)="destroyModal()">Cancel</button>
-      <ng-container *ngIf="!isLoadingProvince && !isLoadingLoyal && !isLoadingCustSector && !isLoadingCustFirm && !isLoadingCatContact; else Loading">
-        <button 
-        nz-button 
-        nzType="primary" 
-        class="text-capitalize" 
-        (click)="submitForm()">
-          {{ modal_type }} Customer
-        </button>
-      </ng-container>
-      <ng-template #Loading>
-        <nz-spin class="ms-2">
+    <div *nzModalFooter >
+      <nz-form-item>
+        <button nz-button nzType="default" (click)="destroyModal()">Cancel</button>
+        <ng-container *ngIf="!isLoadingProvince && !isLoadingLoyal && !isLoadingCustSector && !isLoadingCustFirm && !isLoadingCatContact; else Loading">
           <button 
           nz-button 
           nzType="primary" 
-          class="text-capitalize">
+          class="text-capitalize" 
+          (click)="submitForm()">
             {{ modal_type }} Customer
           </button>
-        </nz-spin>
-      </ng-template>
-    </nz-form-item>
-  </div>
+        </ng-container>
+        <ng-template #Loading>
+          <nz-spin class="ms-2">
+            <button 
+            nz-button 
+            nzType="primary" 
+            class="text-capitalize">
+              {{ modal_type }} Customer
+            </button>
+          </nz-spin>
+        </ng-template>
+      </nz-form-item>
+    </div>
 </nz-spin>
 
 
+<!-- <nz-modal nzCentered [(nzVisible)]="isVisibleAdd" [nzTitle]="' Add Category ' + titleCat" (nzOnCancel)="handleCancelCategoryAdd()" nzFooter="null">
+  <ng-container *nzModalContent>
+      <app-edit-categories-modal [form]="categoryForm"></app-edit-categories-modal>
+  </ng-container>
+  <ng-container *nzModalFooter>
+    <button nz-button nzType="default" (click)="handleCancelCategoryAdd()">Cancel</button>
+    <button nz-button nzType="primary" class="text-capitalize" (click)="handleCategorySubmitAdd()" [disabled]="!this.categoryForm.valid">Submit Category</button>
+  </ng-container>
+</nz-modal> -->

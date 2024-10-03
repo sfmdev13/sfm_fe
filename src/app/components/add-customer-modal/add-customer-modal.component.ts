@@ -7,6 +7,7 @@ import { Observable, tap } from 'rxjs';
 import { ApiService } from 'src/app/api.service';
 import { IDataCustomer, IRootCatContact } from 'src/app/interfaces';
 import { SpinnerService } from 'src/app/spinner.service';
+import { EditCategoriesModalComponent } from '../categories-setting/edit-categories-modal/edit-categories-modal.component';
 
 const getBase64 = (file: File): Promise<string | ArrayBuffer | null> =>
   new Promise((resolve, reject) => {
@@ -94,6 +95,18 @@ export class AddCustomerModalComponent implements OnInit {
   isLoadingCustSector: boolean = true;
   isLoadingCustFirm: boolean = true;
 
+  isVisibleAdd = false;
+
+  categoryForm = this.fb.group({
+    id: [''],
+    name: ['', Validators.required],
+    description: ['', Validators.required]
+  })
+
+  titleCat: string = '';
+
+  nestedModalRef?: NzModalRef;
+
   constructor(
     private modal: NzModalRef,
     private fb: FormBuilder,
@@ -105,6 +118,39 @@ export class AddCustomerModalComponent implements OnInit {
 
   ngOnInit(): void { 
 
+    this.apiSvc.refreshGetCategories$.subscribe(() => {
+
+      this.customerFirm$ = this.apiSvc.getCustomerFirm().pipe(
+        tap(res => {
+          this.isLoadingCustFirm = false;
+        })
+      );
+
+      this.catContact$ = this.apiSvc.getCategoryCP().pipe(
+        tap(res => {
+          this.isLoadingCatContact = false;
+        })
+      );
+
+      this.loyalCustCat$ = this.apiSvc.getLoyalCustomer().pipe(
+        tap(res => {
+          this.isLoadingLoyal = false;
+        })
+      );
+
+      this.customerSector$ = this.apiSvc.getCustomerSector().pipe(
+        tap(res => {
+          this.isLoadingCustSector = false;
+        })
+      );
+
+      this.customerFirm$ = this.apiSvc.getCustomerFirm().pipe(
+        tap(res => {
+          this.isLoadingCustFirm = false;
+        })
+      )
+    })
+
     this.provinces$ = this.apiSvc.getProvinces().pipe(
       tap(p => {
         this.provinceList = p;
@@ -115,10 +161,10 @@ export class AddCustomerModalComponent implements OnInit {
     
     this.catContact$ = this.apiSvc.getCategoryCP().pipe(
       tap(res => {
-        console.log('klear')
         this.isLoadingCatContact = false;
       })
     );
+
     this.loyalCustCat$ = this.apiSvc.getLoyalCustomer().pipe(
       tap(res => {
         this.isLoadingLoyal = false;
@@ -327,6 +373,172 @@ export class AddCustomerModalComponent implements OnInit {
       });
     }
   }
+
+  showModalCategoryAdd(titleCat: string): void {
+    this.titleCat = titleCat;
+    this.isVisibleAdd = true;
+
+    this.nestedModalRef = this.modalSvc.create({
+      nzTitle: ' Add Category ' + titleCat,
+      nzContent: EditCategoriesModalComponent,
+      nzComponentParams: {
+        form: this.categoryForm
+      },
+      nzWidth: '500px',
+      nzFooter: [
+        {
+          label: 'Cancel',
+          onClick: () => this.handleCancelCategoryAdd(),
+          type: 'default'
+        },
+        {
+          label: 'Confirm',
+          onClick: () => this.handleCategorySubmitAdd(),
+          type: 'primary'
+        }
+      ]
+    });
+  }
+
+  handleCategorySubmitAdd(): void{
+
+    this.spinnerSvc.show();
+
+    if(this.categoryForm.valid){
+      if(this.titleCat.toLowerCase() === 'firm'){
+        this.apiSvc.createCustomerFirm(this.categoryForm.value.name, this.categoryForm.value.description).subscribe({
+          next: () => {
+            this.spinnerSvc.hide();
+            this.modalSvc.success({
+              nzTitle: 'Success',
+              nzContent: 'Successfully Add Category',
+              nzOkText: 'Ok',
+              nzCentered: true
+            })
+            this.apiSvc.triggerRefreshCategories()
+            this.isVisibleAdd = false;
+            this.nestedModalRef?.close();
+          },
+          error: (error) => {
+            this.spinnerSvc.hide();
+            this.modalSvc.error({
+              nzTitle: 'Unable to Add Category',
+              nzContent: error.error.meta.message,
+              nzOkText: 'Ok',
+              nzCentered: true
+            })
+          },
+          complete: () => {
+            this.categoryForm.reset();
+          }
+        })
+      }
+
+      if(this.titleCat.toLowerCase() === 'loyal'){
+        this.apiSvc.createLoyalCustomer(this.categoryForm.value.name, this.categoryForm.value.description).subscribe({
+          next: () => {
+            this.spinnerSvc.hide();
+            this.modalSvc.success({
+              nzTitle: 'Success',
+              nzContent: 'Successfully Add Category',
+              nzOkText: 'Ok',
+              nzCentered: true
+            })
+            this.apiSvc.triggerRefreshCategories()
+            this.isVisibleAdd = false;
+            this.nestedModalRef?.close();
+          },
+          error: (error) => {
+            this.spinnerSvc.hide();
+            this.modalSvc.error({
+              nzTitle: 'Unable to Add Category',
+              nzContent: error.error.meta.message,
+              nzOkText: 'Ok',
+              nzCentered: true
+            })
+          },
+          complete: () => {
+            this.categoryForm.reset();
+          }
+        })
+      }
+
+      if(this.titleCat.toLowerCase() === 'sector'){
+        this.apiSvc.createCustomerSector(this.categoryForm.value.name, this.categoryForm.value.description).subscribe({
+          next: () => {
+            this.spinnerSvc.hide();
+            this.modalSvc.success({
+              nzTitle: 'Success',
+              nzContent: 'Successfully Add Category',
+              nzOkText: 'Ok',
+              nzCentered: true
+            })
+            this.apiSvc.triggerRefreshCategories()
+            this.isVisibleAdd = false;
+            this.nestedModalRef?.close();
+          },
+          error: (error) => {
+            this.spinnerSvc.hide();
+            this.modalSvc.error({
+              nzTitle: 'Unable to Add Category',
+              nzContent: error.error.meta.message,
+              nzOkText: 'Ok',
+              nzCentered: true
+            })
+          },
+          complete: () => {
+            this.categoryForm.reset();
+          }
+        })
+      }
+
+      if(this.titleCat.toLowerCase() === 'contact type'){
+        this.apiSvc.createContactType(this.categoryForm.value.name, this.categoryForm.value.description).subscribe({
+          next: () => {
+            this.spinnerSvc.hide();
+            this.modalSvc.success({
+              nzTitle: 'Success',
+              nzContent: 'Successfully Add Category',
+              nzOkText: 'Ok',
+              nzCentered: true
+            })
+            this.apiSvc.triggerRefreshCategories()
+            this.isVisibleAdd = false;
+            this.nestedModalRef?.close();
+          },
+          error: (error) => {
+            this.spinnerSvc.hide();
+            this.modalSvc.error({
+              nzTitle: 'Unable to Add Category',
+              nzContent: error.error.meta.message,
+              nzOkText: 'Ok',
+              nzCentered: true
+            })
+          },
+          complete: () => {
+            this.categoryForm.reset();
+          }
+        })
+      }
+
+    } else {
+      this.spinnerSvc.hide();
+      this.modalSvc.error({
+        nzTitle: 'Unable to Add',
+        nzContent: 'Need to fill all input',
+        nzOkText: 'Ok',
+        nzCentered: true
+      })      
+    }
+  }
+
+
+  handleCancelCategoryAdd(): void{
+    this.isVisibleAdd = false;
+    this.nestedModalRef?.close();
+    this.categoryForm.reset();
+  }
+
 
   get contactPerson(): FormArray {
     return this.customerForm.get('contactPerson') as FormArray;

@@ -3,6 +3,19 @@
     color: #ff4d4f;;
 }
 
+.container {
+    display: flex;
+    flex-wrap: nowrap;
+    padding: 8px;
+}
+
+.add-item {
+    padding: 8px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
 ::ng-deep {
 
     .ant-modal-body{

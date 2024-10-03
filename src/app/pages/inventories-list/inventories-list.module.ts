@@ -18,6 +18,7 @@ import { NzSwitchModule } from 'ng-zorro-antd/switch';
 import { NzDividerModule } from 'ng-zorro-antd/divider';
 import { NzRadioModule } from 'ng-zorro-antd/radio';
 import { NzDropDownModule } from 'ng-zorro-antd/dropdown';
+import { CategoriesSettingTableModule } from 'src/app/components/categories-setting/categories-setting.module';
 
 @NgModule({
   declarations: [InventoriesListComponent],
@@ -39,7 +40,8 @@ import { NzDropDownModule } from 'ng-zorro-antd/dropdown';
     NzSwitchModule,
     NzDividerModule,
     NzRadioModule,
-    NzDropDownModule
+    NzDropDownModule,
+    CategoriesSettingTableModule
   ],
   exports: [
     InventoriesListComponent
