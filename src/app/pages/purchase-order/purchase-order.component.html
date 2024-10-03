@@ -1,7 +1,7 @@
 <div class="d-flex align-items-center justify-content-between mb-4">
     <h4 class="fw-bold">Purchase Order List</h4>
     <nz-input-group [nzSuffix]="suffixIconSearch" nzSize="large" style="width: 320px;">
-        <input [(ngModel)]="search" (ngModelChange)="searchHandler($event)" type="text" nz-input placeholder="Search Inventory" />
+        <input [(ngModel)]="search" (ngModelChange)="searchHandler($event)" type="text" nz-input placeholder="Search Purchase Order" />
     </nz-input-group>
     <ng-template #suffixIconSearch>
         <span nz-icon nzType="search"></span>

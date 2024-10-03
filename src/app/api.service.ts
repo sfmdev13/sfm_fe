@@ -2,7 +2,7 @@ import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, map, Observable, tap } from 'rxjs';
 import { environment } from 'src/environments/environment';
-import { ICategories, IRootAllRoles, IRootCatContact, IRootCustomer, IRootDivision, IRootEmployee, IRootInventory, IRootSupplier, IRootUnit, IRootUserByRole } from './interfaces';
+import { ICategories, IRootAllRoles, IRootCatContact, IRootCustomer, IRootDivision, IRootEmployee, IRootInventory, IRootPurchaseOrder, IRootSupplier, IRootUnit, IRootUserByRole } from './interfaces';
 
 @Injectable({
   providedIn: 'root'
@@ -988,5 +988,21 @@ export class ApiService {
 
     const url = `${this.apiUrl}/update/po-inventory`;
     return this.http.post<any>(url, body ,{ headers })
+  }
+
+  searchPurchaseOrder(search: string, page: number, per_page: number): Observable<IRootPurchaseOrder>{
+    const token = localStorage.getItem('authToken');
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+    });
+
+    let httpParams = new HttpParams()
+    .set('search', search)
+    .set('page', page.toString())
+    .set('per_page', per_page.toString());
+
+    const url = `${this.apiUrl}/search/po-inventory`
+
+    return this.http.post<IRootPurchaseOrder>(url, {}, { headers, params: httpParams });
   }
 }
