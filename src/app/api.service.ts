@@ -1034,4 +1034,15 @@ export class ApiService {
 
     return this.http.post<IRootPurchaseOrder>(url, {}, { headers, params: httpParams });
   }
+
+  changePOStatus(body: any): Observable<any>{
+    const token = localStorage.getItem('authToken');
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+    });
+
+    const url = `${this.apiUrl}/change-postatus`
+
+    return this.http.post<any>(url, body, { headers })
+  }
 }

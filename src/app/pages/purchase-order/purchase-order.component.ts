@@ -75,7 +75,7 @@ export class PurchaseOrderComponent implements OnInit {
 
   ngOnInit(): void {
 
-    this.productCat$ = this.apiSvc.getSupplierProduct();
+    this.productCat$ = this.apiSvc.getSupplierProduct().pipe();
 
 
     this.unit$ = this.apiSvc.getUnitMeasurement().pipe(
@@ -109,6 +109,54 @@ export class PurchaseOrderComponent implements OnInit {
         })
       );
     });
+  }
+
+  changeStatus(status: string, id: any): void{
+    this.spinnerSvc.show();
+
+    let body = { status, id }
+
+    this.apiSvc.changePOStatus(body).subscribe({
+      next: () => {
+        this.modalSvc.closeAll();
+        this.spinnerSvc.hide();
+        this.apiSvc.triggerRefreshPurchaseOrder();
+      },
+      error: () => {
+        this.spinnerSvc.hide()
+        this.modalSvc.closeAll()
+      }
+    })
+  }
+
+  handleChangeStatus(status: string, id: any): void{
+    this.modalSvc.warning({
+      nzTitle: 'Action Cannot Be Undone',
+      nzContent: 'You are about to permanently change purchase order status. This action cannot be undone. Do you want to proceed?',
+      nzCentered: true,
+      nzOkText: 'Confirm',
+      nzOkType: 'primary',
+      nzOnOk: () => this.changeStatus(status, id),
+      nzCancelText: 'Cancel',
+      nzOnCancel: () => this.modalSvc.closeAll()
+    });
+  }
+
+  getColorStatus(status: string): string{
+
+    if(status.toLowerCase() === 'open') return 'blue';
+
+    if(status.toLowerCase() === 'hold') return 'orange';
+
+    if(status.toLowerCase() === 'revised') return 'geekblue';
+
+    if(status.toLowerCase() === 'approved') return 'lime';
+
+    if(status.toLowerCase() === 'rejected') return 'magenta';
+
+    if(status.toLowerCase() === 'finished') return 'green'
+
+    return 'blue';
   }
 
   refreshTable(): void{
@@ -164,12 +212,13 @@ export class PurchaseOrderComponent implements OnInit {
   pageIndexChange(page: number){
     this.currentPage = page;
 
-    // if(this.filtered){
-    //   this.getFilteredInventory();
-    // } else {
-    // }
+    if(this.filtered){
+      this.getFilteredPO();
+    } else {
+      this.getPurchaseOrder();
+    }
     
-    this.getPurchaseOrder();
+
   }
 
   formatter = (value: number | null): string => {

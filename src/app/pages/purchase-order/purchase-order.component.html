@@ -40,6 +40,7 @@
             <th>Supplier Name</th>
             <th>Description</th>
             <th>Total Grand Order</th>
+            <th>Status</th>
             <th>Action</th>
           </tr>
         </thead>
@@ -50,6 +51,9 @@
               <td>{{ data.supplier.name }}</td>
               <td>{{ data.description }}</td>
               <td>{{ data.total_price | currency:'Rp ':'symbol':'1.2-2' }} </td>
+              <td>
+                <nz-tag [nzColor]="getColorStatus(data.status)" class="text-capitalize">{{ data.status }}</nz-tag>
+              </td>
               <td>
                   <div class="d-flex gap-3">
                     <a nz-dropdown nzTrigger="click" [nzDropdownMenu]="menu" style="text-decoration: none;" >
@@ -78,25 +82,50 @@
                           <p class="m-0 p-0" style="color: #f50;">Delete</p>                
                         </li>
                         <li nz-menu-divider></li>
-                          <li nz-menu-item class="gap-2 list-dropdown">
+                          <li 
+                            *ngIf="data.status.toLowerCase() === 'open' || data.status.toLowerCase() === 'revised'"  
+                            nz-menu-item 
+                            class="gap-2 list-dropdown"
+                            (click)="handleChangeStatus('Hold', data.id)"
+                          >
                             <span nz-icon nzType="close-circle" nzTheme="twotone"></span>
-                            <p class="m-0 p-0">Cancel</p>
+                            <p class="m-0 p-0">Hold</p>
                           </li>
-                          <li nz-menu-item class="gap-2 list-dropdown">
+                          <li 
+                            *ngIf="data.status.toLowerCase() === 'hold'" 
+                            nz-menu-item 
+                            class="gap-2 list-dropdown"
+                            (click)="handleChangeStatus('Revised', data.id)"
+                          >
                             <span nz-icon nzType="highlight" nzTheme="twotone"></span>
                             <p class="m-0 p-0">Revise</p>
                           </li>
-                          <li nz-menu-item class="gap-2 list-dropdown">
+                          <li 
+                            *ngIf="data.status.toLowerCase() === 'hold' || data.status.toLowerCase() === 'open' || data.status.toLowerCase() === 'revised'" 
+                            nz-menu-item 
+                            class="gap-2 list-dropdown"
+                            (click)="handleChangeStatus('Rejected', data.id)"
+                          >
                             <span nz-icon nzType="stop" nzTheme="twotone"></span>
                             <p class="m-0 p-0">Reject</p>
                           </li>
-                          <li nz-menu-item class="gap-2 list-dropdown">
+                          <li 
+                            *ngIf="data.status.toLowerCase() === 'open' || data.status.toLowerCase() === 'revised'"  
+                            nz-menu-item 
+                            class="gap-2 list-dropdown"
+                            (click)="handleChangeStatus('Approved', data.id)"
+                          >
                             <span nz-icon nzType="like" nzTheme="twotone"></span>
-                            <p class="m-0 p-0">Approved</p>                
+                            <p class="m-0 p-0">Approve</p>                
                           </li>
-                          <li nz-menu-item class="gap-2 list-dropdown">
+                          <li 
+                            *ngIf="data.status.toLowerCase() === 'approved'" 
+                            nz-menu-item 
+                            class="gap-2 list-dropdown"
+                            (click)="handleChangeStatus('Finished', data.id)"
+                          >
                             <span nz-icon nzType="check-circle" nzTheme="twotone"></span>
-                            <p class="m-0 p-0">Finished</p>                
+                            <p class="m-0 p-0">Finish</p>                
                           </li>
                       </ul>
                     </nz-dropdown-menu>

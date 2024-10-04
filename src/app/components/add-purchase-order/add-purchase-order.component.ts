@@ -44,6 +44,8 @@ export class AddPurchaseOrderComponent implements OnInit {
   totalOrder: number = 0;
   totalGrandOrder: number = 0;
 
+  formDisable: boolean = false;
+
   constructor(
     private fb: FormBuilder,
     private apiSvc: ApiService,
@@ -152,6 +154,13 @@ export class AddPurchaseOrderComponent implements OnInit {
         this.cpValueChangeSubscriptions(updateOrder)
       })
       
+    }
+
+    if(this.modal_type === 'edit'){
+      if(['hold', 'rejected', 'approved', 'finished'].includes(this.dataDetail.status.toLowerCase())){
+        this.formDisable = true;
+        this.purchaseForm.disable();
+      }
     }
 
     
