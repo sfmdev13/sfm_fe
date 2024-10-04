@@ -73,6 +73,8 @@ export class InventoriesListComponent implements OnInit {
     description: ['', Validators.required]
   })
 
+  source$!: Observable<any>;
+
   constructor(
     private apiSvc: ApiService,
     private fb: FormBuilder,
@@ -102,11 +104,19 @@ export class InventoriesListComponent implements OnInit {
     this.filterForm = this.fb.group({
       status: [''],
       supplier_product: [''],
+      supplier: [''],
+      supplier_source: [''],
       sort_by: ['']
     })
    }
 
   ngOnInit(): void {
+
+    this.source$ = this.apiSvc.getSupplierSource();
+
+    this.filterForm.get('supplier_source')?.valueChanges.subscribe((value) => {
+      this.supplier$ = this.apiSvc.getSupplierBySource(value);
+    })
 
     this.apiSvc.refreshGetCategories$.subscribe(() => {
       this.unit$ = this.apiSvc.getUnitMeasurement().pipe(

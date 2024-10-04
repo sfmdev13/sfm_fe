@@ -6,6 +6,7 @@ import { Observable, Subject, tap, debounceTime, distinctUntilChanged } from 'rx
 import { ApiService } from 'src/app/api.service';
 import { AuthService } from 'src/app/auth.service';
 import { AddPurchaseOrderComponent } from 'src/app/components/add-purchase-order/add-purchase-order.component';
+import { FilterPurchaseOrderComponent } from 'src/app/components/filter-purchase-order/filter-purchase-order.component';
 import { IRootUnit, ICategories, IDataInventory, IRootPurchaseOrder, IDataPurchaseOrder } from 'src/app/interfaces';
 import { SpinnerService } from 'src/app/spinner.service';
 
@@ -59,9 +60,9 @@ export class PurchaseOrderComponent implements OnInit {
 
   dataDetail: IDataInventory = {} as IDataInventory;
 
-  filterForm: FormGroup;
-
   filtered: boolean = false;
+
+  filterParams: any;
 
   constructor(
     private apiSvc: ApiService,
@@ -70,18 +71,11 @@ export class PurchaseOrderComponent implements OnInit {
     private modalSvc: NzModalService,
     public authSvc: AuthService,
     private drawerService: NzDrawerService
-  ) { 
-
-    this.filterForm = this.fb.group({
-      status: [''],
-      supplier_product: [''],
-      sort_by: ['']
-    })
-   }
+  ) { }
 
   ngOnInit(): void {
 
-    this.productCat$ = this.apiSvc.getSupplierProduct();
+    this.productCat$ = this.apiSvc.getSupplierProduct().pipe();
 
 
     this.unit$ = this.apiSvc.getUnitMeasurement().pipe(
@@ -117,6 +111,54 @@ export class PurchaseOrderComponent implements OnInit {
     });
   }
 
+  changeStatus(status: string, id: any): void{
+    this.spinnerSvc.show();
+
+    let body = { status, id }
+
+    this.apiSvc.changePOStatus(body).subscribe({
+      next: () => {
+        this.modalSvc.closeAll();
+        this.spinnerSvc.hide();
+        this.apiSvc.triggerRefreshPurchaseOrder();
+      },
+      error: () => {
+        this.spinnerSvc.hide()
+        this.modalSvc.closeAll()
+      }
+    })
+  }
+
+  handleChangeStatus(status: string, id: any): void{
+    this.modalSvc.warning({
+      nzTitle: 'Action Cannot Be Undone',
+      nzContent: 'You are about to permanently change purchase order status. This action cannot be undone. Do you want to proceed?',
+      nzCentered: true,
+      nzOkText: 'Confirm',
+      nzOkType: 'primary',
+      nzOnOk: () => this.changeStatus(status, id),
+      nzCancelText: 'Cancel',
+      nzOnCancel: () => this.modalSvc.closeAll()
+    });
+  }
+
+  getColorStatus(status: string): string{
+
+    if(status.toLowerCase() === 'open') return 'blue';
+
+    if(status.toLowerCase() === 'hold') return 'orange';
+
+    if(status.toLowerCase() === 'revised') return 'geekblue';
+
+    if(status.toLowerCase() === 'approved') return 'lime';
+
+    if(status.toLowerCase() === 'rejected') return 'magenta';
+
+    if(status.toLowerCase() === 'finished') return 'green'
+
+    return 'blue';
+  }
+
   refreshTable(): void{
     this.filtered = false;
     this.pageSize = 5;
@@ -129,19 +171,33 @@ export class PurchaseOrderComponent implements OnInit {
     this.isVisibleFilter=false;
   }
 
-  // getFilteredInventory(){
-  //   this.inventory$ = this.apiSvc.filterInventory(this.filterForm.value, this.currentPage, this.pageSize).pipe(
-  //     tap(res => {
-  //       this.totalInventories = res.data.length;
-  //       this.currentPage = res.pagination.current_page;
-  //       this.totalAll = res.pagination.total
-  //       this.filtered = true
-  //     })
-  //   )
-  // }
+  getFilteredPO(){
+    this.purchaseOrder$ = this.apiSvc.filterPurchaseOrder(this.filterParams, this.currentPage, this.pageSize).pipe(
+      tap(res => {
+        this.total= res.data.length;
+        this.currentPage = res.pagination.current_page;
+        this.totalAll = res.pagination.total
+        this.filtered = true
+      })
+    )
+  }
 
   showFilter(): void{
-    this.isVisibleFilter = true;
+    const poModal = this.modalSvc.create({
+      nzTitle: 'Filter Purchase Order',
+      nzContent: FilterPurchaseOrderComponent,
+      nzCentered: true,
+      nzComponentParams: {
+        filteredPO: this.filtered
+      }
+    })
+
+    poModal.afterClose.subscribe(result => {
+      if(result){
+        this.filterParams = result
+        this.getFilteredPO()
+      }
+    })
   }
 
   handleCancelFilter(): void {
@@ -156,12 +212,13 @@ export class PurchaseOrderComponent implements OnInit {
   pageIndexChange(page: number){
     this.currentPage = page;
 
-    // if(this.filtered){
-    //   this.getFilteredInventory();
-    // } else {
-    // }
+    if(this.filtered){
+      this.getFilteredPO();
+    } else {
+      this.getPurchaseOrder();
+    }
     
-    this.getPurchaseOrder();
+
   }
 
   formatter = (value: number | null): string => {

@@ -44,6 +44,8 @@ export class AddPurchaseOrderComponent implements OnInit {
   totalOrder: number = 0;
   totalGrandOrder: number = 0;
 
+  formDisable: boolean = false;
+
   constructor(
     private fb: FormBuilder,
     private apiSvc: ApiService,
@@ -73,7 +75,6 @@ export class AddPurchaseOrderComponent implements OnInit {
 
 
     this.purchaseForm.get('pic')?.valueChanges.subscribe((value) => {
-      console.log('masuk')
       this.filteredListOfPic = this.listOfPic.filter(pic => value.includes(pic.pic_id));
 
       if(!value.includes(this.purchaseForm.get('is_pic_internal')?.value)){
@@ -153,6 +154,13 @@ export class AddPurchaseOrderComponent implements OnInit {
         this.cpValueChangeSubscriptions(updateOrder)
       })
       
+    }
+
+    if(this.modal_type === 'edit'){
+      if(['hold', 'rejected', 'approved', 'finished'].includes(this.dataDetail.status.toLowerCase())){
+        this.formDisable = true;
+        this.purchaseForm.disable();
+      }
     }
 
     
@@ -280,11 +288,17 @@ export class AddPurchaseOrderComponent implements OnInit {
   cpValueChangeSubscriptions(control: FormGroup){
     control.get('inventory_id')?.valueChanges.subscribe(value => {
       const product = this.inventoryList.data.find(p => p.id === value);
-      control.get('product_cost')?.setValue(parseInt(product?.product_cost ?? '0', 10), { emit_event: false, onlySelf: true });
-      control.get('product_code')?.setValue(product?.code, { emit_event: false });
+
+      control.get('product_cost')?.setValue(parseInt(product?.product_cost ?? '0', 10));
+      control.get('product_code')?.setValue(product?.code);
+
       control.get('unit_measurement')?.setValue(product?.unit.measurement);
       control.get('unit_unit')?.setValue(product?.unit.unit);
     })
+
+    // Disable the controls after setting values
+    control.get('product_cost')?.disable({ emitEvent: false, onlySelf: true });
+    control.get('product_code')?.disable({ emitEvent: false, onlySelf: true });
 
     control.get('qty')?.valueChanges.subscribe(() => this.updateTotalCost(control));
     control.get('product_cost')?.valueChanges.subscribe(() => this.updateTotalCost(control));
@@ -303,7 +317,7 @@ export class AddPurchaseOrderComponent implements OnInit {
       inventory_id: ['', Validators.required],
       qty: ['', Validators.required],
       product_cost: [{value: '', disabled: true}],
-      product_code: [''],
+      product_code: [{value: '', disabled: true}],
       unit_measurement: [''],
       unit_unit: [''],
       total_cost: ['']

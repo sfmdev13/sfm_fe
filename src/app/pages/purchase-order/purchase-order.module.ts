@@ -15,6 +15,7 @@ import { NzTagModule } from 'ng-zorro-antd/tag';
 import { NzDrawerModule } from 'ng-zorro-antd/drawer';
 import { AddPurchaseOrderModule } from 'src/app/components/add-purchase-order/add-purchase-order.module';
 import { NzDropDownModule } from 'ng-zorro-antd/dropdown';
+import { FilterPurchaseOrderModule } from 'src/app/components/filter-purchase-order/filter-purchase-order.module';
 
 @NgModule({
   declarations: [PurchaseOrderComponent],
@@ -33,7 +34,8 @@ import { NzDropDownModule } from 'ng-zorro-antd/dropdown';
     NzTagModule,
     NzDrawerModule,
     AddPurchaseOrderModule,
-    NzDropDownModule
+    NzDropDownModule,
+    FilterPurchaseOrderModule
   ],
   exports: [PurchaseOrderComponent]
 })
