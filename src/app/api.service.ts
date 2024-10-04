@@ -1005,4 +1005,15 @@ export class ApiService {
 
     return this.http.post<IRootPurchaseOrder>(url, {}, { headers, params: httpParams });
   }
+
+  getSupplierBySource(id: any): Observable<any>{
+    const token = localStorage.getItem('authToken');
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+    });
+
+    const url = `${this.apiUrl}/supplier-bysource/${id}`
+
+    return this.http.get<any>(url, { headers });
+  }
 }
