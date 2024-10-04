@@ -6,6 +6,7 @@ import { Observable, Subject, tap, debounceTime, distinctUntilChanged } from 'rx
 import { ApiService } from 'src/app/api.service';
 import { AuthService } from 'src/app/auth.service';
 import { AddPurchaseOrderComponent } from 'src/app/components/add-purchase-order/add-purchase-order.component';
+import { FilterPurchaseOrderComponent } from 'src/app/components/filter-purchase-order/filter-purchase-order.component';
 import { IRootUnit, ICategories, IDataInventory, IRootPurchaseOrder, IDataPurchaseOrder } from 'src/app/interfaces';
 import { SpinnerService } from 'src/app/spinner.service';
 
@@ -59,9 +60,9 @@ export class PurchaseOrderComponent implements OnInit {
 
   dataDetail: IDataInventory = {} as IDataInventory;
 
-  filterForm: FormGroup;
-
   filtered: boolean = false;
+
+  filterParams: any;
 
   constructor(
     private apiSvc: ApiService,
@@ -70,14 +71,7 @@ export class PurchaseOrderComponent implements OnInit {
     private modalSvc: NzModalService,
     public authSvc: AuthService,
     private drawerService: NzDrawerService
-  ) { 
-
-    this.filterForm = this.fb.group({
-      status: [''],
-      supplier_product: [''],
-      sort_by: ['']
-    })
-   }
+  ) { }
 
   ngOnInit(): void {
 
@@ -129,19 +123,33 @@ export class PurchaseOrderComponent implements OnInit {
     this.isVisibleFilter=false;
   }
 
-  // getFilteredInventory(){
-  //   this.inventory$ = this.apiSvc.filterInventory(this.filterForm.value, this.currentPage, this.pageSize).pipe(
-  //     tap(res => {
-  //       this.totalInventories = res.data.length;
-  //       this.currentPage = res.pagination.current_page;
-  //       this.totalAll = res.pagination.total
-  //       this.filtered = true
-  //     })
-  //   )
-  // }
+  getFilteredPO(){
+    this.purchaseOrder$ = this.apiSvc.filterPurchaseOrder(this.filterParams, this.currentPage, this.pageSize).pipe(
+      tap(res => {
+        this.total= res.data.length;
+        this.currentPage = res.pagination.current_page;
+        this.totalAll = res.pagination.total
+        this.filtered = true
+      })
+    )
+  }
 
   showFilter(): void{
-    this.isVisibleFilter = true;
+    const poModal = this.modalSvc.create({
+      nzTitle: 'Filter Purchase Order',
+      nzContent: FilterPurchaseOrderComponent,
+      nzCentered: true,
+      nzComponentParams: {
+        filteredPO: this.filtered
+      }
+    })
+
+    poModal.afterClose.subscribe(result => {
+      if(result){
+        this.filterParams = result
+        this.getFilteredPO()
+      }
+    })
   }
 
   handleCancelFilter(): void {

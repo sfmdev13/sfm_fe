@@ -1016,4 +1016,22 @@ export class ApiService {
 
     return this.http.get<any>(url, { headers });
   }
+
+  filterPurchaseOrder(params: any, page: number, per_page: number): Observable<IRootPurchaseOrder>{
+    const token = localStorage.getItem('authToken');
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+    });
+
+    let httpParams = new HttpParams()
+    .set('status', params.status)
+    .set('supplier', params.supplier)
+    .set('sort_by', params.sort_by)
+    .set('page', page.toString())
+    .set('per_page', per_page.toString());
+
+    const url = `${this.apiUrl}/filter/po-inventory`
+
+    return this.http.post<IRootPurchaseOrder>(url, {}, { headers, params: httpParams });
+  }
 }
