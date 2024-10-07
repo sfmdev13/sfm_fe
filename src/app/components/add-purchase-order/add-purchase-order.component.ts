@@ -2,11 +2,13 @@ import { DatePipe } from '@angular/common';
 import { Component, Input, OnInit } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { NzDrawerRef } from 'ng-zorro-antd/drawer';
-import { NzModalService } from 'ng-zorro-antd/modal';
+import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
 import { combineLatest, Observable, startWith, tap } from 'rxjs';
 import { ApiService } from 'src/app/api.service';
 import { IDataPurchaseOrder, IRootInvenSupplier, IRootInventory } from 'src/app/interfaces';
 import { SpinnerService } from 'src/app/spinner.service';
+import { EditCategoriesModalComponent } from '../categories-setting/edit-categories-modal/edit-categories-modal.component';
+import { AddWarehouseAddressComponent } from '../categories-setting/add-warehouse-address/add-warehouse-address.component';
 
 @Component({
   selector: 'app-add-purchase-order',
@@ -36,6 +38,12 @@ export class AddPurchaseOrderComponent implements OnInit {
     is_pic_internal: ['', [Validators.required]],
     additional_cost: [''],
     tax: [0],
+    project_type: ['project'],
+    warehouse_id: [''],
+    province: ['', Validators.required],
+    city: ['', Validators.required],
+    address: ['', Validators.required],
+    postal_code: ['', Validators.required],
     order: this.fb.array([])
   })
 
@@ -45,6 +53,28 @@ export class AddPurchaseOrderComponent implements OnInit {
   totalGrandOrder: number = 0;
 
   formDisable: boolean = false;
+
+  warehouse$!: Observable<any>;
+  provinces$!: Observable<any>;
+
+  provinceList: any[] = [];
+  city: any[] = [];
+
+  warehouseList: any[] = [];
+
+  categoryForm = this.fb.group({
+    id: [''],
+    name: ['', Validators.required],
+    description: ['', Validators.required],
+    country: ['indonesia'],
+    province: ['', Validators.required],
+    city: ['', Validators.required],
+    postal_code: ['', Validators.required],
+    maps_url: ['', Validators.required],
+    address: ['', Validators.required]
+  })
+
+  modalRef?: NzModalRef;
 
   constructor(
     private fb: FormBuilder,
@@ -56,6 +86,54 @@ export class AddPurchaseOrderComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
+
+    this.purchaseForm.get('project_type')?.valueChanges.subscribe((value) => {
+      if(value === 'stock'){
+        this.purchaseForm.get('province')?.disable();
+        this.purchaseForm.get('city')?.disable();
+        this.purchaseForm.get('address')?.disable();
+        this.purchaseForm.get('postal_code')?.disable();
+      }
+    })
+
+    this.purchaseForm.get('warehouse_id')?.valueChanges.subscribe((value) => {
+      const selectedWarehouse = this.warehouseList.find(w => w.id === value);
+
+      console.log(selectedWarehouse)
+
+      this.purchaseForm.patchValue({
+        province: parseInt(selectedWarehouse.province),
+        city: parseInt(selectedWarehouse.city),
+        address: selectedWarehouse.address,
+        postal_code: selectedWarehouse.postal_code
+      })
+    })
+
+    this.purchaseForm.get('province')?.valueChanges.subscribe((value) => {
+      this.apiSvc.getRegenciesByProvince(value).subscribe((res) => {
+        this.city = res;
+      })
+    })
+
+    this.provinces$ = this.apiSvc.getProvinces().pipe(
+      tap(p => {
+        this.provinceList = p;
+      })
+    );
+
+    this.apiSvc.refreshGetCategories$.subscribe(() => {
+      this.warehouse$ = this.apiSvc.getWarehouse().pipe(
+        tap(w => {
+          this.warehouseList = w.data
+        })
+      );  
+    })
+    
+    this.warehouse$ = this.apiSvc.getWarehouse().pipe(
+      tap(w => {
+        this.warehouseList = w.data
+      })
+    );
 
     //used for calculate total order and total grand order
     const orderChanges$ = this.order.valueChanges.pipe(startWith(this.order.value));
@@ -147,7 +225,9 @@ export class AddPurchaseOrderComponent implements OnInit {
           unit_measurement: order.inventory.unit.measurement,
           unit_unit: order.inventory.unit.unit,
           product_cost: parseInt(order.product_cost),
-          total_cost: parseInt(order.total_cost_per_product)
+          total_cost: parseInt(order.total_cost_per_product),
+          price_list: parseInt(order.inventory.price_list),
+          discount: parseInt(order.inventory.discount)
         })
 
         this.order.push(updateOrder);
@@ -164,6 +244,77 @@ export class AddPurchaseOrderComponent implements OnInit {
     }
 
     
+  }
+
+  handleCancelWarehouse(): void{
+    this.modalRef?.close();
+    this.categoryForm.reset();
+  }
+
+  handleSubmitWarehouse(): void{
+    this.spinnerSvc.show();
+
+    const body = {
+      id: this.categoryForm.get('id')?.value,
+      name: this.categoryForm.get('name')?.value,
+      description: this.categoryForm.get('description')?.value,
+      country: 'indonesia',
+      province: this.categoryForm.get('province')?.value.toString(),
+      city: this.categoryForm.get('city')?.value.toString(),
+      postal_code: this.categoryForm.get('postal_code')?.value,
+      maps_url: this.categoryForm.get('maps_url')?.value,
+      address: this.categoryForm.get('address')?.value
+    }
+
+    this.apiSvc.createWarehouse(body).subscribe({
+      next: () => {
+
+        this.spinnerSvc.hide();
+        this.modalSvc.success({
+          nzTitle: 'Success',
+          nzContent: 'Successfully Add Warehouse',
+          nzOkText: 'Ok',
+          nzCentered: true
+        })
+        this.apiSvc.triggerRefreshCategories()
+      },
+      error: (error) => {
+        this.spinnerSvc.hide();
+        console.log(error);
+        this.modalSvc.error({
+          nzTitle: 'Unable to Add Warehouse',
+          nzContent: error.error.meta.message,
+          nzOkText: 'Ok',
+          nzCentered: true
+        })
+      },
+      complete: () => {
+        this.categoryForm.reset();
+      }
+    })
+  }
+
+  showModalAddWarehouse(){
+    this.modalRef = this.modalSvc.create({
+      nzTitle: 'Add Warehouse',
+      nzContent: AddWarehouseAddressComponent,
+      nzComponentParams: {
+        form: this.categoryForm
+      },
+      nzCentered: true,
+      nzFooter: [
+        {
+          label: 'Cancel',
+          onClick: () => this.handleCancelWarehouse(),
+          type: 'default'
+        },
+        {
+          label: 'Confirm',
+          onClick: () => this.handleSubmitWarehouse(),
+          type: 'primary'
+        }
+      ]
+    })
   }
 
   submitPurchase(): void{
@@ -292,6 +443,9 @@ export class AddPurchaseOrderComponent implements OnInit {
       control.get('product_cost')?.setValue(parseInt(product?.product_cost ?? '0', 10));
       control.get('product_code')?.setValue(product?.code);
 
+      control.get('discount')?.setValue(parseInt(product?.discount ?? '0',10 ));
+      control.get('price_list')?.setValue(parseInt(product?.price_list ?? '0',10));
+
       control.get('unit_measurement')?.setValue(product?.unit.measurement);
       control.get('unit_unit')?.setValue(product?.unit.unit);
     })
@@ -299,6 +453,9 @@ export class AddPurchaseOrderComponent implements OnInit {
     // Disable the controls after setting values
     control.get('product_cost')?.disable({ emitEvent: false, onlySelf: true });
     control.get('product_code')?.disable({ emitEvent: false, onlySelf: true });
+
+    control.get('discount')?.disable({emitEvent: false, onlySelf: true });
+    control.get('price_list')?.disable({emitEvent: false, onlySelf: true})
 
     control.get('qty')?.valueChanges.subscribe(() => this.updateTotalCost(control));
     control.get('product_cost')?.valueChanges.subscribe(() => this.updateTotalCost(control));
@@ -318,6 +475,8 @@ export class AddPurchaseOrderComponent implements OnInit {
       qty: ['', Validators.required],
       product_cost: [{value: '', disabled: true}],
       product_code: [{value: '', disabled: true}],
+      discount: [{value: '', disabled: true}],
+      price_list: [{value: '', disabled: true}],
       unit_measurement: [''],
       unit_unit: [''],
       total_cost: ['']

@@ -19,6 +19,9 @@ import { SupplierSourceComponent } from './supplier-source/supplier-source.compo
 import { ContactTypeComponent } from './contact-type/contact-type.component';
 import { EmployeeContractComponent } from './employee-contract/employee-contract.component';
 import { UnitOfMeasurementComponent } from './unit-of-measurement/unit-of-measurement.component';
+import { WarehouseAddressComponent } from './warehouse-address/warehouse-address.component';
+import { AddWarehouseAddressComponent } from './add-warehouse-address/add-warehouse-address.component';
+import { NzSelectModule } from 'ng-zorro-antd/select';
 
 
 @NgModule({
@@ -32,7 +35,9 @@ import { UnitOfMeasurementComponent } from './unit-of-measurement/unit-of-measur
     SupplierSourceComponent,
     ContactTypeComponent,
     EmployeeContractComponent,
-    UnitOfMeasurementComponent
+    UnitOfMeasurementComponent,
+    WarehouseAddressComponent,
+    AddWarehouseAddressComponent
   ],
   imports: [
     CommonModule,
@@ -44,7 +49,8 @@ import { UnitOfMeasurementComponent } from './unit-of-measurement/unit-of-measur
     NzFormModule,
     NzInputModule,
     NzButtonModule,
-    NzResultModule
+    NzResultModule,
+    NzSelectModule
   ],
   exports: [
     LoyalCustomerComponent,
@@ -56,7 +62,9 @@ import { UnitOfMeasurementComponent } from './unit-of-measurement/unit-of-measur
     SupplierSourceComponent,
     ContactTypeComponent,
     EmployeeContractComponent,
-    UnitOfMeasurementComponent
+    UnitOfMeasurementComponent,
+    WarehouseAddressComponent,
+    AddWarehouseAddressComponent
   ]
 })
 export class CategoriesSettingTableModule { }

@@ -1045,4 +1045,37 @@ export class ApiService {
 
     return this.http.post<any>(url, body, { headers })
   }
+
+  getWarehouse(): Observable<any>{
+    const token = localStorage.getItem('authToken');
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+    });
+
+    const url = `${this.apiUrl}/warehouse`
+
+    return this.http.get<any>(url, { headers })
+  }
+
+  createWarehouse(body: any): Observable<any>{
+    const token = localStorage.getItem('authToken');
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+    });
+
+    const url = `${this.apiUrl}/create-warehouse`
+
+    return this.http.post<any>(url, body , { headers })
+  }
+
+  updateWarehouse(body: any): Observable<any>{
+    const token = localStorage.getItem('authToken');
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+    });
+
+    const url = `${this.apiUrl}/update-warehouse`
+
+    return this.http.post<any>(url, body , { headers })
+  }
 }

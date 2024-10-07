@@ -1,9 +1,10 @@
 <nz-layout class="inner-layout">
     <nz-sider nzWidth="200px" nzTheme="light">
       <ul nz-menu nzMode="inline" class="sider-menu">
-        <li *ngFor="let cat of navCategory" nz-submenu nzOpen [nzTitle]="cat.name">
+        <li class="fw-bold" *ngFor="let cat of navCategory" nz-submenu nzOpen [nzTitle]="cat.name">
             <ul>
                 <li 
+                    class="fw-normal"
                     *ngFor="let cat_sub of cat.sub_menu" 
                     nz-menu-item [nzSelected]="cat_sub.slug === navCategoryActive"
                     (click)="navCategoryActive = cat_sub.slug"
@@ -38,6 +39,9 @@
         </ng-container>
         <ng-container *ngIf="navCategoryActive === 'uom'">
             <app-unit-of-measurement></app-unit-of-measurement>
+        </ng-container>
+        <ng-container *ngIf="navCategoryActive === 'warehouse_address'">
+            <app-warehouse-address></app-warehouse-address>
         </ng-container>
     </nz-content>
 </nz-layout>
