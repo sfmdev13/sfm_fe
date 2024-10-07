@@ -1,0 +1,85 @@
+<div>
+    <form nz-form nzLayout="vertical" [formGroup]="form">
+        <nz-form-item class="mb-4">
+            <nz-form-label nzRequired nzFor="name" class="fw-semibold">Name</nz-form-label>
+            <nz-form-control>
+                <input nz-input formControlName="name" id="name" />
+            </nz-form-control>
+        </nz-form-item>
+
+        <nz-form-item class="mb-4">
+            <nz-form-label nzRequired nzFor="description" class="fw-semibold">Description</nz-form-label>
+            <nz-form-control>
+                <input nz-input formControlName="description" id="description" />
+            </nz-form-control>
+        </nz-form-item>
+
+        <ng-container *ngIf="provinces$ | async as province; else provinceLoad">
+            <nz-form-item>
+              <nz-form-label nzRequired class="fw-semibold" nzFor="province" nzRequired>Province</nz-form-label>
+              <nz-form-control>
+                  <nz-select  nzShowSearch nzPlaceHolder="Select Province" formControlName="province">
+                  <ng-container *ngFor="let p of province">
+                    <nz-option [nzLabel]="p.province" [nzValue]="p.id"></nz-option>
+                  </ng-container>
+                  </nz-select>
+              </nz-form-control>
+            </nz-form-item>
+        </ng-container>
+
+        <ng-template #provinceLoad>
+            <nz-form-item>
+                <nz-form-label nzRequired class="fw-semibold" nzFor="province" nzRequired>Province</nz-form-label>
+                <nz-form-control>
+                    <nz-select nzDisabled nzPlaceHolder="Select Province" formControlName="province">
+                    </nz-select>
+                </nz-form-control>
+            </nz-form-item>
+        </ng-template>
+
+        <ng-container *ngIf="city.length > 0; else loadingCity">
+            <nz-form-item>
+              <nz-form-label nzRequired class="fw-semibold" nzFor="city" nzRequired>City</nz-form-label>
+              <nz-form-control>
+                  <nz-select  nzShowSearch nzPlaceHolder="Select city" formControlName="city">
+                  <ng-container *ngFor="let c of city">
+                    <nz-option [nzLabel]="c.regency" [nzValue]="c.id"></nz-option>
+                  </ng-container>
+                  </nz-select>
+              </nz-form-control>
+            </nz-form-item>
+          </ng-container>
+          <ng-template #loadingCity>
+            <nz-form-item>
+              <nz-form-label nzRequired class="fw-semibold" nzFor="city" nzRequired>City</nz-form-label>
+              <nz-form-control>
+                  <nz-select nzDisabled nzPlaceHolder="Select province first" formControlName="city">
+                  </nz-select>
+              </nz-form-control>
+            </nz-form-item>
+          </ng-template>
+
+        <nz-form-item>
+            <nz-form-label nzRequired nzFor="address" class="fw-semibold">Company Full Address</nz-form-label>
+            <nz-form-control>
+              <nz-textarea-count [nzMaxCharacterCount]="200">
+                <textarea rows="4" formControlName="address" nz-input></textarea>
+              </nz-textarea-count>
+            </nz-form-control>
+        </nz-form-item>
+
+        <nz-form-item class="mb-4">
+            <nz-form-label nzRequired nzFor="postal_code" class="fw-semibold">Postal Code</nz-form-label>
+            <nz-form-control>
+                <input nz-input formControlName="postal_code" id="postal_code" />
+            </nz-form-control>
+        </nz-form-item>
+
+        <nz-form-item class="mb-4">
+            <nz-form-label nzRequired nzFor="maps_url" class="fw-semibold">Maps Url</nz-form-label>
+            <nz-form-control>
+                <input nz-input formControlName="maps_url" id="maps_url" />
+            </nz-form-control>
+        </nz-form-item>
+    </form>
+</div>

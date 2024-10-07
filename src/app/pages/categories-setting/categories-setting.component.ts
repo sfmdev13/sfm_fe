@@ -52,11 +52,15 @@ export class CategoriesSettingComponent implements OnInit {
       ]
     },
     {
-      name: 'Miscellaneous',
+      name: 'Inventory',
       sub_menu: [
         {
           name: 'Unit of Measurement',
           slug: 'uom'
+        },
+        {
+          name: 'Warehouse Address',
+          slug: 'warehouse_address'
         }
       ]
     }
