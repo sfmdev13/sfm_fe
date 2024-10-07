@@ -70,7 +70,7 @@
                         <button *ngIf="authSvc.hasAction('add_new_employee')" nzSize="default" nz-button nzType="primary" disabled>Add New Employee</button>
                     </div>
                 </div>
-                <nz-table #basicTable nzBordered>
+                <nz-table #basicTable nzBordered [nzLoading]="true">
                     <thead>
                         <tr>
                             <th>EMP ID</th>
@@ -153,7 +153,7 @@
                         <button *ngIf="authSvc.hasAction('add_new_customer')" nzSize="default" nz-button nzType="primary" disabled>Add New Customer</button>
                     </div>
                 </div>
-                <nz-table #basicTable nzBordered>
+                <nz-table #basicTable nzBordered [nzLoading]="true">
                     <thead>
                         <tr>
                             <th>CUST ID</th>
@@ -238,7 +238,7 @@
                         <button *ngIf="authSvc.hasAction('add_new_supplier')" nzSize="default" nz-button nzType="primary" disabled>Add New Supplier</button>
                     </div>
                 </div>
-                <nz-table #basicTable nzBordered>
+                <nz-table #basicTable nzBordered [nzLoading]="true">
                     <thead>
                         <tr>
                             <th>SUPP ID</th>

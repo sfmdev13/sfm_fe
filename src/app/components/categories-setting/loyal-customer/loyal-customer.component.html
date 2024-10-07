@@ -36,7 +36,7 @@
       </nz-table>
 </ng-container>
 <ng-template #loading>
-    <nz-table #basicTable nzBordered>
+    <nz-table #basicTable nzBordered [nzLoading]="true">
         <thead>
           <tr>
             <th>Name</th>
