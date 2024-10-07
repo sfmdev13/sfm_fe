@@ -147,7 +147,9 @@ export class AddPurchaseOrderComponent implements OnInit {
           unit_measurement: order.inventory.unit.measurement,
           unit_unit: order.inventory.unit.unit,
           product_cost: parseInt(order.product_cost),
-          total_cost: parseInt(order.total_cost_per_product)
+          total_cost: parseInt(order.total_cost_per_product),
+          price_list: parseInt(order.inventory.price_list),
+          discount: parseInt(order.inventory.discount)
         })
 
         this.order.push(updateOrder);
@@ -292,6 +294,9 @@ export class AddPurchaseOrderComponent implements OnInit {
       control.get('product_cost')?.setValue(parseInt(product?.product_cost ?? '0', 10));
       control.get('product_code')?.setValue(product?.code);
 
+      control.get('discount')?.setValue(parseInt(product?.discount ?? '0',10 ));
+      control.get('price_list')?.setValue(parseInt(product?.price_list ?? '0',10));
+
       control.get('unit_measurement')?.setValue(product?.unit.measurement);
       control.get('unit_unit')?.setValue(product?.unit.unit);
     })
@@ -299,6 +304,9 @@ export class AddPurchaseOrderComponent implements OnInit {
     // Disable the controls after setting values
     control.get('product_cost')?.disable({ emitEvent: false, onlySelf: true });
     control.get('product_code')?.disable({ emitEvent: false, onlySelf: true });
+
+    control.get('discount')?.disable({emitEvent: false, onlySelf: true });
+    control.get('price_list')?.disable({emitEvent: false, onlySelf: true})
 
     control.get('qty')?.valueChanges.subscribe(() => this.updateTotalCost(control));
     control.get('product_cost')?.valueChanges.subscribe(() => this.updateTotalCost(control));
@@ -318,6 +326,8 @@ export class AddPurchaseOrderComponent implements OnInit {
       qty: ['', Validators.required],
       product_cost: [{value: '', disabled: true}],
       product_code: [{value: '', disabled: true}],
+      discount: [{value: '', disabled: true}],
+      price_list: [{value: '', disabled: true}],
       unit_measurement: [''],
       unit_unit: [''],
       total_cost: ['']

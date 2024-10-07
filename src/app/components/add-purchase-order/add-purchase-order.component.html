@@ -84,6 +84,8 @@
                         <th scope="col">Part Number</th>
                         <th scope="col">Qty</th>
                         <th scope="col">Unit</th>
+                        <th scope="col">Price List</th>
+                        <th scope="col">Discount</th>
                         <th scope="col">Product Cost</th>
                         <th scope="col">Total</th>
                         <th scope="col">#</th>
@@ -120,6 +122,20 @@
                             </td>
                             <td>
                                 <nz-form-control>
+                                    <nz-input-number [nzFormatter]="formatter" formControlName="price_list" [nzMin]="0" class="w-100"></nz-input-number>
+                                </nz-form-control>  
+                            </td>
+                            <td>
+                                <nz-form-control>
+                                    <nz-space nzDirection="vertical" style="width: 100%">
+                                        <nz-input-number-group  nzAddOnAfter="%" class="w-100">
+                                            <nz-input-number [nzFormatter]="formatter" formControlName="discount" [nzMin]="0" class="w-100"></nz-input-number>
+                                        </nz-input-number-group>
+                                    </nz-space>
+                                </nz-form-control>  
+                            </td>
+                            <td>
+                                <nz-form-control>
                                     <nz-space nzDirection="vertical" style="width: 100%">
                                         <nz-input-number-group *nzSpaceItem nzPrefix="Rp. " style="width: 100%">
                                             <nz-input-number     
@@ -141,7 +157,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <td colspan="7" class="text-center">
+                            <td colspan="9" class="text-center">
                                 <button (click)="addOrder()" nz-button nzType="primary" class="w-75" [disabled]="formDisable">Add Item</button>
                             </td>
                         </tr>
