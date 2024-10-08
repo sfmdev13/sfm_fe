@@ -94,6 +94,21 @@ export class AddPurchaseOrderComponent implements OnInit {
         this.purchaseForm.get('address')?.disable();
         this.purchaseForm.get('postal_code')?.disable();
       }
+
+      if(value === 'project'){
+
+        this.purchaseForm.get('province')?.enable();
+        this.purchaseForm.get('city')?.enable();
+        this.purchaseForm.get('address')?.enable();
+        this.purchaseForm.get('postal_code')?.enable();
+
+        this.purchaseForm.patchValue({
+          province: '',
+          city: '',
+          address : '',
+          postal_code: ''
+        })
+      }
     })
 
     this.purchaseForm.get('warehouse_id')?.valueChanges.subscribe((value) => {
