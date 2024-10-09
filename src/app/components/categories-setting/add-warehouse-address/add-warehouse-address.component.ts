@@ -11,6 +11,8 @@ import { ApiService } from 'src/app/api.service';
 export class AddWarehouseAddressComponent implements OnInit {
 
   @Input() form!: FormGroup;
+  @Input() type: string  = ''
+  @Input() data: any;
 
   provinces$!: Observable<any>;
 
@@ -33,6 +35,20 @@ export class AddWarehouseAddressComponent implements OnInit {
         this.city = res;
       })
     })
+
+    if(this.type === 'update'){
+      console.log(this.data)
+      this.form.patchValue({
+        id: this.data.id,
+        name: this.data.name,
+        description: this.data.description,
+        province: parseInt(this.data.province),
+        city: parseInt(this.data.city),
+        address: this.data.address,
+        postal_code: this.data.postal_code,
+        maps_url: this.data.maps_url
+      })
+    }
   }
 
 }

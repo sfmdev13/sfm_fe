@@ -1078,4 +1078,37 @@ export class ApiService {
 
     return this.http.post<any>(url, body , { headers })
   }
+
+  getBillingCompany(): Observable<any>{
+    const token = localStorage.getItem('authToken');
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+    });
+
+    const url = `${this.apiUrl}/billing-address`
+
+    return this.http.get<any>(url, { headers })
+  }
+
+  createBillingCompany(body: any): Observable<any>{
+    const token = localStorage.getItem('authToken');
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+    });
+
+    const url = `${this.apiUrl}/create/billing-address`
+
+    return this.http.post<any>(url, body , { headers })
+  }
+
+  updateBillingCompany(body: any): Observable<any>{
+    const token = localStorage.getItem('authToken');
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+    });
+
+    const url = `${this.apiUrl}/update/billing-address`
+
+    return this.http.post<any>(url, body , { headers })
+  }
 }

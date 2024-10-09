@@ -1,13 +1,13 @@
-<h4 class="fw-bold mb-4">Warehouse</h4>
+<h4 class="fw-bold mb-4">Billing Address</h4>
 <div class="d-flex align-items-center justify-content-between mb-3">
-    <span class="fw-light">Result of {{ total_category }} Warehouse</span>
+    <span class="fw-light">Result of {{ total_category }} Address</span>
     <div class="row">
         <div class="text-end">
-            <button nzSize="default" nz-button nzType="primary" (click)="showModalAdd()">Add New Warehouse</button>
+            <button nzSize="default" nz-button nzType="primary" (click)="showModalAdd()">Add New Address</button>
         </div>
     </div>
 </div>
-<ng-container *ngIf="warehouse$ | async as w; else loading">
+<ng-container *ngIf="billing$ | async as w; else loading">
     <nz-table 
         #basicTable 
         [nzData]="w.data"         
@@ -52,9 +52,9 @@
       </nz-table>
 </ng-template>
 
-<nz-modal nzCentered [(nzVisible)]="isVisibleEdit" [nzTitle]="modal_type + ' Warehouse'" (nzOnCancel)="handleCancelEdit()">
+<nz-modal nzCentered [(nzVisible)]="isVisibleEdit" nzTitle="Edit Billing Address" (nzOnCancel)="handleCancelEdit()">
     <ng-container *nzModalContent>
-        <app-add-warehouse-address [form]="categoryFormEdit" [data]="dataDetail" [type]="modal_type"></app-add-warehouse-address>
+        <app-add-warehouse-address  [form]="categoryFormEdit" [type]="modal_type" [data]="dataDetail"></app-add-warehouse-address>
     </ng-container>
     <ng-container *nzModalFooter>
         <button nz-button nzType="default" (click)="handleCancelEdit()">Cancel</button>
@@ -62,7 +62,7 @@
     </ng-container>
 </nz-modal>
 
-<nz-modal nzCentered [(nzVisible)]="isVisibleAdd" [nzTitle]="modal_type + ' Warehouse'" (nzOnCancel)="handleCancelAdd()">
+<nz-modal nzCentered [(nzVisible)]="isVisibleAdd" nzTitle="Add Billing Address" (nzOnCancel)="handleCancelAdd()">
     <ng-container *nzModalContent>
         <app-add-warehouse-address [form]="categoryForm"></app-add-warehouse-address>
     </ng-container>
@@ -71,14 +71,3 @@
         <button nz-button nzType="primary" class="text-capitalize" (click)="handleSubmitAdd()" [disabled]="!this.categoryForm.valid">Submit</button>
     </ng-container>
 </nz-modal>
-
-
-<!-- <nz-modal nzCentered [(nzVisible)]="isVisibleDelete" nzTitle="Delete Unit" (nzOnCancel)="handleCancelDelete()">
-    <ng-container *nzModalContent>
-        <app-delete-categories-modal></app-delete-categories-modal>
-    </ng-container>
-    <ng-container *nzModalFooter>
-        <button nz-button nzType="default" nzDanger (click)="handleCancelDelete()">Cancel</button>
-        <button nz-button nzType="primary" nzDanger (click)="handleSubmitDelete()">Delete Unit</button>
-    </ng-container>
-</nz-modal> -->

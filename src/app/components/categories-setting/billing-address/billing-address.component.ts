@@ -6,13 +6,13 @@ import { ApiService } from 'src/app/api.service';
 import { SpinnerService } from 'src/app/spinner.service';
 
 @Component({
-  selector: 'app-warehouse-address',
-  templateUrl: './warehouse-address.component.html',
-  styleUrls: ['./warehouse-address.component.scss']
+  selector: 'app-billing-address',
+  templateUrl: './billing-address.component.html',
+  styleUrls: ['./billing-address.component.scss']
 })
-export class WarehouseAddressComponent implements OnInit {
+export class BillingAddressComponent implements OnInit {
 
-  warehouse$!: Observable<any>
+  billing$!: Observable<any>
 
   isVisibleEdit = false;
   isVisibleAdd = false;
@@ -60,15 +60,15 @@ export class WarehouseAddressComponent implements OnInit {
    }
 
   ngOnInit(): void {
-    this.getWarehouse();
+    this.getBilling();
 
     this.apiSvc.refreshGetCategories$.subscribe(() => {
-      this.getWarehouse();
+      this.getBilling();
     })
   }
 
-  getWarehouse(): void{
-    this.warehouse$ = this.apiSvc.getWarehouse().pipe(
+  getBilling(): void{
+    this.billing$ = this.apiSvc.getBillingCompany().pipe(
       tap(res => {
         this.total_category = res.data.length
       })
@@ -112,12 +112,12 @@ export class WarehouseAddressComponent implements OnInit {
       }
 
 
-      this.apiSvc.updateWarehouse(body).subscribe({
+      this.apiSvc.updateBillingCompany(body).subscribe({
         next: () => {
           this.spinnerSvc.hide();
           this.modalSvc.success({
             nzTitle: 'Success',
-            nzContent: 'Successfully Update Warehouse',
+            nzContent: 'Successfully Update Address',
             nzOkText: 'Ok',
             nzCentered: true
           })
@@ -165,13 +165,13 @@ export class WarehouseAddressComponent implements OnInit {
         address: this.categoryForm.get('address')?.value
       }
 
-      this.apiSvc.createWarehouse(body).subscribe({
+      this.apiSvc.createBillingCompany(body).subscribe({
         next: () => {
 
           this.spinnerSvc.hide();
           this.modalSvc.success({
             nzTitle: 'Success',
-            nzContent: 'Successfully Add Warehouse',
+            nzContent: 'Successfully Add Address',
             nzOkText: 'Ok',
             nzCentered: true
           })
@@ -182,7 +182,7 @@ export class WarehouseAddressComponent implements OnInit {
           this.spinnerSvc.hide();
           console.log(error);
           this.modalSvc.error({
-            nzTitle: 'Unable to Add Warehouse',
+            nzTitle: 'Unable to Add Address',
             nzContent: error.error.meta.message,
             nzOkText: 'Ok',
             nzCentered: true

@@ -27,6 +27,9 @@ export class AddPurchaseOrderComponent implements OnInit {
   listOfPic: any[] = [];
   filteredListOfPic: any[] = [];
 
+  filtredListOfPicShipping: any[] = [];
+  filteredListOfPicBilling: any[] = [];
+
   pic_id = localStorage.getItem('pic_id')!;
 
   purchaseForm = this.fb.group({
@@ -38,12 +41,23 @@ export class AddPurchaseOrderComponent implements OnInit {
     is_pic_internal: ['', [Validators.required]],
     additional_cost: [''],
     tax: [0],
-    project_type: ['project'],
+    project_type: ['stock'],
     warehouse_id: [''],
-    province: ['', Validators.required],
-    city: ['', Validators.required],
-    address: ['', Validators.required],
-    postal_code: ['', Validators.required],
+    province: [''],
+    city: [''],
+    address: [''],
+    postal_code: [''],
+    pic_shipping: [[], Validators.required],
+    is_pic_internal_shipping: ['', Validators.required],
+    pic_billing: [[], Validators.required],
+    is_pic_internal_billing: ['', Validators.required],
+    billing_id: ['', Validators.required],
+    province_billing: [''],
+    city_billing: [''],
+    address_billing: [''],
+    postal_code_billing: [''],
+    telephone_billing: [''],
+    telephone_shipping: [''],
     order: this.fb.array([])
   })
 
@@ -55,12 +69,15 @@ export class AddPurchaseOrderComponent implements OnInit {
   formDisable: boolean = false;
 
   warehouse$!: Observable<any>;
+  billing$!: Observable<any>;
   provinces$!: Observable<any>;
 
   provinceList: any[] = [];
   city: any[] = [];
+  cityBillingList: any[] = [];
 
   warehouseList: any[] = [];
+  billingList: any[] = [];
 
   categoryForm = this.fb.group({
     id: [''],
@@ -75,6 +92,7 @@ export class AddPurchaseOrderComponent implements OnInit {
   })
 
   modalRef?: NzModalRef;
+  modalRefBilling?: NzModalRef;
 
   constructor(
     private fb: FormBuilder,
@@ -87,34 +105,47 @@ export class AddPurchaseOrderComponent implements OnInit {
 
   ngOnInit(): void {
 
-    this.purchaseForm.get('project_type')?.valueChanges.subscribe((value) => {
-      if(value === 'stock'){
-        this.purchaseForm.get('province')?.disable();
-        this.purchaseForm.get('city')?.disable();
-        this.purchaseForm.get('address')?.disable();
-        this.purchaseForm.get('postal_code')?.disable();
-      }
+    this.purchaseForm.get('province')?.disable();
+    this.purchaseForm.get('city')?.disable();
+    this.purchaseForm.get('address')?.disable();
+    this.purchaseForm.get('postal_code')?.disable();
 
-      if(value === 'project'){
+    this.purchaseForm.get('province_billing')?.disable();
+    this.purchaseForm.get('city_billing')?.disable();
+    this.purchaseForm.get('address_billing')?.disable();
+    this.purchaseForm.get('postal_code_billing')?.disable();
 
-        this.purchaseForm.get('province')?.enable();
-        this.purchaseForm.get('city')?.enable();
-        this.purchaseForm.get('address')?.enable();
-        this.purchaseForm.get('postal_code')?.enable();
+    // this.purchaseForm.get('project_type')?.valueChanges.subscribe((value) => {
+    //   if(value === 'stock'){
+    //     this.purchaseForm.get('province')?.disable();
+    //     this.purchaseForm.get('city')?.disable();
+    //     this.purchaseForm.get('address')?.disable();
+    //     this.purchaseForm.get('postal_code')?.disable();
 
-        this.purchaseForm.patchValue({
-          province: '',
-          city: '',
-          address : '',
-          postal_code: ''
-        })
-      }
-    })
+    //     this.purchaseForm.get('province_billing')?.disable();
+    //     this.purchaseForm.get('city_billing')?.disable();
+    //     this.purchaseForm.get('address_billing')?.disable();
+    //     this.purchaseForm.get('postal_code_billing')?.disable();
+    //   }
+
+    //   if(value === 'project'){
+
+    //     this.purchaseForm.get('province')?.enable();
+    //     this.purchaseForm.get('city')?.enable();
+    //     this.purchaseForm.get('address')?.enable();
+    //     this.purchaseForm.get('postal_code')?.enable();
+
+    //     this.purchaseForm.patchValue({
+    //       province: '',
+    //       city: '',
+    //       address : '',
+    //       postal_code: ''
+    //     })
+    //   }
+    // })
 
     this.purchaseForm.get('warehouse_id')?.valueChanges.subscribe((value) => {
       const selectedWarehouse = this.warehouseList.find(w => w.id === value);
-
-      console.log(selectedWarehouse)
 
       this.purchaseForm.patchValue({
         province: parseInt(selectedWarehouse.province),
@@ -124,11 +155,29 @@ export class AddPurchaseOrderComponent implements OnInit {
       })
     })
 
+    this.purchaseForm.get('billing_id')?.valueChanges.subscribe((value) => {
+      const selectedBilling =  this.billingList.find(b => b.id === value)
+
+      this.purchaseForm.patchValue({
+        province_billing: parseInt(selectedBilling.province),
+        city_billing:  parseInt(selectedBilling.city),
+        address_billing: selectedBilling.address,
+        postal_code_billing: selectedBilling.postal_code
+      })
+    })
+
     this.purchaseForm.get('province')?.valueChanges.subscribe((value) => {
       this.apiSvc.getRegenciesByProvince(value).subscribe((res) => {
         this.city = res;
       })
     })
+
+    this.purchaseForm.get('province_billing')?.valueChanges.subscribe((value) => {
+      this.apiSvc.getRegenciesByProvince(value).subscribe((res) => {
+        this.city = res;
+      })
+    })
+
 
     this.provinces$ = this.apiSvc.getProvinces().pipe(
       tap(p => {
@@ -141,7 +190,13 @@ export class AddPurchaseOrderComponent implements OnInit {
         tap(w => {
           this.warehouseList = w.data
         })
-      );  
+      );
+
+      this.billing$ = this.apiSvc.getBillingCompany().pipe(
+        tap(b => {
+          this.billingList = b.data
+        })
+      )
     })
     
     this.warehouse$ = this.apiSvc.getWarehouse().pipe(
@@ -149,6 +204,12 @@ export class AddPurchaseOrderComponent implements OnInit {
         this.warehouseList = w.data
       })
     );
+
+    this.billing$ = this.apiSvc.getBillingCompany().pipe(
+      tap(b => {
+        this.billingList = b.data
+      })
+    )
 
     //used for calculate total order and total grand order
     const orderChanges$ = this.order.valueChanges.pipe(startWith(this.order.value));
@@ -174,6 +235,23 @@ export class AddPurchaseOrderComponent implements OnInit {
         this.purchaseForm.patchValue({is_pic_internal: ''})
       }
     })
+
+    this.purchaseForm.get('pic_shipping')?.valueChanges.subscribe((value) => {
+      this.filtredListOfPicShipping = this.listOfPic.filter(pic => value.includes(pic.pic_id));
+
+      if(!value.includes(this.purchaseForm.get('is_pic_internal_shipping')?.value)){
+        this.purchaseForm.patchValue({is_pic_internal_shipping: ''})
+      }
+    })
+
+    this.purchaseForm.get('pic_billing')?.valueChanges.subscribe((value) => {
+      this.filteredListOfPicBilling = this.listOfPic.filter(pic => value.includes(pic.pic_id));
+
+      if(!value.includes(this.purchaseForm.get('is_pic_internal_billing')?.value)){
+        this.purchaseForm.patchValue({is_pic_internal_billing: ''})
+      }
+    })
+    
 
     this.purchaseForm.get('date')?.valueChanges.subscribe((value) => {
       const formattedDate = this.datePipe.transform(new Date(value), 'yyyy-MM-dd') || '';
@@ -263,7 +341,51 @@ export class AddPurchaseOrderComponent implements OnInit {
 
   handleCancelWarehouse(): void{
     this.modalRef?.close();
+    this.modalRefBilling?.close();
     this.categoryForm.reset();
+  }
+
+  handleSubmitBilling(): void{
+    this.spinnerSvc.show();
+
+    const body = {
+      id: this.categoryForm.get('id')?.value,
+      name: this.categoryForm.get('name')?.value,
+      description: this.categoryForm.get('description')?.value,
+      country: 'indonesia',
+      province: this.categoryForm.get('province')?.value.toString(),
+      city: this.categoryForm.get('city')?.value.toString(),
+      postal_code: this.categoryForm.get('postal_code')?.value,
+      maps_url: this.categoryForm.get('maps_url')?.value,
+      address: this.categoryForm.get('address')?.value
+    }
+
+    this.apiSvc.createBillingCompany(body).subscribe({
+      next: () => {
+
+        this.spinnerSvc.hide();
+        this.modalSvc.success({
+          nzTitle: 'Success',
+          nzContent: 'Successfully Add Warehouse',
+          nzOkText: 'Ok',
+          nzCentered: true
+        })
+        this.apiSvc.triggerRefreshCategories()
+      },
+      error: (error) => {
+        this.spinnerSvc.hide();
+        console.log(error);
+        this.modalSvc.error({
+          nzTitle: 'Unable to Add Warehouse',
+          nzContent: error.error.meta.message,
+          nzOkText: 'Ok',
+          nzCentered: true
+        })
+      },
+      complete: () => {
+        this.categoryForm.reset();
+      }
+    })
   }
 
   handleSubmitWarehouse(): void{
@@ -332,14 +454,59 @@ export class AddPurchaseOrderComponent implements OnInit {
     })
   }
 
+  showModalAddBilling(){
+    this.modalRefBilling  = this.modalSvc.create({
+      nzTitle: 'Add Warehouse',
+      nzContent: AddWarehouseAddressComponent,
+      nzComponentParams: {
+        form: this.categoryForm
+      },
+      nzCentered: true,
+      nzFooter: [
+        {
+          label: 'Cancel',
+          onClick: () => this.handleCancelWarehouse(),
+          type: 'default'
+        },
+        {
+          label: 'Confirm',
+          onClick: () => this.handleSubmitBilling(),
+          type: 'primary'
+        }
+      ]
+    })
+  }
+
   submitPurchase(): void{
 
     this.spinnerSvc.show()
+
+    //need update
+    if(this.purchaseForm.get('project_type')?.value === 'project'){
+      this.modalSvc.error({
+        nzTitle: 'Error',
+        nzContent: 'Project type not available right now',
+        nzOkText: 'Ok',
+        nzCentered: true
+      })
+      return
+    }
 
     const picComplete = this.purchaseForm.get('pic')!.value.map((pic_id: any) => ({
       pic_id: pic_id,
       is_pic_internal: pic_id === this.purchaseForm.get('is_pic_internal')!.value ? 1 : 0
     }));
+
+    const picShippingComplete = this.purchaseForm.get('pic_shipping')!.value.map((pic_id: any) => ({
+      pic_id: pic_id,
+      is_pic_internal: pic_id ===  this.purchaseForm.get('is_pic_internal_shipping')!.value ? 1 : 0
+    }));
+
+    const picBillingComplete = this.purchaseForm.get('pic_billing')!.value.map((pic_id: any) => ({
+      pic_id: pic_id,
+      is_pic_internal: pic_id ===  this.purchaseForm.get('is_pic_internal_billing')!.value ? 1 : 0
+    }))
+
 
     const inventoryComplete = this.order.value.map((order: any) => ({
       inventory_id: order.inventory_id,
@@ -397,7 +564,14 @@ export class AddPurchaseOrderComponent implements OnInit {
         date: this.purchaseForm.get('date')?.value,
         pic: picComplete,
         inventories: inventoryComplete,
-        tax: this.purchaseForm.get('tax')?.value.toString()
+        tax: this.purchaseForm.get('tax')?.value.toString(),
+        po_billing_pic: picBillingComplete,
+        po_shipping_pic: picShippingComplete,
+        telephone_billing: this.purchaseForm.get('telephone_billing')?.value,
+        telephone_shipping: this.purchaseForm.get('telephone_shipping')?.value,
+        billing_id: this.purchaseForm.get('billing_id')?.value,
+        shipping_id: this.purchaseForm.get('warehouse_id')?.value,
+        type: this.purchaseForm.get('project_type')?.value
       }
       
       
