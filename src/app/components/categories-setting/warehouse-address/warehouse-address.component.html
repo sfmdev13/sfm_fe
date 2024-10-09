@@ -30,7 +30,7 @@
             <td>
                 <div class="d-flex gap-3">
                     <span (click)="showModalEdit(data)" nz-icon nzType="edit" nzTheme="twotone"></span>
-                    <span (click)="showModalDelete(data.id)" nz-icon nzType="delete" nzTheme="twotone"></span>
+                    <!-- <span (click)="showModalDelete(data.id)" nz-icon nzType="delete" nzTheme="twotone"></span> -->
                 </div>
             </td>
             </tr>
@@ -54,7 +54,7 @@
 
 <nz-modal nzCentered [(nzVisible)]="isVisibleEdit" [nzTitle]="modal_type + ' Warehouse'" (nzOnCancel)="handleCancelEdit()">
     <ng-container *nzModalContent>
-        <app-add-warehouse-address [form]="categoryFormEdit"></app-add-warehouse-address>
+        <app-add-warehouse-address [form]="categoryFormEdit" [data]="dataDetail" [type]="modal_type"></app-add-warehouse-address>
     </ng-container>
     <ng-container *nzModalFooter>
         <button nz-button nzType="default" (click)="handleCancelEdit()">Cancel</button>

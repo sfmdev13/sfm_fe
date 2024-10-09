@@ -38,6 +38,8 @@ export class WarehouseAddressComponent implements OnInit {
 
   selectedIdDelete: number = 0;
 
+  dataDetail: any;
+
   constructor(
     private apiSvc: ApiService,
     private fb: FormBuilder,
@@ -74,23 +76,15 @@ export class WarehouseAddressComponent implements OnInit {
   }
 
   showModalEdit(data: any): void {
-    this.modal_type = 'Edit'
+    this.modal_type = 'update'
 
-    this.categoryFormEdit.patchValue({
-      id: data.id,
-      name: data.name,
-      description: data.description,
-      province: parseInt(data.province),
-      city: parseInt(data.city),
-      address: data.address,
-      postal_code: data.postal_code
-    })
+    this.dataDetail = data;
 
     this.isVisibleEdit = true;
   }
 
   showModalAdd(): void {
-    this.modal_type = 'Add'
+    this.modal_type = 'add'
     this.isVisibleAdd = true;
   }
 
