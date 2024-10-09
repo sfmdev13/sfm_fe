@@ -12,6 +12,7 @@ import { NzTableModule } from 'ng-zorro-antd/table';
 import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzInputNumberModule } from 'ng-zorro-antd/input-number';
 import { NzSpaceModule } from 'ng-zorro-antd/space';
+import { NzTabsModule } from 'ng-zorro-antd/tabs';
 
 
 @NgModule({
@@ -29,7 +30,8 @@ import { NzSpaceModule } from 'ng-zorro-antd/space';
     NzTableModule,
     NzIconModule,
     NzInputNumberModule,
-    NzSpaceModule
+    NzSpaceModule,
+    NzTabsModule
   ],
   exports: [AddPurchaseOrderComponent],
   providers: [DatePipe]

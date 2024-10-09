@@ -85,231 +85,417 @@
                     </nz-form-item>
                 </div>
 
-                <nz-divider></nz-divider>
-
-                <nz-form-item class="m-0 mb-2">
-                    <h6 class="fw-semibold">Shipping Address</h6>
-                </nz-form-item>
-
-                <ng-container *ngIf="purchaseForm.get('project_type')?.value === 'stock'">
-                    <div class="col-md-4">
-                        <nz-form-item>
-                            <nz-form-label class="fw-semibold" for="warehouse_id">Warehouse</nz-form-label>
-                            <ng-container *ngIf="warehouse$ | async as w; else warehouseLoad">
-                                <nz-select nzShowSearch nzPlaceHolder="Select Warehouse" formControlName="warehouse_id" [nzDropdownRender]="warehouseRender">
-                                    <nz-option *ngFor="let warehouse of w.data" [nzLabel]="warehouse.name" [nzValue]="warehouse.id"></nz-option>
-                                    <ng-template #warehouseRender>
-                                        <nz-divider class="m-0"></nz-divider>
-                                        <div class="container">
-                                          <a class="add-item" (click)="showModalAddWarehouse()">
-                                            <span nz-icon nzType="plus"></span>
-                                            Add Warehouse
-                                          </a>
-                                        </div>
-                                      </ng-template>
-                                </nz-select>
-                            </ng-container>
-                            <ng-template #warehouseLoad>
-                                <nz-select nzShowSearch nzPlaceHolder="Select Warehouse" nzDisabled>
-                                </nz-select>  
-                            </ng-template>
+                <nz-tabset>
+                    <nz-tab nzTitle="Purchase">
+                        <table class="table table-striped table-order">
+                            <thead style="position: unset;">
+                                <tr>
+                                    <th scope="col">Product Description</th>
+                                    <th scope="col">Part Number</th>
+                                    <th scope="col">Qty</th>
+                                    <th scope="col">Unit</th>
+                                    <th scope="col">Price List</th>
+                                    <th scope="col">Discount</th>
+                                    <th scope="col">Product Cost</th>
+                                    <th scope="col">Total</th>
+                                    <th scope="col">#</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <ng-container formArrayName="order">
+                                    <tr *ngFor="let order of order.controls; let i = index" [formGroupName]="i">
+                                        <td>
+                                            <nz-form-control>
+                                                <nz-select nzShowSearch  nzPlaceHolder="Select Inventory" formControlName="inventory_id">
+                                                    <nz-option
+                                                    *ngFor="let p of inventoryList.data"
+                                                        [nzLabel]="p.description" 
+                                                        [nzValue]="p.id"
+                                                    ></nz-option>
+                                                </nz-select>
+                                            </nz-form-control>                        
+                                        </td>
+                                        <td>
+                                            <nz-form-control>
+                                                <input nz-input formControlName="product_code" />
+                                            </nz-form-control>
+                                        </td>
+                                        <td>
+                                            <nz-form-control>
+                                                <nz-input-number formControlName="qty" [nzMin]="0"></nz-input-number>
+                                            </nz-form-control>  
+                                        </td>
+                                        <td>
+                                            <div>
+                                                <p class="m-0 p-0">{{ order.get('unit_measurement')?.value}} <sup>{{ order.get('unit_unit')?.value }}</sup> </p>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <nz-form-control>
+                                                <nz-input-number [nzFormatter]="formatter" formControlName="price_list" [nzMin]="0" class="w-100"></nz-input-number>
+                                            </nz-form-control>  
+                                        </td>
+                                        <td>
+                                            <nz-form-control>
+                                                <nz-space nzDirection="vertical" style="width: 100%">
+                                                    <nz-input-number-group  nzAddOnAfter="%" class="w-100">
+                                                        <nz-input-number [nzFormatter]="formatter" formControlName="discount" [nzMin]="0" class="w-100"></nz-input-number>
+                                                    </nz-input-number-group>
+                                                </nz-space>
+                                            </nz-form-control>  
+                                        </td>
+                                        <td>
+                                            <nz-form-control>
+                                                <nz-space nzDirection="vertical" style="width: 100%">
+                                                    <nz-input-number-group *nzSpaceItem nzPrefix="Rp. " style="width: 100%">
+                                                        <nz-input-number     
+                                                        formControlName="product_cost"
+                                                        [nzFormatter]="formatter"
+                                                        [nzMin]="0"
+                                                        ></nz-input-number>
+                                                    </nz-input-number-group>
+                                                </nz-space>
+                                            </nz-form-control>  
+                                        </td>
+                                        <td>
+                                            <div style="margin-top: 4px;">
+                                                <p class="m-0 p-0">Rp. {{ order.get('total_cost')?.value | number:'1.0-0' }}</p>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <span (click)="removeOrder(i)" nz-icon nzType="delete" nzTheme="twotone" [nzTwotoneColor]="'#ED0000'"></span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="9" class="text-center">
+                                            <button (click)="addOrder()" nz-button nzType="primary" class="w-75" [disabled]="formDisable">Add Item</button>
+                                        </td>
+                                    </tr>
+                                </ng-container>
+        
+                            </tbody>
+                        </table>
+        
+                        <div class="d-flex flex-column align-items-end gap-2">
+                            <div class="d-flex align-items-center justify-content-between total-children" style="width: 30%;">
+                                <p class="m-0 p-0 fw-semibold">Additional Cost</p>
+                                <nz-space nzDirection="vertical" style="width: 55%">
+                                    <nz-input-number-group *nzSpaceItem nzPrefix="Rp. " style="width: 100%">
+                                        <nz-input-number     
+                                        formControlName="additional_cost"
+                                        [nzFormatter]="formatter"
+                                        [nzMin]="0"
+                                        ></nz-input-number>
+                                    </nz-input-number-group>
+                                </nz-space>                
+                            </div>
+        
+                            <div class="d-flex align-items-center justify-content-between" style="width: 30%;">
+                                <p class="m-0 p-0 fw-semibold">Total Order</p>
+                                <p class="m-0 p-0 fw-semibold total-order">Rp {{ totalOrder | number:'1.0-0' }}</p>
+                            </div>
+        
+                            <div class="d-flex align-items-center justify-content-between" style="width: 30%;">
+                                <p class="m-0 p-0 fw-semibold">Tax</p>
+                                <nz-space nzDirection="vertical" style="width: 55%">
+                                    <nz-input-number-group nzAddOnAfter="%" class="w-100">
+                                        <nz-input-number formControlName="tax" [nzMin]="0"></nz-input-number>
+                                    </nz-input-number-group>
+                                </nz-space>                
+                            </div>
+        
+                            <div class="d-flex align-items-center justify-content-between total-children" style="width: 30%;">
+                                <p class="m-0 p-0 fw-semibold">Grand Total</p>
+                                <p class="m-0 p-0 fw-semibold total-order">Rp {{ totalGrandOrder | number:'1.0-0' }}</p>
+                            </div>
+                        </div>
+                    </nz-tab>
+                    <nz-tab nzTitle="Shipping & Billing">
+                        <nz-form-item class="m-0 mb-2">
+                            <h6 class="fw-semibold">Shipping Address</h6>
                         </nz-form-item>
-                    </div>
-                </ng-container>
 
-                <div class="col-md-4">
-                    <ng-container *ngIf="provinces$ | async as province; else provinceLoad">
-                      <nz-form-item>
-                        <nz-form-label nzRequired class="fw-semibold" nzFor="province" nzRequired>Province</nz-form-label>
-                        <nz-form-control>
-                            <nz-select  nzShowSearch nzPlaceHolder="Select Province" formControlName="province">
-                            <ng-container *ngFor="let p of province">
-                              <nz-option [nzLabel]="p.province" [nzValue]="p.id"></nz-option>
-                            </ng-container>
-                            </nz-select>
-                        </nz-form-control>
-                      </nz-form-item>
-                    </ng-container>
-    
-                    <ng-template #provinceLoad>
-                      <nz-form-item>
-                        <nz-form-label nzRequired class="fw-semibold" nzFor="province" nzRequired>Province</nz-form-label>
-                        <nz-form-control>
-                            <nz-select nzDisabled nzPlaceHolder="Select Province" formControlName="province">
-                            </nz-select>
-                        </nz-form-control>
-                      </nz-form-item>
-                    </ng-template>
-                  </div>
-    
-                  <div class="col-md-4">
-                    <ng-container *ngIf="city.length > 0; else loadingCity">
-                      <nz-form-item>
-                        <nz-form-label nzRequired class="fw-semibold" nzFor="city" nzRequired>City</nz-form-label>
-                        <nz-form-control>
-                            <nz-select  nzShowSearch nzPlaceHolder="Select city" formControlName="city">
-                            <ng-container *ngFor="let c of city">
-                              <nz-option [nzLabel]="c.regency" [nzValue]="c.id"></nz-option>
-                            </ng-container>
-                            </nz-select>
-                        </nz-form-control>
-                      </nz-form-item>
-                    </ng-container>
-                    <ng-template #loadingCity>
-                      <nz-form-item>
-                        <nz-form-label nzRequired class="fw-semibold" nzFor="city" nzRequired>City</nz-form-label>
-                        <nz-form-control>
-                            <nz-select nzDisabled nzPlaceHolder="Select province first" formControlName="city">
-                            </nz-select>
-                        </nz-form-control>
-                      </nz-form-item>
-                    </ng-template>
-                  </div>
-                  <div class="col-md-4">
-                    <nz-form-item>
-                      <nz-form-label nzRequired nzFor="postal_code" class="fw-semibold">Postal Code</nz-form-label>
-                      <nz-form-control>
-                        <input nz-input formControlName="postal_code" id="postal_code"  />
-                      </nz-form-control>
-                    </nz-form-item>
-                  </div>
-                  <nz-form-item>
-                      <nz-form-label nzRequired nzFor="address" class="fw-semibold">Company Full Address</nz-form-label>
-                      <nz-form-control>
-                        <nz-textarea-count [nzMaxCharacterCount]="200">
-                          <textarea rows="4" formControlName="address" nz-input></textarea>
-                        </nz-textarea-count>
-                      </nz-form-control>
-                  </nz-form-item>
-
-                <nz-divider></nz-divider>
-
-                <nz-form-item class="m-0">
-                    <h6 class="fw-semibold">Order Inventory</h6>
-                </nz-form-item>
-                <table class="table table-striped table-order">
-                    <thead style="position: unset;">
-                        <tr>
-                            <th scope="col">Product Description</th>
-                            <th scope="col">Part Number</th>
-                            <th scope="col">Qty</th>
-                            <th scope="col">Unit</th>
-                            <th scope="col">Price List</th>
-                            <th scope="col">Discount</th>
-                            <th scope="col">Product Cost</th>
-                            <th scope="col">Total</th>
-                            <th scope="col">#</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <ng-container formArrayName="order">
-                            <tr *ngFor="let order of order.controls; let i = index" [formGroupName]="i">
-                                <td>
-                                    <nz-form-control>
-                                        <nz-select nzShowSearch  nzPlaceHolder="Select Inventory" formControlName="inventory_id">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <nz-form-item class="mb-4">
+                                    <nz-form-label nzRequired nzFor="pic_shipping" class="fw-semibold">Shipping PIC</nz-form-label>
+                                    <ng-container *ngIf="pic$ | async as pic; else picLoad">
+                                        <nz-select nzShowSearch nzMode="tags" nzPlaceHolder="Select PIC" formControlName="pic_shipping">
                                             <nz-option
-                                            *ngFor="let p of inventoryList.data"
-                                                [nzLabel]="p.description" 
-                                                [nzValue]="p.id"
+                                            *ngFor="let p of pic"
+                                                [nzLabel]="p.name" 
+                                                [nzValue]="p.pic_id"
                                             ></nz-option>
                                         </nz-select>
-                                    </nz-form-control>                        
-                                </td>
-                                <td>
+                                    </ng-container>
+                                    <ng-template #picLoad>
+                                        <nz-select nzShowSearch nzMode="tags" nzPlaceHolder="Select PIC" nzDisabled>
+                                            <nz-option></nz-option>
+                                        </nz-select>
+                                    </ng-template>
+                                </nz-form-item>                                
+                            </div>
+                            <div class="col-md-4">
+                                <nz-form-item>
+                                    <nz-form-label nzRequired class="fw-semibold" nzFor="is_pic_internal_shipping" nzRequired>Head of PIC Shipping</nz-form-label>
                                     <nz-form-control>
-                                        <input nz-input formControlName="product_code" />
+                                        <nz-select nzShowSearch nzPlaceHolder="Select Head" formControlName="is_pic_internal_shipping">
+                                            <ng-container *ngFor="let pic of filtredListOfPicShipping">
+                                                <nz-option [nzLabel]="pic.name" [nzValue]="pic.pic_id"></nz-option>
+                                            </ng-container>
+                                        </nz-select>
                                     </nz-form-control>
-                                </td>
-                                <td>
+                                </nz-form-item>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <ng-container *ngIf="purchaseForm.get('project_type')?.value === 'stock'">
+                                <div class="col-md-4">
+                                    <nz-form-item>
+                                        <nz-form-label class="fw-semibold" for="warehouse_id">Warehouse</nz-form-label>
+                                        <ng-container *ngIf="warehouse$ | async as w; else warehouseLoad">
+                                            <nz-select nzShowSearch nzPlaceHolder="Select Warehouse" formControlName="warehouse_id" [nzDropdownRender]="warehouseRender">
+                                                <nz-option *ngFor="let warehouse of w.data" [nzLabel]="warehouse.name" [nzValue]="warehouse.id"></nz-option>
+                                                <ng-template #warehouseRender>
+                                                    <nz-divider class="m-0"></nz-divider>
+                                                    <div class="container">
+                                                      <a class="add-item" (click)="showModalAddWarehouse()">
+                                                        <span nz-icon nzType="plus"></span>
+                                                        Add Warehouse
+                                                      </a>
+                                                    </div>
+                                                  </ng-template>
+                                            </nz-select>
+                                        </ng-container>
+                                        <ng-template #warehouseLoad>
+                                            <nz-select nzShowSearch nzPlaceHolder="Select Warehouse" nzDisabled>
+                                            </nz-select>  
+                                        </ng-template>
+                                    </nz-form-item>
+                                </div>
+                            </ng-container>
+            
+                            <div class="col-md-4">
+                                <ng-container *ngIf="provinces$ | async as province; else provinceLoad">
+                                  <nz-form-item>
+                                    <nz-form-label nzRequired class="fw-semibold" nzFor="province" nzRequired>Province</nz-form-label>
                                     <nz-form-control>
-                                        <nz-input-number formControlName="qty" [nzMin]="0"></nz-input-number>
-                                    </nz-form-control>  
-                                </td>
-                                <td>
-                                    <div>
-                                        <p class="m-0 p-0">{{ order.get('unit_measurement')?.value}} <sup>{{ order.get('unit_unit')?.value }}</sup> </p>
-                                    </div>
-                                </td>
-                                <td>
+                                        <nz-select  nzShowSearch nzPlaceHolder="Select Province" formControlName="province">
+                                        <ng-container *ngFor="let p of province">
+                                          <nz-option [nzLabel]="p.province" [nzValue]="p.id"></nz-option>
+                                        </ng-container>
+                                        </nz-select>
+                                    </nz-form-control>
+                                  </nz-form-item>
+                                </ng-container>
+                
+                                <ng-template #provinceLoad>
+                                  <nz-form-item>
+                                    <nz-form-label nzRequired class="fw-semibold" nzFor="province" nzRequired>Province</nz-form-label>
                                     <nz-form-control>
-                                        <nz-input-number [nzFormatter]="formatter" formControlName="price_list" [nzMin]="0" class="w-100"></nz-input-number>
-                                    </nz-form-control>  
-                                </td>
-                                <td>
+                                        <nz-select nzDisabled nzPlaceHolder="Select Province" formControlName="province">
+                                        </nz-select>
+                                    </nz-form-control>
+                                  </nz-form-item>
+                                </ng-template>
+                            </div>
+                
+                            <div class="col-md-4">
+                            <ng-container *ngIf="city.length > 0; else loadingCity">
+                                <nz-form-item>
+                                <nz-form-label nzRequired class="fw-semibold" nzFor="city" nzRequired>City</nz-form-label>
+                                <nz-form-control>
+                                    <nz-select  nzShowSearch nzPlaceHolder="Select city" formControlName="city">
+                                    <ng-container *ngFor="let c of city">
+                                        <nz-option [nzLabel]="c.regency" [nzValue]="c.id"></nz-option>
+                                    </ng-container>
+                                    </nz-select>
+                                </nz-form-control>
+                                </nz-form-item>
+                            </ng-container>
+                            <ng-template #loadingCity>
+                                <nz-form-item>
+                                <nz-form-label nzRequired class="fw-semibold" nzFor="city" nzRequired>City</nz-form-label>
+                                <nz-form-control>
+                                    <nz-select nzDisabled nzPlaceHolder="Select province first" formControlName="city">
+                                    </nz-select>
+                                </nz-form-control>
+                                </nz-form-item>
+                            </ng-template>
+                            </div>
+    
+                            <div class="col-md-4">
+                                <nz-form-item>
+                                    <nz-form-label nzRequired nzFor="postal_code" class="fw-semibold">Postal Code</nz-form-label>
                                     <nz-form-control>
-                                        <nz-space nzDirection="vertical" style="width: 100%">
-                                            <nz-input-number-group  nzAddOnAfter="%" class="w-100">
-                                                <nz-input-number [nzFormatter]="formatter" formControlName="discount" [nzMin]="0" class="w-100"></nz-input-number>
-                                            </nz-input-number-group>
-                                        </nz-space>
-                                    </nz-form-control>  
-                                </td>
-                                <td>
+                                        <input nz-input formControlName="postal_code" id="postal_code"  />
+                                    </nz-form-control>
+                                </nz-form-item>
+                            </div>
+
+                            <div class="col-md-4">
+                                <nz-form-item>
+                                    <nz-form-label nzRequired nzFor="telephone_shipping" class="fw-semibold">Telephone/Fax Shipping</nz-form-label>
                                     <nz-form-control>
-                                        <nz-space nzDirection="vertical" style="width: 100%">
-                                            <nz-input-number-group *nzSpaceItem nzPrefix="Rp. " style="width: 100%">
-                                                <nz-input-number     
-                                                formControlName="product_cost"
-                                                [nzFormatter]="formatter"
-                                                [nzMin]="0"
-                                                ></nz-input-number>
-                                            </nz-input-number-group>
-                                        </nz-space>
-                                    </nz-form-control>  
-                                </td>
-                                <td>
-                                    <div style="margin-top: 4px;">
-                                        <p class="m-0 p-0">Rp. {{ order.get('total_cost')?.value | number:'1.0-0' }}</p>
-                                    </div>
-                                </td>
-                                <td>
-                                    <span (click)="removeOrder(i)" nz-icon nzType="delete" nzTheme="twotone" [nzTwotoneColor]="'#ED0000'"></span>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td colspan="9" class="text-center">
-                                    <button (click)="addOrder()" nz-button nzType="primary" class="w-75" [disabled]="formDisable">Add Item</button>
-                                </td>
-                            </tr>
-                        </ng-container>
+                                        <input nz-input formControlName="telephone_shipping" id="telephone_shipping"  />
+                                    </nz-form-control>
+                                </nz-form-item>
+                            </div>
+                            
+                            <nz-form-item>
+                                <nz-form-label nzRequired nzFor="address" class="fw-semibold">Company Full Address</nz-form-label>
+                                <nz-form-control>
+                                <nz-textarea-count [nzMaxCharacterCount]="200">
+                                    <textarea rows="4" formControlName="address" nz-input></textarea>
+                                </nz-textarea-count>
+                                </nz-form-control>
+                            </nz-form-item>
+                        </div>
 
-                    </tbody>
-                </table>
+                        <nz-divider></nz-divider>
 
-                <div class="d-flex flex-column align-items-end gap-2">
-                    <div class="d-flex align-items-center justify-content-between total-children" style="width: 30%;">
-                        <p class="m-0 p-0 fw-semibold">Additional Cost</p>
-                        <nz-space nzDirection="vertical" style="width: 55%">
-                            <nz-input-number-group *nzSpaceItem nzPrefix="Rp. " style="width: 100%">
-                                <nz-input-number     
-                                formControlName="additional_cost"
-                                [nzFormatter]="formatter"
-                                [nzMin]="0"
-                                ></nz-input-number>
-                            </nz-input-number-group>
-                        </nz-space>                
-                    </div>
+                        <nz-form-item class="m-0 mb-2">
+                            <h6 class="fw-semibold">Billing Address</h6>
+                        </nz-form-item>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <nz-form-item class="mb-4">
+                                    <nz-form-label nzRequired nzFor="pic_billing" class="fw-semibold">Billing PIC</nz-form-label>
+                                    <ng-container *ngIf="pic$ | async as pic; else picLoad">
+                                        <nz-select nzShowSearch nzMode="tags" nzPlaceHolder="Select PIC" formControlName="pic_billing">
+                                            <nz-option
+                                            *ngFor="let p of pic"
+                                                [nzLabel]="p.name" 
+                                                [nzValue]="p.pic_id"
+                                            ></nz-option>
+                                        </nz-select>
+                                    </ng-container>
+                                    <ng-template #picLoad>
+                                        <nz-select nzShowSearch nzMode="tags" nzPlaceHolder="Select PIC" nzDisabled>
+                                            <nz-option></nz-option>
+                                        </nz-select>
+                                    </ng-template>
+                                </nz-form-item>                                
+                            </div>
+                            <div class="col-md-4">
+                                <nz-form-item>
+                                    <nz-form-label nzRequired class="fw-semibold" nzFor="is_pic_internal_billing" nzRequired>Head of PIC Billing</nz-form-label>
+                                    <nz-form-control>
+                                        <nz-select nzShowSearch nzPlaceHolder="Select Head" formControlName="is_pic_internal_billing">
+                                            <ng-container *ngFor="let pic of filteredListOfPicBilling">
+                                                <nz-option [nzLabel]="pic.name" [nzValue]="pic.pic_id"></nz-option>
+                                            </ng-container>
+                                        </nz-select>
+                                    </nz-form-control>
+                                </nz-form-item>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <ng-container *ngIf="purchaseForm.get('project_type')?.value === 'stock'">
+                                <div class="col-md-4">
+                                    <nz-form-item>
+                                        <nz-form-label class="fw-semibold" for="billing_id">Billing Address</nz-form-label>
+                                        <ng-container *ngIf="billing$ | async as b; else billingLoad">
+                                            <nz-select nzShowSearch nzPlaceHolder="Select Billing Address" formControlName="billing_id" [nzDropdownRender]="billingRender">
+                                                <nz-option *ngFor="let billing of b.data" [nzLabel]="billing.name" [nzValue]="billing.id"></nz-option>
+                                                <ng-template #billingRender>
+                                                    <nz-divider class="m-0"></nz-divider>
+                                                    <div class="container">
+                                                      <a class="add-item" (click)="showModalAddBilling()">
+                                                        <span nz-icon nzType="plus"></span>
+                                                        Add Billing Address
+                                                      </a>
+                                                    </div>
+                                                  </ng-template>
+                                            </nz-select>
+                                        </ng-container>
+                                        <ng-template #billingLoad>
+                                            <nz-select nzShowSearch nzPlaceHolder="Select Billing Address" nzDisabled>
+                                            </nz-select>  
+                                        </ng-template>
+                                    </nz-form-item>
+                                </div>
+                            </ng-container>
+            
+                            <div class="col-md-4">
+                                <ng-container *ngIf="provinces$ | async as province; else provinceLoad">
+                                  <nz-form-item>
+                                    <nz-form-label nzRequired class="fw-semibold" nzFor="province_billing" nzRequired>Province</nz-form-label>
+                                    <nz-form-control>
+                                        <nz-select  nzShowSearch nzPlaceHolder="Select Province" formControlName="province_billing">
+                                        <ng-container *ngFor="let p of province">
+                                          <nz-option [nzLabel]="p.province" [nzValue]="p.id"></nz-option>
+                                        </ng-container>
+                                        </nz-select>
+                                    </nz-form-control>
+                                  </nz-form-item>
+                                </ng-container>
+                
+                                <ng-template #provinceLoad>
+                                  <nz-form-item>
+                                    <nz-form-label nzRequired class="fw-semibold" nzFor="province_billing" nzRequired>Province</nz-form-label>
+                                    <nz-form-control>
+                                        <nz-select nzDisabled nzPlaceHolder="Select Province" formControlName="province_billing">
+                                        </nz-select>
+                                    </nz-form-control>
+                                  </nz-form-item>
+                                </ng-template>
+                            </div>
+                
+                            <div class="col-md-4">
+                            <ng-container *ngIf="city.length > 0; else loadingCity">
+                                <nz-form-item>
+                                <nz-form-label nzRequired class="fw-semibold" nzFor="city_billing" nzRequired>City</nz-form-label>
+                                <nz-form-control>
+                                    <nz-select  nzShowSearch nzPlaceHolder="Select city" formControlName="city_billing">
+                                    <ng-container *ngFor="let c of city">
+                                        <nz-option [nzLabel]="c.regency" [nzValue]="c.id"></nz-option>
+                                    </ng-container>
+                                    </nz-select>
+                                </nz-form-control>
+                                </nz-form-item>
+                            </ng-container>
+                            <ng-template #loadingCity>
+                                <nz-form-item>
+                                <nz-form-label nzRequired class="fw-semibold" nzFor="city_billing" nzRequired>City</nz-form-label>
+                                <nz-form-control>
+                                    <nz-select nzDisabled nzPlaceHolder="Select province first" formControlName="city_billing">
+                                    </nz-select>
+                                </nz-form-control>
+                                </nz-form-item>
+                            </ng-template>
+                            </div>
+    
+                            <div class="col-md-4">
+                            <nz-form-item>
+                                <nz-form-label nzRequired nzFor="postal_code_billing" class="fw-semibold">Postal Code</nz-form-label>
+                                <nz-form-control>
+                                <input nz-input formControlName="postal_code_billing" id="postal_code_billing"  />
+                                </nz-form-control>
+                            </nz-form-item>
+                            </div>
 
-                    <div class="d-flex align-items-center justify-content-between" style="width: 30%;">
-                        <p class="m-0 p-0 fw-semibold">Total Order</p>
-                        <p class="m-0 p-0 fw-semibold total-order">Rp {{ totalOrder | number:'1.0-0' }}</p>
-                    </div>
-
-                    <div class="d-flex align-items-center justify-content-between" style="width: 30%;">
-                        <p class="m-0 p-0 fw-semibold">Tax</p>
-                        <nz-space nzDirection="vertical" style="width: 55%">
-                            <nz-input-number-group nzAddOnAfter="%" class="w-100">
-                                <nz-input-number formControlName="tax" [nzMin]="0"></nz-input-number>
-                            </nz-input-number-group>
-                        </nz-space>                
-                    </div>
-
-                    <div class="d-flex align-items-center justify-content-between total-children" style="width: 30%;">
-                        <p class="m-0 p-0 fw-semibold">Grand Total</p>
-                        <p class="m-0 p-0 fw-semibold total-order">Rp {{ totalGrandOrder | number:'1.0-0' }}</p>
-                    </div>
-                </div>
-
+                            
+                            <div class="col-md-4">
+                                <nz-form-item>
+                                    <nz-form-label nzRequired nzFor="telephone_billing" class="fw-semibold">Telephone/Fax Billing</nz-form-label>
+                                    <nz-form-control>
+                                        <input nz-input formControlName="telephone_billing" id="telephone_billing"  />
+                                    </nz-form-control>
+                                </nz-form-item>
+                            </div>
+                            
+                            <nz-form-item>
+                                <nz-form-label nzRequired nzFor="address_billing" class="fw-semibold">Company Full Address</nz-form-label>
+                                <nz-form-control>
+                                <nz-textarea-count [nzMaxCharacterCount]="200">
+                                    <textarea rows="4" formControlName="address_billing" nz-input></textarea>
+                                </nz-textarea-count>
+                                </nz-form-control>
+                            </nz-form-item>
+                        </div>
+                    </nz-tab>
+                </nz-tabset>
             </div>
         </form>
     </div>
