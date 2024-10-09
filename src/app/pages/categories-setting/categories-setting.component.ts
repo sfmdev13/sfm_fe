@@ -61,6 +61,10 @@ export class CategoriesSettingComponent implements OnInit {
         {
           name: 'Warehouse Address',
           slug: 'warehouse_address'
+        },
+        {
+          name: 'Billing Address',
+          slug: 'billing_address'
         }
       ]
     }
