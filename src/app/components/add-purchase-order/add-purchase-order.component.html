@@ -495,6 +495,35 @@
                             </nz-form-item>
                         </div>
                     </nz-tab>
+                    <nz-tab nzTitle="Additional Information">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <nz-form-item class="mb-4">
+                                    <nz-form-label nzRequired nzFor="payment_term" class="fw-semibold">Payment Term</nz-form-label>
+                                    <nz-form-control>
+                                        <input nz-input formControlName="payment_term" id="payment_term" />
+                                    </nz-form-control>
+                                </nz-form-item>
+                            </div>
+                            <div class="col-md-4">
+                                <nz-form-item class="mb-4">
+                                    <nz-form-label nzRequired nzFor="shipping_term" class="fw-semibold">Shipping Term</nz-form-label>
+                                    <nz-form-control>
+                                        <input nz-input formControlName="shipping_term" id="shipping_term" />
+                                    </nz-form-control>
+                                </nz-form-item>
+                            </div>
+                            <div class="col-md-4">
+                                <nz-form-item class="mb-4">
+                                    <nz-form-label nzRequired nzFor="remarks" class="fw-semibold">Remarks</nz-form-label>
+                                    <nz-form-control>
+                                        <input nz-input formControlName="remarks" id="remarks" />
+                                    </nz-form-control>
+                                </nz-form-item>
+                            </div>
+                        </div>
+
+                    </nz-tab>
                 </nz-tabset>
             </div>
         </form>

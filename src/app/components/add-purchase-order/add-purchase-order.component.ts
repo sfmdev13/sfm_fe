@@ -58,6 +58,9 @@ export class AddPurchaseOrderComponent implements OnInit {
     postal_code_billing: [''],
     telephone_billing: [''],
     telephone_shipping: [''],
+    payment_term: ['', Validators.required],
+    shipping_term: ['', Validators.required],
+    remarks: ['', Validators.required],
     order: this.fb.array([])
   })
 
@@ -144,28 +147,6 @@ export class AddPurchaseOrderComponent implements OnInit {
     //   }
     // })
 
-    this.purchaseForm.get('warehouse_id')?.valueChanges.subscribe((value) => {
-      const selectedWarehouse = this.warehouseList.find(w => w.id === value);
-
-      this.purchaseForm.patchValue({
-        province: parseInt(selectedWarehouse.province),
-        city: parseInt(selectedWarehouse.city),
-        address: selectedWarehouse.address,
-        postal_code: selectedWarehouse.postal_code
-      })
-    })
-
-    this.purchaseForm.get('billing_id')?.valueChanges.subscribe((value) => {
-      const selectedBilling =  this.billingList.find(b => b.id === value)
-
-      this.purchaseForm.patchValue({
-        province_billing: parseInt(selectedBilling.province),
-        city_billing:  parseInt(selectedBilling.city),
-        address_billing: selectedBilling.address,
-        postal_code_billing: selectedBilling.postal_code
-      })
-    })
-
     this.purchaseForm.get('province')?.valueChanges.subscribe((value) => {
       this.apiSvc.getRegenciesByProvince(value).subscribe((res) => {
         this.city = res;
@@ -210,6 +191,28 @@ export class AddPurchaseOrderComponent implements OnInit {
         this.billingList = b.data
       })
     )
+
+    this.purchaseForm.get('warehouse_id')?.valueChanges.subscribe((value) => {
+      const selectedWarehouse = this.warehouseList.find(w => w.id === value);
+
+      this.purchaseForm.patchValue({
+        province: parseInt(selectedWarehouse?.province),
+        city: parseInt(selectedWarehouse?.city),
+        address: selectedWarehouse?.address,
+        postal_code: selectedWarehouse?.postal_code
+      })
+    })
+
+    this.purchaseForm.get('billing_id')?.valueChanges.subscribe((value) => {
+      const selectedBilling =  this.billingList.find(b => b.id === value)
+
+      this.purchaseForm.patchValue({
+        province_billing: parseInt(selectedBilling?.province),
+        city_billing:  parseInt(selectedBilling?.city),
+        address_billing: selectedBilling?.address,
+        postal_code_billing: selectedBilling?.postal_code
+      })
+    })
 
     //used for calculate total order and total grand order
     const orderChanges$ = this.order.valueChanges.pipe(startWith(this.order.value));
@@ -284,25 +287,53 @@ export class AddPurchaseOrderComponent implements OnInit {
         date: this.dataDetail.date,
         description: this.dataDetail.description,
         additional_cost: parseInt(this.dataDetail.additional_cost),
-        tax: this.dataDetail.tax
+        tax: this.dataDetail.tax,
+        telephone_billing: this.dataDetail.telephone_billing,
+        telephone_shipping: this.dataDetail.telephone_shipping,
+        payment_term: this.dataDetail.payment_term,
+        shipping_term: this.dataDetail.shipping_term,
+        project_type: this.dataDetail.type,
+        remarks: this.dataDetail.remarks,
+        warehouse_id: this.dataDetail.shipping.id,
+        billing_id: this.dataDetail.billing.id,
+        province: parseInt(this.dataDetail.shipping.province),
+        city: parseInt(this.dataDetail.shipping.city),
+        postal_code: this.dataDetail.shipping.postal_code,
+        address: this.dataDetail.shipping.address,
+        maps_url: this.dataDetail.shipping.maps_url,
+        province_billing: parseInt(this.dataDetail.billing.province),
+        city_billing: parseInt(this.dataDetail.billing.city),
+        postal_code_billing: this.dataDetail.billing.postal_code,
+        maps_url_billing: this.dataDetail.billing.maps_url,
+        address_billing: this.dataDetail.billing.address
       })
 
       //update PIC
       this.pic$ = this.apiSvc.getPic().pipe(
         tap(res => {
           this.listOfPic = res;
+
           //extract pic id
           const picIds = this.dataDetail.pic.map(item => item.pic_id);
+          const picIdsBilling = this.dataDetail.billing_pic.map(item => item.pic_id);
+          const picIdsShipping = this.dataDetail.shipping_pic.map(item => item.pic_id)
 
           //find pic internal id
           const isPicInternalId = this.dataDetail.pic.filter(item => item.is_pic_internal === 1);
+          const isPicInternalIdShipping = this.dataDetail.shipping_pic.filter(item => item.is_pic_internal === 1);
+          const isPicInternalIdBilling = this.dataDetail.billing_pic.filter(item => item.is_pic_internal === 1)
 
           this.purchaseForm.patchValue({
             pic: picIds,
-            is_pic_internal: isPicInternalId[0].pic_id
+            is_pic_internal: isPicInternalId[0].pic_id,
+            pic_shipping: picIdsShipping,
+            is_pic_internal_shipping: isPicInternalIdShipping[0].pic_id,
+            pic_billing: picIdsBilling,
+            is_pic_internal_billing: isPicInternalIdBilling[0].pic_id
           });
         })
       )
+      
   
       //clear existing order
       while (this.order.length !== 0) {
@@ -417,7 +448,6 @@ export class AddPurchaseOrderComponent implements OnInit {
       },
       error: (error) => {
         this.spinnerSvc.hide();
-        console.log(error);
         this.modalSvc.error({
           nzTitle: 'Unable to Add Warehouse',
           nzContent: error.error.meta.message,
@@ -523,7 +553,17 @@ export class AddPurchaseOrderComponent implements OnInit {
         date: this.purchaseForm.get('date')?.value,
         pic_new: picComplete,
         inventories_new: inventoryComplete,
-        tax: this.purchaseForm.get('tax')?.value
+        tax: this.purchaseForm.get('tax')?.value,
+        po_billing_pic_new: picBillingComplete,
+        po_shipping_pic_new: picShippingComplete,
+        type: this.purchaseForm.get('project_type')?.value,
+        payment_term: this.purchaseForm.get('payment_term')?.value,
+        shipping_term: this.purchaseForm.get('shipping_term')?.value,
+        remarks: this.purchaseForm.get('remarks')?.value,
+        telephone_billing: this.purchaseForm.get('telephone_billing')?.value,
+        telephone_shipping: this.purchaseForm.get('telephone_shipping')?.value,
+        billing_id: this.purchaseForm.get('billing_id')?.value,
+        shipping_id: this.purchaseForm.get('warehouse_id')?.value,
       }
 
       this.apiSvc.editPurchaseOrder(body).subscribe({
@@ -571,7 +611,10 @@ export class AddPurchaseOrderComponent implements OnInit {
         telephone_shipping: this.purchaseForm.get('telephone_shipping')?.value,
         billing_id: this.purchaseForm.get('billing_id')?.value,
         shipping_id: this.purchaseForm.get('warehouse_id')?.value,
-        type: this.purchaseForm.get('project_type')?.value
+        type: this.purchaseForm.get('project_type')?.value,
+        payment_term: this.purchaseForm.get('payment_term')?.value,
+        shipping_term: this.purchaseForm.get('shipping_term')?.value,
+        remarks: this.purchaseForm.get('remarks')?.value
       }
       
       

@@ -20,8 +20,38 @@ export interface IRootPurchaseOrder {
     supplier: Supplier
     po_items: PoItem[]
     logs: any[]
+    telephone_billing: string;
+    telephone_shipping: string;
+    type: string;
+    billing_pic: {
+      pic_id: string
+      is_pic_internal: number
+      name: string
+    }[]
+    shipping_pic: {
+      pic_id: string
+      is_pic_internal: number
+      name: string
+    }[]
+    payment_term: string
+    shipping_term: string
+    remarks: string
+    shipping: IAddress
+    billing: IAddress
   }
   
+  interface IAddress{
+    id: number
+    name: string
+    description: string
+    address: string
+    city: string
+    province: string
+    country: string
+    postal_code: string
+    maps_url: string
+  }
+
   export interface Pic {
     pic_id: string
     is_pic_internal: number
