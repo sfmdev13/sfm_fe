@@ -347,6 +347,43 @@
                         </nz-select>
                     </nz-form-control>
                 </nz-form-item>
+
+                <div class="col-md-6">
+                    <nz-form-item>
+                        <nz-form-label nzRequired nzFor="supplier_product_id" class="fw-semibold">Product Category</nz-form-label>
+                        <nz-form-control>
+                          <ng-container *ngIf="productCat$ | async as prod; else prodLoad">
+                            <nz-select nzShowSearch nzPlaceHolder="Select Product Category" formControlName="supplier_product_id">
+                              <ng-container *ngFor="let prod of prod.data">
+                                <nz-option [nzLabel]="prod.name" [nzValue]="prod.id"></nz-option>
+                              </ng-container>
+                            </nz-select>
+                          </ng-container>
+                          <ng-template #prodLoad>
+                            <nz-select nzDisabled nzPlaceHolder="Select Product Category" formControlName="supplier_product_id">
+                            </nz-select>
+                          </ng-template>
+                        </nz-form-control>
+                    </nz-form-item>
+                  </div>
+                <div class="col-md-6">
+                  <nz-form-item>
+                      <nz-form-label nzRequired nzFor="supplier_id" class="fw-semibold">Supplier</nz-form-label>
+                      <nz-form-control>
+                        <ng-container *ngIf="supplier$ | async as supplier; else suppLoad">
+                          <nz-select nzShowSearch nzPlaceHolder="Select Supplier" formControlName="supplier_id">
+                            <ng-container *ngFor="let supp of supplier.data">
+                              <nz-option [nzLabel]="supp.name" [nzValue]="supp.id"></nz-option>
+                            </ng-container>
+                          </nz-select>
+                        </ng-container>
+                        <ng-template #suppLoad>
+                          <nz-select nzDisabled nzPlaceHolder="Select Product Category First" formControlName="supplier_id">
+                          </nz-select>
+                        </ng-template>
+                      </nz-form-control>
+                  </nz-form-item>
+                </div>
   
                 <div class="col-md-6">
                     <nz-form-item class="mb-4">
@@ -483,42 +520,6 @@
                     </nz-form-item>
                 </div>
                 <div class="col-md-6">
-                    <nz-form-item>
-                        <nz-form-label nzRequired nzFor="supplier_product_id" class="fw-semibold">Product Category</nz-form-label>
-                        <nz-form-control>
-                          <ng-container *ngIf="productCat$ | async as prod; else prodLoad">
-                            <nz-select nzShowSearch nzPlaceHolder="Select Product Category" formControlName="supplier_product_id">
-                              <ng-container *ngFor="let prod of prod.data">
-                                <nz-option [nzLabel]="prod.name" [nzValue]="prod.id"></nz-option>
-                              </ng-container>
-                            </nz-select>
-                          </ng-container>
-                          <ng-template #prodLoad>
-                            <nz-select nzDisabled nzPlaceHolder="Select Product Category" formControlName="supplier_product_id">
-                            </nz-select>
-                          </ng-template>
-                        </nz-form-control>
-                    </nz-form-item>
-                  </div>
-                <div class="col-md-6">
-                  <nz-form-item>
-                      <nz-form-label nzRequired nzFor="supplier_id" class="fw-semibold">Supplier</nz-form-label>
-                      <nz-form-control>
-                        <ng-container *ngIf="supplier$ | async as supplier; else suppLoad">
-                          <nz-select nzShowSearch nzPlaceHolder="Select Supplier" formControlName="supplier_id">
-                            <ng-container *ngFor="let supp of supplier.data">
-                              <nz-option [nzLabel]="supp.name" [nzValue]="supp.id"></nz-option>
-                            </ng-container>
-                          </nz-select>
-                        </ng-container>
-                        <ng-template #suppLoad>
-                          <nz-select nzDisabled nzPlaceHolder="Select Product Category First" formControlName="supplier_id">
-                          </nz-select>
-                        </ng-template>
-                      </nz-form-control>
-                  </nz-form-item>
-                </div>
-                <div class="col-md-6">
                     <nz-form-item class="mb-4">
                         <nz-form-label nzRequired nzFor="qty" class="fw-semibold">Quantity</nz-form-label>
                         <nz-form-control>
@@ -587,6 +588,43 @@
                             </nz-select>
                         </nz-form-control>
                     </nz-form-item>
+
+                    <div class="col-md-6">
+                        <nz-form-item>
+                            <nz-form-label nzRequired nzFor="supplier_product_id" class="fw-semibold">Product Category</nz-form-label>
+                            <nz-form-control>
+                              <ng-container *ngIf="productCat$ | async as prod; else prodLoad">
+                                <nz-select nzShowSearch nzPlaceHolder="Select Product Category" formControlName="supplier_product_id">
+                                  <ng-container *ngFor="let prod of prod.data">
+                                    <nz-option [nzLabel]="prod.name" [nzValue]="prod.id"></nz-option>
+                                  </ng-container>
+                                </nz-select>
+                              </ng-container>
+                              <ng-template #prodLoad>
+                                <nz-select nzDisabled nzPlaceHolder="Select Product Category" formControlName="supplier_product_id">
+                                </nz-select>
+                              </ng-template>
+                            </nz-form-control>
+                        </nz-form-item>
+                      </div>
+                    <div class="col-md-6">
+                      <nz-form-item>
+                          <nz-form-label nzRequired nzFor="supplier_id" class="fw-semibold">Supplier</nz-form-label>
+                          <nz-form-control>
+                            <ng-container *ngIf="supplier$ | async as supplier; else suppLoad">
+                              <nz-select nzShowSearch nzPlaceHolder="Select Supplier" formControlName="supplier_id">
+                                <ng-container *ngFor="let supp of supplier.data">
+                                  <nz-option [nzLabel]="supp.name" [nzValue]="supp.id"></nz-option>
+                                </ng-container>
+                              </nz-select>
+                            </ng-container>
+                            <ng-template #suppLoad>
+                              <nz-select nzDisabled nzPlaceHolder="Select Product Category First" formControlName="supplier_id">
+                              </nz-select>
+                            </ng-template>
+                          </nz-form-control>
+                      </nz-form-item>
+                    </div>
       
                     <div class="col-md-6">
                         <nz-form-item class="mb-4">
@@ -717,42 +755,6 @@
                                 </nz-space>
                             </nz-form-control>
                         </nz-form-item>
-                    </div>
-                    <div class="col-md-6">
-                        <nz-form-item>
-                            <nz-form-label nzRequired nzFor="supplier_product_id" class="fw-semibold">Product Category</nz-form-label>
-                            <nz-form-control>
-                              <ng-container *ngIf="productCat$ | async as prod; else prodLoad">
-                                <nz-select nzShowSearch nzPlaceHolder="Select Product Category" formControlName="supplier_product_id">
-                                  <ng-container *ngFor="let prod of prod.data">
-                                    <nz-option [nzLabel]="prod.name" [nzValue]="prod.id"></nz-option>
-                                  </ng-container>
-                                </nz-select>
-                              </ng-container>
-                              <ng-template #prodLoad>
-                                <nz-select nzDisabled nzPlaceHolder="Select Product Category" formControlName="supplier_product_id">
-                                </nz-select>
-                              </ng-template>
-                            </nz-form-control>
-                        </nz-form-item>
-                      </div>
-                    <div class="col-md-6">
-                      <nz-form-item>
-                          <nz-form-label nzRequired nzFor="supplier_id" class="fw-semibold">Supplier</nz-form-label>
-                          <nz-form-control>
-                            <ng-container *ngIf="supplier$ | async as supplier; else suppLoad">
-                              <nz-select nzShowSearch nzPlaceHolder="Select Supplier" formControlName="supplier_id">
-                                <ng-container *ngFor="let supp of supplier.data">
-                                  <nz-option [nzLabel]="supp.name" [nzValue]="supp.id"></nz-option>
-                                </ng-container>
-                              </nz-select>
-                            </ng-container>
-                            <ng-template #suppLoad>
-                              <nz-select nzDisabled nzPlaceHolder="Select Product Category First" formControlName="supplier_id">
-                              </nz-select>
-                            </ng-template>
-                          </nz-form-control>
-                      </nz-form-item>
                     </div>
                     <div class="col-md-6">
                         <nz-form-item class="mb-4">

@@ -49,6 +49,9 @@ export class ApiService {
   private refreshGetPurchaseOrder = new BehaviorSubject<void>(undefined);
   refreshGetPurchaseOrder$ = this.refreshGetPurchaseOrder.asObservable();
 
+  private refreshGetProjects = new BehaviorSubject<void>(undefined);
+  refreshGetProjects$ = this.refreshGetProjects.asObservable();
+
   getProfile(): Observable<any> {
     const token = localStorage.getItem('authToken');
     const headers = new HttpHeaders({
@@ -97,6 +100,10 @@ export class ApiService {
 
   triggerRefreshPurchaseOrder(){
     this.refreshGetPurchaseOrder.next();
+  }
+
+  triggerRefreshProject(){
+    this.refreshGetProjects.next();
   }
 
   setFilteredCustomerData(data: IRootCustomer) {
@@ -1110,5 +1117,49 @@ export class ApiService {
     const url = `${this.apiUrl}/update/billing-address`
 
     return this.http.post<any>(url, body , { headers })
+  }
+
+  getProjects(page: number, per_page: number): Observable<any>{
+    const token = localStorage.getItem('authToken');
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+    });
+
+    const url = `${this.apiUrl}/project?page=${page}&per_page=${per_page}`
+
+    return this.http.get<any>(url, { headers })
+  }
+
+  createProjects(body: any): Observable<any>{
+    const token = localStorage.getItem('authToken');
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+    });
+
+    const url = `${this.apiUrl}/create-project`
+
+    return this.http.post<any>(url, body , { headers })
+  }
+
+  updateProjects(body: any): Observable<any>{
+    const token = localStorage.getItem('authToken');
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+    });
+
+    const url = `${this.apiUrl}/update-project`
+
+    return this.http.post<any>(url, body , { headers })
+  }
+
+  getCustomerList(): Observable<any>{
+    const token = localStorage.getItem('authToken');
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+    });
+
+    const url = `${this.apiUrl}/customer-list`
+
+    return this.http.get<any>(url, { headers })
   }
 }

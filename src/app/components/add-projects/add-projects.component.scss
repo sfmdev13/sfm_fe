@@ -1,0 +1,31 @@
+::ng-deep {
+
+    .ant-modal-body{
+        max-height: 80vh;
+        overflow-y: auto;
+    }
+
+    .ant-modal-footer{
+        border-top: 2px solid #f0f0f0 !important;
+    }
+
+    .ant-switch-checked{
+        .ant-switch-inner{
+            margin: -3px 27px 0px 12px;
+        }
+    } 
+
+    .ant-switch-inner{
+        margin: -3px 7px 0 25px;
+    }
+
+    .ant-divider-horizontal.ant-divider-with-text::before, 
+    .ant-divider-horizontal.ant-divider-with-text::after{
+        border-top: 3px solid transparent;
+        border-top-color: inherit;
+    }
+
+    .ant-divider-horizontal.ant-divider-with-text{
+        font-size: 14px;
+    }
+}
