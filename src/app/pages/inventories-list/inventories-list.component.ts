@@ -89,7 +89,7 @@ export class InventoriesListComponent implements OnInit {
       description: ['', Validators.required],
       unit_id: ['', Validators.required],
       price_list: ['', Validators.required],
-      discount: ['', Validators.required],
+      discount: [0, Validators.required],
       price_factor: ['', Validators.required],
       product_cost: [{value: 0, disabled: true}],
       selling_price: [{value: 0, disabled: true}],
@@ -98,7 +98,10 @@ export class InventoriesListComponent implements OnInit {
       is_pic_internal: ['', [Validators.required]],
       supplier_id: ['', [Validators.required]],
       status: [1, [Validators.required]],
-      supplier_product_id: ['', [Validators.required]]
+      supplier_product_id: ['', [Validators.required]],
+      discount_price: [0, [Validators.required]],
+      discount_type: ['percent', [Validators.required]],
+      tax: [0, [Validators.required]]
     })
 
     this.filterForm = this.fb.group({
@@ -111,6 +114,16 @@ export class InventoriesListComponent implements OnInit {
    }
 
   ngOnInit(): void {
+
+    this.inventoryForm.get('discount_type')?.valueChanges.subscribe((res) => {
+       if(res === 'percent'){
+        this.inventoryForm.patchValue({discount_price: 0});
+       }
+
+       if(res === 'price'){
+        this.inventoryForm.patchValue({discount: 0})
+       }
+    })
 
     this.source$ = this.apiSvc.getSupplierSource();
 
@@ -202,6 +215,8 @@ export class InventoriesListComponent implements OnInit {
     //trigger update product cost
     this.inventoryForm.get('discount')?.valueChanges.subscribe(() => this.updateProductCost());
     this.inventoryForm.get('price_list')?.valueChanges.subscribe(() => this.updateProductCost());
+    this.inventoryForm.get('discount_price')?.valueChanges.subscribe(() => this.updateProductCost());
+    this.inventoryForm.get('tax')?.valueChanges.subscribe(() => this.updateProductCost())
 
     //trigger update selling price
     this.inventoryForm.get('price_factor')?.valueChanges.subscribe(() => this.updateSellingPrice());
@@ -262,7 +277,7 @@ export class InventoriesListComponent implements OnInit {
           })
         },
         complete: () => {
-          this.categoryForm.reset();
+          this.resetDefaultForm();
         }
       })
     
@@ -280,7 +295,25 @@ export class InventoriesListComponent implements OnInit {
   
   handleCancelCategoryAdd(): void{
     this.nestedModalRef?.close();
-    this.categoryForm.reset();
+    this.resetDefaultForm();
+    this.fb.group({
+      id: [''],
+      name: ['', Validators.required],
+      code: ['', Validators.required],
+      description: ['', Validators.required],
+      unit_id: ['', Validators.required],
+      price_list: ['', Validators.required],
+      discount: ['', Validators.required],
+      price_factor: ['', Validators.required],
+      product_cost: [{value: 0, disabled: true}],
+      selling_price: [{value: 0, disabled: true}],
+      qty: [{value: 0, disabled: true}],
+      pic: [[this.pic_id], [Validators.required]],
+      is_pic_internal: ['', [Validators.required]],
+      supplier_id: ['', [Validators.required]],
+      status: [1, [Validators.required]],
+      supplier_product_id: ['', [Validators.required]]
+    })
   }
 
   updateSellingPrice(): void{
@@ -293,7 +326,22 @@ export class InventoriesListComponent implements OnInit {
   updateProductCost(): void {
     const priceList = this.inventoryForm.get('price_list')?.value || 0;
     const discount = this.inventoryForm.get('discount')?.value || 0;
-    const totalCost: number = parseInt(priceList) - (parseInt(priceList) * (parseFloat(discount)/100));
+    const discount_price = this.inventoryForm.get('discount_price')?.value || 0;
+    const discount_type = this.inventoryForm.get('discount_type')?.value || 0;
+    const tax = this.inventoryForm.get('tax')?.value || 0;
+    let totalCost = this.inventoryForm.get('product_cost')?.value || 0
+
+
+    if(discount_type === 'percent'){
+      totalCost = parseInt(priceList) - (parseInt(priceList) * (parseFloat(discount)/100));
+    }
+
+    if(discount_type === 'price'){
+      totalCost = parseInt(priceList) - parseInt(discount_price);
+    }
+
+    totalCost = parseInt(totalCost) + (parseInt(priceList) * (parseFloat(tax)/100));
+
     this.inventoryForm.get('product_cost')?.setValue(totalCost, { emitEvent: false });
   }
 
@@ -302,7 +350,7 @@ export class InventoriesListComponent implements OnInit {
     this.filtered = false;
     this.pageSize = 5;
     this.currentPage = 1;
-    this.inventoryForm.reset();
+    this.resetDefaultForm();
     this.getInventory();
   }
 
@@ -522,7 +570,7 @@ export class InventoriesListComponent implements OnInit {
       })
     }
 
-    this.inventoryForm.reset();
+    this.resetDefaultForm();
   }
 
   handleSubmitAdd(): void{
@@ -544,12 +592,16 @@ export class InventoriesListComponent implements OnInit {
         unit_id: this.inventoryForm.get('unit_id')?.value,
         supplier_product_id: this.inventoryForm.get('supplier_product_id')?.value,
         supplier_id: this.inventoryForm.get('supplier_id')?.value,
-        discount: this.inventoryForm.get('discount')?.value,
+        discount: this.inventoryForm.get('discount')?.value.toString(),
         price_list: this.inventoryForm.get('price_list')?.value,
         price_factor: this.inventoryForm.get('price_factor')?.value,
         status: this.inventoryForm.get('status')?.value,
-        pic: picComplete
+        pic: picComplete,
+        discount_type: this.inventoryForm.get('discount_type')?.value,
+        discount_price: this.inventoryForm.get('discount_price')?.value.toString(),
+        tax: this.inventoryForm.get('tax')?.value.toString()
       }
+
 
       this.apiSvc.createInventory(body).subscribe({
         next: () => {
@@ -574,7 +626,7 @@ export class InventoriesListComponent implements OnInit {
           })
         },
         complete: () => {
-          this.inventoryForm.reset();
+          this.resetDefaultForm();
         }
       })
     } else {
@@ -619,18 +671,39 @@ export class InventoriesListComponent implements OnInit {
   }
 
   handleCancelEdit(): void {
-    this.inventoryForm.reset();
+    this.resetDefaultForm();
     this.modal_type = '';
     this.isVisibleEdit = false;
   }
 
   handleCancelAdd(): void{
-    this.inventoryForm.reset();
+    this.resetDefaultForm();
     this.modal_type = '';
     this.isVisibleAdd = false;
   }
 
   handleCancelDelete(): void{
     this.isVisibleDelete = false;
+  }
+
+  resetDefaultForm(): void{
+    this.inventoryForm = this.fb.group({
+      id: [''],
+      name: ['', Validators.required],
+      code: ['', Validators.required],
+      description: ['', Validators.required],
+      unit_id: ['', Validators.required],
+      price_list: ['', Validators.required],
+      discount: ['', Validators.required],
+      price_factor: ['', Validators.required],
+      product_cost: [{value: 0, disabled: true}],
+      selling_price: [{value: 0, disabled: true}],
+      qty: [{value: 0, disabled: true}],
+      pic: [[this.pic_id], [Validators.required]],
+      is_pic_internal: ['', [Validators.required]],
+      supplier_id: ['', [Validators.required]],
+      status: [1, [Validators.required]],
+      supplier_product_id: ['', [Validators.required]]
+    })
   }
 }
