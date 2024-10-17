@@ -36,7 +36,7 @@
 
             <div class="col-md-6">
                 <nz-form-item class="mb-4">
-                    <nz-form-label nzRequired nzFor="name" class="fw-semibold">Name</nz-form-label>
+                    <nz-form-label nzRequired nzFor="name" class="fw-semibold">Project Name</nz-form-label>
                     <nz-form-control>
                     <input nz-input formControlName="name" id="name" />
                     </nz-form-control>
@@ -50,22 +50,22 @@
                     </nz-form-control>
                 </nz-form-item>
             </div>
-            <div class="col-md-6">
+            <!-- <div class="col-md-6">
               <nz-form-item>
                 <nz-form-label nzRequired nzFor="order_date" class="fw-semibold">Order Date</nz-form-label>
                 <nz-form-control>
                     <nz-date-picker class="w-100" formControlName="order_date" id="order_date" nzPlaceHolder="pick a date"></nz-date-picker>
                 </nz-form-control>
               </nz-form-item>
-            </div>
-            <div class="col-md-6">
+            </div> -->
+            <!-- <div class="col-md-6">
                 <nz-form-item>
                   <nz-form-label nzRequired nzFor="delivery_date" class="fw-semibold">Delivery Date</nz-form-label>
                   <nz-form-control>
                       <nz-date-picker class="w-100" formControlName="delivery_date" id="delivery_date" nzPlaceHolder="pick a date"></nz-date-picker>
                   </nz-form-control>
                 </nz-form-item>
-              </div>
+            </div> -->
             <div class="col-md-6">
               <ng-container *ngIf="customerList$ | async as emp; else loadingEmp">
                 <nz-form-item>
@@ -97,9 +97,13 @@
                   </nz-form-control>
                 </nz-form-item>             
               </ng-template>
+              <ng-container *ngIf="this.isCustomerDetail">
+                <a (click)="showDetail()">Click for Customer Detail</a>
+              </ng-container>
             </div>
+            
 
-            <div class="col-md-4">
+            <!-- <div class="col-md-4">
                 <nz-form-item class="mb-4">
                     <nz-form-label  nzFor="progress" nzRequired class="fw-semibold">Progress</nz-form-label>
                     <nz-form-control>
@@ -113,10 +117,10 @@
                         </nz-space>
                     </nz-form-control>
                 </nz-form-item>
-            </div>
+            </div> -->
 
-            <nz-form-item>
-              <nz-form-label nzFor="status" nzRequired>Status</nz-form-label>
+            <nz-form-item class="mt-4">
+              <nz-form-label nzFor="status" class="fw-bold" nzRequired>Status</nz-form-label>
               <nz-form-control>
                 <nz-switch nzSize="default" id="status" formControlName="status" nzCheckedChildren="active" nzUnCheckedChildren="inactive"></nz-switch>
               </nz-form-control>

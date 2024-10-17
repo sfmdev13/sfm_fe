@@ -1,9 +1,13 @@
 import { IDataCategories } from "./categories"
 
 export interface IRootCustomer {
-    data: IDataCustomer[],
-    pagination: IPagination,
+    data: IDataCustomer[]
+    pagination: IPagination
     meta: IMetaResponse
+}
+
+export interface ICustomerDetail{
+    data: IDataCustomer;
 }
   
 export interface IDataCustomer {

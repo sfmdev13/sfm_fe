@@ -2,7 +2,7 @@ import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, map, Observable, tap } from 'rxjs';
 import { environment } from 'src/environments/environment';
-import { ICategories, IRootAllRoles, IRootCatContact, IRootCustomer, IRootDivision, IRootEmployee, IRootInventory, IRootPurchaseOrder, IRootSupplier, IRootUnit, IRootUserByRole } from './interfaces';
+import { ICategories, ICustomerDetail, IRootAllRoles, IRootCatContact, IRootCustomer, IRootDivision, IRootEmployee, IRootInventory, IRootPurchaseOrder, IRootSupplier, IRootUnit, IRootUserByRole } from './interfaces';
 
 @Injectable({
   providedIn: 'root'
@@ -1161,5 +1161,16 @@ export class ApiService {
     const url = `${this.apiUrl}/customer-list`
 
     return this.http.get<any>(url, { headers })
+  }
+
+  getCustomerDetail(id: any): Observable<ICustomerDetail>{
+    const token = localStorage.getItem('authToken');
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+    });
+
+    const url = `${this.apiUrl}/customer-detail/${id}`
+
+    return this.http.get<ICustomerDetail>(url, { headers })
   }
 }

@@ -1,4 +1,4 @@
-export { IRootCustomer, IDataCustomer } from "./customer";
+export { IRootCustomer, IDataCustomer, IContactPerson, ICustomerDetail } from "./customer";
 export { IRootCatContact } from "./cat-contact";
 export { IRootSupplier, IDataSupplier } from "./supplier";
 export { IRootEmployee, IDataEmployee } from "./employee";
