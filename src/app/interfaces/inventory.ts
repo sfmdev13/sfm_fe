@@ -24,6 +24,9 @@ export interface IRootInventory {
     discount: string
     price_factor: string
     price_list: string
+    discount_type: string;
+    discount_price: string;
+    tax: string;
   }
   
   export interface Pic {

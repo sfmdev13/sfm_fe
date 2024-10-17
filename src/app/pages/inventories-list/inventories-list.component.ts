@@ -444,7 +444,10 @@ export class InventoriesListComponent implements OnInit {
       status:data.status,
       price_list: parseInt(data.price_list),
       discount: parseFloat(data.discount),
-      price_factor: parseFloat(data.price_factor)
+      price_factor: parseFloat(data.price_factor),
+      discount_price: parseInt(data.discount_price),
+      discount_type: data.discount_type,
+      tax: parseFloat(data.tax)
     })
 
     this.getFormattedLabel(data.unit.measurement, data.unit.unit);
@@ -533,7 +536,10 @@ export class InventoriesListComponent implements OnInit {
         price_list: this.inventoryForm.get('price_list')?.value,
         price_factor: this.inventoryForm.get('price_factor')?.value,
         status: this.inventoryForm.get('status')?.value,
-        pic_new: picComplete
+        pic_new: picComplete,
+        discount_type: this.inventoryForm.get('discount_type')?.value,
+        discount_price: this.inventoryForm.get('discount_price')?.value.toString(),
+        tax: this.inventoryForm.get('tax')?.value.toString()
       }
 
       this.apiSvc.updateInventory(body).subscribe({
