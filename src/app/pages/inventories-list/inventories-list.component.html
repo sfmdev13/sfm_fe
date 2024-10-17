@@ -687,7 +687,7 @@
                             </nz-form-control>                        
                         </nz-form-item>
                     </div>
-                    <div class="col-md-4">
+                    <div class="col-md-6">
                         <nz-form-item>
                             <nz-form-label nzRequired nzFor="price_list" class="fw-semibold">Price List</nz-form-label>
                             <nz-space nzDirection="vertical" class="w-100">
@@ -702,15 +702,43 @@
 
                         </nz-form-item>
                     </div>
-                    <div class="col-md-4">
+                    <div class="col-md-6">
                         <nz-form-item>
-                            <nz-form-label nzRequired nzFor="discount" class="fw-semibold">Discount</nz-form-label>
+                            <nz-form-label nzRequired nzFor="discount" class="fw-semibold">
+                                <span class="me-4">Discount</span>
+                                <nz-radio-group formControlName="discount_type">
+                                    <label nz-radio nzValue="percent">Percent</label>
+                                    <label nz-radio nzValue="price">Price</label>
+                                </nz-radio-group>
+                            </nz-form-label>
+                            <ng-container *ngIf="inventoryForm.get('discount_type')?.value === 'percent';else price">
+                                <nz-input-number-group nzAddOnAfter="%">
+                                    <nz-input-number formControlName="discount"></nz-input-number>
+                                </nz-input-number-group>
+                            </ng-container>
+                            <ng-template #price>
+                                <nz-space nzDirection="vertical" style="width: 100%">
+                                    <nz-input-number-group *nzSpaceItem nzPrefix="Rp. " style="width: 100%">
+                                        <nz-input-number     
+                                        formControlName="discount_price"
+                                        [nzFormatter]="formatter"
+                                        ></nz-input-number>
+                                    </nz-input-number-group>
+                                </nz-space>
+                            </ng-template>
+                        </nz-form-item>
+                    </div>
+                    <div class="col-md-6">
+                        <nz-form-item>
+                            <nz-form-label nzRequired nzFor="tax" class="fw-semibold">
+                                Tax
+                            </nz-form-label>
                             <nz-input-number-group nzAddOnAfter="%">
-                                <nz-input-number formControlName="discount"></nz-input-number>
+                                <nz-input-number formControlName="tax"></nz-input-number>
                             </nz-input-number-group>
                         </nz-form-item>
                     </div>
-                    <div class="col-md-4">
+                    <div class="col-md-6">
                         <nz-form-item class="mb-4">
                             <nz-form-label  nzFor="product_cost" class="fw-semibold">Product Cost</nz-form-label>
                             <nz-form-control>

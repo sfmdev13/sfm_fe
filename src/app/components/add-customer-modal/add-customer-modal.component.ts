@@ -1001,12 +1001,6 @@ export class AddCustomerModalComponent implements OnInit {
   // Prevent the default automatic upload behavior
   beforeUpload = (file: NzUploadFile): boolean => {
 
-    if (file.type !== 'application/pdf') {
-      
-      this.nzMsgSvc.error('You can only upload PDF file!');
-      return false;
-    }
-
     const isLt5M = file.size! / 1024 / 1024 < 1;
     if (!isLt5M) {
       this.nzMsgSvc.error('Image must be smaller than 1MB!');
@@ -1049,11 +1043,6 @@ export class AddCustomerModalComponent implements OnInit {
   beforeUploadCp(index: number) {
     return (file: NzUploadFile): boolean => {
 
-      if (file.type !== 'application/pdf') {
-        
-        this.nzMsgSvc.error('You can only upload PDF file!');
-        return false;
-      }
       const isLt5M = file.size! / 1024 / 1024 < 1
       if (!isLt5M) {
         this.nzMsgSvc.error('Image must be smaller than 1MB!');

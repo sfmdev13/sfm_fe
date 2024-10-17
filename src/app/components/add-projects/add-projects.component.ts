@@ -4,9 +4,10 @@ import { Validators, FormBuilder } from '@angular/forms';
 import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
 import { Observable, tap } from 'rxjs';
 import { ApiService } from 'src/app/api.service';
-import { IDataEmployee, IRootAllRoles, ICategories } from 'src/app/interfaces';
+import { IDataEmployee, IRootAllRoles, ICategories, IRootCustomer, IContactPerson, IDataCustomer } from 'src/app/interfaces';
 import { IDataProject } from 'src/app/interfaces/project';
 import { SpinnerService } from 'src/app/spinner.service';
+import { DetailCustomerModalComponent } from '../detail-customer-modal/detail-customer-modal.component';
 
 @Component({
   selector: 'app-add-projects',
@@ -20,7 +21,7 @@ export class AddProjectsComponent implements OnInit {
   pic$!: Observable<any>;
   roles$!: Observable<IRootAllRoles>
 
-  customerList$!: Observable<any>;
+  customerList$!: Observable<IRootCustomer>;
 
   divisionList$!: Observable<any>;
 
@@ -37,17 +38,22 @@ export class AddProjectsComponent implements OnInit {
     description: ['', [Validators.required]],
     pic: [[this.pic_id], [Validators.required]],
     is_pic_internal: ['', [Validators.required]],
-    order_date: ['', Validators.required],
-    delivery_date: ['', Validators.required],
+    order_date: [''],
+    delivery_date: [''],
     customer_id: ['', Validators.required],
     status: [1, [Validators.required]],
-    progress: [0, [Validators.required]]
+    progress: [0]
   })
 
   listOfPic: any[] = [];
   filteredListOfPic: any[] = [];
 
   picComplete: any;
+
+  customerDetail: IDataCustomer = {} as IDataCustomer;
+  isCustomerDetail: boolean = false;
+
+  isVisibleDetail: boolean = false;
 
   constructor(
     private modal: NzModalRef,
@@ -59,6 +65,14 @@ export class AddProjectsComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+
+    this.projectForm.get('customer_id')?.valueChanges.subscribe((value) => {
+      this.isCustomerDetail = false
+      this.apiSvc.getCustomerDetail(value).subscribe((res) => {
+        this.customerDetail = res.data
+        this.isCustomerDetail = true
+      })
+    })
 
     this.projectForm.get('pic')?.valueChanges.subscribe((value) => {
       this.filteredListOfPic = this.listOfPic.filter(pic => value.includes(pic.pic_id));
@@ -133,6 +147,18 @@ export class AddProjectsComponent implements OnInit {
 
   }
 
+  showDetail(): void{
+    this.modalSvc.create({
+      nzTitle: 'Detail Customer',
+      nzContent: DetailCustomerModalComponent,
+      nzCentered: true,
+      nzComponentParams: {
+        data: this.customerDetail
+      },
+      nzWidth: '800px'
+    });
+  }
+
   destroyModal(): void {
     this.modal.destroy();
   }
@@ -155,11 +181,8 @@ export class AddProjectsComponent implements OnInit {
           id: this.projectForm.get('id')?.value,
           name: this.projectForm.get('name')?.value,
           description: this.projectForm.get('description')?.value,
-          order_date: this.projectForm.get('order_date')?.value,
-          delivery_date: this.projectForm.get('delivery_date')?.value,
           customer_id: this.projectForm.get('customer_id')?.value,
           status: this.projectForm.get('status')?.value,
-          progress: this.projectForm.get('progress')?.value.toString(),
           pic: this.picComplete
         }
 
@@ -199,11 +222,8 @@ export class AddProjectsComponent implements OnInit {
           id: this.projectForm.get('id')?.value,
           name: this.projectForm.get('name')?.value,
           description: this.projectForm.get('description')?.value,
-          order_date: this.projectForm.get('order_date')?.value,
-          delivery_date: this.projectForm.get('delivery_date')?.value,
           customer_id: this.projectForm.get('customer_id')?.value,
           status: this.projectForm.get('status')?.value,
-          progress: this.projectForm.get('progress')?.value.toString(),
           pic_new: this.picComplete
         }
         
