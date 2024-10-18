@@ -103,6 +103,8 @@ export interface IRootInventory {
     product_cost: string;
     price_list: string;
     discount: string;
+    discount_price: string;
+    discount_type: string;
     description: string;
     unit: {
       id: number;

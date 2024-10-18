@@ -26,8 +26,6 @@ export class InventoriesListComponent implements OnInit {
 
   totalInventories: number = 0;
 
-  inventoryForm: FormGroup;
-
   selectedIdDelete: number = 0;
 
   searchEmp: string = '';
@@ -75,6 +73,29 @@ export class InventoriesListComponent implements OnInit {
 
   source$!: Observable<any>;
 
+
+  inventoryForm = this.fb.group({
+    id: [''],
+    name: ['', Validators.required],
+    code: ['', Validators.required],
+    description: ['', Validators.required],
+    unit_id: ['', Validators.required],
+    price_list: ['', Validators.required],
+    discount: [0, Validators.required],
+    price_factor: ['', Validators.required],
+    product_cost: [{value: 0, disabled: true}],
+    selling_price: [{value: 0, disabled: true}],
+    qty: [{value: 0, disabled: true}],
+    pic: [[this.pic_id], [Validators.required]],
+    is_pic_internal: ['', [Validators.required]],
+    supplier_id: ['', [Validators.required]],
+    status: [1, [Validators.required]],
+    supplier_product_id: ['', [Validators.required]],
+    discount_price: [0, [Validators.required]],
+    discount_type: ['percent', [Validators.required]],
+    tax: [0, [Validators.required]]
+  })
+
   constructor(
     private apiSvc: ApiService,
     private fb: FormBuilder,
@@ -82,28 +103,7 @@ export class InventoriesListComponent implements OnInit {
     private modalSvc: NzModalService,
     public authSvc: AuthService
   ) { 
-    this.inventoryForm = this.fb.group({
-      id: [''],
-      name: ['', Validators.required],
-      code: ['', Validators.required],
-      description: ['', Validators.required],
-      unit_id: ['', Validators.required],
-      price_list: ['', Validators.required],
-      discount: [0, Validators.required],
-      price_factor: ['', Validators.required],
-      product_cost: [{value: 0, disabled: true}],
-      selling_price: [{value: 0, disabled: true}],
-      qty: [{value: 0, disabled: true}],
-      pic: [[this.pic_id], [Validators.required]],
-      is_pic_internal: ['', [Validators.required]],
-      supplier_id: ['', [Validators.required]],
-      status: [1, [Validators.required]],
-      supplier_product_id: ['', [Validators.required]],
-      discount_price: [0, [Validators.required]],
-      discount_type: ['percent', [Validators.required]],
-      tax: [0, [Validators.required]]
-    })
-
+    
     this.filterForm = this.fb.group({
       status: [''],
       supplier_product: [''],
@@ -295,7 +295,6 @@ export class InventoriesListComponent implements OnInit {
   
   handleCancelCategoryAdd(): void{
     this.nestedModalRef?.close();
-    this.resetDefaultForm();
     this.fb.group({
       id: [''],
       name: ['', Validators.required],
@@ -340,7 +339,7 @@ export class InventoriesListComponent implements OnInit {
       totalCost = parseInt(priceList) - parseInt(discount_price);
     }
 
-    totalCost = parseInt(totalCost) + (parseInt(priceList) * (parseFloat(tax)/100));
+    totalCost = parseInt(totalCost) + (parseInt(totalCost) * (parseFloat(tax)/100));
 
     this.inventoryForm.get('product_cost')?.setValue(totalCost, { emitEvent: false });
   }
@@ -504,6 +503,7 @@ export class InventoriesListComponent implements OnInit {
   }
 
   showModalAdd(): void {
+    this.resetDefaultForm();
     this.modal_type = 'Add'
     this.isVisibleAdd = true;
   }
@@ -532,7 +532,7 @@ export class InventoriesListComponent implements OnInit {
         unit_id: this.inventoryForm.get('unit_id')?.value,
         supplier_product_id: this.inventoryForm.get('supplier_product_id')?.value,
         supplier_id: this.inventoryForm.get('supplier_id')?.value,
-        discount: this.inventoryForm.get('discount')?.value,
+        discount: this.inventoryForm.get('discount')?.value.toString(),
         price_list: this.inventoryForm.get('price_list')?.value,
         price_factor: this.inventoryForm.get('price_factor')?.value,
         status: this.inventoryForm.get('status')?.value,
@@ -564,6 +564,7 @@ export class InventoriesListComponent implements OnInit {
         },
         complete: () => {
           this.isVisibleEdit = false;
+          this.spinnerSvc.hide()
         }
       })
     } else {
@@ -575,8 +576,6 @@ export class InventoriesListComponent implements OnInit {
         nzCentered: true
       })
     }
-
-    this.resetDefaultForm();
   }
 
   handleSubmitAdd(): void{
@@ -632,7 +631,7 @@ export class InventoriesListComponent implements OnInit {
           })
         },
         complete: () => {
-          this.resetDefaultForm();
+          this.spinnerSvc.hide();
         }
       })
     } else {
@@ -677,13 +676,11 @@ export class InventoriesListComponent implements OnInit {
   }
 
   handleCancelEdit(): void {
-    this.resetDefaultForm();
     this.modal_type = '';
     this.isVisibleEdit = false;
   }
 
   handleCancelAdd(): void{
-    this.resetDefaultForm();
     this.modal_type = '';
     this.isVisibleAdd = false;
   }
@@ -693,23 +690,26 @@ export class InventoriesListComponent implements OnInit {
   }
 
   resetDefaultForm(): void{
-    this.inventoryForm = this.fb.group({
-      id: [''],
-      name: ['', Validators.required],
-      code: ['', Validators.required],
-      description: ['', Validators.required],
-      unit_id: ['', Validators.required],
-      price_list: ['', Validators.required],
-      discount: ['', Validators.required],
-      price_factor: ['', Validators.required],
-      product_cost: [{value: 0, disabled: true}],
-      selling_price: [{value: 0, disabled: true}],
-      qty: [{value: 0, disabled: true}],
-      pic: [[this.pic_id], [Validators.required]],
-      is_pic_internal: ['', [Validators.required]],
-      supplier_id: ['', [Validators.required]],
-      status: [1, [Validators.required]],
-      supplier_product_id: ['', [Validators.required]]
+    this.inventoryForm.patchValue({
+      id:'',
+      name: '',
+      code: '',
+      description: '',
+      unit_id: '',
+      price_list: '',
+      discount: '',
+      price_factor: '',
+      product_cost: 0,
+      selling_price: 0,
+      qty: 0,
+      pic: this.pic_id,
+      is_pic_internal: '',
+      supplier_id: '',
+      status: 1,
+      supplier_product_id: '',
+      discount_price: 0,
+      discount_type: 'percent',
+      tax: 0
     })
   }
 }
