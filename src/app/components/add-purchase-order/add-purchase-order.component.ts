@@ -39,7 +39,6 @@ export class AddPurchaseOrderComponent implements OnInit {
     description: ['', Validators.required],
     pic: [[this.pic_id], [Validators.required]],
     is_pic_internal: ['', [Validators.required]],
-    additional_cost: [''],
     tax: [0],
     project_type: ['stock'],
     warehouse_id: [''],
@@ -61,7 +60,8 @@ export class AddPurchaseOrderComponent implements OnInit {
     payment_term: ['', Validators.required],
     shipping_term: ['', Validators.required],
     remarks: ['', Validators.required],
-    order: this.fb.array([])
+    order: this.fb.array([]),
+    order_additional: this.fb.array([])
   })
 
   inventoryList: IRootInvenSupplier = {} as IRootInvenSupplier;
@@ -74,6 +74,7 @@ export class AddPurchaseOrderComponent implements OnInit {
   warehouse$!: Observable<any>;
   billing$!: Observable<any>;
   provinces$!: Observable<any>;
+  unit$!: Observable<any>;
 
   provinceList: any[] = [];
   city: any[] = [];
@@ -81,6 +82,7 @@ export class AddPurchaseOrderComponent implements OnInit {
 
   warehouseList: any[] = [];
   billingList: any[] = [];
+  unitList: any[] = [];
 
   categoryForm = this.fb.group({
     id: [''],
@@ -94,8 +96,17 @@ export class AddPurchaseOrderComponent implements OnInit {
     address: ['', Validators.required]
   })
 
+  categoryFormUnit = this.fb.group({
+    id: [''],
+    name: ['', Validators.required],
+    measurement: ['', Validators.required],
+    unit: [''],
+    description: ['', Validators.required]
+  })
+
   modalRef?: NzModalRef;
   modalRefBilling?: NzModalRef;
+  ModalRefUnit?: NzModalRef;
 
   constructor(
     private fb: FormBuilder,
@@ -178,7 +189,19 @@ export class AddPurchaseOrderComponent implements OnInit {
           this.billingList = b.data
         })
       )
+
+      this.unit$ = this.apiSvc.getUnitMeasurement().pipe(
+        tap(unit => {
+          this.unitList = unit.data
+        } )
+      )
     })
+
+    this.unit$ = this.apiSvc.getUnitMeasurement().pipe(
+      tap(unit => {
+        this.unitList = unit.data
+      }
+    ))
     
     this.warehouse$ = this.apiSvc.getWarehouse().pipe(
       tap(w => {
@@ -216,16 +239,16 @@ export class AddPurchaseOrderComponent implements OnInit {
 
     //used for calculate total order and total grand order
     const orderChanges$ = this.order.valueChanges.pipe(startWith(this.order.value));
-    const additionalCostChanges$ = this.purchaseForm.get('additional_cost')?.valueChanges.pipe(startWith(this.purchaseForm.get('additional_cost')?.value)) || [];
+    const orderAdditionalChanges$ = this.orderAdditional.valueChanges.pipe(startWith(this.orderAdditional.value));
     const taxChanges$ = this.purchaseForm.get('tax')?.valueChanges.pipe(startWith(this.purchaseForm.get('tax')?.value)) || [];
   
-    combineLatest([orderChanges$, additionalCostChanges$, taxChanges$]).subscribe(() => {
+    combineLatest([orderChanges$,orderAdditionalChanges$, taxChanges$]).subscribe(() => {
       // Recalculate the total order cost
-      const totalSum = this.calculateTotalCost();
-      const additional_cost = parseInt(this.purchaseForm.get('additional_cost')?.value || '0', 10);
+      const totalSumOrder = this.calculateTotalCost();
+      const totalSumAdditional = this.calculateTotalCostAdditional();
       const taxPercent = parseFloat(this.purchaseForm.get('tax')?.value || '0');
   
-      this.totalOrder = totalSum + additional_cost;
+      this.totalOrder = totalSumOrder + totalSumAdditional;
   
       this.totalGrandOrder = this.totalOrder + (this.totalOrder * (taxPercent / 100));
     });
@@ -368,6 +391,80 @@ export class AddPurchaseOrderComponent implements OnInit {
     }
 
     
+  }
+
+  handleSubmitUnitAdd(): void{
+
+    this.spinnerSvc.show();
+
+    if(this.categoryFormUnit.valid){
+
+      this.apiSvc.createUnitMeasurement(this.categoryFormUnit.value).subscribe({
+        next: () => {
+
+          this.spinnerSvc.hide();
+          this.modalSvc.success({
+            nzTitle: 'Success',
+            nzContent: 'Successfully Add Unit',
+            nzOkText: 'Ok',
+            nzCentered: true
+          })
+          this.apiSvc.triggerRefreshCategories()
+          this.ModalRefUnit?.close();
+        },
+        error: (error) => {
+          this.spinnerSvc.hide();
+          this.modalSvc.error({
+            nzTitle: 'Unable to Add Unit',
+            nzContent: error.error.meta.message,
+            nzOkText: 'Ok',
+            nzCentered: true
+          })
+        },
+        complete: () => {
+
+        }
+      })
+    
+    } else {
+      this.spinnerSvc.hide();
+      this.modalSvc.error({
+        nzTitle: 'Unable to Add',
+        nzContent: 'Need to fill all input',
+        nzOkText: 'Ok',
+        nzCentered: true
+      })      
+    }
+  }
+
+  
+  handleCancelUnitAdd(): void{
+    this.ModalRefUnit?.close();
+  }
+
+  showModalUnit(titleCat: string): void {
+
+    this.ModalRefUnit = this.modalSvc.create({
+      nzTitle: ' Add Unit of Measurment',
+      nzContent: EditCategoriesModalComponent,
+      nzComponentParams: {
+        form: this.categoryFormUnit,
+        type: titleCat
+      },
+      nzWidth: '500px',
+      nzFooter: [
+        {
+          label: 'Cancel',
+          onClick: () => this.handleCancelUnitAdd(),
+          type: 'default'
+        },
+        {
+          label: 'Confirm',
+          onClick: () => this.handleSubmitUnitAdd(),
+          type: 'primary'
+        }
+      ]
+    });
   }
 
   handleCancelWarehouse(): void{
@@ -540,8 +637,25 @@ export class AddPurchaseOrderComponent implements OnInit {
 
     const inventoryComplete = this.order.value.map((order: any) => ({
       inventory_id: order.inventory_id,
-      qty: order.qty.toString()
+      qty: order.qty.toString(),
+      discount_type: order.discount_type_item,
+      discount: order.discount_item.toString(),
+      discount_price: order.discount_price_item.toString()
     }))
+
+    let additionalComplete = null;
+
+    if(this.orderAdditional.length > 0){
+      additionalComplete = this.orderAdditional.value.map((order: any) => ({
+        product_description: order.product_description,
+        qty: order.qty.toString(),
+        unit_id: order.unit_id.toString(),
+        price_list: order.price_list.toString(),
+        discount_type: order.discount_type,
+        discount: order.discount.toString(),
+        discount_price: order.discount_price.toString()
+      }))
+    }
 
 
     if(this.modal_type === 'edit'){
@@ -614,7 +728,8 @@ export class AddPurchaseOrderComponent implements OnInit {
         type: this.purchaseForm.get('project_type')?.value,
         payment_term: this.purchaseForm.get('payment_term')?.value,
         shipping_term: this.purchaseForm.get('shipping_term')?.value,
-        remarks: this.purchaseForm.get('remarks')?.value
+        remarks: this.purchaseForm.get('remarks')?.value,
+        additional_items: additionalComplete
       }
       
       
@@ -648,6 +763,15 @@ export class AddPurchaseOrderComponent implements OnInit {
 
   }
 
+  calculateTotalCostAdditional(): number{
+    let total = 0;
+    this.orderAdditional.controls.forEach((group) => {
+      const totalCost = group.get('total_cost')?.value;
+      total += totalCost ? parseFloat(totalCost) : 0;
+    });
+    return total;
+  }
+
   calculateTotalCost(): number {
     let total = 0;
     this.order.controls.forEach((group) => {
@@ -661,21 +785,85 @@ export class AddPurchaseOrderComponent implements OnInit {
     this.drawerRef.close();
   }
 
+  updateTotalCostAdditional(orderRow: FormGroup): void{
+    const qty = orderRow.get('qty')?.value || 0;
+    const discount = orderRow.get('discount')?.value || 0;
+    const discount_price = orderRow.get('discount_price')?.value || 0;
+    const price_list = orderRow.get('price_list')?.value || 0;
+    let totalCost = orderRow.get('total_cost')?.value || 0;
+
+    totalCost = price_list * qty
+
+    if(orderRow.get('discount_type')?.value === 'percent'){
+      totalCost = totalCost - (totalCost * (parseFloat(discount)/100))
+    }
+
+    if(orderRow.get('discount_type')?.value === 'price'){
+      totalCost = totalCost - parseInt(discount_price);
+    }
+
+    orderRow.get('total_cost')?.setValue(totalCost, { emitEvent: false });
+  }
+
   updateTotalCost(orderRow: FormGroup): void {
     const qty = orderRow.get('qty')?.value || 0;
     const productCost = orderRow.get('product_cost')?.value || 0;
-    const totalCost = qty * productCost;
+    const discount = orderRow.get('discount_item')?.value || 0;
+    const discount_price = orderRow.get('discount_price_item')?.value || 0;
+    let totalCost = qty * productCost;
+
+    if(orderRow.get('discount_type_item')?.value === 'percent'){
+      totalCost = totalCost - (totalCost * (parseFloat(discount)/100))
+    }
+
+    if(orderRow.get('discount_type_item')?.value === 'price'){
+      totalCost = totalCost - parseInt(discount_price);
+    }
+
     orderRow.get('total_cost')?.setValue(totalCost, { emitEvent: false });
+  }
+
+  cpValueChangeSubscriptionsAdditional(control: FormGroup){
+    control.get('unit_id')?.valueChanges.subscribe(res => {
+      const selectedUnit = this.unitList.filter(u => u.id === res).map(u => ({
+        measurement: u.measurement,
+        unit: u.unit 
+      }))
+
+      control.patchValue({
+        measurement: selectedUnit[0].measurement,
+        unit: selectedUnit[0].unit
+      })
+    })
+
+    control.get('discount_type')?.valueChanges.subscribe((res) => {
+      if(res === 'percent'){
+        control.get('discount_price')?.setValue(0);
+      } 
+
+      if(res === 'price'){
+        control.get('discount')?.setValue(0);
+      }
+    })
+
+    control.get('qty')?.valueChanges.subscribe(() => this.updateTotalCostAdditional(control));
+    control.get('price_list')?.valueChanges.subscribe(() => this.updateTotalCostAdditional(control));
+    control.get('discount_price')?.valueChanges.subscribe(() => this.updateTotalCostAdditional(control));
+    control.get('discount')?.valueChanges.subscribe(() => this.updateTotalCostAdditional(control))
   }
 
   cpValueChangeSubscriptions(control: FormGroup){
     control.get('inventory_id')?.valueChanges.subscribe(value => {
       const product = this.inventoryList.data.find(p => p.id === value);
 
+      console.log(product?.discount_type)
+
       control.get('product_cost')?.setValue(parseInt(product?.product_cost ?? '0', 10));
       control.get('product_code')?.setValue(product?.code);
 
       control.get('discount')?.setValue(parseInt(product?.discount ?? '0',10 ));
+      control.get('discount_price')?.setValue(parseInt(product?.discount_price ?? '0', 10))
+      control.get('discount_type')?.setValue(product?.discount_type)
       control.get('price_list')?.setValue(parseInt(product?.price_list ?? '0',10));
 
       control.get('unit_measurement')?.setValue(product?.unit.measurement);
@@ -687,19 +875,59 @@ export class AddPurchaseOrderComponent implements OnInit {
     control.get('product_code')?.disable({ emitEvent: false, onlySelf: true });
 
     control.get('discount')?.disable({emitEvent: false, onlySelf: true });
-    control.get('price_list')?.disable({emitEvent: false, onlySelf: true})
+    control.get('discount_price')?.disable({emitEvent: false, onlySelf: true});
+    control.get('discount_type')?.disable({emitEvent: false, onlySelf: true});
+    control.get('price_list')?.disable({emitEvent: false, onlySelf: true});
+
+    control.get('discount_type_item')?.valueChanges.subscribe((res) => {
+      if(res === 'percent'){
+        control.get('discount_price_item')?.setValue(0);
+      } 
+
+      if(res === 'price'){
+        control.get('discount_item')?.setValue(0);
+      }
+    })
 
     control.get('qty')?.valueChanges.subscribe(() => this.updateTotalCost(control));
     control.get('product_cost')?.valueChanges.subscribe(() => this.updateTotalCost(control));
+    control.get('discount_price_item')?.valueChanges.subscribe(() => this.updateTotalCost(control));
+    control.get('discount_item')?.valueChanges.subscribe(() => this.updateTotalCost(control))
+
+    
   }
 
   get order(): FormArray {
     return this.purchaseForm.get('order') as FormArray;
   }
 
+  get orderAdditional(): FormArray{
+    return this.purchaseForm.get('order_additional') as FormArray;
+  }
+
   formatter = (value: number | null): string => {
     return value !== null ? `${value.toLocaleString('en-US')}` : '';
-  };  
+  }; 
+  
+  
+  addOrderAdditional(): void{
+    const newOrderAdditional = this.fb.group({
+      product_description: ['',[Validators.required]],
+      qty: [0, [Validators.required]],
+      unit_id: ['',[Validators.required]],
+      price_list: [0, [Validators.required]],
+      discount: [0],
+      discount_type: ['percent', [Validators.required]],
+      discount_price: [0],
+      total_cost: [0],
+      measurement: [''],
+      unit: ['']
+    })
+
+    this.orderAdditional.push(newOrderAdditional)
+    
+    this.cpValueChangeSubscriptionsAdditional(newOrderAdditional);
+  }
 
   addOrder(): void {
     const newOrder = this.fb.group({
@@ -711,12 +939,21 @@ export class AddPurchaseOrderComponent implements OnInit {
       price_list: [{value: '', disabled: true}],
       unit_measurement: [''],
       unit_unit: [''],
-      total_cost: ['']
+      total_cost: [''],
+      discount_type: ['percent'],
+      discount_price: [0],
+      discount_item: [0],
+      discount_type_item: ['percent'],
+      discount_price_item: [0]
     });
 
     this.order.push(newOrder);
 
-    this.cpValueChangeSubscriptions(newOrder)
+    this.cpValueChangeSubscriptions(newOrder);
+  }
+
+  removeOrderAdditional(index: number): void{
+    this.orderAdditional.removeAt(index);
   }
 
   removeOrder(index: number): void {
