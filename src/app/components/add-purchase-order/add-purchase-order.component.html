@@ -146,23 +146,25 @@
                                                 </nz-form-control>  
                                             </td>
                                             <td>
-                                                <ng-container *ngIf="order.get('discount_type')?.value === 'percent';else price">
-                                                    <nz-input-number-group nzAddOnAfter="%">
-                                                        <nz-input-number formControlName="discount"></nz-input-number>
-                                                    </nz-input-number-group>
-                                                </ng-container>
-                                                <ng-template #price>
-                                                    <nz-input-number-group nzAddOnBefore="Rp. ">
-                                                        <nz-input-number     
-                                                        formControlName="discount_price"
-                                                        [nzFormatter]="formatter"
-                                                        ></nz-input-number>
-                                                    </nz-input-number-group>
-                                                </ng-template>
-                                                <nz-radio-group formControlName="discount_type" class="mt-2">
-                                                    <label nz-radio nzValue="percent">Percent</label>
-                                                    <label nz-radio nzValue="price">Price</label>
-                                                </nz-radio-group>
+                                                <div class="d-flex flex-column">
+                                                    <ng-container *ngIf="order.get('discount_type')?.value === 'percent';else price">
+                                                        <nz-input-number-group nzAddOnAfter="%">
+                                                            <nz-input-number formControlName="discount"></nz-input-number>
+                                                        </nz-input-number-group>
+                                                    </ng-container>
+                                                    <ng-template #price>
+                                                        <nz-input-number-group nzAddOnBefore="Rp. ">
+                                                            <nz-input-number     
+                                                            formControlName="discount_price"
+                                                            [nzFormatter]="formatter"
+                                                            ></nz-input-number>
+                                                        </nz-input-number-group>
+                                                    </ng-template>
+                                                    <nz-radio-group formControlName="discount_type" class="mt-2">
+                                                        <label nz-radio nzValue="percent">Percent</label>
+                                                        <label nz-radio nzValue="price">Price</label>
+                                                    </nz-radio-group>
+                                                </div>
                                             </td>
                                             <td>
                                                 <nz-form-control>
@@ -178,23 +180,25 @@
                                                 </nz-form-control>  
                                             </td>
                                             <td>
-                                                <ng-container *ngIf="order.get('discount_type_item')?.value === 'percent';else priceItem">
-                                                    <nz-input-number-group nzAddOnAfter="%">
-                                                        <nz-input-number formControlName="discount_item"></nz-input-number>
-                                                    </nz-input-number-group>
-                                                </ng-container>
-                                                <ng-template #priceItem>
-                                                    <nz-input-number-group nzAddOnBefore="Rp. ">
-                                                        <nz-input-number     
-                                                        formControlName="discount_price_item"
-                                                        [nzFormatter]="formatter"
-                                                        ></nz-input-number>
-                                                    </nz-input-number-group>
-                                                </ng-template>
-                                                <nz-radio-group formControlName="discount_type_item" class="mt-2">
-                                                    <label nz-radio nzValue="percent">Percent</label>
-                                                    <label nz-radio nzValue="price">Price</label>
-                                                </nz-radio-group>
+                                                <div class="d-flex flex-column">
+                                                    <ng-container *ngIf="order.get('discount_type_item')?.value === 'percent';else priceItem">
+                                                        <nz-input-number-group nzAddOnAfter="%">
+                                                            <nz-input-number formControlName="discount_item"></nz-input-number>
+                                                        </nz-input-number-group>
+                                                    </ng-container>
+                                                    <ng-template #priceItem>
+                                                        <nz-input-number-group nzAddOnBefore="Rp. ">
+                                                            <nz-input-number     
+                                                            formControlName="discount_price_item"
+                                                            [nzFormatter]="formatter"
+                                                            ></nz-input-number>
+                                                        </nz-input-number-group>
+                                                    </ng-template>
+                                                    <nz-radio-group formControlName="discount_type_item" class="mt-2">
+                                                        <label nz-radio nzValue="percent">Percent</label>
+                                                        <label nz-radio nzValue="price">Price</label>
+                                                    </nz-radio-group>
+                                                </div>
                                             </td>
                                             <td>
                                                 <div style="margin-top: 4px;">
