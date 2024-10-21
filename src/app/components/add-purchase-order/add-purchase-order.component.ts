@@ -108,6 +108,8 @@ export class AddPurchaseOrderComponent implements OnInit {
   modalRefBilling?: NzModalRef;
   ModalRefUnit?: NzModalRef;
 
+  deletedOrderAdditional: string[] = [];
+
   constructor(
     private fb: FormBuilder,
     private apiSvc: ApiService,
@@ -374,13 +376,36 @@ export class AddPurchaseOrderComponent implements OnInit {
           product_cost: parseInt(order.product_cost),
           total_cost: parseInt(order.total_cost_per_product),
           price_list: parseInt(order.inventory.price_list),
-          discount: parseInt(order.inventory.discount)
+          discount: parseInt(order.inventory.discount),
+          discount_type: order.inventory.discount_type,
+          discount_price: parseInt(order.inventory.discount_price),
+          discount_item: parseInt(order.discount),
+          discount_type_item: order.discount_type,
+          discount_price_item: order.discount_price          
         })
 
         this.order.push(updateOrder);
         this.cpValueChangeSubscriptions(updateOrder)
       })
       
+      this.dataDetail.po_additonal_items.forEach((order) => {
+        const updateOrderAdd = this.fb.group({
+          id: order.id,
+          product_description: order.product_description,
+          qty: parseInt(order.qty),
+          unit_id: order.unit.id,
+          price_list: parseInt(order.price_list),
+          discount: parseInt(order.discount),
+          discount_type: order.discount_type,
+          discount_price: parseInt(order.discount_price),
+          total_cost: parseInt(order.total_cost_per_product),
+          measurement: order.unit.measurement,
+          unit: order.unit.unit          
+        })
+
+        this.orderAdditional.push(updateOrderAdd),
+        this.cpValueChangeSubscriptionsAdditional(updateOrderAdd)
+      })
     }
 
     if(this.modal_type === 'edit'){
@@ -678,6 +703,8 @@ export class AddPurchaseOrderComponent implements OnInit {
         telephone_shipping: this.purchaseForm.get('telephone_shipping')?.value,
         billing_id: this.purchaseForm.get('billing_id')?.value,
         shipping_id: this.purchaseForm.get('warehouse_id')?.value,
+        additional_items_new: additionalComplete,
+        deleted_additional_item_ids: this.deletedOrderAdditional
       }
 
       this.apiSvc.editPurchaseOrder(body).subscribe({
@@ -912,6 +939,7 @@ export class AddPurchaseOrderComponent implements OnInit {
   
   addOrderAdditional(): void{
     const newOrderAdditional = this.fb.group({
+      id: [''],
       product_description: ['',[Validators.required]],
       qty: [0, [Validators.required]],
       unit_id: ['',[Validators.required]],
@@ -953,6 +981,7 @@ export class AddPurchaseOrderComponent implements OnInit {
   }
 
   removeOrderAdditional(index: number): void{
+    this.deletedOrderAdditional.push(this.orderAdditional.at(index).get('id')?.value);
     this.orderAdditional.removeAt(index);
   }
 
