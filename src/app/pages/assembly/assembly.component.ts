@@ -43,13 +43,8 @@ export class AssemblyComponent implements OnInit {
   unitList: IRootUnit = {} as IRootUnit
 
   formattedLabel: string = '';
-
-  formattedValueCost: number | null = 0;
-
-  formattedValueSelling: number | null = 0;
-
+  
   supplier$!: Observable<any>;
-  productCat$!: Observable<ICategories>;
 
   totalAll: number = 0;
   pageSize: number = 5;
@@ -76,8 +71,6 @@ export class AssemblyComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-
-    this.productCat$ = this.apiSvc.getSupplierProduct().pipe();
 
 
     this.unit$ = this.apiSvc.getUnitMeasurement().pipe(
@@ -210,14 +203,6 @@ export class AssemblyComponent implements OnInit {
   formatter = (value: number | null): string => {
     return value !== null ? `${value.toLocaleString('en-US')}` : '';
   };
-
-  updateFormattedValueSelling(value: number | null): void{
-    this.formattedValueSelling = value;
-  }
-
-  updateFormattedValue(value: number | null): void {
-    this.formattedValueCost = value;
-  }
 
   getFormattedLabel(measurement: string, unit: string): void {
 

@@ -73,7 +73,6 @@
                                         <th scope="col">Price List</th>
                                         <th scope="col">Discount</th>
                                         <th scope="col">Product Cost</th>
-                                        <th scope="col">Discount Item</th>
                                         <th scope="col">Total</th>
                                         <th scope="col">#</th>
                                     </tr>
@@ -178,7 +177,7 @@
                         <div class="d-flex flex-column align-items-end gap-2">        
                             <div class="d-flex align-items-center justify-content-between" style="width: 30%;">
                                 <p class="m-0 p-0 fw-semibold">Total Inventory Cost</p>
-                                <p class="m-0 p-0 fw-semibold total-order">Rp {{ totalOrder | number:'1.0-0' }}</p>
+                                <p class="m-0 p-0 fw-semibold total-order">Rp {{ totalInventoryOrder | number:'1.0-0' }}</p>
                             </div>
                         </div>
                     </nz-tab>
@@ -299,7 +298,7 @@
                         <div class="d-flex flex-column align-items-end gap-2">        
                             <div class="d-flex align-items-center justify-content-between" style="width: 30%;">
                                 <p class="m-0 p-0 fw-semibold">Total Additional Cost</p>
-                                <p class="m-0 p-0 fw-semibold total-order">Rp {{ totalOrder | number:'1.0-0' }}</p>
+                                <p class="m-0 p-0 fw-semibold total-order">Rp {{ totalAdditionalOrder | number:'1.0-0' }}</p>
                             </div>
                         </div>
                     </nz-tab>
