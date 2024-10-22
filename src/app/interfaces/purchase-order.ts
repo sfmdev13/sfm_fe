@@ -19,6 +19,7 @@ export interface IRootPurchaseOrder {
     pic: Pic[]
     supplier: Supplier
     po_items: PoItem[]
+    po_additonal_items: PoAdditonalItem[]
     logs: any[]
     telephone_billing: string;
     telephone_shipping: string;
@@ -85,6 +86,27 @@ export interface IRootPurchaseOrder {
     qty: string
     product_cost: string
     total_cost_per_product: string
+    discount_type: string
+    discount_price: string
+    discount: string
+  }
+
+  export interface PoAdditonalItem{
+    id: string
+    product_description: string
+    qty: string
+    unit: {
+      id: number
+      name: string
+      measurement: string
+      unit: string
+      description: string
+    }
+    price_list: string
+    discount_type: string
+    discount: string
+    discount_price: string
+    total_cost_per_product: string
   }
   
   export interface Inventory {
@@ -109,6 +131,8 @@ export interface IRootPurchaseOrder {
       unit: string
       description: StringMap
     }
+    discount_type: string
+    discount_price: string
   }
   
   export interface Pagination {

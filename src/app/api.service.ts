@@ -52,6 +52,9 @@ export class ApiService {
   private refreshGetProjects = new BehaviorSubject<void>(undefined);
   refreshGetProjects$ = this.refreshGetProjects.asObservable();
 
+  private refreshGetAssembly = new BehaviorSubject<void>(undefined);
+  refreshGetAssembly$ = this.refreshGetAssembly.asObservable();
+
   getProfile(): Observable<any> {
     const token = localStorage.getItem('authToken');
     const headers = new HttpHeaders({
@@ -104,6 +107,10 @@ export class ApiService {
 
   triggerRefreshProject(){
     this.refreshGetProjects.next();
+  }
+
+  triggerRefreshAssembly(){
+    this.refreshGetAssembly.next();
   }
 
   setFilteredCustomerData(data: IRootCustomer) {
@@ -1173,4 +1180,38 @@ export class ApiService {
 
     return this.http.get<ICustomerDetail>(url, { headers })
   }
+
+  getInventoryList(): Observable<any>{
+    const token = localStorage.getItem('authToken');
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+    });
+
+    const url = `${this.apiUrl}/inventory-list`
+
+    return this.http.get<any>(url, { headers })
+  }
+
+  getAssemblyInventories(page: number, per_page: number): Observable<any>{
+    const token = localStorage.getItem('authToken');
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+    });
+
+    const url = `${this.apiUrl}/assembly-inventory?page=${page}&per_page=${per_page}`
+
+    return this.http.get<any>(url, { headers })
+  }
+
+  createAssembly(body: any): Observable<any>{
+    const token = localStorage.getItem('authToken');
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+    });
+
+    const url = `${this.apiUrl}/create/assembly-inventory`
+
+    return this.http.post<any>(url, body ,{ headers })
+  }
+
 }
