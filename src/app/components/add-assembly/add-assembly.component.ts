@@ -42,6 +42,9 @@ export class AddAssemblyComponent implements OnInit {
   totalOrder: number = 0;
   totalGrandOrder: number = 0;
 
+  totalInventoryOrder: number = 0;
+  totalAdditionalOrder: number = 0;
+
   formDisable: boolean = false;
 
   provinces$!: Observable<any>;
@@ -97,21 +100,22 @@ export class AddAssemblyComponent implements OnInit {
     ))
     
 
-    // //used for calculate total order and total grand order
-    // const orderChanges$ = this.order.valueChanges.pipe(startWith(this.order.value));
-    // const orderAdditionalChanges$ = this.orderAdditional.valueChanges.pipe(startWith(this.orderAdditional.value));
-    // const taxChanges$ = this.purchaseForm.get('tax')?.valueChanges.pipe(startWith(this.purchaseForm.get('tax')?.value)) || [];
+    //used for calculate total order and total grand order
+    const orderChanges$ = this.order.valueChanges.pipe(startWith(this.order.value));
+    const orderAdditionalChanges$ = this.orderAdditional.valueChanges.pipe(startWith(this.orderAdditional.value));
   
-    // combineLatest([orderChanges$,orderAdditionalChanges$, taxChanges$]).subscribe(() => {
-    //   // Recalculate the total order cost
-    //   const totalSumOrder = this.calculateTotalCost();
-    //   const totalSumAdditional = this.calculateTotalCostAdditional();
-    //   const taxPercent = parseFloat(this.purchaseForm.get('tax')?.value || '0');
+    combineLatest([orderChanges$,orderAdditionalChanges$]).subscribe(() => {
+      // Recalculate the total order cost
+      const totalSumOrder = this.calculateTotalCost();
+      const totalSumAdditional = this.calculateTotalCostAdditional();
+
+      this.totalInventoryOrder = totalSumOrder;
+      this.totalAdditionalOrder = totalSumAdditional;
+
+      this.totalOrder = totalSumOrder + totalSumAdditional;
   
-    //   this.totalOrder = totalSumOrder + totalSumAdditional;
-  
-    //   this.totalGrandOrder = this.totalOrder + (this.totalOrder * (taxPercent / 100));
-    // });
+      this.totalGrandOrder = this.totalOrder;
+    });
 
 
     this.assemblyForm.get('pic')?.valueChanges.subscribe((value) => {
@@ -301,10 +305,7 @@ export class AddAssemblyComponent implements OnInit {
 
     const inventoryComplete = this.order.value.map((order: any) => ({
       inventory_id: order.inventory_id,
-      qty: order.qty.toString(),
-      discount_type: order.discount_type_item,
-      discount: order.discount_item.toString(),
-      discount_price: order.discount_price_item.toString()
+      qty: order.qty.toString()
     }))
 
     let additionalComplete = null;
@@ -334,13 +335,13 @@ export class AddAssemblyComponent implements OnInit {
         status: this.assemblyForm.get('status')?.value
       }
 
-      this.apiSvc.editPurchaseOrder(body).subscribe({
+      this.apiSvc.updateAssembly(body).subscribe({
         next: () => {
           this.spinnerSvc.hide()
-          this.apiSvc.triggerRefreshPurchaseOrder();
+          this.apiSvc.triggerRefreshAssembly();
           this.modalSvc.success({
             nzTitle: 'Success',
-            nzContent: 'Successfully Edit Placed Order',
+            nzContent: 'Successfully Edit Assembly Inventory',
             nzOkText: 'Ok',
             nzCentered: true
           })
@@ -378,7 +379,7 @@ export class AddAssemblyComponent implements OnInit {
       this.apiSvc.createAssembly(body).subscribe({
         next: () => {
           this.spinnerSvc.hide()
-          this.apiSvc.triggerRefreshPurchaseOrder();
+          this.apiSvc.triggerRefreshAssembly();
           this.modalSvc.success({
             nzTitle: 'Success',
             nzContent: 'Successfully Created',
@@ -450,17 +451,7 @@ export class AddAssemblyComponent implements OnInit {
   updateTotalCost(orderRow: FormGroup): void {
     const qty = orderRow.get('qty')?.value || 0;
     const productCost = orderRow.get('product_cost')?.value || 0;
-    const discount = orderRow.get('discount_item')?.value || 0;
-    const discount_price = orderRow.get('discount_price_item')?.value || 0;
     let totalCost = qty * productCost;
-
-    if(orderRow.get('discount_type_item')?.value === 'percent'){
-      totalCost = totalCost - (totalCost * (parseFloat(discount)/100))
-    }
-
-    if(orderRow.get('discount_type_item')?.value === 'price'){
-      totalCost = totalCost - parseInt(discount_price);
-    }
 
     orderRow.get('total_cost')?.setValue(totalCost, { emitEvent: false });
   }
