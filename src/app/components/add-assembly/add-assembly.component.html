@@ -302,59 +302,63 @@
                             </div>
                         </div>
                     </nz-tab>
-                    <!-- <nz-tab nzTitle="Finish Goods">
+                    <nz-tab nzTitle="Finish Goods">
                         <div class="table-responsive">
                             <table class="table table-striped table-order">
                                 <thead style="position: unset;">
                                     <tr>
                                         <th scope="col">Product Description</th>
+                                        <th scope="col">Part Number</th>
                                         <th scope="col">Qty</th>
-                                        <th scope="col">Unit</th>
                                         <th scope="col">Unit Code</th>
                                         <th scope="col">Price List</th>
                                         <th scope="col">Discount</th>
-                                        <th scope="col">Total</th>
-                                        <th scope="col">#</th>
+                                        <th scope="col">Total Cost</th>
                                     </tr>
                                 </thead>
                                 <tbody>
+                                    <ng-container formArrayName="order">
+                                        <tr *ngFor="let order of order.controls; let i = index" [formGroupName]="i">
+                                            <td>
+                                                {{ getInventoryDescription(order) }}
+                                            </td>
+                                            <td>
+                                                {{ order.get('product_code')?.value }}
+                                            </td>
+                                            <td>
+                                                {{ order.get('qty')?.value }}
+                                            </td>
+                                            <td>
+                                                <div>
+                                                    <p class="m-0 p-0">{{ order.get('unit_measurement')?.value}} <sup>{{ order.get('unit_unit')?.value }}</sup> </p>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                Rp. {{ order.get('price_list')?.value | number:'1.0-0' }}
+                                            </td>
+                                            <td>
+                                                <ng-container *ngIf="order.get('discount_type')?.value === 'percent';else priceAdditional">
+                                                    {{ order.get('discount')?.value }} %
+                                                </ng-container>
+                                                <ng-template #priceAdditional>
+                                                    Rp. {{ order.get('discount_price')?.value | number:'1.0-0' }}
+                                                </ng-template>
+                                            </td>
+                                            <td>
+                                                <div style="margin-top: 4px;">
+                                                    <p class="m-0 p-0">Rp. {{ order.get('total_cost')?.value | number:'1.0-0' }}</p>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </ng-container>
                                     <ng-container formArrayName="order_additional">
                                         <tr *ngFor="let order of orderAdditional.controls; let i = index" [formGroupName]="i">
                                             <td>
-                                                <nz-form-control>
-                                                    <input nz-input formControlName="product_description" />
-                                                </nz-form-control>
+                                                {{ order.get('product_description')?.value }}
                                             </td>
+                                            <td>-</td>
                                             <td>
-                                                <nz-form-control>
-                                                    <nz-input-number formControlName="qty" [nzMin]="0"></nz-input-number>
-                                                </nz-form-control>  
-                                            </td>
-                                            <td>
-                                                <ng-container *ngIf="unit$ | async as unit; else unitLoad">
-                                                    <nz-select nzShowSearch nzPlaceHolder="Select Unit" formControlName="unit_id" [nzDropdownRender]="unitRender">
-                                                        <nz-option
-                                                            *ngFor="let u of unit.data"
-                                                            [nzValue]="u.id"
-                                                            [nzLabel]="u.name"
-                                                        >
-                                                        </nz-option>
-                                                        <ng-template #unitRender>
-                                                            <nz-divider class="m-0"></nz-divider>
-                                                            <div class="container">
-                                                              <a class="add-item" (click)="showModalUnit('uom')">
-                                                                <span nz-icon nzType="plus"></span>
-                                                                Add Unit
-                                                              </a>
-                                                            </div>
-                                                        </ng-template>
-                                                    </nz-select>
-                                                </ng-container>
-                                                <ng-template #unitLoad>
-                                                    <nz-select nzShowSearch nzPlaceHolder="Select Unit" nzDisabled>
-                                                        <nz-option></nz-option>
-                                                    </nz-select>
-                                                </ng-template>
+                                                {{ order.get('qty')?.value }}
                                             </td>
                                             <td>
                                                 <div>
@@ -362,72 +366,54 @@
                                                 </div>
                                             </td>
                                             <td>
-                                                <nz-form-control>
-                                                    <nz-space nzDirection="vertical" style="width: 100%">
-                                                        <nz-input-number-group *nzSpaceItem nzPrefix="Rp. " style="width: 100%">
-                                                            <nz-input-number     
-                                                            formControlName="price_list"
-                                                            [nzFormatter]="formatter"
-                                                            [nzMin]="0"
-                                                            ></nz-input-number>
-                                                        </nz-input-number-group>
-                                                    </nz-space>
-                                                </nz-form-control>  
+                                                Rp. {{ order.get('price_list')?.value | number:'1.0-0' }}
                                             </td>
                                             <td>
-                                                <div class="d-flex flex-column">
-                                                    <ng-container *ngIf="order.get('discount_type')?.value === 'percent';else priceAdditional">
-                                                        <nz-input-number-group nzAddOnAfter="%">
-                                                            <nz-input-number formControlName="discount"></nz-input-number>
-                                                        </nz-input-number-group>
-                                                    </ng-container>
-                                                    <ng-template #priceAdditional>
-                                                        <nz-input-number-group nzAddOnBefore="Rp. ">
-                                                            <nz-input-number     
-                                                            formControlName="discount_price"
-                                                            [nzFormatter]="formatter"
-                                                            ></nz-input-number>
-                                                        </nz-input-number-group>
-                                                    </ng-template>
-                                                    <nz-radio-group formControlName="discount_type" class="mt-2">
-                                                        <label nz-radio nzValue="percent">Percent</label>
-                                                        <label nz-radio nzValue="price">Price</label>
-                                                    </nz-radio-group>
-                                                </div>
+                                                <ng-container *ngIf="order.get('discount_type')?.value === 'percent';else priceAdditional">
+                                                    {{ order.get('discount')?.value }} %
+                                                </ng-container>
+                                                <ng-template #priceAdditional>
+                                                    Rp. {{ order.get('discount_price')?.value | number:'1.0-0' }}
+                                                </ng-template>
                                             </td>
                                             <td>
                                                 <div style="margin-top: 4px;">
                                                     <p class="m-0 p-0">Rp. {{ order.get('total_cost')?.value | number:'1.0-0' }}</p>
                                                 </div>
                                             </td>
-                                            <td>
-                                                <span (click)="removeOrderAdditional(i)" nz-icon nzType="delete" nzTheme="twotone" [nzTwotoneColor]="'#ED0000'"></span>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td colspan="9" class="text-center">
-                                                <button (click)="addOrderAdditional()" nz-button nzType="primary" class="w-75" [disabled]="formDisable">Add Additional</button>
-                                            </td>
                                         </tr>
                                     </ng-container>
-            
                                 </tbody>
                             </table>
                         </div>
 
         
-                        <div class="d-flex flex-column align-items-end gap-2">        
-                            <div class="d-flex align-items-center justify-content-between" style="width: 30%;">
-                                <p class="m-0 p-0 fw-semibold">Total Order</p>
-                                <p class="m-0 p-0 fw-semibold total-order">Rp {{ totalOrder | number:'1.0-0' }}</p>
+                        <div class="d-flex flex-row align-items-center justify-content-between gap-5">
+                            <div class="w-100">
+                                <div class="d-flex align-items-center justify-content-between" style="margin-bottom: 12px;">
+                                    <p class="m-0 p-0 fw-semibold">Total Inventory Cost</p>
+                                    <p class="m-0 p-0 fw-semibold total-order">Rp {{ totalInventoryOrder | number:'1.0-0' }}</p>
+                                </div>
+            
+                                <div class="d-flex align-items-center justify-content-between total-children">
+                                    <p class="m-0 p-0 fw-semibold">Total Additional Cost</p>
+                                    <p class="m-0 p-0 fw-semibold total-order">Rp {{ totalAdditionalOrder | number:'1.0-0' }}</p>
+                                </div>
                             </div>
-        
-                            <div class="d-flex align-items-center justify-content-between total-children" style="width: 30%;">
-                                <p class="m-0 p-0 fw-semibold">Grand Total</p>
-                                <p class="m-0 p-0 fw-semibold total-order">Rp {{ totalGrandOrder | number:'1.0-0' }}</p>
-                            </div>
+                            <div class="w-100">
+                                <div class="d-flex align-items-center justify-content-between" style="margin-bottom: 12px;">
+                                    <p class="m-0 p-0 fw-semibold">Total Order</p>
+                                    <p class="m-0 p-0 fw-semibold total-order">Rp {{ totalOrder | number:'1.0-0' }}</p>
+                                </div>
+            
+                                <div class="d-flex align-items-center justify-content-between total-children">
+                                    <p class="m-0 p-0 fw-semibold">Grand Total</p>
+                                    <p class="m-0 p-0 fw-semibold total-order">Rp {{ totalGrandOrder | number:'1.0-0' }}</p>
+                                </div>
+                            </div>     
+
                         </div>
-                    </nz-tab> -->
+                    </nz-tab>
                 </nz-tabset>
             </div>
         </form>
