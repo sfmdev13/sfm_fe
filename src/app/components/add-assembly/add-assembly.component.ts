@@ -219,6 +219,10 @@ export class AddAssemblyComponent implements OnInit {
     
   }
 
+  getInventoryDescription(order: any): string {
+    return this.inventoryList?.data?.find(invent => invent.id === order.get('inventory_id')?.value)?.description ?? '';
+  }
+
   handleSubmitUnitAdd(): void{
 
     this.spinnerSvc.show();
@@ -312,6 +316,7 @@ export class AddAssemblyComponent implements OnInit {
 
     if(this.orderAdditional.length > 0){
       additionalComplete = this.orderAdditional.value.map((order: any) => ({
+        id: order.id,
         product_description: order.product_description,
         qty: order.qty.toString(),
         unit_id: order.unit_id.toString(),
