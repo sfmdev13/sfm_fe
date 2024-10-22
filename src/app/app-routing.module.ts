@@ -67,6 +67,12 @@ const routes: Routes = [
         data: { action: 'view_inventory' }
       },
       {
+        path: 'inventories/assembly',
+        loadChildren: () => import('./pages/assembly/assembly.module').then(m => m.AssemblyModule),
+        canActivate: [ActionGuard],
+        data: { action: 'view_inventory' }
+      },
+      {
         path: 'roles',
         loadChildren: () => import('./pages/roles/roles.module').then(m => m.RolesModule),
         canActivate: [ActionGuard],

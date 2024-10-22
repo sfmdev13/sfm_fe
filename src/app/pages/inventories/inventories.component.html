@@ -1,10 +1,14 @@
 <div class="d-flex gap-4">
     <nz-card nzHoverable style="width:240px" [nzCover]="coverTemplate" [routerLink]="'/inventories/inventory-list'">
-        <nz-card-meta nzTitle="Inventory List" nzDescription="Add or Edit Inventories"></nz-card-meta>
+        <nz-card-meta nzTitle="Inventory List" nzDescription="Add or Edit inventory"></nz-card-meta>
     </nz-card>
 
     <nz-card nzHoverable style="width:240px" [nzCover]="coverPurchase" [routerLink]="'/inventories/purchase-order'">
         <nz-card-meta nzTitle="Purchase Order" nzDescription="Purchase inventory"></nz-card-meta>
+    </nz-card>
+
+    <nz-card nzHoverable style="width:240px" [nzCover]="coverAssembly" [routerLink]="'/inventories/assembly'">
+        <nz-card-meta nzTitle="Inventory Assembly" nzDescription="Grouping inventory"></nz-card-meta>
     </nz-card>
 </div>
 
@@ -14,4 +18,8 @@
 
 <ng-template #coverPurchase>
     <img alt="example" src="/assets/images/purchase-order.png" />
+</ng-template>
+
+<ng-template #coverAssembly>
+    <img alt="example" src="/assets/images/assembly.png" />
 </ng-template>
