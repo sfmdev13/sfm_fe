@@ -702,7 +702,7 @@ export class InventoriesListComponent implements OnInit {
       product_cost: 0,
       selling_price: 0,
       qty: 0,
-      pic: this.pic_id,
+      pic: [this.pic_id],
       is_pic_internal: '',
       supplier_id: '',
       status: 1,
