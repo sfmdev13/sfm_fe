@@ -26,7 +26,8 @@
     <nz-table 
         #basicTable 
         [nzData]="cust.data"         
-        [nzShowPagination]="true" 
+        nzShowPagination
+        [nzFrontPagination]="false"
         nzBordered
         [nzTotal]="totalAll"
         [nzPageSize]="pageSize"
