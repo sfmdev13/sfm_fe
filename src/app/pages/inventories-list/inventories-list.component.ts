@@ -150,7 +150,9 @@ export class InventoriesListComponent implements OnInit {
     })
 
     this.inventoryForm.get('supplier_product_id')?.valueChanges.subscribe((value) => {
-      this.supplier$ = this.apiSvc.getSupplierByProduct(value);
+      if(value !== ''){
+        this.supplier$ = this.apiSvc.getSupplierByProduct(value);
+      }
     })
 
     this.inventoryForm.get('status')?.valueChanges.subscribe((value: boolean) => {
