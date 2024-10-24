@@ -37,8 +37,8 @@
         <thead>
           <tr>
             <th>Part Number</th>
-            <th>Product Description</th>
             <th>Product Category</th>
+            <th>Product Description</th>
             <th>Supplier</th>
             <th>Supplier Source</th>
             <th>Selling Price</th>
@@ -50,8 +50,8 @@
         <tbody>
             <tr *ngFor="let data of basicTable.data">
               <td>{{ data.code }}</td>
-              <td>{{ data.description }}</td>
               <td>{{ data.supplier_product.name }}</td>
+              <td>{{ data.description }}</td>
               <td>{{ data.supplier.name }}</td>
               <td>{{ data.supplier.supplier_source.name }}</td>
               <td>{{ data.selling_price | currency:'Rp. ':'symbol':'1.0-0' }}</td>

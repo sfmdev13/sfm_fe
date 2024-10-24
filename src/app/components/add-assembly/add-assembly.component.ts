@@ -29,6 +29,7 @@ export class AddAssemblyComponent implements OnInit {
   assemblyForm = this.fb.group({
     id: [null],
     date: ['', Validators.required],
+    no_ref: ['', Validators.required],
     description: ['', Validators.required],
     pic: [[this.pic_id], [Validators.required]],
     is_pic_internal: ['', [Validators.required]],
@@ -331,6 +332,7 @@ export class AddAssemblyComponent implements OnInit {
     if(this.modal_type === 'edit'){
       let body = {
         id: this.assemblyForm.get('id')?.value,
+        no_ref: this.assemblyForm.get('no_ref')?.value,
         description: this.assemblyForm.get('description')?.value,
         date: this.assemblyForm.get('date')?.value,
         pic_new: picComplete,
@@ -372,6 +374,7 @@ export class AddAssemblyComponent implements OnInit {
     if(this.modal_type === 'add' || this.modal_type === 'duplicate'){
       let body = {
         id: this.assemblyForm.get('id')?.value,
+        no_ref: this.assemblyForm.get('no_ref')?.value,
         description: this.assemblyForm.get('description')?.value,
         date: this.assemblyForm.get('date')?.value,
         pic: picComplete,

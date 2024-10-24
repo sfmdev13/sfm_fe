@@ -279,7 +279,7 @@ export class InventoriesListComponent implements OnInit {
           })
         },
         complete: () => {
-          this.resetDefaultForm();
+
         }
       })
     
