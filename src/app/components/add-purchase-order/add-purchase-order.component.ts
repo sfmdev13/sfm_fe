@@ -302,8 +302,6 @@ export class AddPurchaseOrderComponent implements OnInit {
 
     this.supplier$ = this.apiSvc.supplierList();
 
-    this.addOrder();
-
     if(this.modal_type === 'edit' || this.modal_type === 'duplicate'){
 
       this.purchaseForm.patchValue({
@@ -659,14 +657,17 @@ export class AddPurchaseOrderComponent implements OnInit {
       is_pic_internal: pic_id ===  this.purchaseForm.get('is_pic_internal_billing')!.value ? 1 : 0
     }))
 
+    let inventoryComplete = null
 
-    const inventoryComplete = this.order.value.map((order: any) => ({
-      inventory_id: order.inventory_id,
-      qty: order.qty.toString(),
-      discount_type: order.discount_type_item,
-      discount: order.discount_item.toString(),
-      discount_price: order.discount_price_item.toString()
-    }))
+    if(this.order.length > 0){
+      inventoryComplete = this.order.value.map((order: any) => ({
+        inventory_id: order.inventory_id,
+        qty: order.qty.toString(),
+        discount_type: order.discount_type_item,
+        discount: order.discount_item.toString(),
+        discount_price: order.discount_price_item.toString()
+      }))
+    }
 
     let additionalComplete = null;
 
@@ -986,10 +987,6 @@ export class AddPurchaseOrderComponent implements OnInit {
   }
 
   removeOrder(index: number): void {
-    if(index === 0){
-      return;
-    } 
-
     this.order.removeAt(index);
   }
 
