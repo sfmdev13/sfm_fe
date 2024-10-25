@@ -101,7 +101,7 @@ export class AddSupplierModalComponent implements OnInit {
 
   deletedProductCatIds: string[] = [];
 
-
+  suppProductList: IRootCatContact = {} as IRootCatContact
 
   constructor(
     private modal: NzModalRef,
@@ -125,7 +125,11 @@ export class AddSupplierModalComponent implements OnInit {
       })
     );
 
-    this.suppProduct$ = this.apiSvc.getSupplierProduct()
+    this.suppProduct$ = this.apiSvc.getSupplierProduct().pipe(
+      tap(res => {
+        this.suppProductList = res
+      })
+    )
 
     this.filteredListOfPic = this.listOfPic.filter((p) => p.pic_id === this.pic_id);
 

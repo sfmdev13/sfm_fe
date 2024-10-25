@@ -463,7 +463,7 @@
                                   <nz-form-control>
                                     <ng-container *ngIf="suppProduct$ | async as suppProduct; else prodLoad">
                                       <nz-select nzShowSearch nzPlaceHolder="Select product category" formControlName="supplier_product_id" [nzDropdownRender]="prodRender">
-                                        <ng-container *ngFor="let supp of suppProduct.data">
+                                        <ng-container *ngFor="let supp of suppProductList.data">
                                           <nz-option [nzLabel]="supp.name" [nzValue]="supp.id"></nz-option>
                                         </ng-container>
                                         <ng-template #prodRender>
