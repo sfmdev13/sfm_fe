@@ -18,6 +18,7 @@ import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzSpinModule } from 'ng-zorro-antd/spin';
 import { NzMessageModule } from 'ng-zorro-antd/message';
 import { CategoriesSettingTableModule } from '../categories-setting/categories-setting.module';
+import { NzTabsModule } from 'ng-zorro-antd/tabs';
 
 @NgModule({
   declarations: [AddSupplierModalComponent],
@@ -38,7 +39,8 @@ import { CategoriesSettingTableModule } from '../categories-setting/categories-s
     NzIconModule,
     NzSpinModule,
     NzMessageModule,
-    CategoriesSettingTableModule
+    CategoriesSettingTableModule,
+    NzTabsModule
   ],
   exports: [AddSupplierModalComponent]
 })

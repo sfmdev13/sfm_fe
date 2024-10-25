@@ -40,18 +40,17 @@ export class AddSupplierModalComponent implements OnInit {
     wa_phone: ['', [Validators.required]],
     address: ['',[Validators.required, Validators.maxLength(200)]],
     city: ['', [Validators.required]],
-    province: ['', [Validators.required]],
+    province: ['', [Validators.required]],  
     country: ['Indonesia'],
     postal_code: ['', [Validators.required]],
     status: [1,[Validators.required]],
-    supplier_product_id: [null, [Validators.required]],
-    supplier_source_id: ['', [Validators.required]],
     type: ['company',[Validators.required]],
     website: ['', [Validators.required]],
     maps_url: ['', [Validators.required]],
     contactPerson: this.fb.array([]),
     pic: [[this.pic_id], [Validators.required]],
-    is_pic_internal: ['', [Validators.required]]
+    is_pic_internal: ['', [Validators.required]],
+    product_category: this.fb.array([])
   })
 
   optionsCust = ['company', 'person'];
@@ -63,11 +62,11 @@ export class AddSupplierModalComponent implements OnInit {
 
   picComplete: any;
   contactPersonComplete: any;
+  productCategoryComplete: any;
 
   provinces$!: Observable<any>;
 
   suppProduct$!: Observable<IRootCatContact>;
-  suppSource$!: Observable<IRootCatContact>;
 
   cpListOfPic: any[] = [];
 
@@ -89,8 +88,6 @@ export class AddSupplierModalComponent implements OnInit {
   attachmentDeletedIds: string[] = [];
 
   isLoadingProvince: boolean = true;
-  isLoadingSuppProd: boolean = true;
-  isLoadingSuppSource: boolean = true;
 
   categoryForm = this.fb.group({
     id: [''],
@@ -101,6 +98,10 @@ export class AddSupplierModalComponent implements OnInit {
   titleCat: string = '';
 
   nestedModalRef?: NzModalRef;
+
+  deletedProductCatIds: string[] = [];
+
+
 
   constructor(
     private modal: NzModalRef,
@@ -114,17 +115,7 @@ export class AddSupplierModalComponent implements OnInit {
   ngOnInit(): void {
 
     this.apiSvc.refreshGetCategories$.subscribe(() => {
-      this.suppProduct$ = this.apiSvc.getSupplierProduct().pipe(
-        tap(res => {
-          this.isLoadingSuppProd = false
-        })
-      );
-
-      this.suppSource$ = this.apiSvc.getSupplierSource().pipe(
-        tap(res => {
-          this.isLoadingSuppSource = false
-        })
-      );   
+      this.suppProduct$ = this.apiSvc.getSupplierProduct() 
     })
 
     this.provinces$ = this.apiSvc.getProvinces().pipe(
@@ -134,16 +125,7 @@ export class AddSupplierModalComponent implements OnInit {
       })
     );
 
-    this.suppProduct$ = this.apiSvc.getSupplierProduct().pipe(
-      tap(res => {
-        this.isLoadingSuppProd = false
-      })
-    );
-    this.suppSource$ = this.apiSvc.getSupplierSource().pipe(
-      tap(res => {
-        this.isLoadingSuppSource = false
-      })
-    );
+    this.suppProduct$ = this.apiSvc.getSupplierProduct()
 
     this.filteredListOfPic = this.listOfPic.filter((p) => p.pic_id === this.pic_id);
 
@@ -239,7 +221,6 @@ export class AddSupplierModalComponent implements OnInit {
         province: parseInt(this.supplierDetail.province),
         city: parseInt(this.supplierDetail.city),
         country: this.supplierDetail.country,
-        supplier_source_id: this.supplierDetail.supplier_source.id, 
         wa_phone: this.supplierDetail.wa_phone,
         postal_code: this.supplierDetail.postal_code
       })
@@ -316,6 +297,16 @@ export class AddSupplierModalComponent implements OnInit {
         this.contactPerson.push(updateCp);
       })
 
+      this.supplierDetail.supplier_products.forEach((supp) => {
+        const updateProduct = this.fb.group({
+          supplier_product_id: parseInt(supp.product_id),
+          sub_category: supp.sub_category,
+          manufacture: supp.manufacture
+        })
+
+        this.productCategory.push(updateProduct)
+      })
+
       //extract pic id
       const picIds = this.supplierDetail.pic.map(item => item.pic_id);
 
@@ -328,12 +319,35 @@ export class AddSupplierModalComponent implements OnInit {
       });
 
       //extact supplier product id
-      const supplier_product_ids = this.supplierDetail.supplier_products.map(item => parseInt(item.product_id))
-      this.supplierForm.patchValue({
-        supplier_product_id: supplier_product_ids
-      })
+      // const supplier_product_ids = this.supplierDetail.supplier_products.map(item => parseInt(item.product_id))
+      // this.supplierForm.patchValue({
+      //   supplier_product_id: supplier_product_ids
+      // })
     }
 
+  }
+
+  get productCategory(): FormArray {
+    return this.supplierForm.get('product_category') as FormArray;
+  }
+
+  removeProductCategory(index: number): void {
+    if(index === 0){
+      return;
+    }
+    
+    this.productCategory.removeAt(index);
+  }
+
+  
+  addProductCategory(): void {
+    const productCategory = this.fb.group({
+      supplier_product_id: ['', Validators.required],
+      sub_category: ['', Validators.required],
+      manufacture: ['', Validators.required]
+    });
+
+    this.productCategory.push(productCategory);
   }
 
   showModalCategoryAdd(titleCat: string): void {
@@ -393,35 +407,6 @@ export class AddSupplierModalComponent implements OnInit {
           }
         })
       }
-
-      if(this.titleCat.toLowerCase() === 'supplier source'){
-        this.apiSvc.createSupplierSource(this.categoryForm.value.name, this.categoryForm.value.description).subscribe({
-          next: () => {
-            this.spinnerSvc.hide();
-            this.modalSvc.success({
-              nzTitle: 'Success',
-              nzContent: 'Successfully Add Category',
-              nzOkText: 'Ok',
-              nzCentered: true
-            })
-            this.apiSvc.triggerRefreshCategories()
-            this.nestedModalRef?.close();
-          },
-          error: (error) => {
-            this.spinnerSvc.hide();
-            this.modalSvc.error({
-              nzTitle: 'Unable to Add Category',
-              nzContent: error.error.meta.message,
-              nzOkText: 'Ok',
-              nzCentered: true
-            })
-          },
-          complete: () => {
-            this.categoryForm.reset();
-          }
-        })
-      }
-
     } else {
       this.spinnerSvc.hide();
       this.modalSvc.error({
@@ -556,9 +541,21 @@ export class AddSupplierModalComponent implements OnInit {
       is_pic_internal: pic_id === this.supplierForm.get('is_pic_internal')!.value ? 1 : 0
     }));
 
+    this.productCategoryComplete = this.productCategory.value.map((prod: any) => ({
+      supplier_product_id: prod.supplier_product_id,
+      sub_category: prod.sub_category,
+      manufacture: prod.manufacture
+    }));
+
     if(this.supplierForm.valid){
       if(this.modal_type === 'add'){
 
+        this.productCategoryComplete = this.productCategory.value.map((prod: any) => ({
+          supplier_product_id: prod.supplier_product_id,
+          sub_category: prod.sub_category,
+          manufacture: prod.manufacture
+        }));
+    
         this.contactPersonComplete = this.contactPerson.value.map((pic:any) => ({
           cp_name: pic.cp_name,
           cp_email: pic.cp_email,
@@ -598,6 +595,7 @@ export class AddSupplierModalComponent implements OnInit {
           province: this.supplierForm.get('province')?.value.toString(),
           city: this.supplierForm.get('city')?.value.toString(),
           country: this.supplierForm.get('country')?.value,
+          supplier_product: this.productCategoryComplete
         };
 
         const formData = new FormData();
@@ -685,6 +683,13 @@ export class AddSupplierModalComponent implements OnInit {
 
       if(this.modal_type === 'update'){
 
+        this.productCategoryComplete = this.productCategory.value.map((prod: any) => ({
+          product_id: prod.supplier_product_id,
+          sub_category: prod.sub_category,
+          manufacture: prod.manufacture
+        }));
+    
+
         this.contactPersonComplete = this.contactPerson.value.map((pic:any, i: number) => ({
           cp_id: pic.cp_id,
           cp_name: pic.cp_name,
@@ -724,15 +729,13 @@ export class AddSupplierModalComponent implements OnInit {
           contactPerson: this.contactPersonComplete,
           pic: this.supplierDetail.pic,
           pic_new: this.picComplete,
-          supplier_product_id: this.supplierDetail.supplier_products.map(item => item.product_id),
-          supplier_products_new: this.supplierForm.get('supplier_product_id')?.value,
-          supplier_source_id: this.supplierForm.get('supplier_source_id')?.value,
           postal_code: this.supplierForm.get('postal_code')?.value,
           province: this.supplierForm.get('province')?.value.toString(),
           city: this.supplierForm.get('city')?.value.toString(),
           country: this.supplierForm.get('country')?.value,
           deletedCpIds: this.deletedCpIds,
-          attachmentDeleteIds: this.attachmentDeletedIds
+          attachmentDeleteIds: this.attachmentDeletedIds,
+          supplier_products_new: this.productCategoryComplete
         };
 
         const formData = new FormData();

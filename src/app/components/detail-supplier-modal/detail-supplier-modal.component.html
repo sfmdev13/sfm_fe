@@ -17,144 +17,171 @@
                     <nz-tag [nzColor]="data.is_pic_internal === 1 ? '#1DA32C' : '#f50'">{{ data.is_pic_internal  === 1 ? 'Yes' : 'No' }}</nz-tag>
                 </div>
             </div>
-
         </div>
     </ng-container>
 
-    <nz-divider></nz-divider>
+    <nz-tabset>
+        <nz-tab nzTitle="Basic Information">
+            <div class="row">
+                <div class="col-md-4">
+                    <p class="m-0 p-0 fw-semibold">Company Name</p>
+                    <p class="fw-light text-capitalize">{{ data.name }}</p>
+                </div>
+                <div class="col-md-4">
+                    <p class="m-0 p-0 fw-semibold">Type</p>
+                    <p class="fw-light text-capitalize">{{ data.type }}</p>
+                </div>
+                <div class="col-md-4">
+                    <p class="m-0 p-0 fw-semibold">Email</p>
+                    <p class="fw-light">{{ data.email }}</p>
+                </div>
+                <div class="col-md-4">
+                    <p class="m-0 p-0 fw-semibold">NIB</p>
+                    <p class="fw-light">{{ data.nib }}</p>
+                </div>
+                <div class="col-md-4" *ngFor="let att of data.attachments; let i = index">
+                    <p class="m-0 p-0 fw-semibold">Attachment Document {{i + 1}} </p>
+                    <a [href]="att.file_url" target="_blank" rel="noopener noreferrer">
+                        <p class="fw-light">{{att.file_name}}</p>
+                    </a>
+                </div>
+                <div class="col-md-4">
+                    <p class="m-0 p-0 fw-semibold">Phone Number</p>
+                    <p class="fw-light text-capitalize">{{ data.phone }}</p>
+                </div>
+                <div class="col-md-4">
+                    <p class="m-0 p-0 fw-semibold">Register Whatsapp Number</p>
+                    <p class="fw-light text-capitalize">{{ data.phone }}</p>
+                </div>
+                <div class="col-md-4">
+                    <p class="m-0 p-0 fw-semibold">Province</p>
+                    <p class="fw-light text-capitalize">{{ getProvinceName(data.province) }}</p>
+                </div>
+                <div class="col-md-4">
+                    <p class="m-0 p-0 fw-semibold">City</p>
+                    <p class="fw-light text-capitalize">{{ getRegencyName(data.city) }}</p>
+                </div>
+                <div class="col-md-4">
+                    <p class="m-0 p-0 fw-semibold">Postal Code</p>
+                    <p class="fw-light text-capitalize">{{ data.postal_code }}</p>
+                </div>
+                <div class="col-md-4">
+                    <p class="m-0 p-0 fw-semibold">Detail Address</p>
+                    <p class="fw-light text-capitalize"><a [href]="data.maps_url" target="_blank" rel="noopener noreferrer">{{ data.address }}</a></p>
+                </div>
+                <div class="col-md-4">
+                    <p class="m-0 p-0 fw-semibold">Website</p>
+                    <p class="fw-light"><a [href]="data.website" target="_blank" rel="noopener noreferrer">{{ data.website }}</a></p>
+                </div>
+                <div class="col-md-4">
+                    <p class="m-0 p-0 fw-semibold">Supplier Product</p>
+                    <p  class="fw-light">
+                        <ng-container *ngFor="let prod of data.supplier_products; last as isLast">{{ prod.product_name }}<span *ngIf="!isLast">, </span></ng-container>
+                    </p>
+                </div>
+            </div>
 
-    <div class="row">
-        <div class="col-md-4">
-            <p class="m-0 p-0 fw-semibold">Company Name</p>
-            <p class="fw-light text-capitalize">{{ data.name }}</p>
-        </div>
-        <div class="col-md-4">
-            <p class="m-0 p-0 fw-semibold">Type</p>
-            <p class="fw-light text-capitalize">{{ data.type }}</p>
-        </div>
-        <div class="col-md-4">
-            <p class="m-0 p-0 fw-semibold">Email</p>
-            <p class="fw-light">{{ data.email }}</p>
-        </div>
-        <div class="col-md-4">
-            <p class="m-0 p-0 fw-semibold">NIB</p>
-            <p class="fw-light">{{ data.nib }}</p>
-        </div>
-        <div class="col-md-4" *ngFor="let att of data.attachments; let i = index">
-            <p class="m-0 p-0 fw-semibold">Attachment Document {{i + 1}} </p>
-            <a [href]="att.file_url" target="_blank" rel="noopener noreferrer">
-                <p class="fw-light">{{att.file_name}}</p>
-            </a>
-        </div>
-        <div class="col-md-4">
-            <p class="m-0 p-0 fw-semibold">Phone Number</p>
-            <p class="fw-light text-capitalize">{{ data.phone }}</p>
-        </div>
-        <div class="col-md-4">
-            <p class="m-0 p-0 fw-semibold">Register Whatsapp Number</p>
-            <p class="fw-light text-capitalize">{{ data.phone }}</p>
-        </div>
-        <div class="col-md-4">
-            <p class="m-0 p-0 fw-semibold">Province</p>
-            <p class="fw-light text-capitalize">{{ getProvinceName(data.province) }}</p>
-        </div>
-        <div class="col-md-4">
-            <p class="m-0 p-0 fw-semibold">City</p>
-            <p class="fw-light text-capitalize">{{ getRegencyName(data.city) }}</p>
-        </div>
-        <div class="col-md-4">
-            <p class="m-0 p-0 fw-semibold">Postal Code</p>
-            <p class="fw-light text-capitalize">{{ data.postal_code }}</p>
-        </div>
-        <div class="col-md-4">
-            <p class="m-0 p-0 fw-semibold">Detail Address</p>
-            <p class="fw-light text-capitalize"><a [href]="data.maps_url" target="_blank" rel="noopener noreferrer">{{ data.address }}</a></p>
-        </div>
-        <div class="col-md-4">
-            <p class="m-0 p-0 fw-semibold">Website</p>
-            <p class="fw-light"><a [href]="data.website" target="_blank" rel="noopener noreferrer">{{ data.website }}</a></p>
-        </div>
-        <div class="col-md-4">
-            <p class="m-0 p-0 fw-semibold">Supplier Product</p>
-            <p  class="fw-light">
-                <ng-container *ngFor="let prod of data.supplier_products; last as isLast">{{ prod.product_name }}<span *ngIf="!isLast">, </span></ng-container>
-            </p>
-        </div>
-        <div class="col-md-4">
-            <p class="m-0 p-0 fw-semibold">Supplier Source</p>
-            <p class="fw-light">{{ data.supplier_source.name }}</p>
-        </div>
-    </div>
-
-    <div>
-        <p class="m-0 p-0 fw-semibold">Status</p>
-        <nz-tag [nzColor]="data.status === 1 ? '#1DA32C' : '#f50'">{{ data.status === 1 ? 'Active' : 'Inactive' }}</nz-tag>
-    </div>
-
-    <nz-divider></nz-divider>
-
-    <ng-container *ngFor="let contact of data.contact_person; let i = index">
-        <div class="row mt-3">
-            <div class="col">
-                <p class="m-0 p-0 fw-bold">Contact Person {{ i + 1 }}</p>
+            <div>
+                <p class="m-0 p-0 fw-semibold">Status</p>
+                <nz-tag [nzColor]="data.status === 1 ? '#1DA32C' : '#f50'">{{ data.status === 1 ? 'Active' : 'Inactive' }}</nz-tag>
             </div>
-        </div>
-
-        <div class="mt-3">
-            <a [href]="contact.cp_profile_picture[0].file_url" target="_blank" rel="noopener noreferrer">
-                <nz-avatar [nzSize]="100" [nzSrc]="contact.cp_profile_picture[0].file_url" class="mb-3"></nz-avatar>
-            </a>
-        </div>
-    
-        <div class="row">
-            <div class="col-md-4">
-                <p class="m-0 p-0 fw-semibold">Name</p>
-                <p class="fw-light text-capitalize">{{ contact.cp_name }}</p>
-            </div>
-            <div class="col-md-4">
-                <p class="m-0 p-0 fw-semibold">Email</p>
-                <p class="fw-light">{{ contact.cp_email }}</p>
-            </div>
-            <div class="col-md-4">
-                <p class="m-0 p-0 fw-semibold">NIK</p>
-                <p class="fw-light text-capitalize">{{ contact.cp_nik }}</p>
-            </div>
-            <div class="col-md-4" *ngFor="let att of contact.cp_attachments; let i = index">
-                <p class="m-0 p-0 fw-semibold">Attachment Document {{i + 1}} </p>
-                <a [href]="att.file_url" target="_blank" rel="noopener noreferrer">
-                    <p class="fw-light">{{att.file_name}}</p>
-                </a>
-            </div>
-            <div class="col-md-4">
-                <p class="m-0 p-0 fw-semibold">Phone Number</p>
-                <p class="fw-light text-capitalize">{{ contact.cp_phone }}</p>
-            </div>
-            <div class="col-md-4">
-                <p class="m-0 p-0 fw-semibold">Registered Phone Number</p>
-                <p class="fw-light text-capitalize">{{ contact.cp_wa_phone }}</p>
-            </div>
-            <div class="col-md-4">
-                <p class="m-0 p-0 fw-semibold">Address</p>
-                <p class="fw-light">{{ contact.cp_address }}</p>
-            </div>
-            <div class="col-md-4">
-                <p class="m-0 p-0 fw-semibold">Decision Maker</p>
-                <nz-tag [nzColor]="contact.is_pic_company === 1 ? '#1DA32C' : '#f50'">{{ contact.is_pic_company  === 1 ? 'Yes' : 'No' }}</nz-tag>
-            </div>
-            <div class="col-md-6 mt-2">
-                <p class="m-0 p-0 fw-semibold">Contact PIC</p>
-                <div class="row" *ngFor="let c of contact.pic">
-                    <div class="col-6">
-                        <p class="m-0 p-0 fw-semibold">Name</p>
-                        <p class="fw-light text-capitalize">{{ c.name }}</p>
+        </nz-tab>
+        <nz-tab nzTitle="Contact Person">
+            <ng-container *ngFor="let contact of data.contact_person; let i = index; let isLast = last">
+                <div class="row mt-3">
+                    <div class="col">
+                        <p class="m-0 p-0 fw-bold">Contact Person {{ i + 1 }}</p>
                     </div>
-                    <div class="col-6">
-                        <p class="m-0 p-0 fw-semibold">Head PIC Contact</p>
-                        <nz-tag [nzColor]=" c.is_pic_head === 1 ? '#1DA32C' : '#f50'">{{  c.is_pic_head  === 1 ? 'Yes' : 'No' }}</nz-tag>
+                </div>
+        
+                <div class="mt-3">
+                    <a [href]="contact.cp_profile_picture[0].file_url" target="_blank" rel="noopener noreferrer">
+                        <nz-avatar [nzSize]="100" [nzSrc]="contact.cp_profile_picture[0].file_url" class="mb-3"></nz-avatar>
+                    </a>
+                </div>
+            
+                <div class="row">
+                    <div class="col-md-4">
+                        <p class="m-0 p-0 fw-semibold">Name</p>
+                        <p class="fw-light text-capitalize">{{ contact.cp_name }}</p>
+                    </div>
+                    <div class="col-md-4">
+                        <p class="m-0 p-0 fw-semibold">Email</p>
+                        <p class="fw-light">{{ contact.cp_email }}</p>
+                    </div>
+                    <div class="col-md-4">
+                        <p class="m-0 p-0 fw-semibold">NIK</p>
+                        <p class="fw-light text-capitalize">{{ contact.cp_nik }}</p>
+                    </div>
+                    <div class="col-md-4" *ngFor="let att of contact.cp_attachments; let i = index">
+                        <p class="m-0 p-0 fw-semibold">Attachment Document {{i + 1}} </p>
+                        <a [href]="att.file_url" target="_blank" rel="noopener noreferrer">
+                            <p class="fw-light">{{att.file_name}}</p>
+                        </a>
+                    </div>
+                    <div class="col-md-4">
+                        <p class="m-0 p-0 fw-semibold">Phone Number</p>
+                        <p class="fw-light text-capitalize">{{ contact.cp_phone }}</p>
+                    </div>
+                    <div class="col-md-4">
+                        <p class="m-0 p-0 fw-semibold">Registered Phone Number</p>
+                        <p class="fw-light text-capitalize">{{ contact.cp_wa_phone }}</p>
+                    </div>
+                    <div class="col-md-4">
+                        <p class="m-0 p-0 fw-semibold">Address</p>
+                        <p class="fw-light">{{ contact.cp_address }}</p>
+                    </div>
+                    <div class="col-md-4">
+                        <p class="m-0 p-0 fw-semibold">Decision Maker</p>
+                        <nz-tag [nzColor]="contact.is_pic_company === 1 ? '#1DA32C' : '#f50'">{{ contact.is_pic_company  === 1 ? 'Yes' : 'No' }}</nz-tag>
+                    </div>
+                    <div class="col-md-6 mt-2">
+                        <p class="m-0 p-0 fw-semibold">Contact PIC</p>
+                        <div class="row" *ngFor="let c of contact.pic">
+                            <div class="col-6">
+                                <p class="m-0 p-0 fw-semibold">Name</p>
+                                <p class="fw-light text-capitalize">{{ c.name }}</p>
+                            </div>
+                            <div class="col-6">
+                                <p class="m-0 p-0 fw-semibold">Head PIC Contact</p>
+                                <nz-tag [nzColor]=" c.is_pic_head === 1 ? '#1DA32C' : '#f50'">{{  c.is_pic_head  === 1 ? 'Yes' : 'No' }}</nz-tag>
+                            </div>
+                        </div>
+        
                     </div>
                 </div>
 
-            </div>
-        </div>
-    </ng-container>
+                <nz-divider *ngIf="isLast"></nz-divider>
+            </ng-container>
+        </nz-tab>
+        <nz-tab nzTitle="Product Category">
+            <ng-container *ngFor="let prod of data.supplier_products; let i = index; let isLast = last">
+                <div class="row mb-3">
+                    <div class="col">
+                        <p class="m-0 p-0 fw-bold">Product {{ i + 1 }}</p>
+                    </div>
+                </div>
+        
+                <div class="row">
+                    <div class="col-md-4">
+                        <p class="m-0 p-0 fw-semibold">Product Category</p>
+                        <p class="fw-light text-capitalize">{{ prod.product_name }}</p>
+                    </div>
+
+                    <div class="col-md-4">
+                        <p class="m-0 p-0 fw-semibold">Product Sub Category</p>
+                        <p class="fw-light text-capitalize">{{ prod.sub_category }}</p>
+                    </div>
+
+                    <div class="col-md-4">
+                        <p class="m-0 p-0 fw-semibold">Manufacturer</p>
+                        <p class="fw-light text-capitalize">{{ prod.manufacture }}</p>
+                    </div>
+                </div>
+
+                <nz-divider *ngIf="!isLast"></nz-divider>
+            </ng-container>
+        </nz-tab>
+    </nz-tabset>
+
 </div>

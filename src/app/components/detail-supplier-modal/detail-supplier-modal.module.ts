@@ -6,7 +6,7 @@ import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzAvatarModule } from 'ng-zorro-antd/avatar';
 import { NzTagModule } from 'ng-zorro-antd/tag';
 import { NzDividerModule } from 'ng-zorro-antd/divider';
-
+import { NzTabsModule } from 'ng-zorro-antd/tabs';
 
 @NgModule({
   declarations: [DetailSupplierModalComponent],
@@ -16,7 +16,8 @@ import { NzDividerModule } from 'ng-zorro-antd/divider';
     NzButtonModule,
     NzAvatarModule,
     NzTagModule,
-    NzDividerModule
+    NzDividerModule,
+    NzTabsModule
   ],
   exports: [DetailSupplierModalComponent]
 })

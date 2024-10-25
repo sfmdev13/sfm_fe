@@ -144,7 +144,7 @@
                 <td>
                     <ng-container *ngFor="let pic of data.pic; last as isLast">{{ pic.name }}<span *ngIf="!isLast">, </span></ng-container>
                 </td>
-                <td>
+                <td class="text-capitalize">
                     <ng-container *ngFor="let cp of data.contact_person; last as isLast">{{ cp.cp_name }}<span *ngIf="!isLast">, </span></ng-container>
                 </td>
                 <td>

@@ -23,7 +23,7 @@ export class DeleteSupplierModalComponent implements OnInit {
   deleteSupp(): void{
     this.apiSvc.deleteSupplier(this.id).subscribe({
       next: () => {
-        this.apiSvc.triggerRefreshCustomers();
+        this.apiSvc.triggerRefreshSuppliers();
       },
       error: (error) => {
         this.modalSvc.error({
