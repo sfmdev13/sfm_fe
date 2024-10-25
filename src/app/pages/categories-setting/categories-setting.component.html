@@ -28,9 +28,9 @@
         <ng-container *ngIf="navCategoryActive === 'supplier_product'">
             <app-supplier-product></app-supplier-product>
         </ng-container>
-        <ng-container *ngIf="navCategoryActive === 'supplier_source'">
+        <!-- <ng-container *ngIf="navCategoryActive === 'supplier_source'">
             <app-supplier-source></app-supplier-source>
-        </ng-container>
+        </ng-container> -->
         <ng-container *ngIf="navCategoryActive === 'contact_type'">
             <app-contact-type></app-contact-type>
         </ng-container>
@@ -39,6 +39,9 @@
         </ng-container>
         <ng-container *ngIf="navCategoryActive === 'uom'">
             <app-unit-of-measurement></app-unit-of-measurement>
+        </ng-container>
+        <ng-container *ngIf="navCategoryActive === 'uop'">
+            <app-unit-of-reports></app-unit-of-reports>
         </ng-container>
         <ng-container *ngIf="navCategoryActive === 'warehouse_address'">
             <app-warehouse-address></app-warehouse-address>
