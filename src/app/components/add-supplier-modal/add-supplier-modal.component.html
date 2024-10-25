@@ -23,476 +23,492 @@
             </nz-form-control>
           </nz-form-item>
 
-            <div class="col-md-6">
-                <nz-form-item class="mb-4">
-                    <nz-form-label nzRequired nzFor="name" class="fw-semibold">Name</nz-form-label>
-                    <nz-form-control>
-                    <input nz-input formControlName="name" id="name" />
-                    </nz-form-control>
-                </nz-form-item>
-            </div>
-            <div class="col-md-6">
-                <nz-form-item class="mb-4">
-                    <nz-form-label nzRequired nzFor="email" class="fw-semibold">Email</nz-form-label>
-                    <nz-form-control>
-                    <input nz-input formControlName="email" id="email"  />
-                    </nz-form-control>
-                </nz-form-item>
-            </div>
-            <div class="col-md-6">
-              <nz-form-item>
-                  <nz-form-label nzRequired nzFor="supplier_product_id" class="fw-semibold">Supplier Product</nz-form-label>
-                  <nz-form-control>
-                    <ng-container *ngIf="suppProduct$ | async as suppProduct; else prodLoad">
-                      <nz-select nzShowSearch nzMode="tags" nzPlaceHolder="Select Supplier Product" formControlName="supplier_product_id" [nzDropdownRender]="prodRender">
-                        <ng-container *ngFor="let supp of suppProduct.data">
-                          <nz-option [nzLabel]="supp.name" [nzValue]="supp.id"></nz-option>
-                        </ng-container>
-                        <ng-template #prodRender>
-                          <nz-divider class="m-0"></nz-divider>
-                          <div class="container">
-                            <a class="add-item" (click)="showModalCategoryAdd('Supplier Product')">
-                              <span nz-icon nzType="plus"></span>
-                              Add Category
-                            </a>
-                          </div>
-                        </ng-template>
-                      </nz-select>
-                    </ng-container>
-                    <ng-template #prodLoad>
-                      <nz-select nzDisabled nzPlaceHolder="Select Supplier Product" formControlName="supplier_product_id">
-                      </nz-select>
-                    </ng-template>
-                  </nz-form-control>
-              </nz-form-item>
-            </div>
-            <div class="col-md-6">
-              <nz-form-item>
-                  <nz-form-label nzRequired nzFor="supplier_source_id" class="fw-semibold">Supplier Source</nz-form-label>
-                  <nz-form-control>
-                    <ng-container *ngIf="suppSource$ | async as suppSource; else sourceLoad">
-                      <nz-select nzShowSearch nzPlaceHolder="Select Supplier Source" formControlName="supplier_source_id" [nzDropdownRender]="suppRender">
-                        <ng-container *ngFor="let cust of suppSource.data">
-                          <nz-option [nzLabel]="cust.name" [nzValue]="cust.id"></nz-option>
-                        </ng-container>
+          <nz-form-item>
+            <nz-form-label nzFor="status" nzRequired>Status</nz-form-label>
+            <nz-form-control>
+              <nz-switch nzSize="default" id="status" formControlName="status" nzCheckedChildren="active" nzUnCheckedChildren="inactive"></nz-switch>
+            </nz-form-control>
+          </nz-form-item>
 
-                        <ng-template #suppRender>
-                          <nz-divider class="m-0"></nz-divider>
-                          <div class="container">
-                            <a class="add-item" (click)="showModalCategoryAdd('Supplier Source')">
-                              <span nz-icon nzType="plus"></span>
-                              Add Category
-                            </a>
-                          </div>
-                        </ng-template>
-                      </nz-select>
-                    </ng-container>
-                    <ng-template #sourceLoad>
-                      <nz-select nzDisabled nzPlaceHolder="Select Supplier Source" formControlName="supplier_source_id">
-                      </nz-select>
-                    </ng-template>
-                  </nz-form-control>
-              </nz-form-item>
-            </div>                      
-            <div class="col-md-6">
-                <nz-form-item>
-                    <nz-form-label nzRequired nzFor="nib" class="fw-semibold">NIB</nz-form-label>
+          <nz-tabset>
+            <nz-tab nzTitle="Basic Information">
+              <div class="row">
+                <div class="col-md-6">
+                  <nz-form-item class="mb-4">
+                      <nz-form-label nzRequired nzFor="name" class="fw-semibold">Name</nz-form-label>
+                      <nz-form-control>
+                      <input nz-input formControlName="name" id="name" />
+                      </nz-form-control>
+                  </nz-form-item>
+                </div>
+                <div class="col-md-6">
+                    <nz-form-item class="mb-4">
+                        <nz-form-label nzRequired nzFor="email" class="fw-semibold">Email</nz-form-label>
+                        <nz-form-control>
+                        <input nz-input formControlName="email" id="email"  />
+                        </nz-form-control>
+                    </nz-form-item>
+                </div>
+  
+                <div class="col-md-6">
+                  <nz-form-item>
+                      <nz-form-label nzRequired nzFor="nib" class="fw-semibold">NIB</nz-form-label>
+                      <nz-form-control>
+                        <input nz-input formControlName="nib" id="nib"  />
+                      </nz-form-control>
+                  </nz-form-item>
+                </div>
+  
+                <div class="col-md-6">
+                  <nz-form-item>
+                    <nz-form-label [nzRequired]="true" class="fw-semibold">Upload Document File</nz-form-label>
                     <nz-form-control>
-                      <input nz-input formControlName="nib" id="nib"  />
+                      <nz-upload
+                        [(nzFileList)]="fileList"
+                        [nzBeforeUpload]="beforeUpload"
+                        [nzShowUploadList]="true"
+                        [nzWithCredentials]="true"
+                        [nzShowButton]="fileList.length < 3"
+                        [nzSize]="5000"
+                        [nzRemove]="removeDocument"
+                      >
+                        <button nz-button>
+                          <i nz-icon nzType="upload"></i>
+                          <span>Click to Upload</span>
+                        </button>
+                      </nz-upload>
+                    </nz-form-control>
+                  </nz-form-item>
+                </div>           
+                <div class="col-md-6">
+                    <nz-form-item>
+                        <nz-form-label nzRequired nzFor="phone" class="fw-semibold">Phone</nz-form-label>
+                        <nz-form-control>
+                          <input nz-input formControlName="phone" id="phone"  />
+                        </nz-form-control>
+                    </nz-form-item>
+                </div>
+                <div class="col-md-6">
+                  <nz-form-item>
+                      <nz-form-label nzRequired nzFor="wa_phone" class="fw-semibold">Registered Whatsapp Number</nz-form-label>
+                      <nz-form-control>
+                        <input nz-input formControlName="wa_phone" id="wa_phone"  />
+                      </nz-form-control>
+                  </nz-form-item>
+                </div>
+                <div class="col-md-6">
+                  <nz-form-item>
+                      <nz-form-label nzRequired nzFor="website" class="fw-semibold">Website</nz-form-label>
+                      <nz-form-control>
+                        <input nz-input formControlName="website" id="website"  />
+                      </nz-form-control>
+                  </nz-form-item>
+                </div>
+                <div class="col-md-6">
+                  <nz-form-item>
+                    <nz-form-label nzRequired nzFor="maps_url" class="fw-semibold">Link Maps</nz-form-label>
+                    <nz-form-control>
+                      <input nz-input formControlName="maps_url" id="maps_url"  />
+                    </nz-form-control>
+                  </nz-form-item>
+                </div>
+                <div class="col-md-6">
+                  <ng-container *ngIf="provinces$ | async as province; else provinceLoad">
+                    <nz-form-item>
+                      <nz-form-label nzRequired class="fw-semibold" nzFor="province" nzRequired>Province</nz-form-label>
+                      <nz-form-control>
+                          <nz-select  nzShowSearch  nzPlaceHolder="Select Province" formControlName="province">
+                          <ng-container *ngFor="let p of province">
+                            <nz-option [nzLabel]="p.province" [nzValue]="p.id"></nz-option>
+                          </ng-container>
+                          </nz-select>
+                      </nz-form-control>
+                    </nz-form-item>
+                  </ng-container>
+    
+                  <ng-template #provinceLoad>
+                    <nz-form-item>
+                      <nz-form-label nzRequired class="fw-semibold" nzFor="province" nzRequired>Province</nz-form-label>
+                      <nz-form-control>
+                          <nz-select nzDisabled nzPlaceHolder="Select Province" formControlName="province">
+                          </nz-select>
+                      </nz-form-control>
+                    </nz-form-item>
+                  </ng-template>
+                </div>
+                <div class="col-md-6">
+                  <ng-container *ngIf="city.length > 0; else loadingCity">
+                    <nz-form-item>
+                      <nz-form-label nzRequired class="fw-semibold" nzFor="city" nzRequired>City</nz-form-label>
+                      <nz-form-control>
+                          <nz-select  nzShowSearch  nzPlaceHolder="Select city" formControlName="city">
+                          <ng-container *ngFor="let c of city">
+                            <nz-option [nzLabel]="c.regency" [nzValue]="c.id"></nz-option>
+                          </ng-container>
+                          </nz-select>
+                      </nz-form-control>
+                    </nz-form-item>
+                  </ng-container>
+                  <ng-template #loadingCity>
+                    <nz-form-item>
+                      <nz-form-label nzRequired class="fw-semibold" nzFor="city" nzRequired>City</nz-form-label>
+                      <nz-form-control>
+                          <nz-select nzDisabled nzPlaceHolder="Select province first" formControlName="city">
+                          </nz-select>
+                      </nz-form-control>
+                    </nz-form-item>
+                  </ng-template>
+                </div>
+                <div class="col-md-6">
+                  <nz-form-item>
+                    <nz-form-label nzRequired nzFor="postal_code" class="fw-semibold">Postal Code</nz-form-label>
+                    <nz-form-control>
+                      <input nz-input formControlName="postal_code" id="postal_code"  />
+                    </nz-form-control>
+                  </nz-form-item>
+                </div>                                                          
+                <nz-form-item>
+                    <nz-form-label nzRequired nzFor="address" class="fw-semibold">Address</nz-form-label>
+                    <nz-form-control>
+                      <nz-textarea-count [nzMaxCharacterCount]="200">
+                        <textarea rows="4" formControlName="address" nz-input></textarea>
+                      </nz-textarea-count>
                     </nz-form-control>
                 </nz-form-item>
-            </div>
-            <div class="col-md-6">
-              <nz-form-item>
-                <nz-form-label [nzRequired]="true" class="fw-semibold">Upload Document File</nz-form-label>
-                <nz-form-control>
-                  <nz-upload
-                    [(nzFileList)]="fileList"
-                    [nzBeforeUpload]="beforeUpload"
-                    [nzShowUploadList]="true"
-                    [nzWithCredentials]="true"
-                    [nzShowButton]="fileList.length < 3"
-                    [nzSize]="5000"
-                    [nzRemove]="removeDocument"
-                  >
-                    <button nz-button>
-                      <i nz-icon nzType="upload"></i>
-                      <span>Click to Upload</span>
-                    </button>
-                  </nz-upload>
-                </nz-form-control>
-              </nz-form-item>
-            </div>           
-            <div class="col-md-6">
-                <nz-form-item>
-                    <nz-form-label nzRequired nzFor="phone" class="fw-semibold">Phone</nz-form-label>
-                    <nz-form-control>
-                      <input nz-input formControlName="phone" id="phone"  />
-                    </nz-form-control>
-                </nz-form-item>
-            </div>
-            <div class="col-md-6">
-              <nz-form-item>
-                  <nz-form-label nzRequired nzFor="wa_phone" class="fw-semibold">Registered Whatsapp Number</nz-form-label>
-                  <nz-form-control>
-                    <input nz-input formControlName="wa_phone" id="wa_phone"  />
-                  </nz-form-control>
-              </nz-form-item>
-            </div>
-            <div class="col-md-6">
-              <nz-form-item>
-                  <nz-form-label nzRequired nzFor="website" class="fw-semibold">Website</nz-form-label>
-                  <nz-form-control>
-                    <input nz-input formControlName="website" id="website"  />
-                  </nz-form-control>
-              </nz-form-item>
-            </div>
-            <div class="col-md-6">
-              <nz-form-item>
-                <nz-form-label nzRequired nzFor="maps_url" class="fw-semibold">Link Maps</nz-form-label>
-                <nz-form-control>
-                  <input nz-input formControlName="maps_url" id="maps_url"  />
-                </nz-form-control>
-              </nz-form-item>
-            </div>
-            <div class="col-md-6">
-              <ng-container *ngIf="provinces$ | async as province; else provinceLoad">
-                <nz-form-item>
-                  <nz-form-label nzRequired class="fw-semibold" nzFor="province" nzRequired>Province</nz-form-label>
-                  <nz-form-control>
-                      <nz-select  nzShowSearch  nzPlaceHolder="Select Province" formControlName="province">
-                      <ng-container *ngFor="let p of province">
-                        <nz-option [nzLabel]="p.province" [nzValue]="p.id"></nz-option>
-                      </ng-container>
-                      </nz-select>
-                  </nz-form-control>
-                </nz-form-item>
-              </ng-container>
+              </div>
+            </nz-tab>
 
-              <ng-template #provinceLoad>
-                <nz-form-item>
-                  <nz-form-label nzRequired class="fw-semibold" nzFor="province" nzRequired>Province</nz-form-label>
-                  <nz-form-control>
-                      <nz-select nzDisabled nzPlaceHolder="Select Province" formControlName="province">
-                      </nz-select>
-                  </nz-form-control>
-                </nz-form-item>
-              </ng-template>
-            </div>
-            <div class="col-md-6">
-              <ng-container *ngIf="city.length > 0; else loadingCity">
-                <nz-form-item>
-                  <nz-form-label nzRequired class="fw-semibold" nzFor="city" nzRequired>City</nz-form-label>
-                  <nz-form-control>
-                      <nz-select  nzShowSearch  nzPlaceHolder="Select city" formControlName="city">
-                      <ng-container *ngFor="let c of city">
-                        <nz-option [nzLabel]="c.regency" [nzValue]="c.id"></nz-option>
-                      </ng-container>
-                      </nz-select>
-                  </nz-form-control>
-                </nz-form-item>
-              </ng-container>
-              <ng-template #loadingCity>
-                <nz-form-item>
-                  <nz-form-label nzRequired class="fw-semibold" nzFor="city" nzRequired>City</nz-form-label>
-                  <nz-form-control>
-                      <nz-select nzDisabled nzPlaceHolder="Select province first" formControlName="city">
-                      </nz-select>
-                  </nz-form-control>
-                </nz-form-item>
-              </ng-template>
-            </div>
-            <div class="col-md-6">
-              <nz-form-item>
-                <nz-form-label nzRequired nzFor="postal_code" class="fw-semibold">Postal Code</nz-form-label>
-                <nz-form-control>
-                  <input nz-input formControlName="postal_code" id="postal_code"  />
-                </nz-form-control>
-              </nz-form-item>
-            </div>                                                          
-            <nz-form-item>
-                <nz-form-label nzRequired nzFor="address" class="fw-semibold">Address</nz-form-label>
-                <nz-form-control>
-                  <nz-textarea-count [nzMaxCharacterCount]="200">
-                    <textarea rows="4" formControlName="address" nz-input></textarea>
-                  </nz-textarea-count>
-                </nz-form-control>
-            </nz-form-item>
-
-            
-            <div class="d-flex gap-2 mb-4 flex-column w-auto">
+            <nz-tab nzTitle="Contact Person">
+              <div class="d-flex gap-2 mb-4 flex-column w-auto">
                 <p class="m-0 p-0 fw-semibold">Supplier Type</p>
                 <ng-container *ngIf="modal_type === 'add'; else updateType">
-                  <nz-segmented class="text-capitalize" [nzOptions]="optionsCust" (nzValueChange)="optionCustChange($event)"></nz-segmented>
+                  <nz-segmented class="text-capitalize" style="width: 164px;" [nzOptions]="optionsCust" (nzValueChange)="optionCustChange($event)"></nz-segmented>
                 </ng-container>
                 <ng-template #updateType>
                   <p class="m-0 p-0 fw-normal text-capitalize"> {{ optionCustSelected }} </p>
                 </ng-template>
-            </div>
-
-            <ng-container *ngIf="optionCustSelected === 'company'">
-              <div class="d-flex mb-2">
-                <p class="m-0 p-0 fw-semibold">Contact Person</p>
               </div>
-  
-              <div formArrayName="contactPerson">
-                <div class="mt-3" *ngFor="let contact of contactPerson.controls; let i = index" [formGroupName]="i">
-                  <nz-divider [nzText]="'Person ' + (i + 1)" nzOrientation="left"></nz-divider>
-                  <div class="d-flex gap-4">
-                    <div>
-                      <span nz-icon (click)="removeContactPerson(i)" class="remove-button" nzType="minus-circle" nzTheme="outline"></span>
-                    </div>
-                    <div class="row align-items-center ">
-                      <div class="col-12">
-                        <nz-form-item>
-                          <nz-form-label [nzRequired]="true">Upload Contact Photo</nz-form-label>
-                          <nz-form-control>
-                            <nz-upload
-                            [nzBeforeUpload]="beforeUploadCpProfile(i)"
-                            class="avatar-uploader"
-                            nzName="avatar"
-                            nzListType="picture-card"
-                            [nzFileList]="getValidProfilePicture(contact.get('cp_profile_picture')?.value)"
-                            [nzPreview]="handlePreview"
-                            [nzShowButton]="getValidProfilePicture(contact.get('cp_profile_picture')?.value).length <= 0"
-                            [nzRemove]="handleRemoveProfilePicture(i)"
-                            [nzAccept]="'.jpg,.jpeg,.png'"
-                          >
-                            <div>
-                              <span nz-icon nzType="plus"></span>
-                              <div style="margin-top: 8px"></div>
-                            </div>
-                          </nz-upload>
-                          <nz-modal
-                            [nzVisible]="previewVisible"
-                            [nzContent]="modalContent"
-                            [nzFooter]="null"
-                            (nzOnCancel)="previewVisible = false"
-                            >
-                            <ng-template #modalContent>
-                              <img [src]="previewImage" [ngStyle]="{ width: '100%' }" />
-                            </ng-template>
-                          </nz-modal>
-                          </nz-form-control>
-                        </nz-form-item>
-                      </div>
-                      <div class="col-4">
-                        <nz-form-item>
-                          <nz-form-label nzRequired>Contact Name</nz-form-label>
-                          <nz-form-control>
-                            <input nz-input formControlName="cp_name" />
-                          </nz-form-control>
-                        </nz-form-item>
-                      </div>
-                      <div class="col-4">
-                        <nz-form-item>
-                          <nz-form-label nzRequired>Phone Number</nz-form-label>
-                          <nz-form-control>
-                            <input nz-input formControlName="cp_phone" />
-                          </nz-form-control>
-                        </nz-form-item>
-                      </div>
 
-                      <div class="col-4">
-                        <nz-form-item>
-                          <nz-form-label nzRequired>Registered Whatsapp Number</nz-form-label>
-                          <nz-form-control>
-                            <input nz-input formControlName="cp_wa_phone" />
-                          </nz-form-control>
-                        </nz-form-item>
-                      </div>
-
-                      <div class="col-4">
-                        <ng-container *ngIf="provinces$ | async as province; else provinceLoad">
-                          <nz-form-item>
-                            <nz-form-label nzRequired nzFor="cp_province" nzRequired>Province</nz-form-label>
-                            <nz-form-control>
-                                <nz-select  nzShowSearch  nzPlaceHolder="Select Province" formControlName="cp_province">
-                                <ng-container *ngFor="let p of province">
-                                  <nz-option [nzLabel]="p.province" [nzValue]="p.id"></nz-option>
-                                </ng-container>
-                                </nz-select>
-                            </nz-form-control>
-                          </nz-form-item>
-                        </ng-container>
-          
-                        <ng-template #provinceLoad>
-                          <nz-form-item>
-                            <nz-form-label nzRequired nzFor="cp_province" nzRequired>Province</nz-form-label>
-                            <nz-form-control>
-                                <nz-select nzDisabled nzPlaceHolder="Select Province" formControlName="cp_province">
-                                </nz-select>
-                            </nz-form-control>
-                          </nz-form-item>
-                        </ng-template>
-                      </div>
-          
-                      <div class="col-4">
-                        <ng-container>
-                          <nz-form-item>
-                            <nz-form-label nzRequired  nzFor="cp_city" nzRequired>City</nz-form-label>
-                            <nz-form-control>
-                                <nz-select  nzShowSearch  nzPlaceHolder="Select city" formControlName="cp_city">
-                                <ng-container *ngFor="let c of contact.get('filteredCity')?.value">
-                                  <nz-option [nzLabel]="c.regency" [nzValue]="c.id"></nz-option>
-                                </ng-container>
-                                </nz-select>
-                            </nz-form-control>
-                          </nz-form-item>
-                        </ng-container>
-                        <ng-template #loadingCity>
-                          <nz-form-item>
-                            <nz-form-label nzRequired nzFor="cp_city" nzRequired>City</nz-form-label>
-                            <nz-form-control>
-                                <nz-select nzDisabled nzPlaceHolder="Select province first" formControlName="cp_city">
-                                </nz-select>
-                            </nz-form-control>
-                          </nz-form-item>
-                        </ng-template>
-                      </div>
-                      <div class="col-4">
-                        <nz-form-item>
-                          <nz-form-label nzRequired nzFor="cp_postal_code">Postal Code</nz-form-label>
-                          <nz-form-control>
-                            <input nz-input formControlName="cp_postal_code" id="cp_postal_code"  />
-                          </nz-form-control>
-                        </nz-form-item>
-                      </div>
-                      
-                      <div class="col-4">
-                        <nz-form-item>
-                          <nz-form-label nzRequired>Contact Address</nz-form-label>
-                          <nz-form-control>
-                            <input nz-input formControlName="cp_address" />
-                          </nz-form-control>
-                        </nz-form-item>
-                      </div>
-
-                      <div class="col-4">
-                        <nz-form-item>
-                          <nz-form-label nzRequired>Contact Email</nz-form-label>
-                          <nz-form-control>
-                            <input nz-input formControlName="cp_email" />
-                          </nz-form-control>
-                        </nz-form-item>
-                      </div>
-
-                      <div class="col-4">
-                        <nz-form-item>
-                          <nz-form-label [nzRequired]="true">Upload Document File</nz-form-label>
-                          <nz-form-control>
-                            <nz-upload
-                              [nzBeforeUpload]="beforeUploadCp(i)"
-                              [nzFileList]="contact.get('cp_attachments')?.value"
-                              [nzShowUploadList]="true"
-                              [nzWithCredentials]="true"
-                              [nzLimit]="3"
-                              [nzSize]="5000"
-                              [nzRemove]="handleRemoveAttachmentCp(i)"
-                            >
-                              <button nz-button>
-                                <i nz-icon nzType="upload"></i>
-                                <span>Click to Upload</span>
-                              </button>
-                            </nz-upload>
-                          </nz-form-control>
-                        </nz-form-item>
-                      </div>
-
-                      <br/>
-                      <div class="col-6 mt-4">
-                        <nz-form-item class="mb-4">
-                          <nz-form-label nzRequired nzFor="cp_pic">Contact PIC</nz-form-label>
-                              <nz-select nzShowSearch nzMode="tags" nzPlaceHolder="Tag Mode" formControlName="cp_pic">
-                                  <nz-option
-                                  *ngFor="let pic of cpListOfPic"
-                                      [nzLabel]="pic.name" 
-                                      [nzValue]="pic.pic_id"
-                                  ></nz-option>
-                              </nz-select>
-                        </nz-form-item>
-                      </div>
-                      <div class="col-6 mt-4">
-                        <nz-form-item>
-                          <nz-form-label nzRequired nzFor="cp_is_pic_head" nzRequired>Head of Contact PIC</nz-form-label>
-                          <nz-form-control>
-                              <nz-select nzShowSearch nzPlaceHolder="Select Head" formControlName="cp_is_pic_head">
-                              <ng-container *ngFor="let pic of contact.get('filteredCpListOfPic')?.value">
-                                <nz-option [nzLabel]="pic.name" [nzValue]="pic.pic_id"></nz-option>
-                              </ng-container>
-                              </nz-select>
-                          </nz-form-control>
-                      </nz-form-item>
-                      </div>
-                      <div class="col-4 mt-2">
-                        <nz-form-label nzRequired>Decision Maker</nz-form-label>
-                        <nz-form-control>
-                          <nz-radio-group formControlName="is_pic_company">
-                            <label nz-radio [nzValue]="true">Yes</label>
-                            <label nz-radio [nzValue]="false">No</label>
-                          </nz-radio-group>
-                        </nz-form-control>
-                      </div>
-                    </div>
-                  </div>
-
+              <ng-container *ngIf="optionCustSelected === 'company'">
+                <div class="d-flex mb-2">
+                  <p class="m-0 p-0 fw-semibold">Contact Person</p>
                 </div>
-              </div>
-  
-              <div class="col-md-3 mx-auto mt-4">
-                <nz-form-item>
-                  <button nz-button nzType="primary" (click)="addContactPerson()">Add Person</button>
-                </nz-form-item>
-              </div>
-            </ng-container>
-
-            <ng-container *ngIf="optionCustSelected === 'person'">
-              <div class="row">
-                <nz-form-item>
-                  <nz-form-label [nzRequired]="true" class="fw-semibold">Upload Photo</nz-form-label>
-                  <nz-form-control>
-                    <nz-upload
-                      [(nzFileList)]="fileImageList"
-                      [nzBeforeUpload]="beforeUploadProfile"
-                      [nzShowUploadList]="true"
-                      [nzWithCredentials]="true"
-                      [nzLimit]="1"
-                      [nzSize]="5000"
-                      class="avatar-uploader"
-                      nzName="avatar"
-                      nzListType="picture-card"
-                      [nzPreview]="handlePreview"
-                      [nzShowButton]="fileImageList.length <= 0"
-                      [nzRemove]="removeProfilePersonHandler"
-                      [nzAccept]="'.jpg,.jpeg,.png'" 
-                    >
+    
+                <div formArrayName="contactPerson">
+                  <div class="mt-3" *ngFor="let contact of contactPerson.controls; let i = index" [formGroupName]="i">
+                    <nz-divider [nzText]="'Person ' + (i + 1)" nzOrientation="left"></nz-divider>
+                    <div class="d-flex gap-4">
                       <div>
-                        <span nz-icon nzType="plus"></span>
-                        <div style="margin-top: 8px">Upload</div>
+                        <span nz-icon (click)="removeContactPerson(i)" class="remove-button" nzType="minus-circle" nzTheme="outline"></span>
                       </div>
-                    </nz-upload>
-                    <nz-modal
-                    [nzVisible]="previewVisible"
-                    [nzContent]="modalContent"
-                    [nzFooter]="null"
-                    (nzOnCancel)="previewVisible = false"
-                    >
-                      <ng-template #modalContent>
-                        <img [src]="previewImage" [ngStyle]="{ width: '100%' }" />
-                      </ng-template>
-                    </nz-modal>
-                  </nz-form-control>
-                </nz-form-item>
-              </div>
-            </ng-container>
+                      <div class="row align-items-center ">
+                        <div class="col-12">
+                          <nz-form-item>
+                            <nz-form-label [nzRequired]="true">Upload Contact Photo</nz-form-label>
+                            <nz-form-control>
+                              <nz-upload
+                              [nzBeforeUpload]="beforeUploadCpProfile(i)"
+                              class="avatar-uploader"
+                              nzName="avatar"
+                              nzListType="picture-card"
+                              [nzFileList]="getValidProfilePicture(contact.get('cp_profile_picture')?.value)"
+                              [nzPreview]="handlePreview"
+                              [nzShowButton]="getValidProfilePicture(contact.get('cp_profile_picture')?.value).length <= 0"
+                              [nzRemove]="handleRemoveProfilePicture(i)"
+                              [nzAccept]="'.jpg,.jpeg,.png'"
+                            >
+                              <div>
+                                <span nz-icon nzType="plus"></span>
+                                <div style="margin-top: 8px"></div>
+                              </div>
+                            </nz-upload>
+                            <nz-modal
+                              [nzVisible]="previewVisible"
+                              [nzContent]="modalContent"
+                              [nzFooter]="null"
+                              (nzOnCancel)="previewVisible = false"
+                              >
+                              <ng-template #modalContent>
+                                <img [src]="previewImage" [ngStyle]="{ width: '100%' }" />
+                              </ng-template>
+                            </nz-modal>
+                            </nz-form-control>
+                          </nz-form-item>
+                        </div>
+                        <div class="col-4">
+                          <nz-form-item>
+                            <nz-form-label nzRequired>Contact Name</nz-form-label>
+                            <nz-form-control>
+                              <input nz-input formControlName="cp_name" />
+                            </nz-form-control>
+                          </nz-form-item>
+                        </div>
+                        <div class="col-4">
+                          <nz-form-item>
+                            <nz-form-label nzRequired>Phone Number</nz-form-label>
+                            <nz-form-control>
+                              <input nz-input formControlName="cp_phone" />
+                            </nz-form-control>
+                          </nz-form-item>
+                        </div>
 
+                        <div class="col-4">
+                          <nz-form-item>
+                            <nz-form-label nzRequired>Registered Whatsapp Number</nz-form-label>
+                            <nz-form-control>
+                              <input nz-input formControlName="cp_wa_phone" />
+                            </nz-form-control>
+                          </nz-form-item>
+                        </div>
 
-            <nz-form-item>
-              <nz-form-label nzFor="status" nzRequired>Status</nz-form-label>
-              <nz-form-control>
-                <nz-switch nzSize="default" id="status" formControlName="status" nzCheckedChildren="active" nzUnCheckedChildren="inactive"></nz-switch>
-              </nz-form-control>
-          </nz-form-item>
+                        <div class="col-4">
+                          <ng-container *ngIf="provinces$ | async as province; else provinceLoad">
+                            <nz-form-item>
+                              <nz-form-label nzRequired nzFor="cp_province" nzRequired>Province</nz-form-label>
+                              <nz-form-control>
+                                  <nz-select  nzShowSearch  nzPlaceHolder="Select Province" formControlName="cp_province">
+                                  <ng-container *ngFor="let p of province">
+                                    <nz-option [nzLabel]="p.province" [nzValue]="p.id"></nz-option>
+                                  </ng-container>
+                                  </nz-select>
+                              </nz-form-control>
+                            </nz-form-item>
+                          </ng-container>
+            
+                          <ng-template #provinceLoad>
+                            <nz-form-item>
+                              <nz-form-label nzRequired nzFor="cp_province" nzRequired>Province</nz-form-label>
+                              <nz-form-control>
+                                  <nz-select nzDisabled nzPlaceHolder="Select Province" formControlName="cp_province">
+                                  </nz-select>
+                              </nz-form-control>
+                            </nz-form-item>
+                          </ng-template>
+                        </div>
+            
+                        <div class="col-4">
+                          <ng-container>
+                            <nz-form-item>
+                              <nz-form-label nzRequired  nzFor="cp_city" nzRequired>City</nz-form-label>
+                              <nz-form-control>
+                                  <nz-select  nzShowSearch  nzPlaceHolder="Select city" formControlName="cp_city">
+                                  <ng-container *ngFor="let c of contact.get('filteredCity')?.value">
+                                    <nz-option [nzLabel]="c.regency" [nzValue]="c.id"></nz-option>
+                                  </ng-container>
+                                  </nz-select>
+                              </nz-form-control>
+                            </nz-form-item>
+                          </ng-container>
+                          <ng-template #loadingCity>
+                            <nz-form-item>
+                              <nz-form-label nzRequired nzFor="cp_city" nzRequired>City</nz-form-label>
+                              <nz-form-control>
+                                  <nz-select nzDisabled nzPlaceHolder="Select province first" formControlName="cp_city">
+                                  </nz-select>
+                              </nz-form-control>
+                            </nz-form-item>
+                          </ng-template>
+                        </div>
+                        <div class="col-4">
+                          <nz-form-item>
+                            <nz-form-label nzRequired nzFor="cp_postal_code">Postal Code</nz-form-label>
+                            <nz-form-control>
+                              <input nz-input formControlName="cp_postal_code" id="cp_postal_code"  />
+                            </nz-form-control>
+                          </nz-form-item>
+                        </div>
+                        
+                        <div class="col-4">
+                          <nz-form-item>
+                            <nz-form-label nzRequired>Contact Address</nz-form-label>
+                            <nz-form-control>
+                              <input nz-input formControlName="cp_address" />
+                            </nz-form-control>
+                          </nz-form-item>
+                        </div>
+
+                        <div class="col-4">
+                          <nz-form-item>
+                            <nz-form-label nzRequired>Contact Email</nz-form-label>
+                            <nz-form-control>
+                              <input nz-input formControlName="cp_email" />
+                            </nz-form-control>
+                          </nz-form-item>
+                        </div>
+
+                        <div class="col-4">
+                          <nz-form-item>
+                            <nz-form-label [nzRequired]="true">Upload Document File</nz-form-label>
+                            <nz-form-control>
+                              <nz-upload
+                                [nzBeforeUpload]="beforeUploadCp(i)"
+                                [nzFileList]="contact.get('cp_attachments')?.value"
+                                [nzShowUploadList]="true"
+                                [nzWithCredentials]="true"
+                                [nzLimit]="3"
+                                [nzSize]="5000"
+                                [nzRemove]="handleRemoveAttachmentCp(i)"
+                              >
+                                <button nz-button>
+                                  <i nz-icon nzType="upload"></i>
+                                  <span>Click to Upload</span>
+                                </button>
+                              </nz-upload>
+                            </nz-form-control>
+                          </nz-form-item>
+                        </div>
+
+                        <br/>
+                        <div class="col-6 mt-4">
+                          <nz-form-item class="mb-4">
+                            <nz-form-label nzRequired nzFor="cp_pic">Contact PIC</nz-form-label>
+                                <nz-select nzShowSearch nzMode="tags" nzPlaceHolder="Tag Mode" formControlName="cp_pic">
+                                    <nz-option
+                                    *ngFor="let pic of cpListOfPic"
+                                        [nzLabel]="pic.name" 
+                                        [nzValue]="pic.pic_id"
+                                    ></nz-option>
+                                </nz-select>
+                          </nz-form-item>
+                        </div>
+                        <div class="col-6 mt-4">
+                          <nz-form-item>
+                            <nz-form-label nzRequired nzFor="cp_is_pic_head" nzRequired>Head of Contact PIC</nz-form-label>
+                            <nz-form-control>
+                                <nz-select nzShowSearch nzPlaceHolder="Select Head" formControlName="cp_is_pic_head">
+                                <ng-container *ngFor="let pic of contact.get('filteredCpListOfPic')?.value">
+                                  <nz-option [nzLabel]="pic.name" [nzValue]="pic.pic_id"></nz-option>
+                                </ng-container>
+                                </nz-select>
+                            </nz-form-control>
+                        </nz-form-item>
+                        </div>
+                        <div class="col-4 mt-2">
+                          <nz-form-label nzRequired>Decision Maker</nz-form-label>
+                          <nz-form-control>
+                            <nz-radio-group formControlName="is_pic_company">
+                              <label nz-radio [nzValue]="true">Yes</label>
+                              <label nz-radio [nzValue]="false">No</label>
+                            </nz-radio-group>
+                          </nz-form-control>
+                        </div>
+                      </div>
+                    </div>
+
+                  </div>
+                </div>
+    
+                <div class="col-md-3 mx-auto mt-4">
+                  <nz-form-item>
+                    <button nz-button nzType="primary" (click)="addContactPerson()">Add Person</button>
+                  </nz-form-item>
+                </div>
+              </ng-container>
+
+              <ng-container *ngIf="optionCustSelected === 'person'">
+                <div class="row">
+                  <nz-form-item>
+                    <nz-form-label [nzRequired]="true" class="fw-semibold">Upload Photo</nz-form-label>
+                    <nz-form-control>
+                      <nz-upload
+                        [(nzFileList)]="fileImageList"
+                        [nzBeforeUpload]="beforeUploadProfile"
+                        [nzShowUploadList]="true"
+                        [nzWithCredentials]="true"
+                        [nzLimit]="1"
+                        [nzSize]="5000"
+                        class="avatar-uploader"
+                        nzName="avatar"
+                        nzListType="picture-card"
+                        [nzPreview]="handlePreview"
+                        [nzShowButton]="fileImageList.length <= 0"
+                        [nzRemove]="removeProfilePersonHandler"
+                        [nzAccept]="'.jpg,.jpeg,.png'" 
+                      >
+                        <div>
+                          <span nz-icon nzType="plus"></span>
+                          <div style="margin-top: 8px">Upload</div>
+                        </div>
+                      </nz-upload>
+                      <nz-modal
+                      [nzVisible]="previewVisible"
+                      [nzContent]="modalContent"
+                      [nzFooter]="null"
+                      (nzOnCancel)="previewVisible = false"
+                      >
+                        <ng-template #modalContent>
+                          <img [src]="previewImage" [ngStyle]="{ width: '100%' }" />
+                        </ng-template>
+                      </nz-modal>
+                    </nz-form-control>
+                  </nz-form-item>
+                </div>
+              </ng-container>
+            </nz-tab>
+            <nz-tab nzTitle="Product Category">
+              <div class="table-responsive">
+                <table class="table table-striped table-order">
+                    <thead style="position: unset;">
+                        <tr>
+                            <th scope="col">Category Product</th>
+                            <th scope="col">Sub Category</th>
+                            <th scope="col">Manufacturer</th>
+                            <th scope="col">#</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <ng-container formArrayName="product_category">
+                            <tr *ngFor="let prod of productCategory.controls; let i = index" [formGroupName]="i">
+                                <td>
+                                  <nz-form-control>
+                                    <ng-container *ngIf="suppProduct$ | async as suppProduct; else prodLoad">
+                                      <nz-select nzShowSearch nzPlaceHolder="Select product category" formControlName="supplier_product_id" [nzDropdownRender]="prodRender">
+                                        <ng-container *ngFor="let supp of suppProduct.data">
+                                          <nz-option [nzLabel]="supp.name" [nzValue]="supp.id"></nz-option>
+                                        </ng-container>
+                                        <ng-template #prodRender>
+                                          <nz-divider class="m-0"></nz-divider>
+                                          <div class="container">
+                                            <a class="add-item" (click)="showModalCategoryAdd('Supplier Product')">
+                                              <span nz-icon nzType="plus"></span>
+                                              Add Category
+                                            </a>
+                                          </div>
+                                        </ng-template>
+                                      </nz-select>
+                                    </ng-container>
+                                    <ng-template #prodLoad>
+                                      <nz-select nzDisabled nzPlaceHolder="Select Supplier Product" formControlName="supplier_product_id">
+                                      </nz-select>
+                                    </ng-template>
+                                  </nz-form-control>                        
+                                </td>
+                                <td>
+                                  <nz-form-control>
+                                    <input nz-input formControlName="sub_category" id="sub_category" />
+                                    </nz-form-control>
+                                </td>
+                                <td>
+                                  <nz-form-control>
+                                    <input nz-input formControlName="manufacture" id="manufacture" />
+                                    </nz-form-control>
+                                </td>
+                                <td>
+                                    <span (click)="removeProductCategory(i)" nz-icon nzType="delete" nzTheme="twotone" [nzTwotoneColor]="'#ED0000'"></span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="9" class="text-center">
+                                    <button (click)="addProductCategory()" nz-button nzType="primary" class="w-75">Add Product Category</button>
+                                </td>
+                            </tr>
+                        </ng-container>
+
+                    </tbody>
+                </table>
+            </div>    
+            </nz-tab>
+          </nz-tabset>
         </div>
     </form>
 </div>
@@ -501,7 +517,7 @@
 <div *nzModalFooter>
     <nz-form-item>
     <button nz-button nzType="default" (click)="destroyModal()">Cancel</button>
-    <ng-container *ngIf="!isLoadingProvince && !isLoadingSuppProd && !isLoadingSuppSource; else Loading">
+    <ng-container *ngIf="!isLoadingProvince; else Loading">
       <button 
       nz-button 
       nzType="primary" 
