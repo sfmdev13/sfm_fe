@@ -1,0 +1,46 @@
+<div>
+    <form nz-form nzLayout="vertical" [formGroup]="form">
+        <nz-form-item class="mb-4">
+            <nz-form-label nzRequired nzFor="name" class="fw-semibold">Name</nz-form-label>
+            <nz-form-control>
+                <input nz-input formControlName="name" id="name" />
+            </nz-form-control>
+        </nz-form-item>
+        <nz-form-item class="mb-4">
+            <nz-form-label nzRequired nzFor="description" class="fw-semibold">Description</nz-form-label>
+            <nz-form-control>
+                <input nz-input formControlName="description" id="description" />
+            </nz-form-control>
+        </nz-form-item>    
+        <nz-form-item class="mb-4">
+            <nz-form-label nzFor="code" class="fw-semibold">Code</nz-form-label>
+            <nz-form-control>
+                <input nz-input formControlName="code" id="code" />
+            </nz-form-control>
+        </nz-form-item>
+        <nz-form-item class="mb-4">
+            <nz-form-label nzFor="value" class="fw-semibold">Value</nz-form-label>
+            <nz-form-control>
+                <input nz-input formControlName="value" id="value" />
+            </nz-form-control>
+        </nz-form-item>
+        <nz-form-item class="mb-4">
+            <nz-form-label nzFor="value" class="fw-semibold">Unit Conversion</nz-form-label>
+            <nz-form-control>
+                <nz-select nzShowSearch nzAllowClear nzPlaceHolder="Select Unit Conversion" formControlName="unit_of_measurement_id">
+                    <nz-option *ngFor="let u of unitList" [nzLabel]="u.name" [nzValue]="u.id"></nz-option>
+                </nz-select>
+            </nz-form-control>
+        </nz-form-item>
+        <nz-form-item class="mb-4">
+            <nz-form-label nzFor="dimension" class="fw-semibold">Dimension</nz-form-label>
+            <nz-form-control>
+                <nz-select nzShowSearch nzAllowClear nzPlaceHolder="Select Dimension" formControlName="dimension">
+                    <nz-option nzLabel="Default" nzValue="default"></nz-option>
+                    <nz-option nzLabel="Multiple" nzValue="multiple"></nz-option>
+                    <nz-option nzLabel="Divide" nzValue="divide"></nz-option>
+                </nz-select>
+            </nz-form-control>
+        </nz-form-item>                     
+    </form>
+</div>

@@ -32,10 +32,10 @@ export class CategoriesSettingComponent implements OnInit {
     {
       name: 'Supplier Category',
       sub_menu: [
-        {
-          name: 'Supplier Source',
-          slug: 'supplier_source'
-        },
+        // {
+        //   name: 'Supplier Source',
+        //   slug: 'supplier_source'
+        // },
         {
           name: 'Supplier Product',
           slug: 'supplier_product'
@@ -57,6 +57,10 @@ export class CategoriesSettingComponent implements OnInit {
         {
           name: 'Unit of Measurement',
           slug: 'uom'
+        },
+        {
+          name: 'Unit of Report',
+          slug: 'uop'
         },
         {
           name: 'Warehouse Address',

@@ -23,6 +23,8 @@ import { WarehouseAddressComponent } from './warehouse-address/warehouse-address
 import { AddWarehouseAddressComponent } from './add-warehouse-address/add-warehouse-address.component';
 import { NzSelectModule } from 'ng-zorro-antd/select';
 import { BillingAddressComponent } from './billing-address/billing-address.component';
+import { UnitOfReportsComponent } from './unit-of-reports/unit-of-reports.component';
+import { AddUnitReportComponent } from './add-unit-report/add-unit-report.component';
 
 
 @NgModule({
@@ -39,7 +41,9 @@ import { BillingAddressComponent } from './billing-address/billing-address.compo
     UnitOfMeasurementComponent,
     WarehouseAddressComponent,
     AddWarehouseAddressComponent,
-    BillingAddressComponent
+    BillingAddressComponent,
+    UnitOfReportsComponent,
+    AddUnitReportComponent
   ],
   imports: [
     CommonModule,
@@ -67,7 +71,9 @@ import { BillingAddressComponent } from './billing-address/billing-address.compo
     UnitOfMeasurementComponent,
     WarehouseAddressComponent,
     AddWarehouseAddressComponent,
-    BillingAddressComponent
+    BillingAddressComponent,
+    UnitOfReportsComponent,
+    AddUnitReportComponent
   ]
 })
 export class CategoriesSettingTableModule { }

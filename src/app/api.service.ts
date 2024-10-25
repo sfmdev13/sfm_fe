@@ -1225,4 +1225,33 @@ export class ApiService {
     return this.http.post<any>(url, body ,{ headers })
   }
 
+  getUnitReport(): Observable<any>{
+    const token = localStorage.getItem('authToken');
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+    });
+    
+    const url = `${this.apiUrl}/unit-report`;
+    return this.http.get<any>(url, { headers })
+  }
+
+  createUnitReport(body: any): Observable<any>{
+    const token = localStorage.getItem('authToken');
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+    });
+
+    const url = `${this.apiUrl}/create/unit-report`;
+    return this.http.post<any>(url, body ,{ headers })
+  }
+
+  updateUnitReport(body: any): Observable<any>{
+    const token = localStorage.getItem('authToken');
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+    });
+
+    const url = `${this.apiUrl}/update/unit-report`;
+    return this.http.post<any>(url, body ,{ headers })
+  }
 }
