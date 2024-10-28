@@ -175,6 +175,7 @@ export class AddInventoriesComponent implements OnInit {
 
       this.dataDetail.inventory_items.forEach((item) => {
         const updateInvent = this.fb.group({
+          id: item.id,
           supplier_id: item.supplier.id,
           discount_1: item.discount_1,
           discount_type_1: item.discount_type_1,
@@ -183,7 +184,8 @@ export class AddInventoriesComponent implements OnInit {
           price_factor: item.price_factor,
           total_1: item.product_cost_1,
           total_2: item.product_cost_2,
-          selling_price: item.selling_price
+          selling_price: item.selling_price,
+          qty: item.qty
         })
 
         this.inventoryItem.push(updateInvent)
@@ -219,6 +221,7 @@ export class AddInventoriesComponent implements OnInit {
     // Calculate all dependent values
     const calculateValues = () => {
         const priceList = parseInt(this.inventoryForm.get('price_list')?.value || '0');
+        const tax = parseInt(this.inventoryForm.get('tax')?.value || '0');
 
         // Calculate total_1 based on discount_1 and price_list
         const discount1 = parseInt(control.get('discount_1')?.value || '0');
@@ -234,7 +237,8 @@ export class AddInventoriesComponent implements OnInit {
 
         // Calculate selling price based on total_2 and price_factor
         const priceFactor = parseInt(control.get('price_factor')?.value || '1');
-        const sellingPrice = total2 * priceFactor;
+        const baseSellingPrice = total2 * priceFactor;
+        const sellingPrice = baseSellingPrice + (baseSellingPrice * tax / 100);
         control.patchValue({ selling_price: sellingPrice }, { emitEvent: false });
     };
 
@@ -247,6 +251,7 @@ export class AddInventoriesComponent implements OnInit {
 
     // Update calculated values when price_list changes
     this.inventoryForm.get('price_list')?.valueChanges.subscribe(() => calculateValues());
+    this.inventoryForm.get('tax')?.valueChanges.subscribe(() => calculateValues());
 
     // Recalculate totals and selling price on changes in related controls
     control.get('discount_type_1')?.valueChanges.subscribe((res) => {
@@ -272,7 +277,7 @@ export class AddInventoriesComponent implements OnInit {
       return;
     }
 
-    this.deletedInventory.push(this.inventoryItem.at(index).get('supplier_id')?.value)
+    this.deletedInventory.push(this.inventoryItem.at(index).get('id')?.value)
 
     this.inventoryItem.removeAt(index);
   }
@@ -280,6 +285,7 @@ export class AddInventoriesComponent implements OnInit {
   
   addInventoryItem(): void {
     const newInventory = this.fb.group({
+      id: [''],
       supplier_id: ['', Validators.required],
       discount_1: [0, Validators.required],
       discount_type_1: ['percent', Validators.required],
@@ -288,7 +294,8 @@ export class AddInventoriesComponent implements OnInit {
       price_factor: [0, Validators.required],
       total_1: [{value: 0, disabled: true}],
       total_2: [{value: 0, disabled: true}],
-      selling_price: [{value: 0, disabled: true}]
+      selling_price: [{value: 0, disabled: true}],
+      qty: [0]
     });
 
     this.inventoryItem.push(newInventory);
@@ -455,12 +462,14 @@ export class AddInventoriesComponent implements OnInit {
 
 
       const inventoryItemComplete = this.inventoryItem.value.map((item: any) => ({
+        id: item.id,
         supplier_id: item.supplier_id,
         discount_1: item.discount_1.toString(),
         discount_type_1: item.discount_type_1,
         discount_2: item.discount_2,
         discount_type_2: item.discount_type_2,
-        price_factor: item.price_factor
+        price_factor: item.price_factor,
+        qty: item.qty
       }))
   
 

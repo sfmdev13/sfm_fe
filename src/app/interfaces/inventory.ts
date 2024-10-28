@@ -58,6 +58,7 @@ export interface Attachment {
 }
 
 export interface InventoryItem {
+  id: string;
   inventory_id: string
   supplier: ISupplier
   discount_1: string
