@@ -20,7 +20,7 @@ export class AddInventoriesComponent implements OnInit {
 
 
  @Input() modal_type = 'add';
- @Input() dataDetail?: IDataInventory = {} as IDataInventory;
+ @Input() dataDetail: IDataInventory = {} as IDataInventory;
 
   unit$!: Observable<IRootUnit>;
   unitReport$!: Observable<IRootUnitReport>;
@@ -82,6 +82,10 @@ export class AddInventoriesComponent implements OnInit {
   previewImage: string | undefined = '';
   previewVisible = false;
 
+  deletedInventory: string[] = [];
+
+  isAttachmentChange: boolean = false;
+
   constructor(
     private apiSvc: ApiService,
     private fb: FormBuilder,
@@ -102,13 +106,11 @@ export class AddInventoriesComponent implements OnInit {
    }
 
   ngOnInit(): void {
-
+    
     this.inventoryForm.get('source')?.valueChanges.subscribe((res) => {
       if(res === 'local'){
-        this.inventoryForm.get('hs_code')?.setValue('');
         this.inventoryForm.get('hs_code')?.disable();
       } else {
-        this.inventoryForm.get('hs_code')?.setValue('');
         this.inventoryForm.get('hs_code')?.enable();
       }
     })
@@ -132,16 +134,69 @@ export class AddInventoriesComponent implements OnInit {
 
     this.getUnit();
     this.getUnitReport();
-    
 
-    this.addInventoryItem();
+
+    // this.addInventoryItem();
+
+    if(this.modal_type === 'edit' || this.modal_type === 'duplicate'){
+
+      const newUpdateFileList: NzUploadFile = {
+        uid: this.dataDetail.attachment.id ?? 'picture',
+        name: this.dataDetail.attachment.file_name,
+        status: 'done',
+        url: this.dataDetail.attachment.file_url,
+        response: {
+          id: this.dataDetail.attachment.id ?? 'picture',
+          attachment_path: this.dataDetail.attachment.attachment_path
+        } 
+      }
+      
+      this.inventoryForm.patchValue({
+        id: this.dataDetail.id,
+        description: this.dataDetail.description,
+        unit_id: this.dataDetail.unit.id,
+        status: this.dataDetail.status,
+        supplier_product_id: this.dataDetail.supplier_product.id,
+        tax: this.dataDetail.tax,
+        sub_category: this.dataDetail.sub_category,
+        manufacturer: this.dataDetail.manufacturer,
+        unit_report: this.dataDetail.unit_report.id,
+        alias: this.dataDetail.alias,
+        hs_code: this.dataDetail.hs_code,
+        source: this.dataDetail.inventory_source,
+        price_list: this.dataDetail.price_list,
+        part_number: this.dataDetail.code,
+        attachment: newUpdateFileList
+      })
+
+      this.inventoryForm.get('part_number')?.disable();
+
+      this.getFormattedLabel(this.dataDetail.unit.measurement, this.dataDetail.unit.unit);
+
+      this.dataDetail.inventory_items.forEach((item) => {
+        const updateInvent = this.fb.group({
+          supplier_id: item.supplier.id,
+          discount_1: item.discount_1,
+          discount_type_1: item.discount_type_1,
+          discount_2: item.discount_2,
+          discount_type_2: item.discount_type_2,
+          price_factor: item.price_factor,
+          total_1: item.product_cost_1,
+          total_2: item.product_cost_2,
+          selling_price: item.selling_price
+        })
+
+        this.inventoryItem.push(updateInvent)
+        this.inventoryChangeHandler(updateInvent);
+      })
+    }
   }
 
   getUnit(){
     this.unit$ = this.apiSvc.getUnitMeasurement().pipe(
       tap((res) => {
         this.unitList = res;
-    
+
         this.inventoryForm.get('unit_id')?.valueChanges.subscribe((value) => {
           if (this.unitList?.data && value) {
             const selectedUnit = this.unitList.data.filter((u) => u.id === value);
@@ -150,6 +205,7 @@ export class AddInventoriesComponent implements OnInit {
             }
           }
         });
+        
       })
     );
   }
@@ -215,7 +271,9 @@ export class AddInventoriesComponent implements OnInit {
     if(index === 0){
       return;
     }
-    
+
+    this.deletedInventory.push(this.inventoryItem.at(index).get('supplier_id')?.value)
+
     this.inventoryItem.removeAt(index);
   }
 
@@ -391,31 +449,54 @@ export class AddInventoriesComponent implements OnInit {
     this.spinnerSvc.show();
     
     if(this.inventoryForm.valid){
-      const picComplete = this.inventoryForm.get('pic')!.value.map((pic_id: any) => ({
-        pic_id: pic_id,
-        is_pic_internal: pic_id === this.inventoryForm.get('is_pic_internal')!.value ? 1 : 0
-      }));
+
+      const attachment = this.inventoryForm.get('attachment')?.value
+      const file = this.dataURLtoFile(attachment.url, `${attachment.uid}.png`);
+
+
+      const inventoryItemComplete = this.inventoryItem.value.map((item: any) => ({
+        supplier_id: item.supplier_id,
+        discount_1: item.discount_1.toString(),
+        discount_type_1: item.discount_type_1,
+        discount_2: item.discount_2,
+        discount_type_2: item.discount_type_2,
+        price_factor: item.price_factor
+      }))
   
 
       let body = {
         id: this.inventoryForm.get('id')?.value,
-        name: this.inventoryForm.get('name')?.value,
         code: this.inventoryForm.get('part_number')?.value,
         description: this.inventoryForm.get('description')?.value,
+        alias: this.inventoryForm.get('alias')?.value,
         unit_id: this.inventoryForm.get('unit_id')?.value,
+        unit_report_id: this.inventoryForm.get('unit_report')?.value,
         supplier_product_id: this.inventoryForm.get('supplier_product_id')?.value,
-        supplier_id: this.inventoryForm.get('supplier_id')?.value,
-        discount: this.inventoryForm.get('discount')?.value.toString(),
-        price_list: this.inventoryForm.get('price_list')?.value,
-        price_factor: this.inventoryForm.get('price_factor')?.value,
+        sub_category: this.inventoryForm.get('sub_category')?.value,
+        manufacturer: this.inventoryForm.get('manufacturer')?.value,
+        price_list: this.inventoryForm.get('price_list')?.value.toString(),
         status: this.inventoryForm.get('status')?.value,
-        pic_new: picComplete,
-        discount_type: this.inventoryForm.get('discount_type')?.value,
-        discount_price: this.inventoryForm.get('discount_price')?.value.toString(),
-        tax: this.inventoryForm.get('tax')?.value.toString()
+        tax: this.inventoryForm.get('tax')?.value.toString(),
+        inventory_source: this.inventoryForm.get('source')?.value,
+        hs_code: this.inventoryForm.get('hs_code')?.value,
+        inventory_items_new: inventoryItemComplete,
       }
 
-      this.apiSvc.updateInventory(body).subscribe({
+      const formData = new FormData();
+
+      Object.keys(body).forEach(key => {
+        if(typeof (body as any)[key] === 'object'){
+          formData.append(key, JSON.stringify((body as any)[key]))
+        } else {
+          formData.append(key, ( body as any )[key]);
+        }
+      })
+
+      if(this.isAttachmentChange){
+        formData.append(`attachment_new`, file);
+      }
+    
+      this.apiSvc.updateInventory(formData).subscribe({
         next: () => {
           this.spinnerSvc.hide();
           this.modalSvc.success({
@@ -456,11 +537,13 @@ export class AddInventoriesComponent implements OnInit {
 
     if(this.inventoryForm.valid){
 
+      const attachment = this.inventoryForm.get('attachment')?.value
+      const file = this.dataURLtoFile(attachment.url, `${attachment.uid}.png`);
 
       const inventoryItemComplete = this.inventoryItem.value.map((item: any) => ({
         supplier_id: item.supplier_id,
         discount_1: item.discount_1.toString(),
-        discount_type_1: item.discout_type_1,
+        discount_type_1: item.discount_type_1,
         discount_2: item.discount_2,
         discount_type_2: item.discount_type_2,
         price_factor: item.price_factor
@@ -471,7 +554,7 @@ export class AddInventoriesComponent implements OnInit {
         description: this.inventoryForm.get('description')?.value,
         alias: this.inventoryForm.get('alias')?.value,
         unit_id: this.inventoryForm.get('unit_id')?.value,
-        unit_report_id: this.inventoryForm.get('unit_report_id')?.value,
+        unit_report_id: this.inventoryForm.get('unit_report')?.value,
         supplier_product_id: this.inventoryForm.get('supplier_product_id')?.value,
         sub_category: this.inventoryForm.get('sub_category')?.value,
         manufacturer: this.inventoryForm.get('manufacturer')?.value,
@@ -481,22 +564,21 @@ export class AddInventoriesComponent implements OnInit {
         inventory_source: this.inventoryForm.get('source')?.value,
         hs_code: this.inventoryForm.get('hs_code')?.value,
         inventory_items: inventoryItemComplete,
-        attachment: this.inventoryForm.get('attachment')?.value
       }
 
-      // const formData = new FormData();
+      const formData = new FormData();
 
-      // Object.keys(body).forEach(key => {
-      //   if(typeof (body as any)[key] === 'object'){
-      //     formData.append(key, JSON.stringify((body as any)[key]))
-      //   } else {
-      //     formData.append(key, ( body as any )[key]);
-      //   }
-      // })
+      Object.keys(body).forEach(key => {
+        if(typeof (body as any)[key] === 'object'){
+          formData.append(key, JSON.stringify((body as any)[key]))
+        } else {
+          formData.append(key, ( body as any )[key]);
+        }
+      })
 
+      formData.append(`attachment`, file);
 
-
-      this.apiSvc.createInventory(body).subscribe({
+      this.apiSvc.createInventory(formData).subscribe({
         next: () => {
 
           this.spinnerSvc.hide();
@@ -585,11 +667,27 @@ export class AddInventoriesComponent implements OnInit {
       // For updating deleted attachment
       // this.inventoryForm.get('attachment')?.setValue([file.uid]);
 
-      this.inventoryForm.get('attachment')?.setValue([]);
+      this.isAttachmentChange = true;
+
+      this.inventoryForm.get('attachment')?.setValue('');
     
       return true;
     }
 
+  }
+
+  dataURLtoFile(dataurl: string, filename: string): File {
+    const arr = dataurl.split(',');
+    const mime = arr[0].match(/:(.*?);/)![1];
+    const bstr = atob(arr[1]);
+    let n = bstr.length;
+    const u8arr = new Uint8Array(n);
+    
+    while (n--) {
+        u8arr[n] = bstr.charCodeAt(n);
+    }
+    
+    return new File([u8arr], filename, { type: mime });
   }
 }
 
