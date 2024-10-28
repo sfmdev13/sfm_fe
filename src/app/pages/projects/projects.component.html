@@ -1,7 +1,7 @@
 <div class="d-flex align-items-center justify-content-between mb-4">
     <h4 class="fw-bold">Project List</h4>
     <nz-input-group [nzSuffix]="suffixIconSearch" nzSize="large" style="width: 320px;">
-        <input [(ngModel)]="search" (ngModelChange)="searchHandler($event)" type="text" nz-input placeholder="Search Purchase Order" />
+        <input [(ngModel)]="search" (ngModelChange)="searchHandler($event)" type="text" nz-input placeholder="Search Projects" />
     </nz-input-group>
     <ng-template #suffixIconSearch>
         <span nz-icon nzType="search"></span>
@@ -36,29 +36,27 @@
         <thead>
           <tr>
             <th>ID</th>
-            <th>Project Desc</th>
-            <th>Customer</th>
-            <th>PIC SFM</th>
-            <th>Status</th>
-            <th>Progress</th>
+            <th>Project Name</th>
+            <th>Project Location</th>
+            <th>Issue Date</th>
+            <th>Project Engineer</th>
+            <th>Site Manager</th>
+            <th>Project Supervisor</th>
+            <th>Construction Head</th>
             <th>Action</th>
           </tr>
         </thead>
         <tbody>
             <tr *ngFor="let data of basicTable.data">
              <td>{{ data.project_pid }}</td>
-             <td>{{ data.description }}</td>
-             <td>{{ data.customer.name }}</td>
+             <td>{{ data.name}}</td>
+             <td>-</td>
+             <td>-</td>
+             <td>-</td>
+             <td>-</td>
+             <td>-</td>
+             <td>-</td>
              <td>
-              <ng-container *ngFor="let pic of data.pic; last as isLast">{{ pic.name }}<span *ngIf="!isLast">, </span></ng-container>
-             </td>
-              <td>
-                <nz-tag [nzColor]="data.status === 1 ? '#1DA32C' : '#f50'">{{ data.status === 1 ? 'Active' : 'Inactive' }}</nz-tag>
-              </td>
-              <td>
-                <nz-progress [nzPercent]="data.progress"></nz-progress>
-              </td>
-              <td>
                   <div class="d-flex gap-3">
                     <a nz-dropdown nzTrigger="click" [nzDropdownMenu]="menu" style="text-decoration: none;" >
                       <div class="d-flex align-items-center">
@@ -103,12 +101,13 @@
         <thead>
           <tr>
             <th>ID</th>
-            <th>Project Desc</th>
-            <th>Supplier Name</th>
-            <th>Customer</th>
-            <th>PIC SFM</th>
-            <th>Status</th>
-            <th>Progress</th>
+            <th>Project Name</th>
+            <th>Project Location</th>
+            <th>Issue Date</th>
+            <th>Project Engineer</th>
+            <th>Site Manager</th>
+            <th>Project Supervisor</th>
+            <th>Construction Head</th>
             <th>Action</th>
           </tr>
         </thead>
