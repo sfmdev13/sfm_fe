@@ -38,9 +38,11 @@
           <tr>
             <th>Part Number</th>
             <th>Product Category</th>
+            <th>Product Sub-Category</th>
             <th>Product Description</th>
+            <th>Manufacturer</th>
             <th>Supplier</th>
-            <th>Supplier Source</th>
+            <th>Buying Price</th>
             <th>Selling Price</th>
             <th>Qty</th>
             <th>Status</th>
@@ -50,10 +52,12 @@
         <tbody>
             <tr *ngFor="let data of basicTable.data">
               <td>{{ data.code }}</td>
-              <td>{{ data.supplier_product.name }}</td>
-              <td>{{ data.description }}</td>
-              <td>{{ data.supplier.name }}</td>
-              <td>{{ data.supplier.supplier_source.name }}</td>
+              <td>-</td>
+              <td>-</td>
+              <td>-</td>
+              <td>-</td>
+              <td>-</td>
+              <td>-</td>
               <td>{{ data.selling_price | currency:'Rp. ':'symbol':'1.0-0' }}</td>
               <td>{{ data.qty }}</td>
               <td>
@@ -100,10 +104,12 @@
         <thead>
           <tr>
             <th>Part Number</th>
-            <th>Product Description</th>
             <th>Product Category</th>
+            <th>Product Sub-Category</th>
+            <th>Product Description</th>
+            <th>Manufacturer</th>
             <th>Supplier</th>
-            <th>Supplier Source</th>
+            <th>Buying Price</th>
             <th>Selling Price</th>
             <th>Qty</th>
             <th>Status</th>
@@ -587,37 +593,7 @@
         <div>
             <form nz-form nzLayout="vertical" [formGroup]="inventoryForm">
                 <div class="row">
-                    
-                    <nz-form-item class="mb-4">
-                        <nz-form-label nzRequired nzFor="pic" class="fw-semibold">PIC SFM</nz-form-label>
-                        <ng-container *ngIf="pic$ | async as pic; else picLoad">
-                            <nz-select nzShowSearch nzMode="tags" nzPlaceHolder="Select PIC" formControlName="pic">
-                                <nz-option
-                                *ngFor="let p of pic"
-                                    [nzLabel]="p.name" 
-                                    [nzValue]="p.pic_id"
-                                ></nz-option>
-                            </nz-select>
-                        </ng-container>
-                        <ng-template #picLoad>
-                            <nz-select nzShowSearch nzMode="tags" nzPlaceHolder="Select PIC" nzDisabled>
-                                <nz-option></nz-option>
-                            </nz-select>
-                        </ng-template>
-                    </nz-form-item>
-      
-                  
-                    <nz-form-item>
-                        <nz-form-label nzRequired class="fw-semibold" nzFor="is_pic_internal" nzRequired>Head of PIC SFM</nz-form-label>
-                        <nz-form-control>
-                            <nz-select nzShowSearch nzPlaceHolder="Select Head" formControlName="is_pic_internal">
-                            <ng-container *ngFor="let pic of filteredListOfPic">
-                            <nz-option [nzLabel]="pic.name" [nzValue]="pic.pic_id"></nz-option>
-                            </ng-container>
-                            </nz-select>
-                        </nz-form-control>
-                    </nz-form-item>
-
+                                    
                     <div class="col-md-6">
                         <nz-form-item>
                             <nz-form-label nzRequired nzFor="supplier_product_id" class="fw-semibold">Product Category</nz-form-label>
@@ -635,7 +611,44 @@
                               </ng-template>
                             </nz-form-control>
                         </nz-form-item>
-                      </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <nz-form-item>
+                            <nz-form-label nzRequired nzFor="sub_category" class="fw-semibold">Product Sub Category</nz-form-label>
+                            <nz-form-control>
+                                <input nz-input formControlName="sub_category" id="sub_category" />
+                            </nz-form-control>
+                        </nz-form-item>
+                    </div>
+
+                    <div class="col-md-6">
+                        <nz-form-item>
+                            <nz-form-label nzRequired nzFor="part_number" class="fw-semibold">Part Number</nz-form-label>
+                            <nz-form-control>
+                                <input nz-input formControlName="part_number" id="part_number" />
+                            </nz-form-control>
+                        </nz-form-item>
+                    </div>
+
+                    <div class="col-md-6">
+                        <nz-form-item>
+                            <nz-form-label nzRequired nzFor="manufacturer" class="fw-semibold">Manufacturer</nz-form-label>
+                            <nz-form-control>
+                                <input nz-input formControlName="manufacturer" id="manufacturer" />
+                            </nz-form-control>
+                        </nz-form-item>
+                    </div>
+
+                    <div class="col-md-6">
+                        <nz-form-item>
+                            <nz-form-label nzRequired nzFor="alias" class="fw-semibold">Alias</nz-form-label>
+                            <nz-form-control>
+                                <input nz-input formControlName="alias" id="alias" />
+                            </nz-form-control>
+                        </nz-form-item>
+                    </div>
+
                     <div class="col-md-6">
                       <nz-form-item>
                           <nz-form-label nzRequired nzFor="supplier_id" class="fw-semibold">Supplier</nz-form-label>
@@ -655,30 +668,6 @@
                       </nz-form-item>
                     </div>
       
-                    <div class="col-md-6">
-                        <nz-form-item class="mb-4">
-                            <nz-form-label nzRequired nzFor="name" class="fw-semibold">Product Name</nz-form-label>
-                            <nz-form-control>
-                                <input nz-input formControlName="name" id="name" />
-                            </nz-form-control>
-                        </nz-form-item>
-                    </div>
-                    <div class="col-md-6">
-                        <nz-form-item class="mb-4">
-                            <nz-form-label nzRequired nzFor="code" class="fw-semibold">Part Number</nz-form-label>
-                            <nz-form-control>
-                                <input nz-input formControlName="code" id="code"  />
-                            </nz-form-control>
-                        </nz-form-item>
-                    </div>
-                    <div class="col-md-6">
-                        <nz-form-item class="mb-4">
-                            <nz-form-label nzRequired nzFor="description" class="fw-semibold">Product Description</nz-form-label>
-                            <nz-form-control>
-                                <input nz-input formControlName="description" id="description"  />
-                            </nz-form-control>
-                        </nz-form-item>
-                    </div>
                     <div class="col-md-3">
                         <nz-form-item class="mb-4">
                             <nz-form-label nzRequired nzFor="unit_id" class="fw-semibold">Unit of Measurement</nz-form-label>
@@ -733,53 +722,12 @@
                     </div>
                     <div class="col-md-6">
                         <nz-form-item>
-                            <nz-form-label nzRequired nzFor="discount" class="fw-semibold">
-                                <span class="me-4">Discount</span>
-                                <nz-radio-group formControlName="discount_type">
-                                    <label nz-radio nzValue="percent">Percent</label>
-                                    <label nz-radio nzValue="price">Price</label>
-                                </nz-radio-group>
-                            </nz-form-label>
-                            <ng-container *ngIf="inventoryForm.get('discount_type')?.value === 'percent';else price">
-                                <nz-input-number-group nzAddOnAfter="%">
-                                    <nz-input-number formControlName="discount"></nz-input-number>
-                                </nz-input-number-group>
-                            </ng-container>
-                            <ng-template #price>
-                                <nz-space nzDirection="vertical" style="width: 100%">
-                                    <nz-input-number-group *nzSpaceItem nzPrefix="Rp. " style="width: 100%">
-                                        <nz-input-number     
-                                        formControlName="discount_price"
-                                        [nzFormatter]="formatter"
-                                        ></nz-input-number>
-                                    </nz-input-number-group>
-                                </nz-space>
-                            </ng-template>
-                        </nz-form-item>
-                    </div>
-                    <div class="col-md-6">
-                        <nz-form-item>
                             <nz-form-label nzRequired nzFor="tax" class="fw-semibold">
                                 Tax
                             </nz-form-label>
                             <nz-input-number-group nzAddOnAfter="%">
                                 <nz-input-number formControlName="tax"></nz-input-number>
                             </nz-input-number-group>
-                        </nz-form-item>
-                    </div>
-                    <div class="col-md-6">
-                        <nz-form-item class="mb-4">
-                            <nz-form-label  nzFor="product_cost" class="fw-semibold">Product Cost</nz-form-label>
-                            <nz-form-control>
-                                <nz-space nzDirection="vertical" style="width: 100%">
-                                    <nz-input-number-group *nzSpaceItem nzPrefix="Rp. " style="width: 100%">
-                                        <nz-input-number     
-                                        formControlName="product_cost"
-                                        [nzFormatter]="formatter"
-                                        ></nz-input-number>
-                                    </nz-input-number-group>
-                                </nz-space>
-                            </nz-form-control>
                         </nz-form-item>
                     </div>
                     <div class="col-md-6">

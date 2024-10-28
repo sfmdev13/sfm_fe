@@ -1,9 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import { FormGroup, Validators, FormBuilder } from '@angular/forms';
+import { FormGroup, Validators, FormBuilder, FormArray } from '@angular/forms';
 import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
 import { debounceTime, distinctUntilChanged, Observable, Subject, tap } from 'rxjs';
 import { ApiService } from 'src/app/api.service';
 import { AuthService } from 'src/app/auth.service';
+import { AddInventoriesComponent } from 'src/app/components/add-inventories/add-inventories.component';
 import { EditCategoriesModalComponent } from 'src/app/components/categories-setting/edit-categories-modal/edit-categories-modal.component';
 import { ICategories, IDataCategories, IDataInventory, IRootInventory, IRootUnit } from 'src/app/interfaces';
 import { SpinnerService } from 'src/app/spinner.service';
@@ -76,24 +77,22 @@ export class InventoriesListComponent implements OnInit {
 
   inventoryForm = this.fb.group({
     id: [''],
-    name: ['', Validators.required],
     code: ['', Validators.required],
-    description: ['', Validators.required],
     unit_id: ['', Validators.required],
-    price_list: ['', Validators.required],
-    discount: [0, Validators.required],
-    price_factor: ['', Validators.required],
-    product_cost: [{value: 0, disabled: true}],
-    selling_price: [{value: 0, disabled: true}],
     qty: [{value: 0, disabled: true}],
-    pic: [[this.pic_id], [Validators.required]],
-    is_pic_internal: ['', [Validators.required]],
     supplier_id: ['', [Validators.required]],
     status: [1, [Validators.required]],
     supplier_product_id: ['', [Validators.required]],
-    discount_price: [0, [Validators.required]],
-    discount_type: ['percent', [Validators.required]],
-    tax: [0, [Validators.required]]
+    tax: [0, [Validators.required]],
+    sub_category: ['', Validators.required],
+    manufacturer: ['', Validators.required],
+    unit_report: ['', Validators.required],
+    alias: ['', Validators.required],
+    hs_code: ['', Validators.required],
+    is_hs_code: [false],
+    attachment: ['', Validators.required],
+    price_list: ['', Validators.required],
+    inventory_items: this.fb.array([])
   })
 
   constructor(
@@ -223,6 +222,36 @@ export class InventoriesListComponent implements OnInit {
     //trigger update selling price
     this.inventoryForm.get('price_factor')?.valueChanges.subscribe(() => this.updateSellingPrice());
     this.inventoryForm.get('product_cost')?.valueChanges.subscribe(() => this.updateSellingPrice());
+  }
+
+
+  get inventoryItem(): FormArray {
+    return this.inventoryForm.get('product_category') as FormArray;
+  }
+
+  removeInventoryItem(index: number): void {
+    if(index === 0){
+      return;
+    }
+    
+    this.inventoryItem.removeAt(index);
+  }
+
+  
+  addInventoryItem(): void {
+    const newInventory = this.fb.group({
+      supplier_id: ['', Validators.required],
+      discount_1: [0, Validators.required],
+      discount_type_1: ['percent', Validators.required],
+      discount_2: [0, Validators.required],
+      discount_type_2: ['percent', Validators.required],
+      price_factor: [0, Validators.required],
+      total_1: [{value: 0, disabled: true}],
+      total_2: [{value: 0, disabled: true}],
+      selling_price: [{value: 0, disabled: true}]
+    });
+
+    this.inventoryItem.push(newInventory);
   }
 
   showModalCategoryAdd(titleCat: string): void {
@@ -505,9 +534,20 @@ export class InventoriesListComponent implements OnInit {
   }
 
   showModalAdd(): void {
-    this.resetDefaultForm();
-    this.modal_type = 'Add'
-    this.isVisibleAdd = true;
+
+    this.modal_type = 'add';
+
+    this.modalSvc.create({
+      nzTitle: 'Add Inventories',
+      nzContent: AddInventoriesComponent,
+      nzComponentParams: {
+        modal_type: this.modal_type
+      },
+      nzClosable: false,
+      nzMaskClosable: false,
+      nzCentered: true,
+      nzWidth: '80vw'
+    });
   }
 
   showModalDelete(id: string): void{
@@ -694,24 +734,21 @@ export class InventoriesListComponent implements OnInit {
   resetDefaultForm(): void{
     this.inventoryForm.patchValue({
       id:'',
-      name: '',
       code: '',
-      description: '',
       unit_id: '',
-      price_list: '',
-      discount: '',
-      price_factor: '',
-      product_cost: 0,
-      selling_price: 0,
       qty: 0,
-      pic: [this.pic_id],
-      is_pic_internal: '',
-      supplier_id: '',
       status: 1,
       supplier_product_id: '',
-      discount_price: 0,
-      discount_type: 'percent',
-      tax: 0
+      tax: 0,
+      sub_category: '',
+      manufacturer: '',
+      unit_report: '',
+      alias: '',
+      hs_code: '',
+      is_hs_code: true,
+      attachment: '',
+      price_list: 0,
+      inventory_items: []
     })
   }
 }

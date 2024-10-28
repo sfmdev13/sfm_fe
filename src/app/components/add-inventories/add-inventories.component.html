@@ -1,0 +1,360 @@
+<div>
+    <form nz-form nzLayout="vertical" [formGroup]="inventoryForm">
+        <nz-tabset>
+            <nz-tab nzTitle="Basic Information">
+                <div class="row">
+                    <div class="col-md-6">
+                        <nz-form-item>
+                            <nz-form-label nzRequired nzFor="description" class="fw-semibold">Product Description</nz-form-label>
+                            <nz-form-control>
+                                <input nz-input formControlName="description" id="description" />
+                            </nz-form-control>
+                        </nz-form-item>
+                    </div>
+                    <div class="col-md-6">
+                        <nz-form-item>
+                            <nz-form-label nzRequired nzFor="supplier_product_id" class="fw-semibold">Product Category</nz-form-label>
+                            <nz-form-control>
+                                <ng-container *ngIf="productCat$ | async as prod; else prodLoad">
+                                    <nz-select nzShowSearch nzPlaceHolder="Select Product Category" formControlName="supplier_product_id">
+                                        <ng-container *ngFor="let prod of prod.data">
+                                            <nz-option [nzLabel]="prod.name" [nzValue]="prod.id"></nz-option>
+                                        </ng-container>
+                                    </nz-select>
+                                </ng-container>
+                                <ng-template #prodLoad>
+                                    <nz-select nzDisabled nzPlaceHolder="Select Product Category" formControlName="supplier_product_id">
+                                    </nz-select>
+                                </ng-template>
+                            </nz-form-control>
+                        </nz-form-item>
+                    </div>
+
+                    <div class="col-md-6">
+                        <nz-form-item>
+                            <nz-form-label nzRequired nzFor="sub_category" class="fw-semibold">Product Sub Category</nz-form-label>
+                            <nz-form-control>
+                                <input nz-input formControlName="sub_category" id="sub_category" />
+                            </nz-form-control>
+                        </nz-form-item>
+                    </div>
+    
+                    <div class="col-md-6">
+                        <nz-form-item>
+                            <nz-form-label nzRequired nzFor="part_number" class="fw-semibold">Part Number</nz-form-label>
+                            <nz-form-control>
+                                <input nz-input formControlName="part_number" id="part_number" />
+                            </nz-form-control>
+                        </nz-form-item>
+                    </div>
+                    <div class="col-md-6">
+                        <nz-form-item>
+                            <nz-form-label nzRequired nzFor="manufacturer" class="fw-semibold">Manufacturer</nz-form-label>
+                            <nz-form-control>
+                                <input nz-input formControlName="manufacturer" id="manufacturer" />
+                            </nz-form-control>
+                        </nz-form-item>
+                    </div>
+        
+                    <div class="col-md-3">
+                        <nz-form-item class="mb-4">
+                            <nz-form-label nzRequired nzFor="unit_id" class="fw-semibold">Unit of Measurement</nz-form-label>
+                            <ng-container *ngIf="unit$ | async as unit; else unitLoad">
+                                <nz-select nzShowSearch nzPlaceHolder="Select Unit" formControlName="unit_id" [nzDropdownRender]="unitRender">
+                                    <nz-option
+                                        *ngFor="let u of unit.data"
+                                        [nzValue]="u.id"
+                                        [nzLabel]="u.name"
+                                    >
+                                    </nz-option>
+                                    <ng-template #unitRender>
+                                        <nz-divider class="m-0"></nz-divider>
+                                        <div class="container">
+                                            <a class="add-item" (click)="showModalCategoryAdd('uom')">
+                                            <span nz-icon nzType="plus"></span>
+                                            Add Category
+                                            </a>
+                                        </div>
+                                    </ng-template>
+                                </nz-select>
+                            </ng-container>
+                            <ng-template #unitLoad>
+                                <nz-select nzShowSearch nzPlaceHolder="Select Unit" nzDisabled>
+                                    <nz-option></nz-option>
+                                </nz-select>
+                            </ng-template>
+                        </nz-form-item>
+                    </div>
+                    
+                    <div class="col-md-3">
+                        <nz-form-item>
+                            <nz-form-label nzFor="code" class="fw-semibold">Unit Code</nz-form-label>
+                            <nz-form-control>
+                                <p class="m-0 p-0" [innerHTML]="formattedLabel ? formattedLabel : '-' "></p>
+                            </nz-form-control>                        
+                        </nz-form-item>
+                    </div>
+        
+                    <div class="col-md-6">
+                        <nz-form-item>
+                            <nz-form-label nzRequired nzFor="unit_report" class="fw-semibold">Unit of Report</nz-form-label>
+                            <ng-container *ngIf="unitReport$ | async as unit; else unitReportLoad">
+                                <nz-select nzShowSearch nzPlaceHolder="Select Unit" formControlName="unit_report" [nzDropdownRender]="unitRender">
+                                    <nz-option
+                                        *ngFor="let u of unit.data"
+                                        [nzValue]="u.id"
+                                        [nzLabel]="u.name"
+                                    >
+                                    </nz-option>
+                                    <ng-template #unitRender>
+                                        <nz-divider class="m-0"></nz-divider>
+                                        <div class="container">
+                                            <a class="add-item" (click)="showModalCategoryAdd('uop')">
+                                            <span nz-icon nzType="plus"></span>
+                                            Add Category
+                                            </a>
+                                        </div>
+                                    </ng-template>
+                                </nz-select>
+                            </ng-container>
+                            <ng-template #unitReportLoad>
+                                <nz-select nzShowSearch nzPlaceHolder="Select Unit" nzDisabled>
+                                    <nz-option></nz-option>
+                                </nz-select>
+                            </ng-template>
+                        </nz-form-item>
+                    </div>
+    
+                    <div class="col-md-6">
+                        <nz-form-item>
+                            <nz-form-label nzRequired nzFor="alias" class="fw-semibold">Alias</nz-form-label>
+                            <nz-form-control>
+                                <input nz-input formControlName="alias" id="alias" />
+                            </nz-form-control>
+                        </nz-form-item>
+                    </div>
+
+                    <div class="col-md-6">
+                        <nz-form-item>
+                            <nz-form-label nzRequired nzFor="alias" class="fw-semibold">
+                                Source
+                                <nz-radio-group formControlName="source">
+                                    <label nz-radio nzValue="local">Local</label>
+                                    <label nz-radio nzValue="import">Import</label>
+                                </nz-radio-group>
+                            </nz-form-label>
+                            <nz-form-control>
+                                <input nz-input formControlName="hs_code" id="hs_code" />
+                            </nz-form-control> 
+                        </nz-form-item>
+                    </div>
+        
+                    <div class="col-md-6">
+                        <nz-form-item>
+                            <nz-form-label nzRequired nzFor="price_list" class="fw-semibold">Price List</nz-form-label>
+                            <nz-space nzDirection="vertical" class="w-100">
+                                <nz-input-number-group *nzSpaceItem nzPrefix="Rp. " class="w-100">
+                                    <nz-input-number 
+                                        class="w-100" 
+                                        formControlName="price_list"
+                                        [nzFormatter]="formatter">
+                                    </nz-input-number>
+                                </nz-input-number-group>
+                            </nz-space>
+        
+                        </nz-form-item>
+                    </div>
+    
+                    <div class="col-md-6">
+                        <nz-form-item>
+                            <nz-form-label nzRequired nzFor="tax" class="fw-semibold">
+                                Tax
+                            </nz-form-label>
+                            <nz-input-number-group nzAddOnAfter="%">
+                                <nz-input-number formControlName="tax"></nz-input-number>
+                            </nz-input-number-group>
+                        </nz-form-item>
+                    </div>
+    
+                    <div class="col-md-6">
+                        <nz-form-item>
+                            <nz-form-label nzFor="status" nzRequired class="fw-semibold">Status</nz-form-label>
+                            <nz-form-control>
+                                <nz-switch nzSize="default" id="status" formControlName="status" nzCheckedChildren="active" nzUnCheckedChildren="inactive"></nz-switch>
+                            </nz-form-control>
+                        </nz-form-item>
+                    </div>
+                </div>
+            </nz-tab>
+            <nz-tab nzTitle="Supplier">
+                <div class="table-responsive">
+                    <table class="table table-striped table-order">
+                        <thead style="position: unset;">
+                            <tr>
+                                <th scope="col">Supplier</th>
+                                <th scope="col">Discount 1</th>
+                                <th scope="col">Total 1</th>
+                                <th scope="col">Discount 2</th>
+                                <th scope="col">Total 2</th>
+                                <th scope="col">Price Factor</th>
+                                <th scope="col">Selling Price</th>
+                                <th scope="col">#</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <ng-container formArrayName="inventory_items">
+                                <tr *ngFor="let inventory of inventoryItem.controls; let i = index" [formGroupName]="i">
+                                    <td>
+                                        <nz-form-control>
+                                            <ng-container *ngIf="supplier$ | async as supplier; else suppLoad">
+                                            <nz-select nzShowSearch nzPlaceHolder="Select Supplier" formControlName="supplier_id">
+                                                <ng-container *ngFor="let supp of supplier.data">
+                                                <nz-option [nzLabel]="supp.name" [nzValue]="supp.id"></nz-option>
+                                                </ng-container>
+                                            </nz-select>
+                                            </ng-container>
+                                            <ng-template #suppLoad>
+                                            <nz-select nzDisabled nzPlaceHolder="Select Product Category First" formControlName="supplier_id">
+                                            </nz-select>
+                                            </ng-template>
+                                        </nz-form-control>                     
+                                    </td>
+                                    <td>
+                                        <div class="d-flex flex-column">
+                                            <ng-container *ngIf="inventory.get('discount_type_1')?.value === 'percent';else priceDiscount1">
+                                                <nz-input-number-group nzAddOnAfter="%">
+                                                    <nz-input-number [nzMin]="0" formControlName="discount_1"></nz-input-number>
+                                                </nz-input-number-group>
+                                            </ng-container>
+                                            <ng-template #priceDiscount1>
+                                                <nz-input-number-group nzAddOnBefore="Rp. ">
+                                                    <nz-input-number     
+                                                    formControlName="discount_1"
+                                                    [nzFormatter]="formatter"
+                                                    [nzMin]="0"
+                                                    ></nz-input-number>
+                                                </nz-input-number-group>
+                                            </ng-template>
+                                            <nz-radio-group formControlName="discount_type_1" class="mt-2">
+                                                <label nz-radio nzValue="percent">Percent</label>
+                                                <label nz-radio nzValue="price">Price</label>
+                                            </nz-radio-group>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <nz-form-control>
+                                            <nz-input-number-group nzAddOnBefore="Rp. ">
+                                                <nz-input-number     
+                                                formControlName="total_1"
+                                                [nzFormatter]="formatter"
+                                                ></nz-input-number>
+                                            </nz-input-number-group>
+                                        </nz-form-control>  
+                                    </td>
+                                    <td>
+                                        <div class="d-flex flex-column">
+                                            <ng-container *ngIf="inventory.get('discount_type_2')?.value === 'percent';else priceDiscount2">
+                                                <nz-input-number-group nzAddOnAfter="%">
+                                                    <nz-input-number formControlName="discount_2" [nzMin]="0"></nz-input-number>
+                                                </nz-input-number-group>
+                                            </ng-container>
+                                            <ng-template #priceDiscount2>
+                                                <nz-input-number-group nzAddOnBefore="Rp. ">
+                                                    <nz-input-number     
+                                                    formControlName="discount_2"
+                                                    [nzFormatter]="formatter"
+                                                    [nzMin]="0"
+                                                    ></nz-input-number>
+                                                </nz-input-number-group>
+                                            </ng-template>
+                                            <nz-radio-group formControlName="discount_type_2" class="mt-2">
+                                                <label nz-radio nzValue="percent">Percent</label>
+                                                <label nz-radio nzValue="price">Price</label>
+                                            </nz-radio-group>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <nz-form-control>
+                                            <nz-input-number-group nzAddOnBefore="Rp. ">
+                                                <nz-input-number     
+                                                formControlName="total_2"
+                                                [nzFormatter]="formatter"
+                                                [nzMin]="0"
+                                                ></nz-input-number>
+                                            </nz-input-number-group>
+                                        </nz-form-control>    
+                                    </td>
+                                    <td>
+                                        <nz-form-control>
+                                            <nz-input-number-group>
+                                                <nz-input-number     
+                                                formControlName="price_factor"
+                                                [nzFormatter]="formatter"
+                                                [nzMin]="0"
+                                                ></nz-input-number>
+                                            </nz-input-number-group>
+                                        </nz-form-control>    
+                                    </td>
+                                    <td>
+                                        <div style="margin-top: 4px;">
+                                            <p class="m-0 p-0">Rp. {{ inventory.get('selling_price')?.value | number:'1.0-0' }}</p>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <span (click)="removeInventoryItem(i)" nz-icon nzType="delete" nzTheme="twotone" [nzTwotoneColor]="'#ED0000'"></span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="9" class="text-center">
+                                        <button (click)="addInventoryItem()" nz-button nzType="primary" class="w-75">Add Inventory</button>
+                                    </td>
+                                </tr>
+                            </ng-container>
+
+                        </tbody>
+                    </table>
+                </div>
+            </nz-tab>
+            <nz-tab nzTitle="Picture">
+                <div class="col-md-6">
+                    <nz-form-item>
+                        <nz-form-label [nzRequired]="true">Upload Inventory Photo</nz-form-label>
+                        <nz-form-control>
+                            <nz-upload
+                            [nzBeforeUpload]="beforeUploadCpProfile()"
+                            class="avatar-uploader"
+                            nzName="avatar"
+                            nzListType="picture-card"
+                            [nzFileList]="getValidProfilePicture(inventoryForm.get('attachment')?.value)"
+                            [nzPreview]="handlePreview"
+                            [nzShowButton]="getValidProfilePicture(inventoryForm.get('attachment')?.value).length <= 0"
+                            [nzRemove]="handleRemoveProfilePicture()"
+                            [nzAccept]="'.jpg,.jpeg,.png'"
+                        >
+                            <div>
+                            <span nz-icon nzType="plus"></span>
+                            <div style="margin-top: 8px"></div>
+                            </div>
+                        </nz-upload>
+                        <nz-modal
+                            [nzVisible]="previewVisible"
+                            [nzContent]="modalContent"
+                            [nzFooter]="null"
+                            (nzOnCancel)="previewVisible = false"
+                            >
+                            <ng-template #modalContent>
+                            <img [src]="previewImage" [ngStyle]="{ width: '100%' }" />
+                            </ng-template>
+                        </nz-modal>
+                        </nz-form-control>
+                    </nz-form-item>
+                </div>
+            </nz-tab>
+        </nz-tabset>
+    </form>
+</div>
+
+<ng-container *nzModalFooter>
+    <button nz-button nzType="default" (click)="handleCancel()">Cancel</button>
+    <button nz-button nzType="primary" class="text-capitalize" (click)="handleSubmitAdd()" [disabled]="!this.inventoryForm.valid">Add Inventory</button>
+</ng-container>
