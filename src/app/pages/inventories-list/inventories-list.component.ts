@@ -106,8 +106,8 @@ export class InventoriesListComponent implements OnInit {
     this.filterForm = this.fb.group({
       status: [''],
       supplier_product: [''],
-      supplier: [''],
-      supplier_source: [''],
+      // supplier: [''],
+      // supplier_source: [''],
       sort_by: ['']
     })
    }
