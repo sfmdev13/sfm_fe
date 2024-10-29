@@ -1,5 +1,5 @@
 import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, DatePipe } from '@angular/common';
 
 import { PurchaseOrderRoutingModule } from './purchase-order-routing.module';
 import { PurchaseOrderComponent } from './purchase-order.component';
@@ -37,6 +37,7 @@ import { FilterPurchaseOrderModule } from 'src/app/components/filter-purchase-or
     NzDropDownModule,
     FilterPurchaseOrderModule
   ],
+  providers: [DatePipe],
   exports: [PurchaseOrderComponent]
 })
 export class PurchaseOrderModule { }

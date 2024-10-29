@@ -37,21 +37,10 @@
 
                 <div class="col-md-4">
                     <nz-form-item>
-                        <nz-form-label nzRequired class="fw-semibold" nzFor="supplier_id" nzRequired>Supplier</nz-form-label>
-                        <ng-container *ngIf="supplier$ | async as supp; else suppLoad">
-                            <nz-select nzShowSearch nzPlaceHolder="Select Supplier" formControlName="supplier_id">
-                                <nz-option
-                                *ngFor="let p of supp.data"
-                                    [nzLabel]="p.name" 
-                                    [nzValue]="p.id"
-                                ></nz-option>
-                            </nz-select>
-                        </ng-container>
-                        <ng-template #suppLoad>
-                            <nz-select nzShowSearch nzPlaceHolder="Select Supplier" nzDisabled>
-                                <nz-option></nz-option>
-                            </nz-select>
-                        </ng-template>
+                        <nz-form-label nzRequired class="fw-semibold" nzFor="manufacture">Manufacture</nz-form-label>
+                        <nz-form-control>
+                            <input nz-input formControlName="manufacture" id="manufacture" />
+                        </nz-form-control>
                     </nz-form-item>
                 </div>
 
@@ -85,19 +74,28 @@
                     </nz-form-item>
                 </div>
 
+                <div *ngIf="purchaseForm.get('project_type')?.value === 'project'" class="col-md-4">
+                    <nz-form-item class="mb-4">
+                        <nz-form-label nzRequired nzFor="project_id" class="fw-semibold">Project</nz-form-label>
+                        <nz-form-control>
+                            <input nz-input formControlName="project_id" id="project_id" />
+                        </nz-form-control>
+                    </nz-form-item>
+                </div>
+
                 <nz-tabset>
                     <nz-tab nzTitle="Inventory Purchase">
                         <div class="table-responsive">
                             <table class="table table-striped table-order">
                                 <thead style="position: unset;">
                                     <tr>
-                                        <th scope="col">Product Description</th>
                                         <th scope="col">Part Number</th>
+                                        <th scope="col">Product Description</th>
+                                        <th scope="col">Alias</th>
+                                        <th scope="col">Supplier</th>
                                         <th scope="col">Qty</th>
                                         <th scope="col">Unit</th>
-                                        <th scope="col">Price List</th>
-                                        <th scope="col">Discount</th>
-                                        <th scope="col">Product Cost</th>
+                                        <th scope="col">Price</th>
                                         <th scope="col">Discount Item</th>
                                         <th scope="col">Total</th>
                                         <th scope="col">#</th>
@@ -106,6 +104,17 @@
                                 <tbody>
                                     <ng-container formArrayName="order">
                                         <tr *ngFor="let order of order.controls; let i = index" [formGroupName]="i">
+                                            <td>
+                                                <nz-form-control>
+                                                    <nz-select nzShowSearch  nzPlaceHolder="Select Part Number" formControlName="product_code">
+                                                        <nz-option
+                                                        *ngFor="let p of inventoryList.data"
+                                                            [nzLabel]="p.code" 
+                                                            [nzValue]="p.id"
+                                                        ></nz-option>
+                                                    </nz-select>
+                                                </nz-form-control>                        
+                                            </td>
                                             <td>
                                                 <nz-form-control>
                                                     <nz-select nzShowSearch  nzPlaceHolder="Select Inventory" formControlName="inventory_id">
@@ -119,7 +128,18 @@
                                             </td>
                                             <td>
                                                 <nz-form-control>
-                                                    <input nz-input formControlName="product_code" />
+                                                    <input nz-input formControlName="alias" />
+                                                </nz-form-control>
+                                            </td>
+                                            <td>
+                                                <nz-form-control>
+                                                    <nz-select nzShowSearch nzPlaceHolder="Select Supplier" formControlName="supplier">
+                                                        <nz-option
+                                                            *ngFor="let supplier of order.get('suppliersList')?.value"
+                                                            [nzLabel]="supplier.supplier.name" 
+                                                            [nzValue]="supplier.id"
+                                                        ></nz-option>
+                                                    </nz-select>
                                                 </nz-form-control>
                                             </td>
                                             <td>
@@ -137,7 +157,7 @@
                                                     <nz-space nzDirection="vertical" style="width: 100%">
                                                         <nz-input-number-group *nzSpaceItem nzPrefix="Rp. " style="width: 100%">
                                                             <nz-input-number     
-                                                            formControlName="price_list"
+                                                            formControlName="selling_price"
                                                             [nzFormatter]="formatter"
                                                             [nzMin]="0"
                                                             ></nz-input-number>
@@ -155,46 +175,12 @@
                                                     <ng-template #price>
                                                         <nz-input-number-group nzAddOnBefore="Rp. ">
                                                             <nz-input-number     
-                                                            formControlName="discount_price"
+                                                            formControlName="discount"
                                                             [nzFormatter]="formatter"
                                                             ></nz-input-number>
                                                         </nz-input-number-group>
                                                     </ng-template>
                                                     <nz-radio-group formControlName="discount_type" class="mt-2">
-                                                        <label nz-radio nzValue="percent">Percent</label>
-                                                        <label nz-radio nzValue="price">Price</label>
-                                                    </nz-radio-group>
-                                                </div>
-                                            </td>
-                                            <td>
-                                                <nz-form-control>
-                                                    <nz-space nzDirection="vertical" style="width: 100%">
-                                                        <nz-input-number-group *nzSpaceItem nzPrefix="Rp. " style="width: 100%">
-                                                            <nz-input-number     
-                                                            formControlName="product_cost"
-                                                            [nzFormatter]="formatter"
-                                                            [nzMin]="0"
-                                                            ></nz-input-number>
-                                                        </nz-input-number-group>
-                                                    </nz-space>
-                                                </nz-form-control>  
-                                            </td>
-                                            <td>
-                                                <div class="d-flex flex-column">
-                                                    <ng-container *ngIf="order.get('discount_type_item')?.value === 'percent';else priceItem">
-                                                        <nz-input-number-group nzAddOnAfter="%">
-                                                            <nz-input-number formControlName="discount_item"></nz-input-number>
-                                                        </nz-input-number-group>
-                                                    </ng-container>
-                                                    <ng-template #priceItem>
-                                                        <nz-input-number-group nzAddOnBefore="Rp. ">
-                                                            <nz-input-number     
-                                                            formControlName="discount_price_item"
-                                                            [nzFormatter]="formatter"
-                                                            ></nz-input-number>
-                                                        </nz-input-number-group>
-                                                    </ng-template>
-                                                    <nz-radio-group formControlName="discount_type_item" class="mt-2">
                                                         <label nz-radio nzValue="percent">Percent</label>
                                                         <label nz-radio nzValue="price">Price</label>
                                                     </nz-radio-group>
@@ -210,7 +196,7 @@
                                             </td>
                                         </tr>
                                         <tr>
-                                            <td colspan="9" class="text-center">
+                                            <td colspan="10" class="text-center">
                                                 <button (click)="addOrder()" nz-button nzType="primary" class="w-75" [disabled]="formDisable">Add Item</button>
                                             </td>
                                         </tr>
@@ -229,11 +215,13 @@
         
                             <div class="d-flex align-items-center justify-content-between" style="width: 30%;">
                                 <p class="m-0 p-0 fw-semibold">Tax</p>
-                                <nz-space nzDirection="vertical" style="width: 55%">
-                                    <nz-input-number-group nzAddOnAfter="%" class="w-100">
-                                        <nz-input-number formControlName="tax" [nzMin]="0"></nz-input-number>
-                                    </nz-input-number-group>
-                                </nz-space>                
+                                <nz-form-control>
+                                    <nz-space nzDirection="vertical" style="width: 55%">
+                                        <nz-input-number-group nzAddOnAfter="%" class="w-100">
+                                            <nz-input-number formControlName="tax" [nzMin]="0"></nz-input-number>
+                                        </nz-input-number-group>
+                                    </nz-space>     
+                                </nz-form-control>           
                             </div>
         
                             <div class="d-flex align-items-center justify-content-between total-children" style="width: 30%;">
@@ -282,10 +270,10 @@
                                                         <ng-template #unitRender>
                                                             <nz-divider class="m-0"></nz-divider>
                                                             <div class="container">
-                                                              <a class="add-item" (click)="showModalUnit('uom')">
+                                                            <a class="add-item" (click)="showModalUnit('uom')">
                                                                 <span nz-icon nzType="plus"></span>
                                                                 Add Unit
-                                                              </a>
+                                                            </a>
                                                             </div>
                                                         </ng-template>
                                                     </nz-select>
@@ -362,14 +350,14 @@
                                 <p class="m-0 p-0 fw-semibold total-order">Rp {{ totalOrder | number:'1.0-0' }}</p>
                             </div>
         
-                            <div class="d-flex align-items-center justify-content-between" style="width: 30%;">
+                            <!-- <div class="d-flex align-items-center justify-content-between" style="width: 30%;">
                                 <p class="m-0 p-0 fw-semibold">Tax</p>
                                 <nz-space nzDirection="vertical" style="width: 55%">
                                     <nz-input-number-group nzAddOnAfter="%" class="w-100">
                                         <nz-input-number formControlName="tax" [nzMin]="0"></nz-input-number>
                                     </nz-input-number-group>
-                                </nz-space>                
-                            </div>
+                                </nz-space>               
+                            </div> -->
         
                             <div class="d-flex align-items-center justify-content-between total-children" style="width: 30%;">
                                 <p class="m-0 p-0 fw-semibold">Grand Total</p>
@@ -426,12 +414,12 @@
                                                 <ng-template #warehouseRender>
                                                     <nz-divider class="m-0"></nz-divider>
                                                     <div class="container">
-                                                      <a class="add-item" (click)="showModalAddWarehouse()">
+                                                    <a class="add-item" (click)="showModalAddWarehouse()">
                                                         <span nz-icon nzType="plus"></span>
                                                         Add Warehouse
-                                                      </a>
+                                                    </a>
                                                     </div>
-                                                  </ng-template>
+                                                </ng-template>
                                             </nz-select>
                                         </ng-container>
                                         <ng-template #warehouseLoad>
@@ -444,26 +432,26 @@
             
                             <div class="col-md-4">
                                 <ng-container *ngIf="provinces$ | async as province; else provinceLoad">
-                                  <nz-form-item>
+                                <nz-form-item>
                                     <nz-form-label nzRequired class="fw-semibold" nzFor="province" nzRequired>Province</nz-form-label>
                                     <nz-form-control>
                                         <nz-select  nzShowSearch nzPlaceHolder="Select Province" formControlName="province">
                                         <ng-container *ngFor="let p of province">
-                                          <nz-option [nzLabel]="p.province" [nzValue]="p.id"></nz-option>
+                                        <nz-option [nzLabel]="p.province" [nzValue]="p.id"></nz-option>
                                         </ng-container>
                                         </nz-select>
                                     </nz-form-control>
-                                  </nz-form-item>
+                                </nz-form-item>
                                 </ng-container>
                 
                                 <ng-template #provinceLoad>
-                                  <nz-form-item>
+                                <nz-form-item>
                                     <nz-form-label nzRequired class="fw-semibold" nzFor="province" nzRequired>Province</nz-form-label>
                                     <nz-form-control>
                                         <nz-select nzDisabled nzPlaceHolder="Select Province" formControlName="province">
                                         </nz-select>
                                     </nz-form-control>
-                                  </nz-form-item>
+                                </nz-form-item>
                                 </ng-template>
                             </div>
                 
@@ -568,12 +556,12 @@
                                                 <ng-template #billingRender>
                                                     <nz-divider class="m-0"></nz-divider>
                                                     <div class="container">
-                                                      <a class="add-item" (click)="showModalAddBilling()">
+                                                    <a class="add-item" (click)="showModalAddBilling()">
                                                         <span nz-icon nzType="plus"></span>
                                                         Add Billing Address
-                                                      </a>
+                                                    </a>
                                                     </div>
-                                                  </ng-template>
+                                                </ng-template>
                                             </nz-select>
                                         </ng-container>
                                         <ng-template #billingLoad>
@@ -586,26 +574,26 @@
             
                             <div class="col-md-4">
                                 <ng-container *ngIf="provinces$ | async as province; else provinceLoad">
-                                  <nz-form-item>
+                                <nz-form-item>
                                     <nz-form-label nzRequired class="fw-semibold" nzFor="province_billing" nzRequired>Province</nz-form-label>
                                     <nz-form-control>
                                         <nz-select  nzShowSearch nzPlaceHolder="Select Province" formControlName="province_billing">
                                         <ng-container *ngFor="let p of province">
-                                          <nz-option [nzLabel]="p.province" [nzValue]="p.id"></nz-option>
+                                        <nz-option [nzLabel]="p.province" [nzValue]="p.id"></nz-option>
                                         </ng-container>
                                         </nz-select>
                                     </nz-form-control>
-                                  </nz-form-item>
+                                </nz-form-item>
                                 </ng-container>
                 
                                 <ng-template #provinceLoad>
-                                  <nz-form-item>
+                                <nz-form-item>
                                     <nz-form-label nzRequired class="fw-semibold" nzFor="province_billing" nzRequired>Province</nz-form-label>
                                     <nz-form-control>
                                         <nz-select nzDisabled nzPlaceHolder="Select Province" formControlName="province_billing">
                                         </nz-select>
                                     </nz-form-control>
-                                  </nz-form-item>
+                                </nz-form-item>
                                 </ng-template>
                             </div>
                 
@@ -668,7 +656,35 @@
                                 <nz-form-item class="mb-4">
                                     <nz-form-label nzRequired nzFor="payment_term" class="fw-semibold">Payment Term</nz-form-label>
                                     <nz-form-control>
-                                        <input nz-input formControlName="payment_term" id="payment_term" />
+                                        <div class="row">
+                                            <div class="col-6">
+                                                <nz-select nzShowSearch nzAllowClear nzPlaceHolder="Select a person" formControlName="payment_term">
+                                                    <nz-option nzValue="down_payment" nzLabel="Down Payment"></nz-option>
+                                                    <nz-option nzValue="termin" nzLabel="Termin"></nz-option>
+                                                    <nz-option nzValue="cash_on_delivery" nzLabel="Cash on Delivery"></nz-option>
+                                                </nz-select>
+                                            </div>
+                                            <div class="col-6">
+                                                <ng-container *ngIf="paymentTerm === 'down_payment'">
+                                                    <nz-input-group nzAddOnAfter="%">
+                                                        <input nz-input formControlName="payment_due_date" id="payment_due_date" />
+                                                    </nz-input-group>
+                                                </ng-container>
+                                                <ng-container *ngIf="paymentTerm === 'termin'">
+                                                    <nz-input-group nzAddOnAfter="Hari">
+                                                        <input nz-input formControlName="payment_due_date" id="payment_due_date" />
+                                                    </nz-input-group>
+                                                </ng-container>
+                                            </div>
+                                        </div>
+                                    </nz-form-control>
+                                </nz-form-item>
+                            </div>
+                            <div class="col-md-4">
+                                <nz-form-item class="mb-4">
+                                    <nz-form-label nzRequired nzFor="payment_due_date_status" class="fw-semibold">Payment Due Date</nz-form-label>
+                                    <nz-form-control>
+                                        <input nz-input formControlName="payment_due_date_status" id="payment_due_date_status" />
                                     </nz-form-control>
                                 </nz-form-item>
                             </div>

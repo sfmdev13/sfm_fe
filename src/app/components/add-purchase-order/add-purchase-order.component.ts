@@ -20,6 +20,7 @@ export class AddPurchaseOrderComponent implements OnInit {
 
   @Input() modal_type: string = '';
   @Input() dataDetail: IDataPurchaseOrder = {} as IDataPurchaseOrder;
+  @Input() inventoryList: any;
 
   pic$!: Observable<any>;
   supplier$!: Observable<any>;
@@ -34,7 +35,6 @@ export class AddPurchaseOrderComponent implements OnInit {
 
   purchaseForm = this.fb.group({
     id: [null],
-    supplier_id: ['', Validators.required],
     date: ['', Validators.required],
     description: ['', Validators.required],
     pic: [[this.pic_id], [Validators.required]],
@@ -50,21 +50,25 @@ export class AddPurchaseOrderComponent implements OnInit {
     is_pic_internal_shipping: ['', Validators.required],
     pic_billing: [[], Validators.required],
     is_pic_internal_billing: ['', Validators.required],
-    billing_id: ['', Validators.required],
+    billing_id: [''],
     province_billing: [''],
     city_billing: [''],
     address_billing: [''],
     postal_code_billing: [''],
     telephone_billing: [''],
     telephone_shipping: [''],
-    payment_term: ['', Validators.required],
+    payment_term: ['down_payment', Validators.required],
     shipping_term: ['', Validators.required],
     remarks: ['', Validators.required],
     order: this.fb.array([]),
-    order_additional: this.fb.array([])
+    order_additional: this.fb.array([]),
+    manufacture: [''],
+    project_id: [''],
+    payment_due_date: [''],
+    payment_due_date_status: [{value: 'Pay Immediately', disabled: true}]
   })
 
-  inventoryList: IRootInvenSupplier = {} as IRootInvenSupplier;
+  inventory$!: Observable<any>;
 
   totalOrder: number = 0;
   totalGrandOrder: number = 0;
@@ -93,7 +97,8 @@ export class AddPurchaseOrderComponent implements OnInit {
     city: ['', Validators.required],
     postal_code: ['', Validators.required],
     maps_url: ['', Validators.required],
-    address: ['', Validators.required]
+    address: ['', Validators.required],
+
   })
 
   categoryFormUnit = this.fb.group({
@@ -110,6 +115,9 @@ export class AddPurchaseOrderComponent implements OnInit {
 
   deletedOrderAdditional: string[] = [];
 
+  paymentTerm: string = 'down_payment'
+  terminDueDate: number = 0;
+  
   constructor(
     private fb: FormBuilder,
     private apiSvc: ApiService,
@@ -121,44 +129,77 @@ export class AddPurchaseOrderComponent implements OnInit {
 
   ngOnInit(): void {
 
-    this.purchaseForm.get('province')?.disable();
-    this.purchaseForm.get('city')?.disable();
-    this.purchaseForm.get('address')?.disable();
-    this.purchaseForm.get('postal_code')?.disable();
+    this.purchaseForm.get('payment_term')?.valueChanges.subscribe((res) => {
+      this.paymentTerm = res
 
-    this.purchaseForm.get('province_billing')?.disable();
-    this.purchaseForm.get('city_billing')?.disable();
-    this.purchaseForm.get('address_billing')?.disable();
-    this.purchaseForm.get('postal_code_billing')?.disable();
+      if(res === 'cash_on_delivery'){
+        this.purchaseForm.get('payment_due_date')?.setValue('paid');
+        this.purchaseForm.get('payment_due_date_status')?.setValue('Paid');
+        this.purchaseForm.get('payment_due_date')?.disable();
+        return
+      } 
+      
+      if(res === 'down_payment') {
+        this.purchaseForm.get('payment_due_date')?.setValue('0');
+        this.purchaseForm.get('payment_due_date_status')?.setValue('Pay Immediately');
+      }
 
-    // this.purchaseForm.get('project_type')?.valueChanges.subscribe((value) => {
-    //   if(value === 'stock'){
-    //     this.purchaseForm.get('province')?.disable();
-    //     this.purchaseForm.get('city')?.disable();
-    //     this.purchaseForm.get('address')?.disable();
-    //     this.purchaseForm.get('postal_code')?.disable();
+      this.purchaseForm.get('payment_due_date')?.enable();
+    })
 
-    //     this.purchaseForm.get('province_billing')?.disable();
-    //     this.purchaseForm.get('city_billing')?.disable();
-    //     this.purchaseForm.get('address_billing')?.disable();
-    //     this.purchaseForm.get('postal_code_billing')?.disable();
-    //   }
+    this.purchaseForm.get('payment_due_date')?.valueChanges.subscribe((res) => {
 
-    //   if(value === 'project'){
+      const date = this.purchaseForm.get('date')?.value;
 
-    //     this.purchaseForm.get('province')?.enable();
-    //     this.purchaseForm.get('city')?.enable();
-    //     this.purchaseForm.get('address')?.enable();
-    //     this.purchaseForm.get('postal_code')?.enable();
+      if(this.paymentTerm === 'termin'){
+        if(date === '') {
+          return
+        }
 
-    //     this.purchaseForm.patchValue({
-    //       province: '',
-    //       city: '',
-    //       address : '',
-    //       postal_code: ''
-    //     })
-    //   }
-    // })
+        this.terminDueDate = parseInt(res)
+
+        this.calculateDueDate(date, this.terminDueDate)
+      }
+    })
+
+    // this.purchaseForm.get('province')?.disable();
+    // this.purchaseForm.get('city')?.disable();
+    // this.purchaseForm.get('address')?.disable();
+    // this.purchaseForm.get('postal_code')?.disable();
+
+    // this.purchaseForm.get('province_billing')?.disable();
+    // this.purchaseForm.get('city_billing')?.disable();
+    // this.purchaseForm.get('address_billing')?.disable();
+    // this.purchaseForm.get('postal_code_billing')?.disable();
+
+    this.purchaseForm.get('project_type')?.valueChanges.subscribe((value) => {
+      if(value === 'stock'){
+        this.purchaseForm.get('province')?.disable();
+        this.purchaseForm.get('city')?.disable();
+        this.purchaseForm.get('address')?.disable();
+        this.purchaseForm.get('postal_code')?.disable();
+
+        this.purchaseForm.get('province_billing')?.disable();
+        this.purchaseForm.get('city_billing')?.disable();
+        this.purchaseForm.get('address_billing')?.disable();
+        this.purchaseForm.get('postal_code_billing')?.disable();
+      }
+
+      if(value === 'project'){
+
+        this.purchaseForm.get('province')?.enable();
+        this.purchaseForm.get('city')?.enable();
+        this.purchaseForm.get('address')?.enable();
+        this.purchaseForm.get('postal_code')?.enable();
+
+        this.purchaseForm.patchValue({
+          province: '',
+          city: '',
+          address : '',
+          postal_code: ''
+        })
+      }
+    })
 
     this.purchaseForm.get('province')?.valueChanges.subscribe((value) => {
       this.apiSvc.getRegenciesByProvince(value).subscribe((res) => {
@@ -285,13 +326,13 @@ export class AddPurchaseOrderComponent implements OnInit {
       const formattedDate = this.datePipe.transform(new Date(value), 'yyyy-MM-dd') || '';
 
       this.purchaseForm.patchValue({date: formattedDate})
+
+      if(this.paymentTerm === 'termin'){
+        this.calculateDueDate(formattedDate, this.terminDueDate)
+      }
     })
 
-    this.purchaseForm.get('supplier_id')?.valueChanges.subscribe((res) => {      
-      this.apiSvc.getInventoryBySupplier(res).subscribe(val => {
-        this.inventoryList = val;
-      })
-    })
+
 
     this.pic$ = this.apiSvc.getPic().pipe(
       tap(res => {
@@ -306,29 +347,30 @@ export class AddPurchaseOrderComponent implements OnInit {
 
       this.purchaseForm.patchValue({
         id: this.dataDetail.id,
-        supplier_id: this.dataDetail.supplier_id,
         date: this.dataDetail.date,
         description: this.dataDetail.description,
-        additional_cost: parseInt(this.dataDetail.additional_cost),
-        tax: this.dataDetail.tax,
-        telephone_billing: this.dataDetail.telephone_billing,
-        telephone_shipping: this.dataDetail.telephone_shipping,
-        payment_term: this.dataDetail.payment_term,
-        shipping_term: this.dataDetail.shipping_term,
+        tax: parseInt(this.dataDetail.tax),
         project_type: this.dataDetail.type,
-        remarks: this.dataDetail.remarks,
         warehouse_id: this.dataDetail.shipping.id,
-        billing_id: this.dataDetail.billing.id,
         province: parseInt(this.dataDetail.shipping.province),
         city: parseInt(this.dataDetail.shipping.city),
-        postal_code: this.dataDetail.shipping.postal_code,
         address: this.dataDetail.shipping.address,
-        maps_url: this.dataDetail.shipping.maps_url,
+        postal_code: this.dataDetail.shipping.postal_code,
+        telephone_shipping: this.dataDetail.telephone_shipping,
+        billing_id: this.dataDetail.billing.id,
         province_billing: parseInt(this.dataDetail.billing.province),
         city_billing: parseInt(this.dataDetail.billing.city),
+        telephone_billing: this.dataDetail.telephone_billing,
         postal_code_billing: this.dataDetail.billing.postal_code,
         maps_url_billing: this.dataDetail.billing.maps_url,
-        address_billing: this.dataDetail.billing.address
+        address_billing: this.dataDetail.billing.address,
+        payment_term: this.dataDetail.payment_term,
+        shipping_term: this.dataDetail.shipping_term,
+        remarks: this.dataDetail.remarks,
+        maps_url: this.dataDetail.shipping.maps_url,
+        manufacture: this.dataDetail.manufacture,
+        project_id: this.dataDetail.project_id,
+        payment_due_date: this.dataDetail.payment_due_date
       })
 
       //update PIC
@@ -365,21 +407,22 @@ export class AddPurchaseOrderComponent implements OnInit {
 
       //update orders
       this.dataDetail.po_items.forEach((order) => {
+        const product = this.inventoryList.data.find((p: any) => p.id === order.inventory_items.inventory.id);
+        console.log(product.inventory_items)
+
         const updateOrder = this.fb.group({
-          inventory_id: order.inventory.id,
-          product_code: order.inventory.code,
-          qty: parseInt(order.qty),
-          unit_measurement: order.inventory.unit.measurement,
-          unit_unit: order.inventory.unit.unit,
-          product_cost: parseInt(order.product_cost),
-          total_cost: parseInt(order.total_cost_per_product),
-          price_list: parseInt(order.inventory.price_list),
-          discount: parseInt(order.inventory.discount),
-          discount_type: order.inventory.discount_type,
-          discount_price: parseInt(order.inventory.discount_price),
-          discount_item: parseInt(order.discount),
-          discount_type_item: order.discount_type,
-          discount_price_item: order.discount_price          
+          inventory_id: [order.inventory_items.inventory.id, Validators.required],
+          qty: [parseInt(order.qty), Validators.required],
+          product_code: [order.inventory_items.inventory.id],
+          unit_measurement: [order.inventory_items.inventory.unit.measurement],
+          unit_unit: [order.inventory_items.inventory.unit.unit],
+          total_cost: [parseInt(order.total_cost_per_product)],
+          discount: [parseInt(order.discount)],
+          discount_type: [order.discount_type],
+          alias: [order.inventory_items.inventory.alias],
+          suppliersList: [product.inventory_items],
+          supplier: [order.inventory_items.id],
+          selling_price: [{value: parseInt(order.inventory_items.selling_price), disabled: true}],
         })
 
         this.order.push(updateOrder);
@@ -414,6 +457,14 @@ export class AddPurchaseOrderComponent implements OnInit {
     }
 
     
+  }
+
+  calculateDueDate(selectedDate: string, daysToAdd: number) {
+    const date = new Date(selectedDate);
+    date.setDate(date.getDate() + daysToAdd);
+    const dueDate = date.toISOString().split('T')[0]; // Returns date in 'YYYY-MM-DD' format
+
+    this.purchaseForm.get('payment_due_date_status')?.setValue(dueDate)
   }
 
   handleSubmitUnitAdd(): void{
@@ -631,16 +682,16 @@ export class AddPurchaseOrderComponent implements OnInit {
 
     this.spinnerSvc.show()
 
-    //need update
-    if(this.purchaseForm.get('project_type')?.value === 'project'){
-      this.modalSvc.error({
-        nzTitle: 'Error',
-        nzContent: 'Project type not available right now',
-        nzOkText: 'Ok',
-        nzCentered: true
-      })
-      return
-    }
+    // //need update
+    // if(this.purchaseForm.get('project_type')?.value === 'project'){
+    //   this.modalSvc.error({
+    //     nzTitle: 'Error',
+    //     nzContent: 'Project type not available right now',
+    //     nzOkText: 'Ok',
+    //     nzCentered: true
+    //   })
+    //   return
+    // }
 
     const picComplete = this.purchaseForm.get('pic')!.value.map((pic_id: any) => ({
       pic_id: pic_id,
@@ -661,11 +712,10 @@ export class AddPurchaseOrderComponent implements OnInit {
 
     if(this.order.length > 0){
       inventoryComplete = this.order.value.map((order: any) => ({
-        inventory_id: order.inventory_id,
+        inventory_item_id: order.supplier,
         qty: order.qty.toString(),
-        discount_type: order.discount_type_item,
-        discount: order.discount_item.toString(),
-        discount_price: order.discount_price_item.toString()
+        discount_type: order.discount_type,
+        discount: order.discount.toString()
       }))
     }
 
@@ -705,7 +755,10 @@ export class AddPurchaseOrderComponent implements OnInit {
         billing_id: this.purchaseForm.get('billing_id')?.value,
         shipping_id: this.purchaseForm.get('warehouse_id')?.value,
         additional_items_new: additionalComplete,
-        deleted_additional_item_ids: this.deletedOrderAdditional
+        deleted_additional_item_ids: this.deletedOrderAdditional,
+        project_id: this.purchaseForm.get('project_id')?.value,
+        payment_due_date: this.purchaseForm.get('payment_due_date')?.value,
+        manufacture: this.purchaseForm.get('manufacture')?.value,
       }
 
       this.apiSvc.editPurchaseOrder(body).subscribe({
@@ -741,8 +794,6 @@ export class AddPurchaseOrderComponent implements OnInit {
       let body = {
         id: this.purchaseForm.get('id')?.value,
         description: this.purchaseForm.get('description')?.value,
-        supplier_id: this.purchaseForm.get('supplier_id')?.value,
-        additional_cost: this.purchaseForm.get('additional_cost')?.value.toString(),
         date: this.purchaseForm.get('date')?.value,
         pic: picComplete,
         inventories: inventoryComplete,
@@ -754,7 +805,10 @@ export class AddPurchaseOrderComponent implements OnInit {
         billing_id: this.purchaseForm.get('billing_id')?.value,
         shipping_id: this.purchaseForm.get('warehouse_id')?.value,
         type: this.purchaseForm.get('project_type')?.value,
+        project_id: this.purchaseForm.get('project_id')?.value,
         payment_term: this.purchaseForm.get('payment_term')?.value,
+        payment_due_date: this.purchaseForm.get('payment_due_date')?.value,
+        manufacture: this.purchaseForm.get('manufacture')?.value,
         shipping_term: this.purchaseForm.get('shipping_term')?.value,
         remarks: this.purchaseForm.get('remarks')?.value,
         additional_items: additionalComplete
@@ -835,17 +889,16 @@ export class AddPurchaseOrderComponent implements OnInit {
 
   updateTotalCost(orderRow: FormGroup): void {
     const qty = orderRow.get('qty')?.value || 0;
-    const productCost = orderRow.get('product_cost')?.value || 0;
-    const discount = orderRow.get('discount_item')?.value || 0;
-    const discount_price = orderRow.get('discount_price_item')?.value || 0;
-    let totalCost = qty * productCost;
+    const sellingPrice = orderRow.get('selling_price')?.value || 0;
+    const discount = orderRow.get('discount')?.value || 0;
+    let totalCost = qty * sellingPrice;
 
-    if(orderRow.get('discount_type_item')?.value === 'percent'){
+    if(orderRow.get('discount_type')?.value === 'percent'){
       totalCost = totalCost - (totalCost * (parseFloat(discount)/100))
     }
 
-    if(orderRow.get('discount_type_item')?.value === 'price'){
-      totalCost = totalCost - parseInt(discount_price);
+    if(orderRow.get('discount_type')?.value === 'price'){
+      totalCost = totalCost - parseInt(discount);
     }
 
     orderRow.get('total_cost')?.setValue(totalCost, { emitEvent: false });
@@ -881,48 +934,65 @@ export class AddPurchaseOrderComponent implements OnInit {
   }
 
   cpValueChangeSubscriptions(control: FormGroup){
+    let isUpdating = false;
+
     control.get('inventory_id')?.valueChanges.subscribe(value => {
-      const product = this.inventoryList.data.find(p => p.id === value);
-
-      console.log(product?.discount_type)
-
-      control.get('product_cost')?.setValue(parseInt(product?.product_cost ?? '0', 10));
-      control.get('product_code')?.setValue(product?.code);
-
-      control.get('discount')?.setValue(parseInt(product?.discount ?? '0',10 ));
-      control.get('discount_price')?.setValue(parseInt(product?.discount_price ?? '0', 10))
-      control.get('discount_type')?.setValue(product?.discount_type)
-      control.get('price_list')?.setValue(parseInt(product?.price_list ?? '0',10));
-
-      control.get('unit_measurement')?.setValue(product?.unit.measurement);
-      control.get('unit_unit')?.setValue(product?.unit.unit);
-    })
+      if (!isUpdating) {
+        isUpdating = true;
+        const product = this.inventoryList.data.find((p: any) => p.id === value);
+        control.get('product_code')?.setValue(product?.id, { emitEvent: false }); // Disable event trigger
+        this.changeValueOrder(control, product);
+        isUpdating = false;
+      }
+    });
+    
+    control.get('product_code')?.valueChanges.subscribe(value => {
+      if (!isUpdating) {
+        isUpdating = true;
+        const product = this.inventoryList.data.find((p: any) => p.id === value);
+        control.get('inventory_id')?.setValue(product?.id, { emitEvent: false }); // Disable event trigger
+        this.changeValueOrder(control, product);
+        isUpdating = false;
+      }
+    });
 
     // Disable the controls after setting values
-    control.get('product_cost')?.disable({ emitEvent: false, onlySelf: true });
-    control.get('product_code')?.disable({ emitEvent: false, onlySelf: true });
+    control.get('alias')?.disable();
 
-    control.get('discount')?.disable({emitEvent: false, onlySelf: true });
-    control.get('discount_price')?.disable({emitEvent: false, onlySelf: true});
-    control.get('discount_type')?.disable({emitEvent: false, onlySelf: true});
-    control.get('price_list')?.disable({emitEvent: false, onlySelf: true});
-
-    control.get('discount_type_item')?.valueChanges.subscribe((res) => {
+    control.get('discount_type')?.valueChanges.subscribe((res) => {
       if(res === 'percent'){
-        control.get('discount_price_item')?.setValue(0);
+        control.get('discount')?.setValue(0);
       } 
 
       if(res === 'price'){
-        control.get('discount_item')?.setValue(0);
+        control.get('discount')?.setValue(0);
       }
     })
 
     control.get('qty')?.valueChanges.subscribe(() => this.updateTotalCost(control));
     control.get('product_cost')?.valueChanges.subscribe(() => this.updateTotalCost(control));
-    control.get('discount_price_item')?.valueChanges.subscribe(() => this.updateTotalCost(control));
-    control.get('discount_item')?.valueChanges.subscribe(() => this.updateTotalCost(control))
+    control.get('discount')?.valueChanges.subscribe(() => this.updateTotalCost(control));
+
+    control.get('supplier')?.valueChanges.subscribe(supplierId => {
+      const selectedProduct = this.inventoryList.data.find((p: any) => p.id === control.get('inventory_id')?.value);
+      const selectedSupplier = selectedProduct?.inventory_items.find((item: any) => item.id === supplierId);
+      const sellingPrice = selectedSupplier?.selling_price ?? 0;
+    
+      // Update form control with selling price or handle it as needed
+      control.get('selling_price')?.setValue(parseInt(sellingPrice) ?? 0);
+    });
 
     
+  }
+
+  changeValueOrder(control: FormGroup, product: any){
+    control.get('unit_measurement')?.setValue(product?.unit.measurement);
+    control.get('unit_unit')?.setValue(product?.unit.unit);
+    control.get('alias')?.setValue(product?.alias);
+
+    // const suppliers = product?.inventory_items.map((item: any) => item.supplier) || [];
+    control.get('supplier')?.setValue(null); // Reset supplier on product change
+    control.get('suppliersList')?.setValue(product?.inventory_items); // Set suppliers for the select input
   }
 
   get order(): FormArray {
@@ -961,19 +1031,17 @@ export class AddPurchaseOrderComponent implements OnInit {
   addOrder(): void {
     const newOrder = this.fb.group({
       inventory_id: ['', Validators.required],
-      qty: ['', Validators.required],
-      product_cost: [{value: '', disabled: true}],
-      product_code: [{value: '', disabled: true}],
-      discount: [{value: '', disabled: true}],
-      price_list: [{value: '', disabled: true}],
+      qty: [0, Validators.required],
+      product_code: [''],
       unit_measurement: [''],
       unit_unit: [''],
       total_cost: [''],
       discount_type: ['percent'],
-      discount_price: [0],
-      discount_item: [0],
-      discount_type_item: ['percent'],
-      discount_price_item: [0]
+      discount: [0],
+      alias: [''],
+      supplier: [''],
+      selling_price: [{value: 0, disabled: true}],
+      suppliersList: [[]]
     });
 
     this.order.push(newOrder);
