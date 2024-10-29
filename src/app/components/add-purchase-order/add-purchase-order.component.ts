@@ -65,7 +65,9 @@ export class AddPurchaseOrderComponent implements OnInit {
     manufacture: [''],
     project_id: [''],
     payment_due_date: [''],
-    payment_due_date_status: [{value: 'Pay Immediately', disabled: true}]
+    payment_due_date_status: [{value: 'Pay Immediately', disabled: true}],
+    tax1: [0],
+    tax2: [0]
   })
 
   inventory$!: Observable<any>;
@@ -128,6 +130,16 @@ export class AddPurchaseOrderComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
+
+    this.purchaseForm.get('tax1')?.valueChanges.subscribe(value => {
+      this.purchaseForm.get('tax2')?.setValue(value, { emitEvent: false });
+      this.updateTaxValue();
+    });
+
+      this.purchaseForm.get('tax2')?.valueChanges.subscribe(value => {
+      this.purchaseForm.get('tax1')?.setValue(value, { emitEvent: false });
+      this.updateTaxValue();
+    });
 
     this.purchaseForm.get('payment_term')?.valueChanges.subscribe((res) => {
       this.paymentTerm = res
@@ -458,6 +470,11 @@ export class AddPurchaseOrderComponent implements OnInit {
 
     
   }
+
+  updateTaxValue() {
+    const taxValue = this.purchaseForm.get('tax1')?.value;
+    this.purchaseForm.get('tax')?.setValue(taxValue, { emitEvent: false });
+}
 
   calculateDueDate(selectedDate: string, daysToAdd: number) {
     const date = new Date(selectedDate);
