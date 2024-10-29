@@ -1,3 +1,4 @@
+import { DatePipe } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { NzDrawerService } from 'ng-zorro-antd/drawer';
@@ -64,19 +65,25 @@ export class PurchaseOrderComponent implements OnInit {
 
   filterParams: any;
 
+  inventoryList: any;
+
   constructor(
     private apiSvc: ApiService,
     private fb: FormBuilder,
     private spinnerSvc: SpinnerService,
     private modalSvc: NzModalService,
     public authSvc: AuthService,
-    private drawerService: NzDrawerService
+    private drawerService: NzDrawerService,
+    private datePipe: DatePipe
   ) { }
 
   ngOnInit(): void {
 
-    this.productCat$ = this.apiSvc.getSupplierProduct().pipe();
+    this.apiSvc.getInventoryList().subscribe((res) => {
+      this.inventoryList = res;
+    })
 
+    this.productCat$ = this.apiSvc.getSupplierProduct().pipe();
 
     this.unit$ = this.apiSvc.getUnitMeasurement().pipe(
       tap(res => {
@@ -109,6 +116,23 @@ export class PurchaseOrderComponent implements OnInit {
         })
       );
     });
+  }
+
+  paymentDueDateHandler(paymentTerm: string, paymentDueDate: string, date: string): string{
+
+    if(paymentTerm === 'termin'){
+      const newDate = new Date(date);
+      newDate.setDate(newDate.getDate() + parseInt(paymentDueDate));
+      const dueDate = newDate.toISOString().split('T')[0]; // Returns date in 'YYYY-MM-DD' format
+  
+      return this.datePipe.transform(dueDate, 'fullDate') ?? dueDate;
+    }
+
+    if(paymentTerm === 'down_payment'){
+      return 'Pay Immedietaly'
+    }
+
+    return 'paid'
   }
 
   changeStatus(status: string, id: any): void{
@@ -262,7 +286,8 @@ export class PurchaseOrderComponent implements OnInit {
       nzHeight: '100vh',
       nzContentParams: {
         modal_type: this.modal_type,
-        dataDetail: data
+        dataDetail: data,
+        inventoryList: this.inventoryList
       }
     });
   }
@@ -276,7 +301,8 @@ export class PurchaseOrderComponent implements OnInit {
       nzHeight: '100vh',
       nzContentParams: {
         modal_type: this.modal_type,
-        dataDetail: data
+        dataDetail: data,
+        inventoryList: this.inventoryList
       }
     });
   }
@@ -289,7 +315,8 @@ export class PurchaseOrderComponent implements OnInit {
       nzPlacement: 'bottom',
       nzHeight: '100vh',
       nzContentParams: {
-        modal_type: this.modal_type
+        modal_type: this.modal_type,
+        inventoryList: this.inventoryList
       }
     });
   }

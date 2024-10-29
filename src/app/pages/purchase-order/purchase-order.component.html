@@ -39,7 +39,8 @@
             <th>Order No</th>
             <th>Supplier Name</th>
             <th>Description</th>
-            <th>Total Grand Order</th>
+            <th>Grand Order</th>
+            <th>Payment Due Date</th>
             <th>Status</th>
             <th>Action</th>
           </tr>
@@ -48,9 +49,12 @@
             <tr *ngFor="let data of basicTable.data">
               <td>{{ data.date | date: 'fullDate' }}</td>
               <td>{{ data.po_number }}</td>
-              <td>{{ data.supplier.name }}</td>
+              <td>
+                <ng-container *ngFor="let po of data.po_items; last as isLast">{{ po.inventory_items.supplier.name}}<span *ngIf="!isLast">, </span></ng-container>
+              </td>
               <td>{{ data.description }}</td>
-              <td>{{ data.total_price | currency:'Rp ':'symbol':'1.2-2' }} </td>
+              <td>{{ data.total_price| currency:'Rp ':'symbol':'1.2-2' }} </td>
+              <td>{{ paymentDueDateHandler(data.payment_term, data.payment_due_date, data.date) }}</td>
               <td>
                 <nz-tag [nzColor]="getColorStatus(data.status)" class="text-capitalize">{{ data.status }}</nz-tag>
               </td>
@@ -148,7 +152,8 @@
             <th>Order No</th>
             <th>Supplier Name</th>
             <th>Description</th>
-            <th>Total Grand Order</th>
+            <th>Grand Order</th>
+            <th>Payment Due Date</th>
             <th>Status</th>
             <th>Action</th>
           </tr>
