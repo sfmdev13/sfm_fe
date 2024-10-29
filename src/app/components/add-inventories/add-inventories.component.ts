@@ -457,10 +457,6 @@ export class AddInventoriesComponent implements OnInit {
     
     if(this.inventoryForm.valid){
 
-      const attachment = this.inventoryForm.get('attachment')?.value
-      const file = this.dataURLtoFile(attachment.url, `${attachment.uid}.png`);
-
-
       const inventoryItemComplete = this.inventoryItem.value.map((item: any) => ({
         id: item.id,
         supplier_id: item.supplier_id,
@@ -502,6 +498,8 @@ export class AddInventoriesComponent implements OnInit {
       })
 
       if(this.isAttachmentChange){
+        const attachment = this.inventoryForm.get('attachment')?.value
+        const file = this.dataURLtoFile(attachment.url, `${attachment.uid}.png`);
         formData.append(`attachment_new`, file);
       }
     
