@@ -14,7 +14,7 @@ export class FilterPurchaseOrderComponent implements OnInit {
   @Input() filteredPO: boolean = false
 
   filterPOForm = this.fb.group({
-    supplier: [''],
+    // supplier: [''],
     status: [''],
     sort_by: [''],
   })
