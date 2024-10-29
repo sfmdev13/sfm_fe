@@ -525,6 +525,7 @@ export class AddInventoriesComponent implements OnInit {
         },
         complete: () => {
           this.spinnerSvc.hide()
+          this.modal.destroy();
         }
       })
     } else {
@@ -608,6 +609,7 @@ export class AddInventoriesComponent implements OnInit {
         },
         complete: () => {
           this.spinnerSvc.hide();
+          this.modal.destroy();
         }
       })
     } else {
