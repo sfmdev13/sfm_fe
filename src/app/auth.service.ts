@@ -32,9 +32,14 @@ export class AuthService {
   }
 
   login(email: string, password: string): Observable<any> {
-    const url = `${this.apiUrl}/cognito/login?email=${email}&password=${password}`;
+    const url = `${this.apiUrl}/cognito/login`;
     localStorage.setItem('loginTime', new Date().getTime().toString());
-    return this.http.post(url, {});
+
+    let body = {
+      email,
+      password
+    }
+    return this.http.post(url, body);
   }
 
   setPassword(email: string, new_password: string, token: string): Observable<any> {
