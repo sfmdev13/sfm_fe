@@ -13,3 +13,4 @@ export { IRootPurchaseOrder, IDataPurchaseOrder } from "./purchase-order";
 export { IRootProject } from "./project"
 export { IRootAssembly, IDataAssembly } from "./assembly"
 export { IRootUnitReport, IDataUnitReport } from "./unit-report"
+export { IRootAllInventories, IDataAllInventories } from "./all-inventories";

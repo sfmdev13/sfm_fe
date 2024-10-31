@@ -1,25 +1,13 @@
-<div class="d-flex gap-4">
-    <nz-card nzHoverable style="width:240px" [nzCover]="coverTemplate" [routerLink]="'/inventories/inventory-list'">
-        <nz-card-meta nzTitle="Inventory List" nzDescription="Add or Edit inventory"></nz-card-meta>
-    </nz-card>
-
-    <nz-card nzHoverable style="width:240px" [nzCover]="coverPurchase" [routerLink]="'/inventories/purchase-order'">
-        <nz-card-meta nzTitle="Purchase Order" nzDescription="Purchase inventory"></nz-card-meta>
-    </nz-card>
-
-    <nz-card nzHoverable style="width:240px" [nzCover]="coverAssembly" [routerLink]="'/inventories/assembly'">
-        <nz-card-meta nzTitle="Inventory Assembly" nzDescription="Grouping inventory"></nz-card-meta>
-    </nz-card>
-</div>
-
-<ng-template #coverTemplate>
-    <img alt="example" src="/assets/images/inventory-list.png" />
-</ng-template>
-
-<ng-template #coverPurchase>
-    <img alt="example" src="/assets/images/purchase-order.png" />
-</ng-template>
-
-<ng-template #coverAssembly>
-    <img alt="example" src="/assets/images/assembly.png" />
-</ng-template>
+<div class="row row-gap-4">
+    <div class="col-md-3" *ngFor="let card of inventoryCards">
+        <nz-card
+        nzHoverable
+        style="width: 90%;"
+        [routerLink]="card.link"
+      >
+        <img class="img-fluid" [src]="card.cover" alt="example" nz-card-cover />
+        <nz-card-meta [nzTitle]="card.title" [nzDescription]="card.description"></nz-card-meta>
+      </nz-card>
+    </div>
+  </div>
+  

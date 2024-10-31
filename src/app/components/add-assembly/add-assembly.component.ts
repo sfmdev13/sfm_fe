@@ -18,6 +18,8 @@ export class AddAssemblyComponent implements OnInit {
 
   @Input() modal_type: string = '';
   @Input() dataDetail: IDataAssembly = {} as IDataAssembly;
+  @Input() inventoryList: any;
+  @Input() assemblyList: any;
 
   pic$!: Observable<any>;
 
@@ -34,16 +36,18 @@ export class AddAssemblyComponent implements OnInit {
     pic: [[this.pic_id], [Validators.required]],
     is_pic_internal: ['', [Validators.required]],
     status: [1, [Validators.required]],
+    qty: [1, [Validators.required]],
     order: this.fb.array([]),
     order_additional: this.fb.array([])
   })
 
-  inventoryList: IRootInvenSupplier = {} as IRootInvenSupplier;
+
 
   totalOrder: number = 0;
   totalGrandOrder: number = 0;
 
   totalInventoryOrder: number = 0;
+  totalInventoryOrderPerItem: number = 0;
   totalAdditionalOrder: number = 0;
 
   formDisable: boolean = false;
@@ -77,10 +81,6 @@ export class AddAssemblyComponent implements OnInit {
 
   ngOnInit(): void {
 
-    this.apiSvc.getInventoryList().subscribe((res) => {
-      this.inventoryList = res
-    })
-
     this.assemblyForm.get('status')?.valueChanges.subscribe((value: boolean) => {
       this.assemblyForm.get('status')?.setValue(value ? 1 : 0, { emitEvent: false });
     });
@@ -110,10 +110,12 @@ export class AddAssemblyComponent implements OnInit {
       const totalSumOrder = this.calculateTotalCost();
       const totalSumAdditional = this.calculateTotalCostAdditional();
 
-      this.totalInventoryOrder = totalSumOrder;
+      this.totalInventoryOrder = totalSumOrder.total;
+      this.totalInventoryOrderPerItem = totalSumOrder.totalEach;
+
       this.totalAdditionalOrder = totalSumAdditional;
 
-      this.totalOrder = totalSumOrder + totalSumAdditional;
+      this.totalOrder = totalSumOrder.total + totalSumAdditional;
   
       this.totalGrandOrder = this.totalOrder;
     });
@@ -150,7 +152,9 @@ export class AddAssemblyComponent implements OnInit {
       this.assemblyForm.patchValue({
         id: this.dataDetail.id,
         date: this.dataDetail.date,
-        description: this.dataDetail.description
+        description: this.dataDetail.description,
+        no_ref: this.dataDetail.no_ref,
+        qty: this.dataDetail.qty
       })
 
       //update PIC
@@ -178,20 +182,45 @@ export class AddAssemblyComponent implements OnInit {
       }
 
       //update orders
-      this.dataDetail.assembly_inventory_items.forEach((order) => {
-        const updateOrder = this.fb.group({
-          inventory_id: order.inventory.id,
-          product_code: order.inventory.code,
-          qty: parseInt(order.qty),
-          unit_measurement: order.inventory.unit.measurement,
-          unit_unit: order.inventory.unit.unit,
-          product_cost: parseInt(order.inventory.product_cost),
-          total_cost: parseInt(order.total_product_cost),
-          price_list: parseInt(order.inventory.price_list),
-          discount: parseInt(order.inventory.discount),
-          discount_type: order.inventory.discount_type,
-          discount_price: parseInt(order.inventory.discount_price)
-        })
+      this.dataDetail.assembly_inventory_items.forEach((order, i) => {
+        let updateOrder: any;
+        if(order.type === 'inventory'){
+          const product = this.inventoryList.data.find((p: any) => p.id === order.raw_material_inventory?.inventory.id);
+          updateOrder = this.fb.group({
+            type: [order.type],
+            inventory_id: [order.raw_material_inventory?.inventory.id, Validators.required],
+            inventory_items_id: [order.raw_material_inventory?.id],
+            supplier: [order.raw_material_inventory?.id],
+            suppliersList: [product.inventory_items],
+            product_code: [order.raw_material_inventory?.inventory.id],
+            qty: [parseInt(order.qty), Validators.required],
+            unit_unit: [order.raw_material_inventory?.inventory.unit.unit],
+            unit_measurement: [order.raw_material_inventory?.inventory.unit.measurement],
+            price_list: [{value: parseInt(order.raw_material_inventory?.inventory.price_list ?? '0'), disabled: true}],
+            discount_type_1: [{value: order.raw_material_inventory?.discount_type_1, disabled: true}],
+            discount_1: [{value: parseInt(order.raw_material_inventory?.discount_1 ?? '0'), disabled: true}],
+            discount_type_2: [{value: order.raw_material_inventory?.discount_type_2, disabled: true}],
+            discount_2: [{value: parseInt(order.raw_material_inventory?.discount_2 ?? '0'), disabled: true }],
+            product_cost_1: [{value: parseInt(order.raw_material_inventory?.product_cost_1 ?? '0'), disabled: true}],
+            product_cost_2: [{value: parseInt(order.raw_material_inventory?.product_cost_2 ?? '0'), disabled: true}],
+            total_per_cost: [parseInt(order.each_product_cost)],
+            total_cost: [parseInt(order.total_product_cost)],
+            qty_total: [order.total_qty]
+          })
+        }
+
+        if(order.type === 'assembly'){
+          updateOrder = this.fb.group({
+            type: [order.type],
+            inventory_id: [order.raw_material_assembly?.id],
+            product_code: [order.raw_material_assembly?.id],
+            qty: [order.qty],
+            price_list: [{value: parseInt(order.raw_material_assembly?.total_price ?? '0'), disabled: true}],
+            total_per_cost: [parseInt(order.each_product_cost)],
+            total_cost: [parseInt(order.total_product_cost)],
+            qty_total: [parseInt(order.total_qty)]
+          })  
+        }
 
         this.order.push(updateOrder);
         this.cpValueChangeSubscriptions(updateOrder)
@@ -220,8 +249,13 @@ export class AddAssemblyComponent implements OnInit {
     
   }
 
-  getInventoryDescription(order: any): string {
-    return this.inventoryList?.data?.find(invent => invent.id === order.get('inventory_id')?.value)?.description ?? '';
+  getInventoryDescription(order: any, type: string): string {
+
+    if(type === 'assembly'){
+      return this.assemblyList?.data?.find((invent: any) => invent.id === order.get('inventory_id')?.value)?.description ?? '';
+    }
+
+    return this.inventoryList?.data?.find((invent: any) => invent.id === order.get('inventory_id')?.value)?.description ?? '';
   }
 
   handleSubmitUnitAdd(): void{
@@ -309,8 +343,9 @@ export class AddAssemblyComponent implements OnInit {
     }));
 
     const inventoryComplete = this.order.value.map((order: any) => ({
-      inventory_id: order.inventory_id,
-      qty: order.qty.toString()
+      inventory_id: order.type === 'inventory' ? order.inventory_items_id : order.inventory_id,
+      qty: order.qty.toString(),
+      type: order.type
     }))
 
     let additionalComplete = null;
@@ -339,7 +374,8 @@ export class AddAssemblyComponent implements OnInit {
         inventories_new: inventoryComplete,
         additional_items_new: additionalComplete,
         deleted_additional_item_ids: this.deletedOrderAdditional,
-        status: this.assemblyForm.get('status')?.value
+        status: this.assemblyForm.get('status')?.value,
+        qty: this.assemblyForm.get('qty')?.value.toString()
       }
 
       this.apiSvc.updateAssembly(body).subscribe({
@@ -380,7 +416,8 @@ export class AddAssemblyComponent implements OnInit {
         pic: picComplete,
         inventories: inventoryComplete,
         additional_items: additionalComplete,
-        status: this.assemblyForm.get('status')?.value
+        status: this.assemblyForm.get('status')?.value,
+        qty: this.assemblyForm.get('qty')?.value.toString()
       }
       
       
@@ -423,13 +460,19 @@ export class AddAssemblyComponent implements OnInit {
     return total;
   }
 
-  calculateTotalCost(): number {
+  calculateTotalCost(): {total: number, totalEach: number} {
     let total = 0;
+    let totalEach = 0;
     this.order.controls.forEach((group) => {
       const totalCost = group.get('total_cost')?.value;
       total += totalCost ? parseFloat(totalCost) : 0;
     });
-    return total;
+
+    this.order.controls.forEach((group) => {
+      const totalCost = group.get('total_per_cost')?.value;
+      totalEach += totalCost ? parseFloat(totalCost) : 0;
+    })
+    return { total, totalEach };
   }
 
   closeDrawer(){
@@ -457,10 +500,32 @@ export class AddAssemblyComponent implements OnInit {
   }
 
   updateTotalCost(orderRow: FormGroup): void {
+    const type = orderRow.get('type')?.value;
+    const qtyAssembly = this.assemblyForm.get('qty')?.value || 0;
     const qty = orderRow.get('qty')?.value || 0;
-    const productCost = orderRow.get('product_cost')?.value || 0;
-    let totalCost = qty * productCost;
+    const productCost = orderRow.get('product_cost_2')?.value || 0;
 
+    let priceList = 0
+    let totalPerCost = 0
+    let totalQty = 0
+    let totalCost = 0
+
+    if(type === 'assembly'){
+      priceList = orderRow.get('price_list')?.value;
+      totalPerCost = qty * priceList;
+      totalQty = qty * qtyAssembly;
+      totalCost = totalQty * totalPerCost
+    }
+
+    if(type === 'inventory'){
+      totalPerCost = qty * productCost;
+      totalQty = qty * qtyAssembly;
+      totalCost = totalQty * totalPerCost
+    }
+
+
+    orderRow.get('qty_total')?.setValue(totalQty, { emitEvent: false });
+    orderRow.get('total_per_cost')?.setValue(totalPerCost, { emitEvent: false });
     orderRow.get('total_cost')?.setValue(totalCost, { emitEvent: false });
   }
 
@@ -494,48 +559,101 @@ export class AddAssemblyComponent implements OnInit {
   }
 
   cpValueChangeSubscriptions(control: FormGroup){
+    let isUpdating = false;
+
     control.get('inventory_id')?.valueChanges.subscribe(value => {
-      const product = this.inventoryList.data.find(p => p.id === value);
+      const type = control.get('type')?.value;
 
-      console.log(product?.discount_type)
+      if (!isUpdating) {
+        isUpdating = true;
+        let product: any;
+        if(type === 'inventory'){
+          product = this.inventoryList.data.find((p: any) => p.id === value);
+        }
 
-      control.get('product_cost')?.setValue(parseInt(product?.product_cost ?? '0', 10));
-      control.get('product_code')?.setValue(product?.code);
+        if(type === 'assembly'){
+          product = this.assemblyList.data.find((p: any) => p.id === value);          
+        }
 
-      control.get('discount')?.setValue(parseInt(product?.discount ?? '0',10 ));
-      control.get('discount_price')?.setValue(parseInt(product?.discount_price ?? '0', 10))
-      control.get('discount_type')?.setValue(product?.discount_type)
-      control.get('price_list')?.setValue(parseInt(product?.price_list ?? '0',10));
+        control.get('product_code')?.setValue(product?.id, { emitEvent: false });
+        this.changeValueOrder(control, product)
+        isUpdating = false;
+      }
+    });
+    
+    control.get('product_code')?.valueChanges.subscribe(value => {
+      const type = control.get('type')?.value;
 
-      control.get('unit_measurement')?.setValue(product?.unit.measurement);
-      control.get('unit_unit')?.setValue(product?.unit.unit);
-    })
+      if (!isUpdating) {
+        isUpdating = true;
+
+        let product;
+
+        if(type === 'inventory'){
+          product = this.inventoryList.data.find((p: any) => p.id === value);
+        }
+
+        if(type === 'assembly'){
+          product = this.assemblyList.data.find((p: any) => p.id === value);          
+        }
+        control.get('inventory_id')?.setValue(product?.id, { emitEvent: false });
+        this.changeValueOrder(control, product)
+        isUpdating = false;
+      }
+    });
+
 
     // Disable the controls after setting values
-    control.get('product_cost')?.disable({ emitEvent: false, onlySelf: true });
-    control.get('product_code')?.disable({ emitEvent: false, onlySelf: true });
+    // control.get('product_cost')?.disable({ emitEvent: false, onlySelf: true });
+    // control.get('product_code')?.disable({ emitEvent: false, onlySelf: true });
 
-    control.get('discount')?.disable({emitEvent: false, onlySelf: true });
-    control.get('discount_price')?.disable({emitEvent: false, onlySelf: true});
-    control.get('discount_type')?.disable({emitEvent: false, onlySelf: true});
-    control.get('price_list')?.disable({emitEvent: false, onlySelf: true});
+    // control.get('discount')?.disable({emitEvent: false, onlySelf: true });
+    // control.get('discount_price')?.disable({emitEvent: false, onlySelf: true});
+    // control.get('discount_type')?.disable({emitEvent: false, onlySelf: true});
+    // control.get('price_list')?.disable({emitEvent: false, onlySelf: true});
 
-    control.get('discount_type_item')?.valueChanges.subscribe((res) => {
-      if(res === 'percent'){
-        control.get('discount_price_item')?.setValue(0);
-      } 
-
-      if(res === 'price'){
-        control.get('discount_item')?.setValue(0);
-      }
-    })
 
     control.get('qty')?.valueChanges.subscribe(() => this.updateTotalCost(control));
-    control.get('product_cost')?.valueChanges.subscribe(() => this.updateTotalCost(control));
-    control.get('discount_price_item')?.valueChanges.subscribe(() => this.updateTotalCost(control));
-    control.get('discount_item')?.valueChanges.subscribe(() => this.updateTotalCost(control))
+    this.assemblyForm.get('qty')?.valueChanges.subscribe(() => this.updateTotalCost(control));
 
-    
+    control.get('supplier')?.valueChanges.subscribe(supplierId => {
+      const type = control.get('type')?.value;
+      
+      if(type === 'inventory'){
+        const selectedProduct = this.inventoryList.data.find((p: any) => p.id === control.get('inventory_id')?.value);
+        const selectedInventoryItems = selectedProduct?.inventory_items.find((item: any) => item.id === supplierId);
+      
+        // Update form control with selling price or handle it as needed
+        control.get('inventory_items_id')?.setValue(selectedInventoryItems.id);
+        // control.get('price_list')?.setValue(20000);
+        control.get('discount_type_1')?.setValue(selectedInventoryItems.discount_type_1);
+        control.get('discount_1')?.setValue(parseInt(selectedInventoryItems.discount_1));
+        control.get('discount_type_2')?.setValue(selectedInventoryItems.discount_type_2);
+        control.get('discount_2')?.setValue(parseInt(selectedInventoryItems.discount_2));
+  
+        control.get('product_cost_1')?.setValue(parseInt(selectedInventoryItems.product_cost_1));
+        control.get('product_cost_2')?.setValue(parseInt(selectedInventoryItems.product_cost_2));
+      }
+
+    });
+  }
+
+  changeValueOrder(control: FormGroup, product: any){
+    const type = control.get('type')?.value;
+
+    if(type === 'inventory'){
+      control.get('price_list')?.setValue(parseInt(product?.price_list));
+      control.get('unit_measurement')?.setValue(product?.unit.measurement);
+      control.get('unit_unit')?.setValue(product?.unit.unit);
+  
+      control.get('supplier')?.setValue(null); // Reset supplier on product change
+      control.get('suppliersList')?.setValue(product?.inventory_items);
+    }
+
+    if(type === 'assembly'){
+      control.get('price_list')?.setValue(parseInt(product?.total_price));
+    }
+
   }
 
   get order(): FormArray {
@@ -573,20 +691,25 @@ export class AddAssemblyComponent implements OnInit {
 
   addOrder(): void {
     const newOrder = this.fb.group({
+      type: ['inventory'],
       inventory_id: ['', Validators.required],
+      inventory_items_id: [''],
+      supplier: [''],
+      suppliersList: [[]],
+      product_code: [''],
       qty: ['', Validators.required],
-      product_cost: [{value: '', disabled: true}],
-      product_code: [{value: '', disabled: true}],
-      discount: [{value: '', disabled: true}],
-      price_list: [{value: '', disabled: true}],
-      unit_measurement: [''],
       unit_unit: [''],
+      unit_measurement: [''],
+      price_list: [{value: '', disabled: true}],
+      discount_type_1: [{value: 'percent', disabled: true}],
+      discount_1: [{value: '', disabled: true}],
+      product_cost_1: [{value: '', disabled: true}],
+      product_cost_2: [{value: '', disabled: true}],
+      discount_type_2: [{value: 'percent', disabled: true}],
+      discount_2: [{value: '', disabled: true}],
+      total_per_cost: [''],
       total_cost: [''],
-      discount_type: ['percent'],
-      discount_price: [0],
-      discount_item: [0],
-      discount_type_item: ['percent'],
-      discount_price_item: [0]
+      qty_total: ['']
     });
 
     this.order.push(newOrder);
@@ -600,9 +723,9 @@ export class AddAssemblyComponent implements OnInit {
   }
 
   removeOrder(index: number): void {
-    if(index === 0){
-      return;
-    } 
+    // if(index === 0){
+    //   return;
+    // } 
 
     this.order.removeAt(index);
   }

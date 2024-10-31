@@ -68,7 +68,6 @@
                         <nz-form-control>
                             <nz-select nzShowSearch nzPlaceHolder="Select PO Type" formControlName="project_type">
                                 <nz-option [nzLabel]="'Stock'" [nzValue]="'stock'"></nz-option>
-                                <nz-option [nzLabel]="'Project'" [nzValue]="'project'"></nz-option>
                             </nz-select>
                         </nz-form-control>
                     </nz-form-item>
@@ -157,7 +156,7 @@
                                                     <nz-space nzDirection="vertical" style="width: 100%">
                                                         <nz-input-number-group *nzSpaceItem nzPrefix="Rp. " style="width: 100%">
                                                             <nz-input-number     
-                                                            formControlName="selling_price"
+                                                            formControlName="price_list"
                                                             [nzFormatter]="formatter"
                                                             [nzMin]="0"
                                                             ></nz-input-number>
