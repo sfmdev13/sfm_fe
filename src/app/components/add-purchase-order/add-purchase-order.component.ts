@@ -420,7 +420,6 @@ export class AddPurchaseOrderComponent implements OnInit {
       //update orders
       this.dataDetail.po_items.forEach((order) => {
         const product = this.inventoryList.data.find((p: any) => p.id === order.inventory_items.inventory.id);
-        console.log(product.inventory_items)
 
         const updateOrder = this.fb.group({
           inventory_id: [order.inventory_items.inventory.id, Validators.required],
