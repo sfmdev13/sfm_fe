@@ -1254,4 +1254,14 @@ export class ApiService {
     const url = `${this.apiUrl}/update/unit-report`;
     return this.http.post<any>(url, body ,{ headers })
   }
+
+  getAssemblyList(): Observable<any>{
+    const token = localStorage.getItem('authToken');
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+    });
+
+    const url = `${this.apiUrl}/assembly-list`;
+    return this.http.get<any>(url, { headers })
+  }
 }

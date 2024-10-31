@@ -55,3 +55,8 @@
     padding-top: 16px;
     padding-right: 20px;
 }
+
+.table-raw th, .table-raw td {
+    min-width: 132px; /* Set this to whatever minimum width works best */
+    white-space: nowrap; /* Prevent text from wrapping */
+}

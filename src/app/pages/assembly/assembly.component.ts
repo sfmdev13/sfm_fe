@@ -61,6 +61,9 @@ export class AssemblyComponent implements OnInit {
 
   currentDate = new Date();
 
+  inventoryList: any;
+  assemblyList: any;
+
   constructor(
     private apiSvc: ApiService,
     private fb: FormBuilder,
@@ -71,6 +74,14 @@ export class AssemblyComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
+
+    this.apiSvc.getInventoryList().subscribe((res) => {
+      this.inventoryList = res
+    })
+
+    this.apiSvc.getAssemblyList().subscribe((res) => {
+      this.assemblyList = res
+    })
 
 
     this.unit$ = this.apiSvc.getUnitMeasurement().pipe(
@@ -233,7 +244,9 @@ export class AssemblyComponent implements OnInit {
       nzHeight: '100vh',
       nzContentParams: {
         modal_type: this.modal_type,
-        dataDetail: data
+        dataDetail: data,
+        inventoryList: this.inventoryList,
+        assemblyList: this.assemblyList
       }
     });
   }
@@ -247,7 +260,9 @@ export class AssemblyComponent implements OnInit {
       nzHeight: '100vh',
       nzContentParams: {
         modal_type: this.modal_type,
-        dataDetail: data
+        dataDetail: data,
+        inventoryList: this.inventoryList,
+        assemblyList: this.assemblyList
       }
     });
   }
@@ -260,7 +275,9 @@ export class AssemblyComponent implements OnInit {
       nzPlacement: 'bottom',
       nzHeight: '100vh',
       nzContentParams: {
-        modal_type: this.modal_type
+        modal_type: this.modal_type,
+        inventoryList: this.inventoryList,
+        assemblyList: this.assemblyList
       }
     });
   }
