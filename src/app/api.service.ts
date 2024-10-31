@@ -2,7 +2,7 @@ import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, map, Observable, tap } from 'rxjs';
 import { environment } from 'src/environments/environment';
-import { ICategories, ICustomerDetail, IRootAllRoles, IRootCatContact, IRootCustomer, IRootDivision, IRootEmployee, IRootInventory, IRootPurchaseOrder, IRootSupplier, IRootUnit, IRootUserByRole } from './interfaces';
+import { ICategories, ICustomerDetail, IRootAllInventories, IRootAllRoles, IRootCatContact, IRootCustomer, IRootDivision, IRootEmployee, IRootInventory, IRootPurchaseOrder, IRootSupplier, IRootUnit, IRootUserByRole } from './interfaces';
 
 @Injectable({
   providedIn: 'root'
@@ -1264,4 +1264,42 @@ export class ApiService {
     const url = `${this.apiUrl}/assembly-list`;
     return this.http.get<any>(url, { headers })
   }
+
+  getAllInventories(page: number, per_page: number): Observable<IRootAllInventories>{
+    const token = localStorage.getItem('authToken');
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+    });
+
+    const url = `${this.apiUrl}/inventory-assembly?page=${page}&per_page=${per_page}`;
+    return this.http.get<IRootAllInventories>(url, { headers })
+  }
+
+  searchAllInventories(search: string,page: number, per_page: number): Observable<IRootAllInventories>{
+    const token = localStorage.getItem('authToken');
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+    });
+
+    const url = `${this.apiUrl}/search/inventory-assembly?page=${page}&per_page=${per_page}&search=${search}`;
+    return this.http.post<IRootAllInventories>(url, { headers })
+  }
+
+  
+  filterAllInventories(params: any, page: number, per_page: number): Observable<IRootAllInventories>{
+    const token = localStorage.getItem('authToken');
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+    });
+
+    let httpParams = new HttpParams()
+    .set('type', params.type)
+    .set('page', page.toString())
+    .set('per_page', per_page.toString());
+
+    const url = `${this.apiUrl}/filter/inventory-assembly`
+
+    return this.http.post<IRootAllInventories>(url, {}, { headers, params: httpParams });
+  }
+
 }
