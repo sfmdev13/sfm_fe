@@ -433,7 +433,7 @@ export class AddPurchaseOrderComponent implements OnInit {
           alias: [order.inventory_items.inventory.alias],
           suppliersList: [product.inventory_items],
           supplier: [order.inventory_items.id],
-          selling_price: [{value: parseInt(order.inventory_items.selling_price), disabled: true}],
+          price_list: [{value: parseInt(order.inventory_items.inventory.price_list), disabled: true}],
         })
 
         this.order.push(updateOrder);
@@ -905,9 +905,9 @@ export class AddPurchaseOrderComponent implements OnInit {
 
   updateTotalCost(orderRow: FormGroup): void {
     const qty = orderRow.get('qty')?.value || 0;
-    const sellingPrice = orderRow.get('selling_price')?.value || 0;
+    const priceList = orderRow.get('price_list')?.value || 0;
     const discount = orderRow.get('discount')?.value || 0;
-    let totalCost = qty * sellingPrice;
+    let totalCost = qty * priceList;
 
     if(orderRow.get('discount_type')?.value === 'percent'){
       totalCost = totalCost - (totalCost * (parseFloat(discount)/100))
@@ -992,10 +992,10 @@ export class AddPurchaseOrderComponent implements OnInit {
     control.get('supplier')?.valueChanges.subscribe(supplierId => {
       const selectedProduct = this.inventoryList.data.find((p: any) => p.id === control.get('inventory_id')?.value);
       const selectedSupplier = selectedProduct?.inventory_items.find((item: any) => item.id === supplierId);
-      const sellingPrice = selectedSupplier?.selling_price ?? 0;
+      const priceList = selectedProduct?.price_list
     
       // Update form control with selling price or handle it as needed
-      control.get('selling_price')?.setValue(parseInt(sellingPrice) ?? 0);
+      control.get('price_list')?.setValue(parseInt(priceList) ?? 0);
     });
 
     
@@ -1056,7 +1056,7 @@ export class AddPurchaseOrderComponent implements OnInit {
       discount: [0],
       alias: [''],
       supplier: [''],
-      selling_price: [{value: 0, disabled: true}],
+      price_list: [{value: 0, disabled: true}],
       suppliersList: [[]]
     });
 
