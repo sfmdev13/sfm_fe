@@ -119,6 +119,8 @@ export class AddPurchaseOrderComponent implements OnInit {
 
   paymentTerm: string = 'down_payment'
   terminDueDate: number = 0;
+
+  taxNominal: number = 0;
   
   constructor(
     private fb: FormBuilder,
@@ -301,7 +303,9 @@ export class AddPurchaseOrderComponent implements OnInit {
       // Recalculate the total order cost
       const totalSumOrder = this.calculateTotalCost();
       const totalSumAdditional = this.calculateTotalCostAdditional();
-      const taxPercent = parseFloat(this.purchaseForm.get('tax')?.value || '0');
+      const taxPercent = parseFloat(this.purchaseForm.get('tax1')?.value || '0');
+
+      this.taxNominal = this.totalOrder * (taxPercent / 100);
   
       this.totalOrder = totalSumOrder + totalSumAdditional;
   

@@ -207,21 +207,24 @@
 
         
                         <div class="d-flex flex-column align-items-end gap-2">        
-                            <div class="d-flex align-items-center justify-content-between" style="width: 30%;">
+                            <div class="d-flex align-items-center justify-content-between" style="width: 50%;">
                                 <p class="m-0 p-0 fw-semibold">Total Order</p>
                                 <p class="m-0 p-0 fw-semibold total-order">Rp {{ totalOrder | number:'1.0-0' }}</p>
                             </div>
         
-                            <div class="d-flex align-items-center justify-content-between" style="width: 30%;">
+                            <div class="d-flex align-items-center justify-content-between" style="width: 50%;">
                                 <p class="m-0 p-0 fw-semibold">Tax</p>
-                                <nz-space nzDirection="vertical" style="width: 55%">
-                                    <nz-input-number-group nzAddOnAfter="%" class="w-100">
-                                        <nz-input-number formControlName="tax1" [nzMin]="0"></nz-input-number>
-                                    </nz-input-number-group>
-                                </nz-space>         
+                                <div class="d-flex align-items-center" style="width: 55%;">
+                                    <nz-space nzDirection="vertical" style="width: 90px;">
+                                        <nz-input-number-group nzAddOnAfter="%" class="w-100">
+                                            <nz-input-number formControlName="tax1" [nzMin]="0"></nz-input-number>
+                                        </nz-input-number-group>
+                                    </nz-space>
+                                    <p class="m-0 p-0 fw-semibold total-order">Rp {{ taxNominal | number:'1.0-0' }}</p>
+                                </div>
                             </div>
         
-                            <div class="d-flex align-items-center justify-content-between total-children" style="width: 30%;">
+                            <div class="d-flex align-items-center justify-content-between total-children" style="width: 50%;">
                                 <p class="m-0 p-0 fw-semibold">Grand Total</p>
                                 <p class="m-0 p-0 fw-semibold total-order">Rp {{ totalGrandOrder | number:'1.0-0' }}</p>
                             </div>
@@ -342,21 +345,24 @@
 
         
                         <div class="d-flex flex-column align-items-end gap-2">        
-                            <div class="d-flex align-items-center justify-content-between" style="width: 30%;">
+                            <div class="d-flex align-items-center justify-content-between" style="width: 50%;">
                                 <p class="m-0 p-0 fw-semibold">Total Order</p>
                                 <p class="m-0 p-0 fw-semibold total-order">Rp {{ totalOrder | number:'1.0-0' }}</p>
                             </div>
         
-                            <div class="d-flex align-items-center justify-content-between" style="width: 30%;">
+                            <div class="d-flex align-items-center justify-content-between" style="width: 50%;">
                                 <p class="m-0 p-0 fw-semibold">Tax</p>
-                                <nz-space nzDirection="vertical" style="width: 55%">
-                                    <nz-input-number-group nzAddOnAfter="%" class="w-100">
-                                        <nz-input-number formControlName="tax2" [nzMin]="0"></nz-input-number>
-                                    </nz-input-number-group>
-                                </nz-space>            
+                                <div class="d-flex align-items-center" style="width: 55%;">
+                                    <nz-space nzDirection="vertical" style="width: 90px;">
+                                        <nz-input-number-group nzAddOnAfter="%">
+                                            <nz-input-number formControlName="tax1" [nzMin]="0"></nz-input-number>
+                                        </nz-input-number-group>
+                                    </nz-space>
+                                    <p class="m-0 p-0 fw-semibold total-order">Rp {{ taxNominal | number:'1.0-0' }}</p>
+                                </div>
                             </div>
         
-                            <div class="d-flex align-items-center justify-content-between total-children" style="width: 30%;">
+                            <div class="d-flex align-items-center justify-content-between total-children" style="width: 50%;">
                                 <p class="m-0 p-0 fw-semibold">Grand Total</p>
                                 <p class="m-0 p-0 fw-semibold total-order">Rp {{ totalGrandOrder | number:'1.0-0' }}</p>
                             </div>

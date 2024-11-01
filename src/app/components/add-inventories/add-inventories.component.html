@@ -5,14 +5,6 @@
                 <div class="row">
                     <div class="col-md-6">
                         <nz-form-item>
-                            <nz-form-label nzRequired nzFor="description" class="fw-semibold">Product Description</nz-form-label>
-                            <nz-form-control>
-                                <input nz-input formControlName="description" id="description" />
-                            </nz-form-control>
-                        </nz-form-item>
-                    </div>
-                    <div class="col-md-6">
-                        <nz-form-item>
                             <nz-form-label nzRequired nzFor="supplier_product_id" class="fw-semibold">Product Category</nz-form-label>
                             <nz-form-control>
                                 <ng-container *ngIf="productCat$ | async as prod; else prodLoad">
@@ -35,6 +27,15 @@
                             <nz-form-label nzRequired nzFor="sub_category" class="fw-semibold">Product Sub Category</nz-form-label>
                             <nz-form-control>
                                 <input nz-input formControlName="sub_category" id="sub_category" />
+                            </nz-form-control>
+                        </nz-form-item>
+                    </div>
+
+                    <div class="col-md-6">
+                        <nz-form-item>
+                            <nz-form-label nzRequired nzFor="description" class="fw-semibold">Product Description</nz-form-label>
+                            <nz-form-control>
+                                <input nz-input formControlName="description" id="description" />
                             </nz-form-control>
                         </nz-form-item>
                     </div>
