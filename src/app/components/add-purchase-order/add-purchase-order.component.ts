@@ -295,7 +295,7 @@ export class AddPurchaseOrderComponent implements OnInit {
     //used for calculate total order and total grand order
     const orderChanges$ = this.order.valueChanges.pipe(startWith(this.order.value));
     const orderAdditionalChanges$ = this.orderAdditional.valueChanges.pipe(startWith(this.orderAdditional.value));
-    const taxChanges$ = this.purchaseForm.get('tax')?.valueChanges.pipe(startWith(this.purchaseForm.get('tax')?.value)) || [];
+    const taxChanges$ = this.purchaseForm.get('tax1')?.valueChanges.pipe(startWith(this.purchaseForm.get('tax')?.value)) || [];
   
     combineLatest([orderChanges$,orderAdditionalChanges$, taxChanges$]).subscribe(() => {
       // Recalculate the total order cost
