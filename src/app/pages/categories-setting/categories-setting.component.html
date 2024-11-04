@@ -49,5 +49,11 @@
         <ng-container *ngIf="navCategoryActive === 'billing_address'">
             <app-billing-address></app-billing-address>
         </ng-container>
+        <ng-container *ngIf="navCategoryActive === 'sub_category'">
+            <app-sub-category></app-sub-category>
+        </ng-container>
+        <ng-container *ngIf="navCategoryActive === 'manufacture'">
+            <app-manufacture></app-manufacture>
+        </ng-container>
     </nz-content>
 </nz-layout>

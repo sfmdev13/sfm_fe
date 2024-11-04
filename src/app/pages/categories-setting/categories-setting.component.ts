@@ -29,19 +29,19 @@ export class CategoriesSettingComponent implements OnInit {
         }
       ]
     },
-    {
-      name: 'Supplier Category',
-      sub_menu: [
-        // {
-        //   name: 'Supplier Source',
-        //   slug: 'supplier_source'
-        // },
-        {
-          name: 'Supplier Product',
-          slug: 'supplier_product'
-        }
-      ]
-    },
+    // {
+    //   name: 'Supplier Category',
+    //   sub_menu: [
+    //     // {
+    //     //   name: 'Supplier Source',
+    //     //   slug: 'supplier_source'
+    //     // },
+    //     {
+    //       name: 'Supplier Product',
+    //       slug: 'supplier_product'
+    //     }
+    //   ]
+    // },
     {
       name: 'Employee Category',
       sub_menu : [
@@ -54,6 +54,18 @@ export class CategoriesSettingComponent implements OnInit {
     {
       name: 'Inventory',
       sub_menu: [
+        {
+          name: 'Product Category',
+          slug: 'supplier_product'
+        },
+        {
+          name: 'Product Sub Category',
+          slug: 'sub_category'
+        },
+        {
+          name: 'Manufacture',
+          slug: 'manufacture'
+        },
         {
           name: 'Unit of Measurement',
           slug: 'uom'

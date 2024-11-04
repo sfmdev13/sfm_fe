@@ -1,0 +1,81 @@
+<h4 class="fw-bold mb-4">Manufacture</h4>
+<div class="d-flex align-items-center justify-content-between mb-3">
+    <span class="fw-light">Result of {{ total_category}} Manufacture</span>
+    <div class="row">
+        <div class="text-end">
+            <button nzSize="default" nz-button nzType="primary" (click)="showModalAdd()">Add New Category</button>
+        </div>
+    </div>
+</div>
+<ng-container *ngIf="manufacture$ | async as m; else loading">
+    <nz-table 
+        #basicTable 
+        [nzData]="m.data"         
+        [nzShowPagination]="false" 
+        nzBordered
+    >
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Description</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let data of basicTable.data">
+              <td>{{ data.name }}</td>
+              <td>{{ data.description }}</td>
+            <td>
+                <div class="d-flex gap-3">
+                    <span (click)="showModalEdit(data)" nz-icon nzType="edit" nzTheme="twotone"></span>
+                    <!-- <span (click)="showModalDelete(data.id)" nz-icon nzType="delete" nzTheme="twotone"></span> -->
+                </div>
+            </td>
+            </tr>
+        </tbody>
+      </nz-table>
+</ng-container>
+<ng-template #loading>
+    <nz-table #basicTable nzBordered [nzLoading]="true">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>description</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+        </tbody>
+      </nz-table>
+</ng-template>
+
+<nz-modal nzCentered [(nzVisible)]="isVisibleEdit" [nzTitle]="modal_type + ' Category'" (nzOnCancel)="handleCancelEdit()">
+    <ng-container *nzModalContent>
+        <app-edit-categories-modal [type]="'loyal_customer'" [form]="categoryFormEdit"></app-edit-categories-modal>
+    </ng-container>
+    <ng-container *nzModalFooter>
+        <button nz-button nzType="default" (click)="handleCancelEdit()">Cancel</button>
+        <button nz-button nzType="primary" class="text-capitalize" (click)="handleSubmitEdit()" [disabled]="!this.categoryFormEdit.valid">Submit</button>
+    </ng-container>
+</nz-modal>
+
+<nz-modal nzCentered [(nzVisible)]="isVisibleAdd" [nzTitle]="modal_type + ' Category'" (nzOnCancel)="handleCancelAdd()">
+    <ng-container *nzModalContent>
+        <app-edit-categories-modal [type]="'loyal_customer'" [form]="categoryForm"></app-edit-categories-modal>
+    </ng-container>
+    <ng-container *nzModalFooter>
+        <button nz-button nzType="default" (click)="handleCancelAdd()">Cancel</button>
+        <button nz-button nzType="primary" class="text-capitalize" (click)="handleSubmitAdd()" [disabled]="!this.categoryForm.valid">Submit</button>
+    </ng-container>
+</nz-modal>
+
+
+<nz-modal nzCentered [(nzVisible)]="isVisibleDelete" nzTitle="Delete Category" (nzOnCancel)="handleCancelDelete()">
+    <ng-container *nzModalContent>
+        <app-delete-categories-modal></app-delete-categories-modal>
+    </ng-container>
+    <ng-container *nzModalFooter>
+        <button nz-button nzType="default" nzDanger (click)="handleCancelDelete()">Cancel</button>
+        <button nz-button nzType="primary" nzDanger (click)="handleSubmitDelete()">Delete Category</button>
+    </ng-container>
+</nz-modal>
