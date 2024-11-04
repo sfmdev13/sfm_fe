@@ -310,9 +310,9 @@ export class AddSupplierModalComponent implements OnInit {
 
       this.supplierDetail.supplier_products.forEach((supp) => {
         const updateProduct = this.fb.group({
-          supplier_product_id: parseInt(supp.product_id),
-          sub_category: supp.sub_category,
-          manufacture: supp.manufacture
+          supplier_product_id: supp.product.id,
+          sub_category: supp.sub_category.id,
+          manufacture: supp.manufacture.id
         })
 
         this.productCategory.push(updateProduct)
