@@ -44,6 +44,7 @@
             <th>Supplier</th>
             <th>Buying Price</th>
             <th>Selling Price</th>
+            <th>Gross Margin</th>
             <th>Qty</th>
             <th>Status</th>
             <th>Action</th>
@@ -53,14 +54,15 @@
             <tr *ngFor="let data of basicTable.data">
               <td>{{ data.code }}</td>
               <td>{{ data.supplier_product.name }}</td>
-              <td>{{ data.sub_category }}</td>
+              <td>{{ data.sub_category.name }}</td>
               <td>{{ data.description }}</td>
-              <td>{{ data.manufacturer }}</td>
+              <td>{{ data.manufacturer.name }}</td>
               <td>
                 <ng-container *ngFor="let invent of data.inventory_items; last as isLast">{{ invent.supplier.name }}<span *ngIf="!isLast">, </span></ng-container>
               </td>
-              <td>{{ data.price_list | currency:'Rp. ':'symbol':'1.0-0'}}</td>
-              <td>{{ data.highest_selling_price | currency:'Rp. ':'symbol':'1.0-0' }}</td>
+              <td>{{ data.default_product_cost_2 | currency:'Rp. ':'symbol':'1.0-0'}}</td>
+              <td>{{ data.default_selling_price | currency:'Rp. ':'symbol':'1.0-0' }}</td>
+              <td>{{ data.default_gross_margin }} % </td>
               <td>{{ data.total_qty }}</td>
               <td>
                 <nz-tag [nzColor]="data.status === 1 ? '#1DA32C' : '#f50'">{{ data.status === 1 ? 'Active' : 'Inactive' }}</nz-tag>

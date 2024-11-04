@@ -1,3 +1,8 @@
+.table-supplier th, .table-raw td {
+    min-width: 132px; /* Set this to whatever minimum width works best */
+    white-space: nowrap; /* Prevent text from wrapping */
+}
+
 .container {
     display: flex;
     flex-wrap: nowrap;

@@ -8,10 +8,24 @@
                             <nz-form-label nzRequired nzFor="supplier_product_id" class="fw-semibold">Product Category</nz-form-label>
                             <nz-form-control>
                                 <ng-container *ngIf="productCat$ | async as prod; else prodLoad">
-                                    <nz-select nzShowSearch nzPlaceHolder="Select Product Category" formControlName="supplier_product_id">
+                                    <nz-select 
+                                        nzShowSearch 
+                                        nzPlaceHolder="Select Product Category" 
+                                        formControlName="supplier_product_id"
+                                        [nzDropdownRender]="catRender"
+                                    >
                                         <ng-container *ngFor="let prod of prod.data">
                                             <nz-option [nzLabel]="prod.name" [nzValue]="prod.id"></nz-option>
                                         </ng-container>
+                                        <ng-template #catRender>
+                                            <nz-divider class="m-0"></nz-divider>
+                                            <div class="container">
+                                                <a class="add-item" (click)="showModalCategoryAdd('product_category')">
+                                                <span nz-icon nzType="plus"></span>
+                                                Add More
+                                                </a>
+                                            </div>
+                                        </ng-template>
                                     </nz-select>
                                 </ng-container>
                                 <ng-template #prodLoad>
@@ -26,7 +40,26 @@
                         <nz-form-item>
                             <nz-form-label nzRequired nzFor="sub_category" class="fw-semibold">Product Sub Category</nz-form-label>
                             <nz-form-control>
-                                <input nz-input formControlName="sub_category" id="sub_category" />
+                                <ng-container *ngIf="subCategory$ | async as prod; else subLoad">
+                                    <nz-select nzShowSearch nzPlaceHolder="Select Sub Category" formControlName="sub_category" [nzDropdownRender]="subCatProduct">
+                                        <ng-container *ngFor="let prod of prod.data">
+                                            <nz-option [nzLabel]="prod.name" [nzValue]="prod.id"></nz-option>
+                                        </ng-container>
+                                        <ng-template #subCatProduct>
+                                            <nz-divider class="m-0"></nz-divider>
+                                            <div class="container">
+                                                <a class="add-item" (click)="showModalCategoryAdd('sub_category')">
+                                                <span nz-icon nzType="plus"></span>
+                                                    Add More
+                                                </a>
+                                            </div>
+                                        </ng-template>
+                                    </nz-select>
+                                </ng-container>
+                                <ng-template #subLoad>
+                                    <nz-select nzDisabled nzPlaceHolder="Select Sub Category" formControlName="sub_category">
+                                    </nz-select>
+                                </ng-template>
                             </nz-form-control>
                         </nz-form-item>
                     </div>
@@ -50,9 +83,28 @@
                     </div>
                     <div class="col-md-6">
                         <nz-form-item>
-                            <nz-form-label nzRequired nzFor="manufacturer" class="fw-semibold">Manufacturer</nz-form-label>
+                            <nz-form-label nzRequired nzFor="manufacturer" class="fw-semibold">Manufacture</nz-form-label>
                             <nz-form-control>
-                                <input nz-input formControlName="manufacturer" id="manufacturer" />
+                                <ng-container *ngIf="manufacture$ | async as prod; else manuLoad">
+                                    <nz-select nzShowSearch nzPlaceHolder="Select Manufacture" formControlName="manufacturer" [nzDropdownRender]="manRender">
+                                        <ng-container *ngFor="let prod of prod.data">
+                                            <nz-option [nzLabel]="prod.name" [nzValue]="prod.id"></nz-option>
+                                        </ng-container>
+                                    </nz-select>
+                                    <ng-template #manRender>
+                                        <nz-divider class="m-0"></nz-divider>
+                                        <div class="container">
+                                            <a class="add-item" (click)="showModalCategoryAdd('manufacture')">
+                                            <span nz-icon nzType="plus"></span>
+                                            Add More
+                                            </a>
+                                        </div>
+                                    </ng-template>
+                                </ng-container>
+                                <ng-template #manuLoad>
+                                    <nz-select nzDisabled nzPlaceHolder="Select Manufacture" formControlName="manufacturer">
+                                    </nz-select>
+                                </ng-template>
                             </nz-form-control>
                         </nz-form-item>
                     </div>
@@ -73,7 +125,7 @@
                                         <div class="container">
                                             <a class="add-item" (click)="showModalCategoryAdd('uom')">
                                             <span nz-icon nzType="plus"></span>
-                                            Add Category
+                                            Add More
                                             </a>
                                         </div>
                                     </ng-template>
@@ -98,7 +150,10 @@
         
                     <div class="col-md-6">
                         <nz-form-item>
-                            <nz-form-label nzRequired nzFor="unit_report" class="fw-semibold">Unit of Report</nz-form-label>
+                            <nz-form-label nzRequired nzFor="unit_report" class="fw-semibold">
+                                <span class="me-3">Unit of Report</span>
+                                <label nz-checkbox formControlName="isEqualMeasurement">Equal Measurement</label>
+                            </nz-form-label>
                             <ng-container *ngIf="unitReport$ | async as unit; else unitReportLoad">
                                 <nz-select nzShowSearch nzPlaceHolder="Select Unit" formControlName="unit_report" [nzDropdownRender]="unitRender">
                                     <nz-option
@@ -112,7 +167,7 @@
                                         <div class="container">
                                             <a class="add-item" (click)="showModalCategoryAdd('uop')">
                                             <span nz-icon nzType="plus"></span>
-                                            Add Category
+                                            Add More
                                             </a>
                                         </div>
                                     </ng-template>
@@ -138,7 +193,7 @@
                     <div class="col-md-6">
                         <nz-form-item>
                             <nz-form-label nzRequired nzFor="alias" class="fw-semibold">
-                                Source
+                                <span class="me-2">Source</span>
                                 <nz-radio-group formControlName="source">
                                     <label nz-radio nzValue="local">Local</label>
                                     <label nz-radio nzValue="import">Import</label>
@@ -189,7 +244,7 @@
             </nz-tab>
             <nz-tab nzTitle="Supplier">
                 <div class="table-responsive">
-                    <table class="table table-striped table-order">
+                    <table class="table table-striped table-order table-supplier">
                         <thead style="position: unset;">
                             <tr>
                                 <th scope="col">Supplier</th>
@@ -199,6 +254,8 @@
                                 <th scope="col">Total 2</th>
                                 <th scope="col">Price Factor</th>
                                 <th scope="col">Selling Price</th>
+                                <th scope="col">Gross Margin</th>
+                                <th scope="col">Default</th>
                                 <th scope="col">#</th>
                             </tr>
                         </thead>
@@ -302,11 +359,25 @@
                                         </div>
                                     </td>
                                     <td>
+                                        <div style="margin-top: 4px;">
+                                            <p class="m-0 p-0">{{ inventory.get('gross_margin')?.value }} %</p>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <label 
+                                            nz-checkbox 
+                                            formControlName="is_default" 
+                                            (change)="checkButton(i)"
+                                            (click)="checkButton(i)"
+                                        >
+                                        </label>
+                                    </td>
+                                    <td>
                                         <span (click)="removeInventoryItem(i)" nz-icon nzType="delete" nzTheme="twotone" [nzTwotoneColor]="'#ED0000'"></span>
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td colspan="9" class="text-center">
+                                    <td colspan="10" class="text-center">
                                         <button (click)="addInventoryItem()" nz-button nzType="primary" class="w-75">Add Inventory</button>
                                     </td>
                                 </tr>

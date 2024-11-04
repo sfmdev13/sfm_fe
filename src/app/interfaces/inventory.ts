@@ -12,8 +12,8 @@ export interface IDataInventory {
   unit: Unit
   unit_report: UnitReport
   supplier_product: SupplierProduct
-  sub_category: string
-  manufacturer: string
+  sub_category: ISubCategory
+  manufacturer: IManufacturer
   price_list: string
   tax: string
   inventory_source: string
@@ -21,8 +21,23 @@ export interface IDataInventory {
   attachment: Attachment
   status: number
   total_qty: number
-  highest_selling_price: string
+  highest_selling_price: string,
+  default_selling_price: string,
+  default_product_cost_2: string,
+  default_gross_margin: string
   inventory_items: InventoryItem[]
+}
+
+interface ISubCategory{
+  id: number
+  name: string
+  description: string
+}
+
+interface IManufacturer{
+  id: number
+  name: string
+  description: string
 }
 
 export interface Unit {
@@ -70,6 +85,8 @@ export interface InventoryItem {
   price_factor: string
   qty: string
   selling_price: string
+  gross_margin: string
+  is_default: number
 }
 
 interface ISupplier{

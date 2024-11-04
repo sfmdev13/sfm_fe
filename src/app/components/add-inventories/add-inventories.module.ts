@@ -21,7 +21,8 @@ import { CategoriesSettingTableModule } from '../categories-setting/categories-s
 import { NzUploadModule } from 'ng-zorro-antd/upload';
 import { NzMessageModule } from 'ng-zorro-antd/message';
 import { NzTabsModule } from 'ng-zorro-antd/tabs';
-
+import { NzCheckboxModule } from 'ng-zorro-antd/checkbox';
+import { NzNotificationModule } from 'ng-zorro-antd/notification';
 
 
 @NgModule({
@@ -48,7 +49,9 @@ import { NzTabsModule } from 'ng-zorro-antd/tabs';
     CategoriesSettingTableModule,
     NzUploadModule,
     NzMessageModule,
-    NzTabsModule
+    NzTabsModule,
+    NzCheckboxModule,
+    NzNotificationModule
   ],
   exports: [AddInventoriesComponent]
 })
