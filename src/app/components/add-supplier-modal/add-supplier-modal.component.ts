@@ -5,7 +5,7 @@ import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
 import { NzUploadFile } from 'ng-zorro-antd/upload';
 import { filter, Observable, tap } from 'rxjs';
 import { ApiService } from 'src/app/api.service';
-import { IDataSupplier, IRootCatContact } from 'src/app/interfaces';
+import { ICategories, IDataSupplier, IRootCatContact } from 'src/app/interfaces';
 import { SpinnerService } from 'src/app/spinner.service';
 import { EditCategoriesModalComponent } from '../categories-setting/edit-categories-modal/edit-categories-modal.component';
 
@@ -67,6 +67,8 @@ export class AddSupplierModalComponent implements OnInit {
   provinces$!: Observable<any>;
 
   suppProduct$!: Observable<IRootCatContact>;
+  subCategory$!: Observable<ICategories>;
+  manufacture$!: Observable<ICategories>;
 
   cpListOfPic: any[] = [];
 
@@ -115,7 +117,9 @@ export class AddSupplierModalComponent implements OnInit {
   ngOnInit(): void {
 
     this.apiSvc.refreshGetCategories$.subscribe(() => {
-      this.suppProduct$ = this.apiSvc.getSupplierProduct() 
+      this.suppProduct$ = this.apiSvc.getSupplierProduct();
+      this.subCategory$ = this.apiSvc.getSubCategory();
+      this.manufacture$ = this.apiSvc.getManufacture();
     })
 
     this.provinces$ = this.apiSvc.getProvinces().pipe(
@@ -130,6 +134,9 @@ export class AddSupplierModalComponent implements OnInit {
         this.suppProductList = res
       })
     )
+
+    this.subCategory$ = this.apiSvc.getSubCategory();
+    this.manufacture$ = this.apiSvc.getManufacture();
 
     this.filteredListOfPic = this.listOfPic.filter((p) => p.pic_id === this.pic_id);
 
@@ -358,7 +365,7 @@ export class AddSupplierModalComponent implements OnInit {
     this.titleCat = titleCat;
 
     this.nestedModalRef = this.modalSvc.create({
-      nzTitle: ' Add Category ' + titleCat,
+      nzTitle: ' Add ' + titleCat,
       nzContent: EditCategoriesModalComponent,
       nzComponentParams: {
         form: this.categoryForm
@@ -401,6 +408,62 @@ export class AddSupplierModalComponent implements OnInit {
             this.spinnerSvc.hide();
             this.modalSvc.error({
               nzTitle: 'Unable to Add Category',
+              nzContent: error.error.meta.message,
+              nzOkText: 'Ok',
+              nzCentered: true
+            })
+          },
+          complete: () => {
+            this.categoryForm.reset();
+          }
+        })
+      }
+
+      if(this.titleCat.toLowerCase() === 'sub category'){
+        this.apiSvc.createSupplierProduct(this.categoryForm.value.name, this.categoryForm.value.description).subscribe({
+          next: () => {
+            this.spinnerSvc.hide();
+            this.modalSvc.success({
+              nzTitle: 'Success',
+              nzContent: 'Successfully Add Sub Category',
+              nzOkText: 'Ok',
+              nzCentered: true
+            })
+            this.apiSvc.triggerRefreshCategories()
+            this.nestedModalRef?.close();
+          },
+          error: (error) => {
+            this.spinnerSvc.hide();
+            this.modalSvc.error({
+              nzTitle: 'Unable to Add Sub Category',
+              nzContent: error.error.meta.message,
+              nzOkText: 'Ok',
+              nzCentered: true
+            })
+          },
+          complete: () => {
+            this.categoryForm.reset();
+          }
+        })
+      }
+
+      if(this.titleCat.toLowerCase() === 'manufacture'){
+        this.apiSvc.createSupplierProduct(this.categoryForm.value.name, this.categoryForm.value.description).subscribe({
+          next: () => {
+            this.spinnerSvc.hide();
+            this.modalSvc.success({
+              nzTitle: 'Success',
+              nzContent: 'Successfully Add Manufacture',
+              nzOkText: 'Ok',
+              nzCentered: true
+            })
+            this.apiSvc.triggerRefreshCategories()
+            this.nestedModalRef?.close();
+          },
+          error: (error) => {
+            this.spinnerSvc.hide();
+            this.modalSvc.error({
+              nzTitle: 'Unable to Add Manufacture',
               nzContent: error.error.meta.message,
               nzOkText: 'Ok',
               nzCentered: true

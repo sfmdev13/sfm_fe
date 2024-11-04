@@ -471,7 +471,7 @@
                                           <div class="container">
                                             <a class="add-item" (click)="showModalCategoryAdd('Supplier Product')">
                                               <span nz-icon nzType="plus"></span>
-                                              Add Category
+                                              Add More
                                             </a>
                                           </div>
                                         </ng-template>
@@ -485,13 +485,51 @@
                                 </td>
                                 <td>
                                   <nz-form-control>
-                                    <input nz-input formControlName="sub_category" id="sub_category" />
-                                    </nz-form-control>
+                                    <ng-container *ngIf="subCategory$ | async as prod; else subLoad">
+                                        <nz-select nzShowSearch nzPlaceHolder="Select Sub Category" formControlName="sub_category" [nzDropdownRender]="subCatProduct">
+                                            <ng-container *ngFor="let prod of prod.data">
+                                                <nz-option [nzLabel]="prod.name" [nzValue]="prod.id"></nz-option>
+                                            </ng-container>
+                                            <ng-template #subCatProduct>
+                                                <nz-divider class="m-0"></nz-divider>
+                                                <div class="container">
+                                                    <a class="add-item" (click)="showModalCategoryAdd('Sub Category')">
+                                                    <span nz-icon nzType="plus"></span>
+                                                        Add More
+                                                    </a>
+                                                </div>
+                                            </ng-template>
+                                        </nz-select>
+                                    </ng-container>
+                                    <ng-template #subLoad>
+                                        <nz-select nzDisabled nzPlaceHolder="Select Sub Category" formControlName="sub_category">
+                                        </nz-select>
+                                    </ng-template>
+                                </nz-form-control>
                                 </td>
                                 <td>
                                   <nz-form-control>
-                                    <input nz-input formControlName="manufacture" id="manufacture" />
-                                    </nz-form-control>
+                                    <ng-container *ngIf="manufacture$ | async as prod; else manuLoad">
+                                        <nz-select nzShowSearch nzPlaceHolder="Select Manufacture" formControlName="manufacturer" [nzDropdownRender]="manRender">
+                                            <ng-container *ngFor="let prod of prod.data">
+                                                <nz-option [nzLabel]="prod.name" [nzValue]="prod.id"></nz-option>
+                                            </ng-container>
+                                        </nz-select>
+                                        <ng-template #manRender>
+                                            <nz-divider class="m-0"></nz-divider>
+                                            <div class="container">
+                                                <a class="add-item" (click)="showModalCategoryAdd('Manufacture')">
+                                                <span nz-icon nzType="plus"></span>
+                                                Add More
+                                                </a>
+                                            </div>
+                                        </ng-template>
+                                    </ng-container>
+                                    <ng-template #manuLoad>
+                                        <nz-select nzDisabled nzPlaceHolder="Select Manufacture" formControlName="manufacturer">
+                                        </nz-select>
+                                    </ng-template>
+                                </nz-form-control>
                                 </td>
                                 <td>
                                     <span (click)="removeProductCategory(i)" nz-icon nzType="delete" nzTheme="twotone" [nzTwotoneColor]="'#ED0000'"></span>
