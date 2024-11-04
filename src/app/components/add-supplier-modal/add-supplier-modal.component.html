@@ -510,7 +510,7 @@
                                 <td>
                                   <nz-form-control>
                                     <ng-container *ngIf="manufacture$ | async as prod; else manuLoad">
-                                        <nz-select nzShowSearch nzPlaceHolder="Select Manufacture" formControlName="manufacturer" [nzDropdownRender]="manRender">
+                                        <nz-select nzShowSearch nzPlaceHolder="Select Manufacture" formControlName="manufacture" [nzDropdownRender]="manRender">
                                             <ng-container *ngFor="let prod of prod.data">
                                                 <nz-option [nzLabel]="prod.name" [nzValue]="prod.id"></nz-option>
                                             </ng-container>
@@ -526,7 +526,7 @@
                                         </ng-template>
                                     </ng-container>
                                     <ng-template #manuLoad>
-                                        <nz-select nzDisabled nzPlaceHolder="Select Manufacture" formControlName="manufacturer">
+                                        <nz-select nzDisabled nzPlaceHolder="Select Manufacture" formControlName="manufacture">
                                         </nz-select>
                                     </ng-template>
                                 </nz-form-control>
