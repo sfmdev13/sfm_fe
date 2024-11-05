@@ -505,7 +505,8 @@ export class AddPurchaseOrderComponent implements OnInit {
           supplier: [order.inventory_items.id],
           product_cost_2: [{value: parseInt(order.inventory_items.product_cost_2), disabled: true}],
           product_cost_2_taxed: [{value: productCostTaxed, disabled: true}],
-          include_tax: [order.include_inventory_tax === 1 ? true : false]
+          include_tax: [order.include_inventory_tax === 1 ? true : false],
+          tax: [parseInt(product.tax)]
         })
 
         this.order.push(updateOrder);
@@ -1162,6 +1163,7 @@ export class AddPurchaseOrderComponent implements OnInit {
       const selectedSupplier = selectedProduct?.inventory_items.find((item: any) => item.id === supplierId);
       const product_cost_2 = selectedSupplier?.product_cost_2 ?? 0
       const tax = control.get('tax')?.value;
+      console.log(tax);
       const product_taxed = parseInt(product_cost_2) + (parseInt(product_cost_2) * (parseFloat(tax)/100))
       // Update form control with selling price or handle it as needed
       control.get('product_cost_2')?.setValue(parseInt(product_cost_2) ?? 0);
