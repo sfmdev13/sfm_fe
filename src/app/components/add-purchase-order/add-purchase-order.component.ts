@@ -1042,7 +1042,6 @@ export class AddPurchaseOrderComponent implements OnInit {
   updateTotalCostAdditional(orderRow: FormGroup): void{
     const qty = orderRow.get('qty')?.value || 0;
     const discount = orderRow.get('discount')?.value || 0;
-    const discount_price = orderRow.get('discount_price')?.value || 0;
     const price_list = orderRow.get('price_list')?.value || 0;
     let totalCost = orderRow.get('total_cost')?.value || 0;
 
@@ -1053,7 +1052,7 @@ export class AddPurchaseOrderComponent implements OnInit {
     }
 
     if(orderRow.get('discount_type')?.value === 'price'){
-      totalCost = totalCost - parseInt(discount_price);
+      totalCost = totalCost - parseInt(discount);
     }
 
     orderRow.get('total_cost')?.setValue(totalCost, { emitEvent: false });

@@ -1,5 +1,5 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { Injectable, NgZone } from '@angular/core';
 import { Router } from '@angular/router';
 import { NzModalService } from 'ng-zorro-antd/modal';
 import { Observable } from 'rxjs';
@@ -16,11 +16,38 @@ export class AuthService {
   
   private userRoles: string[] = []
 
+  private activityTimeout: any;
+
   constructor(
     private http: HttpClient, 
     private router: Router,
-    private modal: NzModalService
-  ) {}
+    private modal: NzModalService,
+    private ngZone: NgZone
+  ) {
+    this.setupActivityListener();
+  }
+
+  private setupActivityListener(): void {
+    this.ngZone.runOutsideAngular(() => {
+      const events = ['click', 'mousemove', 'keypress', 'scroll'];
+
+      events.forEach(event => {
+        window.addEventListener(event, () => this.resetTimeout());
+      });
+    });
+  }
+
+  private resetTimeout(): void {
+    if (this.activityTimeout) {
+      clearTimeout(this.activityTimeout);
+    }
+    
+    this.activityTimeout = setTimeout(() => {
+      if (!this.isAuthenticated()) {
+        // Handle logout or warning
+      }
+    }, 1000); // Check authentication status after 1 second of inactivity
+  }
 
   hasAction(action: string): boolean {
     this.userRoles = localStorage.getItem('actions') as unknown as string[]
