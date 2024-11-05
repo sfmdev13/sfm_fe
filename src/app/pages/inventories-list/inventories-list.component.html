@@ -224,48 +224,124 @@
 </nz-modal>
 
 <!-- detail modal -->
-<nz-modal nzCentered [(nzVisible)]="isVisibleDetail" [nzTitle]="'Detail Inventory'" (nzOnCancel)="handleCancelDetail()">
+<nz-modal nzCentered nzWidth="900px" [(nzVisible)]="isVisibleDetail" [nzTitle]="'Detail Inventory'" (nzOnCancel)="handleCancelDetail()">
   <ng-container *nzModalContent>
     <div class="d-flex flex-column gap-2">  
-  
-      <div class="row">
-          <div class="col-md-4">
-              <p class="m-0 p-0 fw-semibold">Inventory Code</p>
-              <p class="fw-light text-capitalize">{{ dataDetail.code }}</p>
-          </div>
-          <div class="col-md-4">
-              <p class="m-0 p-0 fw-semibold">Description</p>
-              <p class="fw-light">{{ dataDetail.description }}</p>
-          </div>
-          <div class="col-md-4">
+
+      <div class="mt-3">
+        <a [href]="dataDetail.attachment.file_url" target="_blank" rel="noopener noreferrer">
+            <nz-avatar [nzSize]="100" [nzSrc]="dataDetail.attachment.file_url" class="mb-3"></nz-avatar>
+        </a>
+      </div>
+
+      <nz-tabset>
+        <nz-tab nzTitle="Basic Information">
+          <div class="row">
+            <div class="col-md-4">
               <p class="m-0 p-0 fw-semibold">Product Category</p>
               <p class="fw-light">{{ dataDetail.supplier_product.name }}</p>
+            </div>
+            <div class="col-md-4">
+              <p class="m-0 p-0 fw-semibold">Product Sub Category</p>
+              <p class="fw-light">{{ dataDetail.sub_category.name }}</p>
+            </div>
+            <div class="col-md-4">
+              <p class="m-0 p-0 fw-semibold">Description</p>
+              <p class="fw-light">{{ dataDetail.description }}</p>
+            </div>
+            <div class="col-md-4">
+                <p class="m-0 p-0 fw-semibold">Inventory Code</p>
+                <p class="fw-light text-capitalize">{{ dataDetail.code }}</p>
+            </div>
+            <div class="col-md-4">
+                <p class="m-0 p-0 fw-semibold">Unit of Measurement</p>
+                <p *ngIf="dataDetail.unit.unit; else noUnit" class="fw-light text-capitalize">{{ dataDetail.unit.measurement }} <sup>{{ dataDetail.unit.unit }}</sup> </p>
+                <ng-template #noUnit>
+                  <p class="fw-light text-capitalize">{{ dataDetail.unit.measurement }}</p>                
+                </ng-template>
+            </div>
+            <div class="col-md-4">
+              <p class="m-0 p-0 fw-semibold">Unit of Report</p>
+              <div *ngIf="dataDetail.unit_report">
+                <p class="m-0 p-0">{{ dataDetail.unit_report.name }}</p>
+              </div>
+              <div *ngIf="dataDetail.unit_report === null">
+                <p *ngIf="dataDetail.unit.unit; else noUnit" class="fw-light text-capitalize">{{ dataDetail.unit.measurement }} <sup>{{ dataDetail.unit.unit }}</sup> </p>
+                <ng-template #noUnit>
+                  <p class="fw-light text-capitalize">{{ dataDetail.unit.measurement }}</p>                
+                </ng-template>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <p class="m-0 p-0 fw-semibold">Price List</p>
+              <p class="fw-light text-capitalize">{{ dataDetail.price_list | currency:'Rp. ':'symbol':'1.0-0' }}</p>
+            </div>
+            <div class="col-md-4">
+              <p class="m-0 p-0 fw-semibold">Tax</p>
+              <p class="fw-light text-capitalize">{{ dataDetail.tax }} % </p>
+            </div>
+            <div class="col-md-4">
+              <p class="m-0 p-0 fw-semibold">Quantity</p>
+              <p class="fw-light text-capitalize">{{ dataDetail.total_qty }}</p>
           </div>
-          <div class="col-md-4">
-              <p class="m-0 p-0 fw-semibold">Unit of Measurement</p>
-              <p *ngIf="dataDetail.unit.unit; else noUnit" class="fw-light text-capitalize">{{ dataDetail.unit.measurement }} <sup>{{ dataDetail.unit.unit }}</sup> </p>
-              <ng-template #noUnit>
-                <p class="fw-light text-capitalize">{{ dataDetail.unit.measurement }}</p>                
-              </ng-template>
-          </div>
-          <div class="col-md-4">
-            <p class="m-0 p-0 fw-semibold">Price List</p>
-            <p class="fw-light text-capitalize">{{ dataDetail.price_list | currency:'Rp. ':'symbol':'1.0-0' }}</p>
-          </div>
-          <div class="col-md-4">
-              <p class="m-0 p-0 fw-semibold">Selling Price</p>
-              <p class="fw-light text-capitalize">{{ dataDetail.highest_selling_price | currency:'Rp. ':'symbol':'1.0-0' }}</p>
-          </div>
-          <div class="col-md-4">
-            <p class="m-0 p-0 fw-semibold">Quantity</p>
-            <p class="fw-light text-capitalize">{{ dataDetail.total_qty }}</p>
         </div>
-      </div>
-  
-      <div>
-          <p class="m-0 p-0 fw-semibold">Status</p>
-          <nz-tag [nzColor]="dataDetail.status === 1 ? '#1DA32C' : '#f50'">{{ dataDetail.status === 1 ? 'Active' : 'Inactive' }}</nz-tag>
-      </div>
+    
+        <div>
+            <p class="m-0 p-0 fw-semibold">Status</p>
+            <nz-tag [nzColor]="dataDetail.status === 1 ? '#1DA32C' : '#f50'">{{ dataDetail.status === 1 ? 'Active' : 'Inactive' }}</nz-tag>
+        </div>
+        </nz-tab>
+        <nz-tab nzTitle="Supplier">
+          <ng-container *ngFor="let item of dataDetail.inventory_items; let isFirst = first">
+            <nz-divider *ngIf="!isFirst "></nz-divider>
+            <div class="row">
+              <div class="col-12">
+                <p class="m-0 p-0 fw-semibold">Supplier Name</p>
+                <p class="fw-light">{{ item.supplier.nib }}</p>
+              </div>
+
+              <div class="col-md-6">
+                <p class="m-0 p-0 fw-semibold">Product Cost 1</p>
+                <p class="fw-light">{{ item.product_cost_1| currency:'Rp. ':'symbol':'1.0-0' }}</p>
+              </div>
+
+              <div class="col-md-6">
+                <p class="m-0 p-0 fw-semibold">Discount 1</p>
+                <p *ngIf="item.discount_type_1 === 'price'" class="fw-light">{{ item.discount_1 | currency:'Rp. ':'symbol':'1.0-0' }} </p>
+                <p *ngIf="item.discount_type_1 === 'percent'" class="fw-light">{{ item.discount_1 }} % </p>
+              </div>
+
+              <div class="col-md-6">
+                <p class="m-0 p-0 fw-semibold">Product Cost 2</p>
+                <p class="fw-light">{{ item.product_cost_2 | currency:'Rp. ':'symbol':'1.0-0' }}</p>
+              </div>
+
+              <div class="col-md-6">
+                <p class="m-0 p-0 fw-semibold">Discount 2</p>
+                <p *ngIf="item.discount_type_2 === 'price'" class="fw-light">{{ item.discount_2 | currency:'Rp. ':'symbol':'1.0-0' }} </p>
+                <p *ngIf="item.discount_type_2 === 'percent'" class="fw-light">{{ item.discount_2 }} % </p>
+              </div>
+
+              <div class="col-md-6">
+                <p class="m-0 p-0 fw-semibold">Selling Price</p>
+                <p class="fw-light">{{ item.selling_price | currency:'Rp. ':'symbol':'1.0-0' }}</p>
+              </div>
+
+              <div class="col-md-6">
+                <p class="m-0 p-0 fw-semibold">Gross Margin</p>
+                <p class="fw-light">{{ item.gross_margin }} %</p>
+              </div>
+
+              <div class="col-md-4">
+                <p class="m-0 p-0 fw-semibold">Default Supplier</p>
+                <p class="fw-light">{{ item.is_default ? 'Yes' : 'No' }} </p>
+              </div>
+
+            </div>
+          </ng-container>
+        </nz-tab>
+      </nz-tabset>
+
     </div>
   </ng-container>
   <ng-container *nzModalFooter>

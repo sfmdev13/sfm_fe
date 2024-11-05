@@ -104,7 +104,7 @@
                 <nz-tabset>
                     <nz-tab nzTitle="Inventory Purchase">
                         <div class="table-responsive">
-                            <table class="table table-striped table-order">
+                            <table class="table table-striped table-order table-purchase">
                                 <thead style="position: unset;">
                                     <tr>
                                         <th scope="col">Part Number</th>
@@ -172,23 +172,26 @@
                                             </td>
                                             <td>
                                                 <nz-form-control>
-                                                    <nz-space nzDirection="vertical" style="width: 100%">
-                                                        <nz-input-number-group *nzSpaceItem nzPrefix="Rp. " style="width: 100%">
-                                                            <nz-input-number
-                                                            *ngIf="order.get('include_tax')?.value"
-                                                            formControlName="product_cost_2_taxed"
-                                                            [nzFormatter]="formatter"
-                                                            [nzMin]="0"
-                                                            ></nz-input-number>
-                                                            <nz-input-number
-                                                            *ngIf="!order.get('include_tax')?.value"
-                                                            formControlName="product_cost_2"
-                                                            [nzFormatter]="formatter"
-                                                            [nzMin]="0"
-                                                            ></nz-input-number>
-                                                        </nz-input-number-group>
-                                                    </nz-space>
-                                                    <label class="mt-2" nz-checkbox formControlName="include_tax">Include Tax</label>
+                                                    <div class="d-flex flex-column">
+                                                        <nz-space nzDirection="vertical" style="width: 100%">
+                                                            <nz-input-number-group *nzSpaceItem nzPrefix="Rp. " style="width: 100%">
+                                                                <nz-input-number
+                                                                *ngIf="order.get('include_tax')?.value"
+                                                                formControlName="product_cost_2_taxed"
+                                                                [nzFormatter]="formatter"
+                                                                [nzMin]="0"
+                                                                ></nz-input-number>
+                                                                <nz-input-number
+                                                                *ngIf="!order.get('include_tax')?.value"
+                                                                formControlName="product_cost_2"
+                                                                [nzFormatter]="formatter"
+                                                                [nzMin]="0"
+                                                                ></nz-input-number>
+                                                            </nz-input-number-group>
+                                                        </nz-space>
+                                                        <label class="mt-2" nz-checkbox formControlName="include_tax">Include Tax</label>
+                                                    </div>
+ 
                                                 </nz-form-control>  
                                             </td>
                                             <td>
@@ -232,7 +235,7 @@
                             </table>
                         </div>
 
-                        <div class="w-50 ms-auto">
+                        <div class="w-50 ms-auto mt-4">
                             <div class="row mb-4">
                                 <div class="col-md-5">
                                     <p class="m-0 p-0 fw-semibold">Total Order</p>
