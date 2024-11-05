@@ -420,7 +420,7 @@ export class AddSupplierModalComponent implements OnInit {
       }
 
       if(this.titleCat.toLowerCase() === 'sub category'){
-        this.apiSvc.createSupplierProduct(this.categoryForm.value.name, this.categoryForm.value.description).subscribe({
+        this.apiSvc.createSubCategory(this.categoryForm.value.name, this.categoryForm.value.description).subscribe({
           next: () => {
             this.spinnerSvc.hide();
             this.modalSvc.success({
@@ -448,7 +448,7 @@ export class AddSupplierModalComponent implements OnInit {
       }
 
       if(this.titleCat.toLowerCase() === 'manufacture'){
-        this.apiSvc.createSupplierProduct(this.categoryForm.value.name, this.categoryForm.value.description).subscribe({
+        this.apiSvc.createManufacture(this.categoryForm.value.name, this.categoryForm.value.description).subscribe({
           next: () => {
             this.spinnerSvc.hide();
             this.modalSvc.success({
