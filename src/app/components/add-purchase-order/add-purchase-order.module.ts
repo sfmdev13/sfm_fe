@@ -14,6 +14,7 @@ import { NzInputNumberModule } from 'ng-zorro-antd/input-number';
 import { NzSpaceModule } from 'ng-zorro-antd/space';
 import { NzTabsModule } from 'ng-zorro-antd/tabs';
 import { NzRadioModule } from 'ng-zorro-antd/radio';
+import { NzCheckboxModule } from 'ng-zorro-antd/checkbox';
 
 
 @NgModule({
@@ -33,7 +34,8 @@ import { NzRadioModule } from 'ng-zorro-antd/radio';
     NzInputNumberModule,
     NzSpaceModule,
     NzTabsModule,
-    NzRadioModule
+    NzRadioModule,
+    NzCheckboxModule
   ],
   exports: [AddPurchaseOrderComponent],
   providers: [DatePipe]
