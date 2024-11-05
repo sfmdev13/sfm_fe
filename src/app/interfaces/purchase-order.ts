@@ -27,10 +27,18 @@ export interface IDataPurchaseOrder {
   billing: Billing
   payment_term: string
   payment_due_date: string
-  manufacture: string
   project_id: any
   shipping_term: string
   remarks: string
+  manufacture: IManufacture
+  discount: string
+  discount_type: string
+}
+
+interface IManufacture{
+  id: number
+  name: string
+  description: string
 }
 
 export interface Pic {
@@ -45,6 +53,7 @@ export interface PoItem {
   discount_type: string
   discount: string
   total_cost_per_product: string
+  include_inventory_tax: number;
 }
 
 export interface InventoryItems {

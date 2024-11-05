@@ -5,7 +5,7 @@ import { NzDrawerRef } from 'ng-zorro-antd/drawer';
 import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
 import { combineLatest, Observable, startWith, tap } from 'rxjs';
 import { ApiService } from 'src/app/api.service';
-import { IDataPurchaseOrder, IRootInvenSupplier, IRootInventory } from 'src/app/interfaces';
+import { ICategories, IDataPurchaseOrder, IRootInvenSupplier, IRootInventory } from 'src/app/interfaces';
 import { SpinnerService } from 'src/app/spinner.service';
 import { EditCategoriesModalComponent } from '../categories-setting/edit-categories-modal/edit-categories-modal.component';
 import { AddWarehouseAddressComponent } from '../categories-setting/add-warehouse-address/add-warehouse-address.component';
@@ -67,7 +67,13 @@ export class AddPurchaseOrderComponent implements OnInit {
     payment_due_date: [''],
     payment_due_date_status: [{value: 'Pay Immediately', disabled: true}],
     tax1: [0],
-    tax2: [0]
+    tax2: [0],
+    discount_total_1: [0],
+    discount_total_2: [0],
+    discount_total: [0],
+    discount_total_type_1: ['percent'],
+    discount_total_type_2: ['percent'],
+    discount_total_type: ['percent']
   })
 
   inventory$!: Observable<any>;
@@ -111,9 +117,17 @@ export class AddPurchaseOrderComponent implements OnInit {
     description: ['', Validators.required]
   })
 
+  categoryFormBasic = this.fb.group({
+    id: [''],
+    name: ['', Validators.required],
+    description: ['', Validators.required]
+  })
+
+
   modalRef?: NzModalRef;
   modalRefBilling?: NzModalRef;
   ModalRefUnit?: NzModalRef;
+  modalRefCat?: NzModalRef;
 
   deletedOrderAdditional: string[] = [];
 
@@ -121,6 +135,9 @@ export class AddPurchaseOrderComponent implements OnInit {
   terminDueDate: number = 0;
 
   taxNominal: number = 0;
+  discountNominal: number = 0;
+
+  manufacture$!: Observable<ICategories>;
   
   constructor(
     private fb: FormBuilder,
@@ -132,6 +149,30 @@ export class AddPurchaseOrderComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
+
+    this.purchaseForm.get('discount_total_type_2')?.valueChanges.subscribe((value) => {
+      this.purchaseForm.get('discount_total_type_1')?.setValue(value, { emitEvent: false })
+      this.purchaseForm.get('discount_total_2')?.setValue(0)
+      this.updateDiscountTotalValue();
+    })
+
+
+    this.purchaseForm.get('discount_total_type_1')?.valueChanges.subscribe((value) => {
+      this.purchaseForm.get('discount_total_type_2')?.setValue(value, { emitEvent: false })
+      this.purchaseForm.get('discount_total_1')?.setValue(0)
+      this.updateDiscountTotalValue();
+    })
+
+
+    this.purchaseForm.get('discount_total_2')?.valueChanges.subscribe(value => {
+      this.purchaseForm.get('discount_total_1')?.setValue(value, { emitEvent: false });
+      this.updateDiscountTotalValue();
+    });
+
+    this.purchaseForm.get('discount_total_1')?.valueChanges.subscribe(value => {
+      this.purchaseForm.get('discount_total_2')?.setValue(value, { emitEvent: false });
+      this.updateDiscountTotalValue();
+    });
 
     this.purchaseForm.get('tax1')?.valueChanges.subscribe(value => {
       this.purchaseForm.get('tax2')?.setValue(value, { emitEvent: false });
@@ -252,6 +293,8 @@ export class AddPurchaseOrderComponent implements OnInit {
           this.unitList = unit.data
         } )
       )
+
+      this.manufacture$ = this.apiSvc.getManufacture();
     })
 
     this.unit$ = this.apiSvc.getUnitMeasurement().pipe(
@@ -271,6 +314,8 @@ export class AddPurchaseOrderComponent implements OnInit {
         this.billingList = b.data
       })
     )
+
+    this.manufacture$ = this.apiSvc.getManufacture();
 
     this.purchaseForm.get('warehouse_id')?.valueChanges.subscribe((value) => {
       const selectedWarehouse = this.warehouseList.find(w => w.id === value);
@@ -298,18 +343,29 @@ export class AddPurchaseOrderComponent implements OnInit {
     const orderChanges$ = this.order.valueChanges.pipe(startWith(this.order.value));
     const orderAdditionalChanges$ = this.orderAdditional.valueChanges.pipe(startWith(this.orderAdditional.value));
     const taxChanges$ = this.purchaseForm.get('tax1')?.valueChanges.pipe(startWith(this.purchaseForm.get('tax')?.value)) || [];
+    const discountChanges$ = this.purchaseForm.get('discount_total_1')?.valueChanges.pipe(startWith(this.purchaseForm.get('discount_total')?.value))
   
-    combineLatest([orderChanges$,orderAdditionalChanges$, taxChanges$]).subscribe(() => {
+    combineLatest([orderChanges$,orderAdditionalChanges$, taxChanges$, discountChanges$ ]).subscribe(() => {
       // Recalculate the total order cost
       const totalSumOrder = this.calculateTotalCost();
       const totalSumAdditional = this.calculateTotalCostAdditional();
       const taxPercent = parseFloat(this.purchaseForm.get('tax1')?.value || '0');
+      const discount_total = parseFloat(this.purchaseForm.get('discount_total_1')?.value || '0');
+      const discountType = this.purchaseForm.get('discount_total_type_1')?.value || '0';
 
       this.taxNominal = this.totalOrder * (taxPercent / 100);
-  
+
+      if(discountType === 'percent'){
+        this.discountNominal = this.totalOrder * (discount_total/100)
+      }
+
+      if(discountType === 'price'){
+        this.discountNominal = discount_total
+      }
+
       this.totalOrder = totalSumOrder + totalSumAdditional;
   
-      this.totalGrandOrder = this.totalOrder + (this.totalOrder * (taxPercent / 100));
+      this.totalGrandOrder = this.totalOrder + this.taxNominal - this.discountNominal;
     });
 
 
@@ -365,7 +421,9 @@ export class AddPurchaseOrderComponent implements OnInit {
         id: this.dataDetail.id,
         date: this.dataDetail.date,
         description: this.dataDetail.description,
-        tax: parseInt(this.dataDetail.tax),
+        tax: parseFloat(this.dataDetail.tax),
+        tax1: parseFloat(this.dataDetail.tax),
+        tax2: parseFloat(this.dataDetail.tax),
         project_type: this.dataDetail.type,
         warehouse_id: this.dataDetail.type === 'stock' ? this.dataDetail.shipping.id : '',
         province: parseInt(this.dataDetail.shipping.province),
@@ -384,9 +442,15 @@ export class AddPurchaseOrderComponent implements OnInit {
         shipping_term: this.dataDetail.shipping_term,
         remarks: this.dataDetail.remarks,
         maps_url: this.dataDetail.shipping.maps_url,
-        manufacture: this.dataDetail.manufacture,
+        manufacture: this.dataDetail.manufacture.id,
         project_id: this.dataDetail.project_id,
-        payment_due_date: this.dataDetail.payment_due_date
+        payment_due_date: this.dataDetail.payment_due_date,
+        discount_total_type: this.dataDetail.discount_type,
+        discount_total_type_1: this.dataDetail.discount_type,
+        discount_total_type_2: this.dataDetail.discount_type,
+        discount_total: parseFloat(this.dataDetail.discount),
+        discount_total_1: parseFloat(this.dataDetail.discount),
+        discount_total_2: parseFloat(this.dataDetail.discount),
       })
 
       //update PIC
@@ -425,6 +489,8 @@ export class AddPurchaseOrderComponent implements OnInit {
       this.dataDetail.po_items.forEach((order) => {
         const product = this.inventoryList.data.find((p: any) => p.id === order.inventory_items.inventory.id);
 
+        const productCostTaxed = parseInt(order.inventory_items.product_cost_2) + ( parseInt(order.inventory_items.product_cost_2) * (parseFloat(product.tax) / 100) )
+
         const updateOrder = this.fb.group({
           inventory_id: [order.inventory_items.inventory.id, Validators.required],
           qty: [parseInt(order.qty), Validators.required],
@@ -437,7 +503,9 @@ export class AddPurchaseOrderComponent implements OnInit {
           alias: [order.inventory_items.inventory.alias],
           suppliersList: [product.inventory_items],
           supplier: [order.inventory_items.id],
-          price_list: [{value: parseInt(order.inventory_items.inventory.price_list), disabled: true}],
+          product_cost_2: [{value: parseInt(order.inventory_items.product_cost_2), disabled: true}],
+          product_cost_2_taxed: [{value: productCostTaxed, disabled: true}],
+          include_tax: [order.include_inventory_tax === 1 ? true : false]
         })
 
         this.order.push(updateOrder);
@@ -473,11 +541,91 @@ export class AddPurchaseOrderComponent implements OnInit {
 
     
   }
+  
+  handleCategorySubmitAdd(type: string): void{
+
+    this.spinnerSvc.show();
+
+    if(type === 'manufacture'){
+      if(this.categoryFormBasic.valid){
+        this.apiSvc.createManufacture(this.categoryFormBasic.value.name, this.categoryFormBasic.value.description).subscribe({
+          next: () => {
+  
+            this.spinnerSvc.hide();
+            this.modalSvc.success({
+              nzTitle: 'Success',
+              nzContent: 'Successfully Add Manufacture',
+              nzOkText: 'Ok',
+              nzCentered: true
+            })
+            this.apiSvc.triggerRefreshCategories();
+            this.categoryFormBasic.reset();
+            this.modalRefCat?.close();
+          },
+          error: (error) => {
+            this.spinnerSvc.hide();
+            this.modalSvc.error({
+              nzTitle: 'Unable to Add Manufacture',
+              nzContent: error.error.meta.message,
+              nzOkText: 'Ok',
+              nzCentered: true
+            })
+          }
+        })    
+      } else {
+        this.spinnerSvc.hide();
+        this.modalSvc.error({
+          nzTitle: 'Unable to Add',
+          nzContent: 'Need to fill all input',
+          nzOkText: 'Ok',
+          nzCentered: true
+        })      
+      }
+    }
+  }
+
+
+  handleCancelCategoryAdd(): void{
+    this.modalRefCat?.close();
+  }
+
+  showModalCategoryAdd(titleCat: string): void{
+    if(titleCat === 'manufacture'){
+      this.modalRefCat = this.modalSvc.create({
+        nzTitle: ' Add Manufacture',
+        nzContent: EditCategoriesModalComponent,
+        nzComponentParams: {
+          form: this.categoryFormBasic,
+          type: titleCat
+        },
+        nzWidth: '500px',
+        nzFooter: [
+          {
+            label: 'Cancel',
+            onClick: () => this.handleCancelCategoryAdd(),
+            type: 'default'
+          },
+          {
+            label: 'Confirm',
+            onClick: () => this.handleCategorySubmitAdd('manufacture'),
+            type: 'primary'
+          }
+        ]
+      });
+    }
+  }
+
+  updateDiscountTotalValue(){
+    const discountValue = this.purchaseForm.get('discount_total_1')?.value;
+    const discountTypeValue = this.purchaseForm.get('discount_total_type_1')?.value;
+    this.purchaseForm.get('discount_total')?.setValue(discountValue, { emitEvent: false });
+    this.purchaseForm.get('discount_total_type')?.setValue(discountTypeValue, { emitEvent: false });
+  }
 
   updateTaxValue() {
     const taxValue = this.purchaseForm.get('tax1')?.value;
     this.purchaseForm.get('tax')?.setValue(taxValue, { emitEvent: false });
-}
+  }
 
   calculateDueDate(selectedDate: string, daysToAdd: number) {
     const date = new Date(selectedDate);
@@ -735,7 +883,8 @@ export class AddPurchaseOrderComponent implements OnInit {
         inventory_item_id: order.supplier,
         qty: order.qty.toString(),
         discount_type: order.discount_type,
-        discount: order.discount.toString()
+        discount: order.discount.toString(),
+        include_inventory_tax: order.include_tax ? 1 : 0
       }))
     }
 
@@ -779,6 +928,8 @@ export class AddPurchaseOrderComponent implements OnInit {
         project_id: this.purchaseForm.get('project_id')?.value,
         payment_due_date: this.purchaseForm.get('payment_due_date')?.value,
         manufacture: this.purchaseForm.get('manufacture')?.value,
+        discount_type: this.purchaseForm.get('discount_total_type')?.value,
+        discount: this.purchaseForm.get('discount_total')?.value.toString()
       }
 
       this.apiSvc.editPurchaseOrder(body).subscribe({
@@ -831,7 +982,9 @@ export class AddPurchaseOrderComponent implements OnInit {
         manufacture: this.purchaseForm.get('manufacture')?.value,
         shipping_term: this.purchaseForm.get('shipping_term')?.value,
         remarks: this.purchaseForm.get('remarks')?.value,
-        additional_items: additionalComplete
+        additional_items: additionalComplete,
+        discount_type: this.purchaseForm.get('discount_total_type')?.value,
+        discount: this.purchaseForm.get('discount_total')?.value.toString()
       }
       
       
@@ -908,10 +1061,22 @@ export class AddPurchaseOrderComponent implements OnInit {
   }
 
   updateTotalCost(orderRow: FormGroup): void {
+    const includeTax = orderRow.get('include_tax')?.value;
     const qty = orderRow.get('qty')?.value || 0;
-    const priceList = orderRow.get('price_list')?.value || 0;
+    let productCost2 = 0
     const discount = orderRow.get('discount')?.value || 0;
-    let totalCost = qty * priceList;
+
+    if(includeTax){
+      console.log('masuk sini')
+      productCost2 = parseInt(orderRow.get('product_cost_2_taxed')?.value) || 0;
+    }
+
+    if(!includeTax){
+      console.log('masuk sini')
+      productCost2 = parseInt(orderRow.get('product_cost_2')?.value) || 0;
+    }
+
+    let totalCost = qty * productCost2;
 
     if(orderRow.get('discount_type')?.value === 'percent'){
       totalCost = totalCost - (totalCost * (parseFloat(discount)/100))
@@ -990,16 +1155,19 @@ export class AddPurchaseOrderComponent implements OnInit {
     })
 
     control.get('qty')?.valueChanges.subscribe(() => this.updateTotalCost(control));
-    control.get('product_cost')?.valueChanges.subscribe(() => this.updateTotalCost(control));
+    control.get('product_cost_2')?.valueChanges.subscribe(() => this.updateTotalCost(control));
     control.get('discount')?.valueChanges.subscribe(() => this.updateTotalCost(control));
+    control.get('include_tax')?.valueChanges.subscribe(() => this.updateTotalCost(control));
 
     control.get('supplier')?.valueChanges.subscribe(supplierId => {
       const selectedProduct = this.inventoryList.data.find((p: any) => p.id === control.get('inventory_id')?.value);
       const selectedSupplier = selectedProduct?.inventory_items.find((item: any) => item.id === supplierId);
-      const priceList = selectedProduct?.price_list
-    
+      const product_cost_2 = selectedSupplier?.product_cost_2 ?? 0
+      const tax = control.get('tax')?.value;
+      const product_taxed = parseInt(product_cost_2) + (parseInt(product_cost_2) * (parseFloat(tax)/100))
       // Update form control with selling price or handle it as needed
-      control.get('price_list')?.setValue(parseInt(priceList) ?? 0);
+      control.get('product_cost_2')?.setValue(parseInt(product_cost_2) ?? 0);
+      control.get('product_cost_2_taxed')?.setValue(product_taxed);
     });
 
     
@@ -1009,6 +1177,7 @@ export class AddPurchaseOrderComponent implements OnInit {
     control.get('unit_measurement')?.setValue(product?.unit.measurement);
     control.get('unit_unit')?.setValue(product?.unit.unit);
     control.get('alias')?.setValue(product?.alias);
+    control.get('tax')?.setValue(parseFloat(product?.tax));
 
     // const suppliers = product?.inventory_items.map((item: any) => item.supplier) || [];
     control.get('supplier')?.setValue(null); // Reset supplier on product change
@@ -1060,7 +1229,10 @@ export class AddPurchaseOrderComponent implements OnInit {
       discount: [0],
       alias: [''],
       supplier: [''],
-      price_list: [{value: 0, disabled: true}],
+      product_cost_2: [{value: 0, disabled: true}],
+      product_cost_2_taxed: [{value: 0, disabled: true}],
+      include_tax: [false],
+      tax: [0],
       suppliersList: [[]]
     });
 
