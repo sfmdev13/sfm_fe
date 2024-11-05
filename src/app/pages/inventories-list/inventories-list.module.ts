@@ -20,6 +20,8 @@ import { NzRadioModule } from 'ng-zorro-antd/radio';
 import { NzDropDownModule } from 'ng-zorro-antd/dropdown';
 import { CategoriesSettingTableModule } from 'src/app/components/categories-setting/categories-setting.module';
 import { AddInventoriesModule } from 'src/app/components/add-inventories/add-inventories.module';
+import { NzAvatarModule } from 'ng-zorro-antd/avatar';
+import { NzTabsModule } from 'ng-zorro-antd/tabs';
 
 @NgModule({
   declarations: [InventoriesListComponent],
@@ -43,7 +45,9 @@ import { AddInventoriesModule } from 'src/app/components/add-inventories/add-inv
     NzRadioModule,
     NzDropDownModule,
     CategoriesSettingTableModule,
-    AddInventoriesModule
+    AddInventoriesModule,
+    NzAvatarModule,
+    NzTabsModule
   ],
   exports: [
     InventoriesListComponent
