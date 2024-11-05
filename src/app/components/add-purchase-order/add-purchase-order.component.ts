@@ -521,7 +521,6 @@ export class AddPurchaseOrderComponent implements OnInit {
           price_list: parseInt(order.price_list),
           discount: parseInt(order.discount),
           discount_type: order.discount_type,
-          discount_price: parseInt(order.discount_price),
           total_cost: parseInt(order.total_cost_per_product),
           measurement: order.unit.measurement,
           unit: order.unit.unit          
@@ -892,13 +891,13 @@ export class AddPurchaseOrderComponent implements OnInit {
 
     if(this.orderAdditional.length > 0){
       additionalComplete = this.orderAdditional.value.map((order: any) => ({
+        id: order.id,
         product_description: order.product_description,
         qty: order.qty.toString(),
         unit_id: order.unit_id.toString(),
         price_list: order.price_list.toString(),
         discount_type: order.discount_type,
-        discount: order.discount.toString(),
-        discount_price: order.discount_price.toString()
+        discount: order.discount.toString()
       }))
     }
 
