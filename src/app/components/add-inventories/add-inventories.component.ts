@@ -10,6 +10,7 @@ import { EditCategoriesModalComponent } from '../categories-setting/edit-categor
 import { AddUnitReportComponent } from '../categories-setting/add-unit-report/add-unit-report.component';
 import { NzUploadFile } from 'ng-zorro-antd/upload';
 import { NzMessageService } from 'ng-zorro-antd/message';
+import { NzNotificationService } from 'ng-zorro-antd/notification';
 
 @Component({
   selector: 'app-add-inventories',
@@ -31,6 +32,8 @@ export class AddInventoriesComponent implements OnInit {
 
   supplier$!: Observable<any>;
   productCat$!: Observable<ICategories>;
+  subCategory$!: Observable<ICategories>;
+  manufacture$!: Observable<ICategories>;
 
   totalAll: number = 0;
   pageSize: number = 5;
@@ -41,6 +44,12 @@ export class AddInventoriesComponent implements OnInit {
   filtered: boolean = false;
 
   nestedModalRef?: NzModalRef;
+
+  categoryFormBasic = this.fb.group({
+    id: [''],
+    name: ['', Validators.required],
+    description: ['', Validators.required]
+  })
 
   categoryForm = this.fb.group({
     id: [''],
@@ -76,6 +85,7 @@ export class AddInventoriesComponent implements OnInit {
     attachment: ['', Validators.required],
     price_list: [0, Validators.required],
     part_number: ['', Validators.required],
+    isEqualMeasurement: [false],
     inventory_items: this.fb.array([])
   })
 
@@ -93,7 +103,8 @@ export class AddInventoriesComponent implements OnInit {
     private modalSvc: NzModalService,
     public authSvc: AuthService,
     private modal: NzModalRef,
-    private nzMsgSvc: NzMessageService
+    private nzMsgSvc: NzMessageService,
+    private notifSvc: NzNotificationService
   ) { 
     
     this.filterForm = this.fb.group({
@@ -106,6 +117,14 @@ export class AddInventoriesComponent implements OnInit {
    }
 
   ngOnInit(): void {
+
+    this.inventoryForm.get('isEqualMeasurement')?.valueChanges.subscribe((res) => {
+      if(res === true){
+        this.inventoryForm.get('unit_report')?.disable();
+      }else {
+        this.inventoryForm.get('unit_report')?.enable();
+      }
+    })
     
     this.inventoryForm.get('source')?.valueChanges.subscribe((res) => {
       if(res === 'local'){
@@ -118,6 +137,9 @@ export class AddInventoriesComponent implements OnInit {
     this.apiSvc.refreshGetCategories$.subscribe(() => {
       this.getUnit();
       this.getUnitReport();
+      this.productCat$ = this.apiSvc.getSupplierProduct();
+      this.subCategory$ = this.apiSvc.getSubCategory();
+      this.manufacture$ = this.apiSvc.getManufacture();
     })
 
     this.inventoryForm.get('supplier_product_id')?.valueChanges.subscribe((value) => {
@@ -131,6 +153,8 @@ export class AddInventoriesComponent implements OnInit {
     });
 
     this.productCat$ = this.apiSvc.getSupplierProduct();
+    this.subCategory$ = this.apiSvc.getSubCategory();
+    this.manufacture$ = this.apiSvc.getManufacture();
 
     this.getUnit();
     this.getUnitReport();
@@ -158,14 +182,15 @@ export class AddInventoriesComponent implements OnInit {
         status: this.dataDetail.status,
         supplier_product_id: this.dataDetail.supplier_product.id,
         tax: this.dataDetail.tax,
-        sub_category: this.dataDetail.sub_category,
-        manufacturer: this.dataDetail.manufacturer,
-        unit_report: this.dataDetail.unit_report.id,
+        sub_category: this.dataDetail.sub_category.id,
+        manufacturer: this.dataDetail.manufacturer.id,
+        unit_report:  this.dataDetail.unit_report?.id,
         alias: this.dataDetail.alias,
         hs_code: this.dataDetail.hs_code,
         source: this.dataDetail.inventory_source,
-        price_list: this.dataDetail.price_list,
+        price_list: parseInt(this.dataDetail.price_list),
         part_number: this.dataDetail.code,
+        isEqualMeasurement: this.dataDetail.unit_report === null ? true : false,
         attachment: newUpdateFileList
       })
 
@@ -177,21 +202,32 @@ export class AddInventoriesComponent implements OnInit {
         const updateInvent = this.fb.group({
           id: item.id,
           supplier_id: item.supplier.id,
-          discount_1: item.discount_1,
+          discount_1: parseInt(item.discount_1),
           discount_type_1: item.discount_type_1,
-          discount_2: item.discount_2,
+          discount_2: parseInt(item.discount_2),
           discount_type_2: item.discount_type_2,
-          price_factor: item.price_factor,
-          total_1: item.product_cost_1,
-          total_2: item.product_cost_2,
-          selling_price: item.selling_price,
-          qty: item.qty
+          price_factor: parseInt(item.price_factor),
+          total_1: parseInt(item.product_cost_1),
+          total_2: parseInt(item.product_cost_2),
+          selling_price: parseInt(item.selling_price),
+          qty: parseInt(item.qty),
+          gross_margin: parseInt(item.gross_margin),
+          is_default: item.is_default === 1 ? true : false
         })
 
         this.inventoryItem.push(updateInvent)
         this.inventoryChangeHandler(updateInvent);
       })
     }
+  }
+
+  checkButton(i: number){
+
+    for (let index = 0; index < this.inventoryItem.length; index++) {
+      if (index !== i) {
+        this.inventoryItem.at(index).patchValue({ is_default: false });
+      }
+    } 
   }
 
   getUnit(){
@@ -221,12 +257,17 @@ export class AddInventoriesComponent implements OnInit {
     // Calculate all dependent values
     const calculateValues = () => {
         const priceList = parseInt(this.inventoryForm.get('price_list')?.value || '0');
-        const tax = parseInt(this.inventoryForm.get('tax')?.value || '0');
+        // const tax = parseInt(this.inventoryForm.get('tax')?.value || '0');
 
+        console.log(priceList)
         // Calculate total_1 based on discount_1 and price_list
+        control.patchValue({ total_1: priceList }, { emitEvent: false });
+        control.patchValue({ total_2: priceList }, { emitEvent: false });
+
         const discount1 = parseInt(control.get('discount_1')?.value || '0');
         const discountType1 = control.get('discount_type_1')?.value;
         const total1 = calculateTotal(priceList, discountType1, discount1);
+        console.log(total1)
         control.patchValue({ total_1: total1 }, { emitEvent: false });
 
         // Calculate total_2 based on discount_2 and total_1
@@ -238,8 +279,13 @@ export class AddInventoriesComponent implements OnInit {
         // Calculate selling price based on total_2 and price_factor
         const priceFactor = parseInt(control.get('price_factor')?.value || '1');
         const baseSellingPrice = total2 * priceFactor;
-        const sellingPrice = baseSellingPrice + (baseSellingPrice * tax / 100);
+        // const sellingPrice = baseSellingPrice + (baseSellingPrice * tax / 100);
+        const sellingPrice = baseSellingPrice
+
+        const grossMargin = ((baseSellingPrice - total2) / baseSellingPrice) * 100 || 0;
+
         control.patchValue({ selling_price: sellingPrice }, { emitEvent: false });
+        control.patchValue({ gross_margin: grossMargin }, { emitEvent: false })
     };
 
     // Helper function to calculate total based on discount type and value
@@ -251,7 +297,8 @@ export class AddInventoriesComponent implements OnInit {
 
     // Update calculated values when price_list changes
     this.inventoryForm.get('price_list')?.valueChanges.subscribe(() => calculateValues());
-    this.inventoryForm.get('tax')?.valueChanges.subscribe(() => calculateValues());
+
+    // this.inventoryForm.get('tax')?.valueChanges.subscribe(() => calculateValues());
 
     // Recalculate totals and selling price on changes in related controls
     control.get('discount_type_1')?.valueChanges.subscribe((res) => {
@@ -267,7 +314,10 @@ export class AddInventoriesComponent implements OnInit {
     control.get('discount_1')?.valueChanges.subscribe(() => calculateValues());
     control.get('discount_2')?.valueChanges.subscribe(() => calculateValues());
     control.get('price_factor')?.valueChanges.subscribe(() => calculateValues());
-}
+
+    
+  }
+
   get inventoryItem(): FormArray {
     return this.inventoryForm.get('inventory_items') as FormArray;
   }
@@ -284,6 +334,9 @@ export class AddInventoriesComponent implements OnInit {
 
   
   addInventoryItem(): void {
+
+    const priceList = this.inventoryForm.get('price_list')?.value
+
     const newInventory = this.fb.group({
       id: [''],
       supplier_id: ['', Validators.required],
@@ -292,10 +345,12 @@ export class AddInventoriesComponent implements OnInit {
       discount_2: [0, Validators.required],
       discount_type_2: ['percent', Validators.required],
       price_factor: [0, Validators.required],
-      total_1: [{value: 0, disabled: true}],
-      total_2: [{value: 0, disabled: true}],
+      total_1: [{value: priceList, disabled: true}],
+      total_2: [{value: priceList, disabled: true}],
       selling_price: [{value: 0, disabled: true}],
-      qty: [0]
+      qty: [0],
+      is_default:[this.inventoryItem.length === 0],
+      gross_margin: [0],
     });
 
     this.inventoryItem.push(newInventory);
@@ -322,6 +377,78 @@ export class AddInventoriesComponent implements OnInit {
           {
             label: 'Confirm',
             onClick: () => this.handleCategorySubmitAdd('uom'),
+            type: 'primary'
+          }
+        ]
+      });
+    }
+
+    if(titleCat === 'product_category'){
+      this.nestedModalRef = this.modalSvc.create({
+        nzTitle: ' Add Product Category',
+        nzContent: EditCategoriesModalComponent,
+        nzComponentParams: {
+          form: this.categoryFormBasic,
+          type: titleCat
+        },
+        nzWidth: '500px',
+        nzFooter: [
+          {
+            label: 'Cancel',
+            onClick: () => this.handleCancelCategoryAdd(),
+            type: 'default'
+          },
+          {
+            label: 'Confirm',
+            onClick: () => this.handleCategorySubmitAdd('product_category'),
+            type: 'primary'
+          }
+        ]
+      });
+    }
+
+    if(titleCat === 'sub_category'){
+      this.nestedModalRef = this.modalSvc.create({
+        nzTitle: ' Add Product Sub Category',
+        nzContent: EditCategoriesModalComponent,
+        nzComponentParams: {
+          form: this.categoryFormBasic,
+          type: titleCat
+        },
+        nzWidth: '500px',
+        nzFooter: [
+          {
+            label: 'Cancel',
+            onClick: () => this.handleCancelCategoryAdd(),
+            type: 'default'
+          },
+          {
+            label: 'Confirm',
+            onClick: () => this.handleCategorySubmitAdd('sub_category'),
+            type: 'primary'
+          }
+        ]
+      });
+    }
+
+    if(titleCat === 'manufacture'){
+      this.nestedModalRef = this.modalSvc.create({
+        nzTitle: ' Add Manufacture',
+        nzContent: EditCategoriesModalComponent,
+        nzComponentParams: {
+          form: this.categoryFormBasic,
+          type: titleCat
+        },
+        nzWidth: '500px',
+        nzFooter: [
+          {
+            label: 'Cancel',
+            onClick: () => this.handleCancelCategoryAdd(),
+            type: 'default'
+          },
+          {
+            label: 'Confirm',
+            onClick: () => this.handleCategorySubmitAdd('manufacture'),
             type: 'primary'
           }
         ]
@@ -429,6 +556,117 @@ export class AddInventoriesComponent implements OnInit {
         })      
       }
     }
+
+    if(type === 'product_category'){
+      if(this.categoryFormBasic.valid){
+        this.apiSvc.createSupplierProduct(this.categoryFormBasic.value.name, this.categoryFormBasic.value.description).subscribe({
+          next: () => {
+  
+            this.spinnerSvc.hide();
+            this.modalSvc.success({
+              nzTitle: 'Success',
+              nzContent: 'Successfully Add Product Category',
+              nzOkText: 'Ok',
+              nzCentered: true
+            })
+            this.apiSvc.triggerRefreshCategories()
+            this.categoryFormBasic.reset();
+            this.nestedModalRef?.close();
+          },
+          error: (error) => {
+            this.spinnerSvc.hide();
+            this.modalSvc.error({
+              nzTitle: 'Unable to Add Product Category',
+              nzContent: error.error.meta.message,
+              nzOkText: 'Ok',
+              nzCentered: true
+            })
+          }
+        })    
+      } else {
+        this.spinnerSvc.hide();
+        this.modalSvc.error({
+          nzTitle: 'Unable to Add',
+          nzContent: 'Need to fill all input',
+          nzOkText: 'Ok',
+          nzCentered: true
+        })      
+      }
+    }
+
+    if(type === 'sub_category'){
+      if(this.categoryFormBasic.valid){
+        this.apiSvc.createSubCategory(this.categoryFormBasic.value.name, this.categoryFormBasic.value.description).subscribe({
+          next: () => {
+  
+            this.spinnerSvc.hide();
+            this.modalSvc.success({
+              nzTitle: 'Success',
+              nzContent: 'Successfully Add Sub Category',
+              nzOkText: 'Ok',
+              nzCentered: true
+            })
+            this.apiSvc.triggerRefreshCategories();
+            this.categoryFormBasic.reset();
+            this.nestedModalRef?.close();
+          },
+          error: (error) => {
+            this.spinnerSvc.hide();
+            this.modalSvc.error({
+              nzTitle: 'Unable to Add Sub Category',
+              nzContent: error.error.meta.message,
+              nzOkText: 'Ok',
+              nzCentered: true
+            })
+          }
+        })    
+      } else {
+        this.spinnerSvc.hide();
+        this.modalSvc.error({
+          nzTitle: 'Unable to Add',
+          nzContent: 'Need to fill all input',
+          nzOkText: 'Ok',
+          nzCentered: true
+        })      
+      }
+    }
+
+    if(type === 'manufacture'){
+      if(this.categoryFormBasic.valid){
+        this.apiSvc.createManufacture(this.categoryFormBasic.value.name, this.categoryFormBasic.value.description).subscribe({
+          next: () => {
+  
+            this.spinnerSvc.hide();
+            this.modalSvc.success({
+              nzTitle: 'Success',
+              nzContent: 'Successfully Add Manufacture',
+              nzOkText: 'Ok',
+              nzCentered: true
+            })
+            this.apiSvc.triggerRefreshCategories();
+            this.categoryFormBasic.reset();
+            this.nestedModalRef?.close();
+          },
+          error: (error) => {
+            this.spinnerSvc.hide();
+            this.modalSvc.error({
+              nzTitle: 'Unable to Add Manufacture',
+              nzContent: error.error.meta.message,
+              nzOkText: 'Ok',
+              nzCentered: true
+            })
+          }
+        })    
+      } else {
+        this.spinnerSvc.hide();
+        this.modalSvc.error({
+          nzTitle: 'Unable to Add',
+          nzContent: 'Need to fill all input',
+          nzOkText: 'Ok',
+          nzCentered: true
+        })      
+      }
+    }
   }
 
   
@@ -456,16 +694,18 @@ export class AddInventoriesComponent implements OnInit {
     this.spinnerSvc.show();
     
     if(this.inventoryForm.valid){
+      const equal = this.inventoryForm.get('isEqualMeasurement')?.value;
 
       const inventoryItemComplete = this.inventoryItem.value.map((item: any) => ({
         id: item.id,
         supplier_id: item.supplier_id,
         discount_1: item.discount_1.toString(),
         discount_type_1: item.discount_type_1,
-        discount_2: item.discount_2,
+        discount_2: item.discount_2.toString(),
         discount_type_2: item.discount_type_2,
         price_factor: item.price_factor,
-        qty: item.qty
+        qty: item.qty,
+        is_default: item.is_default ? 1 : 0
       }))
   
 
@@ -475,10 +715,10 @@ export class AddInventoriesComponent implements OnInit {
         description: this.inventoryForm.get('description')?.value,
         alias: this.inventoryForm.get('alias')?.value,
         unit_id: this.inventoryForm.get('unit_id')?.value,
-        unit_report_id: this.inventoryForm.get('unit_report')?.value,
+        unit_report_id: equal ? null : this.inventoryForm.get('unit_report')?.value,
         supplier_product_id: this.inventoryForm.get('supplier_product_id')?.value,
-        sub_category: this.inventoryForm.get('sub_category')?.value,
-        manufacturer: this.inventoryForm.get('manufacturer')?.value,
+        sub_category_id: this.inventoryForm.get('sub_category')?.value,
+        manufacture_id: this.inventoryForm.get('manufacturer')?.value,
         price_list: this.inventoryForm.get('price_list')?.value.toString(),
         status: this.inventoryForm.get('status')?.value,
         tax: this.inventoryForm.get('tax')?.value.toString(),
@@ -544,6 +784,8 @@ export class AddInventoriesComponent implements OnInit {
     this.spinnerSvc.show();
 
     if(this.inventoryForm.valid){
+      
+      const equal = this.inventoryForm.get('isEqualMeasurement')?.value;
 
       const attachment = this.inventoryForm.get('attachment')?.value
       const file = this.dataURLtoFile(attachment.url, `${attachment.uid}.png`);
@@ -552,9 +794,10 @@ export class AddInventoriesComponent implements OnInit {
         supplier_id: item.supplier_id,
         discount_1: item.discount_1.toString(),
         discount_type_1: item.discount_type_1,
-        discount_2: item.discount_2,
+        discount_2: item.discount_2.toString(),
         discount_type_2: item.discount_type_2,
-        price_factor: item.price_factor
+        price_factor: item.price_factor,
+        is_default: item.is_default ? 1 : 0
       }))
 
       let body = {
@@ -562,10 +805,10 @@ export class AddInventoriesComponent implements OnInit {
         description: this.inventoryForm.get('description')?.value,
         alias: this.inventoryForm.get('alias')?.value,
         unit_id: this.inventoryForm.get('unit_id')?.value,
-        unit_report_id: this.inventoryForm.get('unit_report')?.value,
+        unit_report_id: equal ? null : this.inventoryForm.get('unit_report')?.value,
         supplier_product_id: this.inventoryForm.get('supplier_product_id')?.value,
-        sub_category: this.inventoryForm.get('sub_category')?.value,
-        manufacturer: this.inventoryForm.get('manufacturer')?.value,
+        sub_category_id: this.inventoryForm.get('sub_category')?.value,
+        manufacture_id: this.inventoryForm.get('manufacturer')?.value,
         price_list: this.inventoryForm.get('price_list')?.value.toString(),
         status: this.inventoryForm.get('status')?.value,
         tax: this.inventoryForm.get('tax')?.value.toString(),

@@ -40,11 +40,30 @@ export interface Pic {
   
   export interface SupplierProduct {
     supplier_product_mapping_id: string
+    product: IProduct
     product_id: string
     product_name: string
     product_description: string
-    sub_category: string
-    manufacture: string
+    sub_category: ISubCategory
+    manufacture: IManufacture
+  }
+
+  interface IProduct{
+    id: number
+    name: string
+    description: string
+  }
+
+  interface ISubCategory{
+    id: number
+    name: string
+    description: string
+  }
+
+  interface IManufacture{
+    id: number
+    name: string
+    description: string
   }
   
   export interface Attachment {
