@@ -124,7 +124,7 @@
                                             </td>
                                             <td>
                                                 <nz-form-control>
-                                                    <nz-select nzShowSearch  nzPlaceHolder="Select Part Number" formControlName="product_code">
+                                                    <nz-select nzShowSearch  nzPlaceHolder="Select Part Number" formControlName="part_number">
                                                         <ng-container *ngIf="order.get('type')?.value === 'inventory'">
                                                             <nz-option
                                                             *ngFor="let p of inventoryList.data"

@@ -192,7 +192,8 @@ export class AddAssemblyComponent implements OnInit {
             inventory_items_id: [order.raw_material_inventory?.id],
             supplier: [order.raw_material_inventory?.id],
             suppliersList: [product.inventory_items],
-            product_code: [order.raw_material_inventory?.inventory.id],
+            part_number: [order.raw_material_inventory?.inventory.id],
+            product_code: [order.raw_material_inventory?.inventory.code],
             qty: [parseInt(order.qty), Validators.required],
             unit_unit: [order.raw_material_inventory?.inventory.unit.unit],
             unit_measurement: [order.raw_material_inventory?.inventory.unit.measurement],
@@ -213,7 +214,8 @@ export class AddAssemblyComponent implements OnInit {
           updateOrder = this.fb.group({
             type: [order.type],
             inventory_id: [order.raw_material_assembly?.id],
-            product_code: [order.raw_material_assembly?.id],
+            part_number: [order.raw_material_assembly?.id],
+            product_code: [order.raw_material_assembly?.no_ref],
             qty: [order.qty],
             price_list: [{value: parseInt(order.raw_material_assembly?.total_price ?? '0'), disabled: true}],
             total_per_cost: [parseInt(order.each_product_cost)],
@@ -575,13 +577,13 @@ export class AddAssemblyComponent implements OnInit {
           product = this.assemblyList.data.find((p: any) => p.id === value);          
         }
 
-        control.get('product_code')?.setValue(product?.id, { emitEvent: false });
+        control.get('part_number')?.setValue(product?.id, { emitEvent: false });
         this.changeValueOrder(control, product)
         isUpdating = false;
       }
     });
     
-    control.get('product_code')?.valueChanges.subscribe(value => {
+    control.get('part_number')?.valueChanges.subscribe(value => {
       const type = control.get('type')?.value;
 
       if (!isUpdating) {
@@ -696,6 +698,7 @@ export class AddAssemblyComponent implements OnInit {
       inventory_items_id: [''],
       supplier: [''],
       suppliersList: [[]],
+      part_number: [''],
       product_code: [''],
       qty: ['', Validators.required],
       unit_unit: [''],
