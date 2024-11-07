@@ -207,13 +207,13 @@ export class WarehouseAddressComponent implements OnInit {
 
     this.spinnerSvc.show();
 
-    this.apiSvc.deleteUnit(this.selectedIdDelete).subscribe({
+    this.apiSvc.deleteWarehouse(this.selectedIdDelete).subscribe({
       next:() => {
 
         this.spinnerSvc.hide();
         this.modalSvc.success({
           nzTitle: 'Success',
-          nzContent: 'Successfully Delete Category',
+          nzContent: 'Successfully Delete Address',
           nzOkText: 'Ok',
           nzCentered: true
         })
