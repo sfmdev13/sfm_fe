@@ -650,10 +650,13 @@ export class AddAssemblyComponent implements OnInit {
   
       control.get('supplier')?.setValue(null); // Reset supplier on product change
       control.get('suppliersList')?.setValue(product?.inventory_items);
+
+      control.get('product_code')?.setValue(product?.code)
     }
 
     if(type === 'assembly'){
       control.get('price_list')?.setValue(parseInt(product?.total_price));
+      control.get('product_code')?.setValue(product?.no_ref)
     }
 
   }
