@@ -17,6 +17,9 @@ import { NzTagModule } from 'ng-zorro-antd/tag';
 import { FilterPurchaseOrderModule } from 'src/app/components/filter-purchase-order/filter-purchase-order.module';
 import { AddProjectsModule } from 'src/app/components/add-projects/add-projects.module';
 import { NzProgressModule } from 'ng-zorro-antd/progress';
+import { DragDropModule } from '@angular/cdk/drag-drop';
+import { NzCardModule } from 'ng-zorro-antd/card';
+import { NzSegmentedModule } from 'ng-zorro-antd/segmented';
 
 @NgModule({
   declarations: [ProjectsComponent],
@@ -37,7 +40,10 @@ import { NzProgressModule } from 'ng-zorro-antd/progress';
     NzDropDownModule,
     FilterPurchaseOrderModule,
     AddProjectsModule,
-    NzProgressModule
+    NzProgressModule,
+    DragDropModule,
+    NzCardModule,
+    NzSegmentedModule
   ],
   exports: [ProjectsComponent]
 })

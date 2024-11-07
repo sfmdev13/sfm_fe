@@ -1,7 +1,9 @@
+import { CdkDragDrop, moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { NzDrawerService } from 'ng-zorro-antd/drawer';
 import { NzModalService } from 'ng-zorro-antd/modal';
+import { NzSegmentedOptions } from 'ng-zorro-antd/segmented';
 import { Observable, Subject, tap, debounceTime, distinctUntilChanged } from 'rxjs';
 import { ApiService } from 'src/app/api.service';
 import { AuthService } from 'src/app/auth.service';
@@ -62,6 +64,94 @@ export class ProjectsComponent implements OnInit {
 
   filterParams: any;
 
+  awarded = ['Get to work', 'Pick up groceries', 'Go home', 'Fall asleep'];
+  CatAPlus = ['Get up', 'Brush teeth', 'Take a shower', 'Check e-mail', 'Walk dog'];
+  CatA = ['Get up', 'Brush teeth', 'Take a shower', 'Check e-mail', 'Walk dog'];
+  CatB = ['Get up', 'Brush teeth', 'Take a shower', 'Check e-mail', 'Walk dog'];
+  CatC = ['Get up', 'Brush teeth', 'Take a shower', 'Check e-mail', 'Walk dog'];
+  CatC1 = ['Get up', 'Brush teeth', 'Take a shower', 'Check e-mail', 'Walk dog'];
+  CatC2 = ['Get up', 'Brush teeth', 'Take a shower', 'Check e-mail', 'Walk dog'];
+  CatC3 = ['Get up', 'Brush teeth', 'Take a shower', 'Check e-mail', 'Walk dog'];
+  CatD = ['Get up', 'Brush teeth', 'Take a shower', 'Check e-mail', 'Walk dog'];
+  CatE = ['Get up', 'Brush teeth', 'Take a shower', 'Check e-mail', 'Walk dog'];
+  failed = ['Get up', 'Brush teeth', 'Take a shower', 'Check e-mail', 'Walk dog'];
+
+
+  listBoard = [
+    {
+      id: 'awarded',
+      title: 'Awarded',
+      project_list: [
+        {
+          id: 1,
+          title: 'Project Test 1',
+          description: 'pemasangan pipa SFM di bagian atap stadion',
+          date: new Date()
+        },
+        {
+          id: 2,
+          title: 'Project Test 2',
+          description: 'pemasangan pipa SFM bandara internasional',
+          date: new Date()
+        },
+        {
+          id: 3,
+          title: 'Project Test 3',
+          description: 'pemasangan pipa SFM 3',
+          date: new Date()
+        },
+        {
+          id: 4,
+          title: 'Project Test 4',
+          description: 'pemasangan pipa SFM 4',
+          date: new Date()
+        }
+      ]
+    },
+    {
+      id: 'cataplus',
+      title: 'Category A+',
+      project_list: []
+    },
+    {
+      id: 'cata',
+      title: 'Category A',
+      project_list: [],
+    },
+    {
+      id: 'catb',
+      title: 'Category B',
+      project_list: [],
+    },
+    {
+      id: 'catc',
+      title: 'Category C',
+      project_list: []
+    },
+    {
+      id: 'catd',
+      title: 'Category D',
+      project_list: []
+    },
+    {
+      id: 'cate',
+      title: 'Category E',
+      project_list: []
+    }
+    
+  ]
+
+  gridStyle = {
+    width: '100%'
+  }
+
+  options: NzSegmentedOptions = [
+    { value: 'List', icon: 'bars', label: 'Table' },
+    { value: 'Kanban', icon: 'appstore', label: 'Board' }
+  ];
+
+  selectedOptIndex: number = 0;
+
   constructor(
     private apiSvc: ApiService,
     private spinnerSvc: SpinnerService,
@@ -70,6 +160,7 @@ export class ProjectsComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
+    
 
     this.customerList$ = this.apiSvc.getCustomerList().pipe();
 
@@ -99,6 +190,24 @@ export class ProjectsComponent implements OnInit {
     //     })
     //   );
     // });
+  }
+
+  boardConnectArray(id: string): string[]{
+    return this.listBoard.filter(board => board.id !== id)
+    .map(board => board.id);
+  }
+
+  drop(event: CdkDragDrop<any[]>) {
+    if (event.previousContainer === event.container) {
+      moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
+    } else {
+      transferArrayItem(
+        event.previousContainer.data,
+        event.container.data,
+        event.previousIndex,
+        event.currentIndex,
+      );
+    }
   }
 
   changeStatus(status: string, id: any): void{

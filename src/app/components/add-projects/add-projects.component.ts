@@ -34,15 +34,29 @@ export class AddProjectsComponent implements OnInit {
 
   projectForm = this.fb.group({
     id: [''],
-    name: ['', [Validators.required]],
-    description: ['', [Validators.required]],
-    pic: [[this.pic_id], [Validators.required]],
-    is_pic_internal: ['', [Validators.required]],
-    order_date: [''],
-    delivery_date: [''],
+    project_id: ['', Validators.required],
+    name: ['', Validators.required],
+    issue_date: ['', Validators.required],
+    project_category: ['', Validators.required],
+    reason_failed: ['', Validators.required],
+    sales_pic: [[this.pic_id], [Validators.required]],
+    dce_pic: [[], Validators.required],
+
+    province: ['', Validators.required],
+    city: ['', Validators.required],
+    postal_code: ['', Validators.required],
+    address: ['', Validators.required],
+    cluster: ['', Validators.required],
+    segmentation: ['', Validators.required],
+    specification: [[], Validators.required],
+    material: [[], Validators.required],
+    competitor: ['', Validators.required],
+    year_month: ['', Validators.required],
+
     customer_id: ['', Validators.required],
-    status: [1, [Validators.required]],
-    progress: [0]
+    owner: [''],
+    architect: [''],
+    contractor: ['']
   })
 
   listOfPic: any[] = [];
@@ -53,7 +67,9 @@ export class AddProjectsComponent implements OnInit {
   customerDetail: IDataCustomer = {} as IDataCustomer;
   isCustomerDetail: boolean = false;
 
-  isVisibleDetail: boolean = false;
+  provinces$!: Observable<any>;
+  provinceList: any[] = [];
+  city: any[] = [];
 
   constructor(
     private modal: NzModalRef,
@@ -65,6 +81,18 @@ export class AddProjectsComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+
+    this.provinces$ = this.apiSvc.getProvinces().pipe(
+      tap(p => {
+        this.provinceList = p;
+      })
+    );
+
+    this.projectForm.get('province')?.valueChanges.subscribe((value) => {
+      this.apiSvc.getRegenciesByProvince(value).subscribe((res) => {
+        this.city = res;
+      })
+    })
 
     this.projectForm.get('customer_id')?.valueChanges.subscribe((value) => {
       this.isCustomerDetail = false
@@ -89,18 +117,11 @@ export class AddProjectsComponent implements OnInit {
       })
     )
 
-    this.projectForm.get('order_date')?.valueChanges.subscribe((value) => {
+    this.projectForm.get('issue_date')?.valueChanges.subscribe((value) => {
       const formattedDate = this.datePipe.transform(new Date(value), 'yyyy-MM-dd') || '';
 
-      this.projectForm.patchValue({order_date: formattedDate})
+      this.projectForm.patchValue({issue_date: formattedDate})
     })
-
-    this.projectForm.get('delivery_date')?.valueChanges.subscribe((value) => {
-      const formattedDate = this.datePipe.transform(new Date(value), 'yyyy-MM-dd') || '';
-
-      this.projectForm.patchValue({delivery_date: formattedDate})
-    })
-
 
     this.customerList$ = this.apiSvc.getCustomerList().pipe(
       tap(res => {
@@ -108,9 +129,6 @@ export class AddProjectsComponent implements OnInit {
       })
     )
 
-    this.projectForm.get('status')?.valueChanges.subscribe((value: boolean) => {
-      this.projectForm.get('status')?.setValue(value ? 1 : 0, { emitEvent: false });
-    });
 
     if(this.modal_type === 'update'){
       this.projectForm.patchValue({
