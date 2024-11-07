@@ -78,8 +78,8 @@ export class SubCategoryComponent implements OnInit {
   }
 
   showModalDelete(id: number): void{
-    // this.selectedIdDelete = id;
-    // this.isVisibleDelete = true;
+    this.selectedIdDelete = id;
+    this.isVisibleDelete = true;
   }
 
   handleSubmitEdit(): void {
@@ -153,19 +153,37 @@ export class SubCategoryComponent implements OnInit {
   }
 
   handleSubmitDelete(): void{
-    // this.apiSvc.deleteSupplierProduct(this.selectedIdDelete).subscribe({
-    //   next:() => {
-    //     this.apiSvc.triggerRefreshCategories();
-    //     this.isVisibleDelete = false;
-    //   },
-    //   error:(error) => {
-    //     console.log(error)
-    //   }
-    // })
+    this.spinnerSvc.show();
+
+    this.apiSvc.deleteSubCategory(this.selectedIdDelete).subscribe({
+      next:() => {
+
+        this.spinnerSvc.hide();
+        this.modalSvc.success({
+          nzTitle: 'Success',
+          nzContent: 'Successfully Delete Category',
+          nzOkText: 'Ok',
+          nzCentered: true
+        })
+
+        this.apiSvc.triggerRefreshCategories();
+        this.isVisibleDelete = false;
+      },
+      error:(error) => {
+        this.spinnerSvc.hide();
+
+        this.modalSvc.error({
+          nzTitle: 'Unable to Delete',
+          nzContent: error.error.meta.message,
+          nzOkText: 'Ok',
+          nzCentered: true
+        })
+      }
+    })
   }
 
   handleCancelEdit(): void {
-    // this.isVisibleEdit = false;
+    this.isVisibleEdit = false;
   }
 
   handleCancelAdd(): void{

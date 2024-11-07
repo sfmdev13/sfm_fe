@@ -152,13 +152,31 @@ export class SupplierProductComponent implements OnInit {
   }
 
   handleSubmitDelete(): void{
+    this.spinnerSvc.show();
+
     this.apiSvc.deleteSupplierProduct(this.selectedIdDelete).subscribe({
       next:() => {
+
+        this.spinnerSvc.hide();
+        this.modalSvc.success({
+          nzTitle: 'Success',
+          nzContent: 'Successfully Delete Category',
+          nzOkText: 'Ok',
+          nzCentered: true
+        })
+
         this.apiSvc.triggerRefreshCategories();
         this.isVisibleDelete = false;
       },
       error:(error) => {
-        console.log(error)
+        this.spinnerSvc.hide();
+
+        this.modalSvc.error({
+          nzTitle: 'Unable to Delete',
+          nzContent: error.error.meta.message,
+          nzOkText: 'Ok',
+          nzCentered: true
+        })
       }
     })
   }

@@ -30,7 +30,7 @@
             <td>
                 <div class="d-flex gap-3">
                     <span (click)="showModalEdit(data)" nz-icon nzType="edit" nzTheme="twotone"></span>
-                    <!-- <span (click)="showModalDelete(data.id)" nz-icon nzType="delete" nzTheme="twotone"></span> -->
+                    <span (click)="showModalDelete(data.id)" nz-icon nzType="delete" nzTheme="twotone"></span>
                 </div>
             </td>
             </tr>
@@ -73,12 +73,12 @@
 </nz-modal>
 
 
-<!-- <nz-modal nzCentered [(nzVisible)]="isVisibleDelete" nzTitle="Delete Unit" (nzOnCancel)="handleCancelDelete()">
+<nz-modal nzCentered [(nzVisible)]="isVisibleDelete" nzTitle="Delete Warehouse" (nzOnCancel)="handleCancelDelete()">
     <ng-container *nzModalContent>
         <app-delete-categories-modal></app-delete-categories-modal>
     </ng-container>
     <ng-container *nzModalFooter>
         <button nz-button nzType="default" nzDanger (click)="handleCancelDelete()">Cancel</button>
-        <button nz-button nzType="primary" nzDanger (click)="handleSubmitDelete()">Delete Unit</button>
+        <button nz-button nzType="primary" nzDanger (click)="handleSubmitDelete()">Delete</button>
     </ng-container>
-</nz-modal> -->
+</nz-modal>

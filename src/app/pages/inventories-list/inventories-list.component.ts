@@ -27,7 +27,7 @@ export class InventoriesListComponent implements OnInit {
 
   totalInventories: number = 0;
 
-  selectedIdDelete: number = 0;
+  selectedIdDelete: string = '';
 
   searchEmp: string = '';
 
@@ -271,19 +271,19 @@ export class InventoriesListComponent implements OnInit {
   }
 
   showModalDelete(id: string): void{
-    this.selectedIdDelete = parseInt(id);
+    this.selectedIdDelete = id;
     this.isVisibleDelete = true;
   }
 
   handleSubmitDelete(): void{
 
-    this.apiSvc.deleteContactType(this.selectedIdDelete).subscribe({
+    this.apiSvc.deleteInventory(this.selectedIdDelete).subscribe({
       next:() => {
 
         this.spinnerSvc.hide();
         this.modalSvc.success({
           nzTitle: 'Success',
-          nzContent: 'Successfully Delete Category',
+          nzContent: 'Successfully Delete Inventory',
           nzOkText: 'Ok',
           nzCentered: true
         })

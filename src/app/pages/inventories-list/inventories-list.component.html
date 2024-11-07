@@ -352,9 +352,10 @@
 
 
 <!-- delete modal -->
-<nz-modal class="delete-modal" nzCentered [(nzVisible)]="isVisibleDelete" nzTitle="Delete Category" (nzOnCancel)="handleCancelDelete()">
+<nz-modal class="delete-modal" nzCentered [(nzVisible)]="isVisibleDelete" nzTitle="Delete Inventories" (nzOnCancel)="handleCancelDelete()">
     <ng-container *nzModalContent>
-        <!-- <app-delete-categories-modal></app-delete-categories-modal> -->
+      <nz-result nzStatus="warning" nzTitle="Are you sure want to delete this Inventories?">
+      </nz-result>
     </ng-container>
     <ng-container *nzModalFooter>
         <button nz-button nzType="default" nzDanger (click)="handleCancelDelete()">Cancel</button>

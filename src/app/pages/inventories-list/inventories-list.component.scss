@@ -22,6 +22,32 @@
 
 ::ng-deep {
 
+        
+    .ant-modal-header{
+        display: none;
+    }
+
+    .ant-modal-body{
+        padding-bottom: 12px;
+    }
+
+    .ant-result{
+        padding: 0;
+    }
+
+    .ant-result-icon{
+        margin-bottom: 0;
+
+        i{
+            font-size: 60px;
+        }
+    }
+
+    .ant-result-title{
+        font-size: 20px;
+    }
+    
+
     .ant-modal-footer{
         border-top: 2px solid #f0f0f0 !important;
     }

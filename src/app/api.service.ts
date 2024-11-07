@@ -1367,4 +1367,64 @@ export class ApiService {
 
     return this.http.post<any>(url, {} , { headers })
   }
+
+  deleteUnitReport(id: number): Observable<any>{
+    const token = localStorage.getItem('authToken');
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+    });
+
+    const url = `${this.apiUrl}/delete/unit-report?id=${id}`;
+    return this.http.delete<any>(url, { headers })
+  }
+
+  deleteManufacture(id: number): Observable<any>{
+    const token = localStorage.getItem('authToken');
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+    });
+
+    const url = `${this.apiUrl}/delete/manufacture?id=${id}`;
+    return this.http.delete<any>(url, { headers })
+  }
+
+  deleteSubCategory(id: number): Observable<any>{
+    const token = localStorage.getItem('authToken');
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+    });
+
+    const url = `${this.apiUrl}/delete/sub-category?id=${id}`;
+    return this.http.delete<any>(url, { headers })
+  }
+
+  deleteWarehouse(id: number): Observable<any>{
+    const token = localStorage.getItem('authToken');
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+    });
+
+    const url = `${this.apiUrl}/delete/warehouse?id=${id}`;
+    return this.http.delete<any>(url, { headers })
+  }
+
+  deleteBillingAddress(id: number): Observable<any>{
+    const token = localStorage.getItem('authToken');
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+    });
+
+    const url = `${this.apiUrl}/delete/billing-address?id=${id}`;
+    return this.http.delete<any>(url, { headers })
+  }
+
+  deleteInventory(id: any): Observable<any>{
+    const token = localStorage.getItem('authToken');
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+    });
+
+    const url = `${this.apiUrl}/delete-inventory?id=${id}`;
+    return this.http.delete<any>(url, { headers })
+  }
 }
