@@ -22,6 +22,7 @@ import { CategoriesSettingTableModule } from 'src/app/components/categories-sett
 import { AddInventoriesModule } from 'src/app/components/add-inventories/add-inventories.module';
 import { NzAvatarModule } from 'ng-zorro-antd/avatar';
 import { NzTabsModule } from 'ng-zorro-antd/tabs';
+import { NzResultModule } from 'ng-zorro-antd/result';
 
 @NgModule({
   declarations: [InventoriesListComponent],
@@ -47,7 +48,8 @@ import { NzTabsModule } from 'ng-zorro-antd/tabs';
     CategoriesSettingTableModule,
     AddInventoriesModule,
     NzAvatarModule,
-    NzTabsModule
+    NzTabsModule,
+    NzResultModule
   ],
   exports: [
     InventoriesListComponent
