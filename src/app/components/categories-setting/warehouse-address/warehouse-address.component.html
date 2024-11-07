@@ -52,7 +52,7 @@
       </nz-table>
 </ng-template>
 
-<nz-modal nzCentered [(nzVisible)]="isVisibleEdit" [nzTitle]="modal_type + ' Warehouse'" (nzOnCancel)="handleCancelEdit()">
+<nz-modal nzCentered [(nzVisible)]="isVisibleEdit" [nzTitle]="'Edit Warehouse'" (nzOnCancel)="handleCancelEdit()">
     <ng-container *nzModalContent>
         <app-add-warehouse-address [form]="categoryFormEdit" [data]="dataDetail" [type]="modal_type"></app-add-warehouse-address>
     </ng-container>
@@ -62,7 +62,7 @@
     </ng-container>
 </nz-modal>
 
-<nz-modal nzCentered [(nzVisible)]="isVisibleAdd" [nzTitle]="modal_type + ' Warehouse'" (nzOnCancel)="handleCancelAdd()">
+<nz-modal nzCentered [(nzVisible)]="isVisibleAdd" [nzTitle]="'Add Warehouse'" (nzOnCancel)="handleCancelAdd()">
     <ng-container *nzModalContent>
         <app-add-warehouse-address [form]="categoryForm"></app-add-warehouse-address>
     </ng-container>
