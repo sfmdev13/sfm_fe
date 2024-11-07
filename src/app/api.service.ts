@@ -1367,4 +1367,14 @@ export class ApiService {
 
     return this.http.post<any>(url, {} , { headers })
   }
+
+  deleteUnitReport(id: number): Observable<any>{
+    const token = localStorage.getItem('authToken');
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+    });
+
+    const url = `${this.apiUrl}/delete/unit-report?id=${id}`;
+    return this.http.delete<any>(url, { headers })
+  }
 }

@@ -101,10 +101,10 @@ export class UnitOfReportsComponent implements OnInit {
     this.isVisibleAdd = true;
   }
 
-  // showModalDelete(id: any): void{
-  //   this.selectedIdDelete = id;
-  //   this.isVisibleDelete = true;
-  // }
+  showModalDelete(id: any): void{
+    this.selectedIdDelete = id;
+    this.isVisibleDelete = true;
+  }
 
   handleSubmitEdit(): void {
 
@@ -189,37 +189,36 @@ export class UnitOfReportsComponent implements OnInit {
     }
   }
 
-  // handleSubmitDelete(): void{
+  handleSubmitDelete(): void{
 
-  //   this.spinnerSvc.show();
+    this.spinnerSvc.show();
 
-  //   this.apiSvc.deleteUnit(this.selectedIdDelete).subscribe({
-  //     next:() => {
+    this.apiSvc.deleteUnitReport(this.selectedIdDelete).subscribe({
+      next:() => {
 
-  //       this.spinnerSvc.hide();
-  //       this.modalSvc.success({
-  //         nzTitle: 'Success',
-  //         nzContent: 'Successfully Delete Category',
-  //         nzOkText: 'Ok',
-  //         nzCentered: true
-  //       })
+        this.spinnerSvc.hide();
+        this.modalSvc.success({
+          nzTitle: 'Success',
+          nzContent: 'Successfully Delete Category',
+          nzOkText: 'Ok',
+          nzCentered: true
+        })
 
+        this.apiSvc.triggerRefreshCategories();
+        this.isVisibleDelete = false;
+      },
+      error:(error) => {
+        this.spinnerSvc.hide();
 
-  //       this.apiSvc.triggerRefreshCategories();
-  //       this.isVisibleDelete = false;
-  //     },
-  //     error:(error) => {
-  //       this.spinnerSvc.hide();
-
-  //       this.modalSvc.error({
-  //         nzTitle: 'Unable to Delete',
-  //         nzContent: error.error.meta.message,
-  //         nzOkText: 'Ok',
-  //         nzCentered: true
-  //       })
-  //     }
-  //   })
-  // }
+        this.modalSvc.error({
+          nzTitle: 'Unable to Delete',
+          nzContent: error.error.meta.message,
+          nzOkText: 'Ok',
+          nzCentered: true
+        })
+      }
+    })
+  }
 
   handleCancelEdit(): void {
     this.isVisibleEdit = false;
@@ -229,7 +228,7 @@ export class UnitOfReportsComponent implements OnInit {
     this.isVisibleAdd = false;
   }
 
-  // handleCancelDelete(): void{
-  //   this.isVisibleDelete = false;
-  // }
+  handleCancelDelete(): void{
+    this.isVisibleDelete = false;
+  }
 }
