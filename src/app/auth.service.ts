@@ -44,7 +44,6 @@ export class AuthService {
     
     this.activityTimeout = setTimeout(() => {
       if (!this.isAuthenticated()) {
-        // Handle logout or warning
       }
     }, 1000); // Check authentication status after 1 second of inactivity
   }
@@ -98,7 +97,9 @@ export class AuthService {
     const elapsedTime = now - parseInt(loginTime, 10);
 
     if (elapsedTime > this.TOKEN_EXPIRY_TIME) {
-      this.showLogoutWarning();
+      setTimeout(() => {
+        this.ngZone.run(() => this.showLogoutWarning());
+      }, 500)
       this.logout(); // Automatically log out if the session has expired
       return false;
     }
