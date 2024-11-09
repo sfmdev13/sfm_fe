@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { FormGroup } from '@angular/forms';
+import { UntypedFormGroup } from '@angular/forms';
 import { Observable, tap } from 'rxjs';
 import { ApiService } from 'src/app/api.service';
 
@@ -10,7 +10,7 @@ import { ApiService } from 'src/app/api.service';
 })
 export class AddWarehouseAddressComponent implements OnInit {
 
-  @Input() form!: FormGroup;
+  @Input() form!: UntypedFormGroup;
   @Input() type: string  = ''
   @Input() data: any;
 

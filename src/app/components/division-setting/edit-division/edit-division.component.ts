@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { FormGroup, FormBuilder } from '@angular/forms';
+import { UntypedFormGroup, UntypedFormBuilder } from '@angular/forms';
 
 @Component({
   selector: 'app-edit-division',
@@ -8,10 +8,10 @@ import { FormGroup, FormBuilder } from '@angular/forms';
 })
 export class EditDivisionComponent implements OnInit {
 
-  @Input() form!: FormGroup;
+  @Input() form!: UntypedFormGroup;
 
   constructor(
-    private fb: FormBuilder
+    private fb: UntypedFormBuilder
   ) { }
 
   ngOnInit(): void {

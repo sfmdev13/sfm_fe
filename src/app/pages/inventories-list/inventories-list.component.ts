@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormGroup, Validators, FormBuilder, FormArray } from '@angular/forms';
+import { UntypedFormGroup, Validators, UntypedFormBuilder, FormArray } from '@angular/forms';
 import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
 import { debounceTime, distinctUntilChanged, Observable, Subject, tap } from 'rxjs';
 import { ApiService } from 'src/app/api.service';
@@ -58,7 +58,7 @@ export class InventoriesListComponent implements OnInit {
 
   dataDetail: IDataInventory = {} as IDataInventory;
 
-  filterForm: FormGroup;
+  filterForm: UntypedFormGroup;
 
   filtered: boolean = false;
 
@@ -97,7 +97,7 @@ export class InventoriesListComponent implements OnInit {
 
   constructor(
     private apiSvc: ApiService,
-    private fb: FormBuilder,
+    private fb: UntypedFormBuilder,
     private spinnerSvc: SpinnerService,
     private modalSvc: NzModalService,
     public authSvc: AuthService

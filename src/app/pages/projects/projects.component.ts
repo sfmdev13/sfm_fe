@@ -315,7 +315,7 @@ export class ProjectsComponent implements OnInit {
       }
     })
 
-    poModal.afterClose.subscribe(result => {
+    poModal.afterClose.subscribe((result: any) => {
       if(result){
         this.filterParams = result
         this.getFilteredPO()
@@ -368,7 +368,7 @@ export class ProjectsComponent implements OnInit {
 
   getProject(): void{
     this.project$ = this.apiSvc.getProjects(this.currentPage, this.pageSize).pipe(
-      tap(res => {
+      tap((res: any) => {
         this.total = res.data.length;
         this.currentPage = res.pagination.current_page;
         this.totalAll = res.pagination.total

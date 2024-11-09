@@ -1,6 +1,6 @@
 import { DatePipe } from '@angular/common';
 import { Component, Input, OnInit } from '@angular/core';
-import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { UntypedFormArray, UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { NzDrawerRef } from 'ng-zorro-antd/drawer';
 import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
 import { combineLatest, Observable, startWith, tap } from 'rxjs';
@@ -140,7 +140,7 @@ export class AddPurchaseOrderComponent implements OnInit {
   manufacture$!: Observable<ICategories>;
   
   constructor(
-    private fb: FormBuilder,
+    private fb: UntypedFormBuilder,
     private apiSvc: ApiService,
     private drawerRef: NzDrawerRef,
     private datePipe: DatePipe,
@@ -1040,7 +1040,7 @@ export class AddPurchaseOrderComponent implements OnInit {
     this.drawerRef.close();
   }
 
-  updateTotalCostAdditional(orderRow: FormGroup): void{
+  updateTotalCostAdditional(orderRow: UntypedFormGroup): void{
     const qty = orderRow.get('qty')?.value || 0;
     const discount = orderRow.get('discount')?.value || 0;
     const price_list = orderRow.get('price_list')?.value || 0;
@@ -1059,7 +1059,7 @@ export class AddPurchaseOrderComponent implements OnInit {
     orderRow.get('total_cost')?.setValue(totalCost, { emitEvent: false });
   }
 
-  updateTotalCost(orderRow: FormGroup): void {
+  updateTotalCost(orderRow: UntypedFormGroup): void {
     const includeTax = orderRow.get('include_tax')?.value;
     const qty = orderRow.get('qty')?.value || 0;
     let productCost2 = 0
@@ -1088,7 +1088,7 @@ export class AddPurchaseOrderComponent implements OnInit {
     orderRow.get('total_cost')?.setValue(totalCost, { emitEvent: false });
   }
 
-  cpValueChangeSubscriptionsAdditional(control: FormGroup){
+  cpValueChangeSubscriptionsAdditional(control: UntypedFormGroup){
     control.get('unit_id')?.valueChanges.subscribe(res => {
       const selectedUnit = this.unitList.filter(u => u.id === res).map(u => ({
         measurement: u.measurement,
@@ -1117,7 +1117,7 @@ export class AddPurchaseOrderComponent implements OnInit {
     control.get('discount')?.valueChanges.subscribe(() => this.updateTotalCostAdditional(control))
   }
 
-  cpValueChangeSubscriptions(control: FormGroup){
+  cpValueChangeSubscriptions(control: UntypedFormGroup){
     let isUpdating = false;
 
     control.get('inventory_id')?.valueChanges.subscribe(value => {
@@ -1173,7 +1173,7 @@ export class AddPurchaseOrderComponent implements OnInit {
     
   }
 
-  changeValueOrder(control: FormGroup, product: any){
+  changeValueOrder(control: UntypedFormGroup, product: any){
     control.get('unit_measurement')?.setValue(product?.unit.measurement);
     control.get('unit_unit')?.setValue(product?.unit.unit);
     control.get('alias')?.setValue(product?.alias);
@@ -1184,12 +1184,12 @@ export class AddPurchaseOrderComponent implements OnInit {
     control.get('suppliersList')?.setValue(product?.inventory_items); // Set suppliers for the select input
   }
 
-  get order(): FormArray {
-    return this.purchaseForm.get('order') as FormArray;
+  get order(): UntypedFormArray {
+    return this.purchaseForm.get('order') as UntypedFormArray;
   }
 
-  get orderAdditional(): FormArray{
-    return this.purchaseForm.get('order_additional') as FormArray;
+  get orderAdditional(): UntypedFormArray{
+    return this.purchaseForm.get('order_additional') as UntypedFormArray;
   }
 
   formatter = (value: number | null): string => {

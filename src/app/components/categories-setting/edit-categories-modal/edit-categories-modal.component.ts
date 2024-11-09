@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { NzModalRef } from 'ng-zorro-antd/modal';
 
 @Component({
@@ -10,10 +10,10 @@ import { NzModalRef } from 'ng-zorro-antd/modal';
 export class EditCategoriesModalComponent implements OnInit {
 
   @Input() type: string = ''
-  @Input() form!: FormGroup;
+  @Input() form!: UntypedFormGroup;
 
   constructor(
-    private fb: FormBuilder
+    private fb: UntypedFormBuilder
   ) { }
 
   ngOnInit(): void {
