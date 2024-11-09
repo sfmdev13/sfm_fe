@@ -8,7 +8,7 @@ import { en_US } from 'ng-zorro-antd/i18n';
 import { registerLocaleData } from '@angular/common';
 import en from '@angular/common/locales/en';
 import { FormsModule } from '@angular/forms';
-import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
+import { HTTP_INTERCEPTORS, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { LayoutModule } from './components/layout/layout.module';
 import { AuthInterceptor } from './auth.interceptor';
@@ -19,26 +19,20 @@ import { NzSpinModule } from 'ng-zorro-antd/spin';
 
 registerLocaleData(en);
 
-@NgModule({
-  declarations: [
-    AppComponent,
-    UnauthorizedComponent,
-    SpinnerComponent,
-  ],
-  imports: [
-    BrowserModule,
-    AppRoutingModule,
-    FormsModule,
-    HttpClientModule,
-    BrowserAnimationsModule,
-    LayoutModule,
-    NzModalModule,
-    NzSpinModule
-  ],
-  providers: [
-    { provide: NZ_I18N, useValue: en_US },
-    { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true }
-  ],
-  bootstrap: [AppComponent]
-})
+@NgModule({ declarations: [
+        AppComponent,
+        UnauthorizedComponent,
+        SpinnerComponent,
+    ],
+    bootstrap: [AppComponent], imports: [BrowserModule,
+        AppRoutingModule,
+        FormsModule,
+        BrowserAnimationsModule,
+        LayoutModule,
+        NzModalModule,
+        NzSpinModule], providers: [
+        { provide: NZ_I18N, useValue: en_US },
+        { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
+        provideHttpClient(withInterceptorsFromDi())
+    ] })
 export class AppModule { }
