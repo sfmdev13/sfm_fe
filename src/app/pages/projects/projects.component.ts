@@ -152,6 +152,21 @@ export class ProjectsComponent implements OnInit {
 
   selectedOptIndex: number = 0;
 
+    // Define columns with visibility settings
+    columns = [
+      { name: 'ID', visible: true },
+      { name: 'Project Name', visible: true },
+      { name: 'Project Location', visible: true },
+      { name: 'Issue Date', visible: true },
+      { name: 'Project Engineer', visible: true },
+      { name: 'Site Manager', visible: true },
+      { name: 'Project Supervisor', visible: true },
+      { name: 'Construction Head', visible: true },
+      { name: 'Action', visible: true }
+    ];
+
+    isVisibleColumn: boolean = false;
+  
   constructor(
     private apiSvc: ApiService,
     private spinnerSvc: SpinnerService,
@@ -191,6 +206,15 @@ export class ProjectsComponent implements OnInit {
     //   );
     // });
   }
+
+  showColumn(): void{
+    this.isVisibleColumn = true;
+  }
+
+  handleCancelColumn(): void {
+    this.isVisibleColumn = false;
+  }
+  
 
   boardConnectArray(id: string): string[]{
     return this.listBoard.filter(board => board.id !== id)

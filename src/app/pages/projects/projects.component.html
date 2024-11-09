@@ -22,6 +22,7 @@
           </div>
           <button (click)="refreshTable()" class="me-2 filter-icon" nz-button nzType="default" nzSize="default"><span nz-icon nzType="reload"></span></button>
           <button (click)="showFilter()" class="me-2 filter-icon" nz-button nzType="default" nzSize="default"><span nz-icon nzType="filter"></span></button>
+          <button (click)="showColumn()" class="me-2 filter-icon" nz-button nzType="default" nzSize="default"><span nz-icon nzType="setting"></span></button>
           <button  nzSize="default" nz-button nzType="primary" (click)="showModalAdd()">Add Projects</button>
       </div>
   </div>
@@ -38,28 +39,28 @@
       >
           <thead>
             <tr>
-              <th>ID</th>
-              <th>Project Name</th>
-              <th>Project Location</th>
-              <th>Issue Date</th>
-              <th>Project Engineer</th>
-              <th>Site Manager</th>
-              <th>Project Supervisor</th>
-              <th>Construction Head</th>
-              <th>Action</th>
+              <th *ngIf="columns[0].visible">ID</th>
+              <th *ngIf="columns[1].visible">Project Name</th>
+              <th *ngIf="columns[2].visible">Project Location</th>
+              <th *ngIf="columns[3].visible">Issue Date</th>
+              <th *ngIf="columns[4].visible">Project Engineer</th>
+              <th *ngIf="columns[5].visible">Site Manager</th>
+              <th *ngIf="columns[6].visible">Project Supervisor</th>
+              <th *ngIf="columns[7].visible">Construction Head</th>
+              <th *ngIf="columns[8].visible">Action</th>
             </tr>
           </thead>
           <tbody>
               <tr *ngFor="let data of basicTable.data">
-              <td>{{ data.project_pid }}</td>
-              <td>{{ data.name}}</td>
-              <td>-</td>
-              <td>-</td>
-              <td>-</td>
-              <td>-</td>
-              <td>-</td>
-              <td>-</td>
-              <td>
+                <td *ngIf="columns[0].visible">{{ data.project_pid }}</td>
+                <td *ngIf="columns[1].visible">{{ data.name }}</td>
+                <td *ngIf="columns[2].visible">-</td>
+                <td *ngIf="columns[3].visible">-</td>
+                <td *ngIf="columns[4].visible">-</td>
+                <td *ngIf="columns[5].visible">-</td>
+                <td *ngIf="columns[6].visible">-</td>
+                <td *ngIf="columns[7].visible">-</td>
+              <td *ngIf="columns[8].visible">
                     <div class="d-flex gap-3">
                       <a nz-dropdown nzTrigger="click" [nzDropdownMenu]="menu" style="text-decoration: none;" >
                         <div class="d-flex align-items-center">
@@ -194,3 +195,16 @@
       </tbody>
     </nz-table>
 </ng-template>
+
+<nz-modal nzCentered [(nzVisible)]="isVisibleColumn" [nzTitle]="'Setting Column'" (nzOnCancel)="handleCancelColumn()">
+  <ng-container *nzModalContent>
+    <div *ngFor="let column of columns">
+      <label nz-checkbox [(ngModel)]="column.visible">
+        {{ column.name }}
+      </label>
+    </div>
+  </ng-container>
+  <ng-container *nzModalFooter>
+      <button nz-button nzType="primary" class="text-capitalize" (click)="handleCancelColumn()">Ok</button>        
+  </ng-container>
+</nz-modal>
