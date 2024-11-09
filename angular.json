@@ -81,10 +81,10 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "browserTarget": "sfm_fe:build:production"
+              "buildTarget": "sfm_fe:build:production"
             },
             "development": {
-              "browserTarget": "sfm_fe:build:development"
+              "buildTarget": "sfm_fe:build:development"
             }
           },
           "defaultConfiguration": "development"
@@ -92,7 +92,7 @@
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "sfm_fe:build"
+            "buildTarget": "sfm_fe:build"
           }
         },
         "test": {
