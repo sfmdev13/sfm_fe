@@ -68,22 +68,28 @@
 
                     </a>
                     <nz-dropdown-menu #menu="nzDropdownMenu">
-                      <ul nz-menu class="dropdown-wrapper">
+                      <ul nz-menu class="dropdown-wrapper" style="width: 120px">
                         <!-- <li nz-menu-item class="gap-2 list-dropdown">
                           <span nz-icon nzType="eye" nzTheme="twotone"></span>
                           <p class="m-0 p-0">Detail</p>
                         </li> -->
                         <li nz-menu-item class="gap-2 list-dropdown" (click)="showModalEdit(data)">
-                          <span nz-icon nzType="edit" nzTheme="twotone"></span>
-                          <p class="m-0 p-0">Edit</p>
+                          <div class="d-flex gap-2">
+                            <span nz-icon nzType="edit" nzTheme="twotone"></span>
+                            <p class="m-0 p-0">Edit</p>
+                          </div>
                         </li>
                         <li (click)="showModalDuplicate(data)" nz-menu-item class="gap-2 list-dropdown">
-                          <span nz-icon nzType="copy" nzTheme="twotone" ></span>
-                          <p class="m-0 p-0">Duplicate</p>                
+                          <div class="d-flex gap-2">
+                            <span nz-icon nzType="copy" nzTheme="twotone" ></span>
+                            <p class="m-0 p-0">Duplicate</p>     
+                          </div>
                         </li>
                         <li (click)="showModalDelete(data.id)" nz-menu-item class="gap-2 list-dropdown">
-                          <span nz-icon nzType="delete" nzTheme="twotone" [nzTwotoneColor]="'#f50'"></span>
-                          <p class="m-0 p-0" style="color: #f50;">Delete</p>                
+                          <div class="d-flex gap-2">
+                            <span nz-icon nzType="delete" nzTheme="twotone" [nzTwotoneColor]="'#f50'"></span>
+                            <p class="m-0 p-0" style="color: #f50;">Delete</p>    
+                          </div>
                         </li>
                         <li nz-menu-divider></li>
                           <li 
@@ -92,8 +98,10 @@
                             class="gap-2 list-dropdown"
                             (click)="handleChangeStatus('Hold', data.id)"
                           >
-                            <span nz-icon nzType="close-circle" nzTheme="twotone"></span>
-                            <p class="m-0 p-0">Hold</p>
+                            <div class="d-flex gap-2">
+                              <span nz-icon nzType="close-circle" nzTheme="twotone"></span>
+                              <p class="m-0 p-0">Hold</p>
+                            </div>
                           </li>
                           <li 
                             *ngIf="data.status.toLowerCase() === 'hold'" 
@@ -101,8 +109,10 @@
                             class="gap-2 list-dropdown"
                             (click)="handleChangeStatus('Revised', data.id)"
                           >
-                            <span nz-icon nzType="highlight" nzTheme="twotone"></span>
-                            <p class="m-0 p-0">Revise</p>
+                            <div class="d-flex gap-2">
+                              <span nz-icon nzType="highlight" nzTheme="twotone"></span>
+                              <p class="m-0 p-0">Revise</p>
+                            </div>
                           </li>
                           <li 
                             *ngIf="data.status.toLowerCase() === 'hold' || data.status.toLowerCase() === 'open' || data.status.toLowerCase() === 'revised'" 
@@ -110,8 +120,10 @@
                             class="gap-2 list-dropdown"
                             (click)="handleChangeStatus('Rejected', data.id)"
                           >
-                            <span nz-icon nzType="stop" nzTheme="twotone"></span>
-                            <p class="m-0 p-0">Reject</p>
+                            <div class="d-flex gap-2">
+                              <span nz-icon nzType="stop" nzTheme="twotone"></span>
+                              <p class="m-0 p-0">Reject</p>
+                            </div>
                           </li>
                           <li 
                             *ngIf="data.status.toLowerCase() === 'open' || data.status.toLowerCase() === 'revised'"  
@@ -119,8 +131,10 @@
                             class="gap-2 list-dropdown"
                             (click)="handleChangeStatus('Approved', data.id)"
                           >
-                            <span nz-icon nzType="like" nzTheme="twotone"></span>
-                            <p class="m-0 p-0">Approve</p>                
+                            <div class="d-flex gap-2">
+                              <span nz-icon nzType="like" nzTheme="twotone"></span>
+                              <p class="m-0 p-0">Approve</p>   
+                            </div>
                           </li>
                           <li 
                             *ngIf="data.status.toLowerCase() === 'approved'" 
@@ -128,8 +142,10 @@
                             class="gap-2 list-dropdown"
                             (click)="handleChangeStatus('Finished', data.id)"
                           >
-                            <span nz-icon nzType="check-circle" nzTheme="twotone"></span>
-                            <p class="m-0 p-0">Finish</p>                
+                            <div class="d-flex">
+                              <span nz-icon nzType="check-circle" nzTheme="twotone"></span>
+                              <p class="m-0 p-0">Finish</p>     
+                            </div>
                           </li>
                       </ul>
                     </nz-dropdown-menu>

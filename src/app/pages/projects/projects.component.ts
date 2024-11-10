@@ -152,6 +152,21 @@ export class ProjectsComponent implements OnInit {
 
   selectedOptIndex: number = 0;
 
+    // Define columns with visibility settings
+    columns = [
+      { name: 'ID', visible: true },
+      { name: 'Project Name', visible: true },
+      { name: 'Project Location', visible: true },
+      { name: 'Issue Date', visible: true },
+      { name: 'Project Engineer', visible: true },
+      { name: 'Site Manager', visible: true },
+      { name: 'Project Supervisor', visible: true },
+      { name: 'Construction Head', visible: true },
+      { name: 'Action', visible: true }
+    ];
+
+    isVisibleColumn: boolean = false;
+  
   constructor(
     private apiSvc: ApiService,
     private spinnerSvc: SpinnerService,
@@ -191,6 +206,15 @@ export class ProjectsComponent implements OnInit {
     //   );
     // });
   }
+
+  showColumn(): void{
+    this.isVisibleColumn = true;
+  }
+
+  handleCancelColumn(): void {
+    this.isVisibleColumn = false;
+  }
+  
 
   boardConnectArray(id: string): string[]{
     return this.listBoard.filter(board => board.id !== id)
@@ -286,12 +310,12 @@ export class ProjectsComponent implements OnInit {
       nzTitle: 'Filter Purchase Order',
       nzContent: FilterPurchaseOrderComponent,
       nzCentered: true,
-      nzComponentParams: {
+      nzData: {
         filteredPO: this.filtered
       }
     })
 
-    poModal.afterClose.subscribe(result => {
+    poModal.afterClose.subscribe((result: any) => {
       if(result){
         this.filterParams = result
         this.getFilteredPO()
@@ -344,7 +368,7 @@ export class ProjectsComponent implements OnInit {
 
   getProject(): void{
     this.project$ = this.apiSvc.getProjects(this.currentPage, this.pageSize).pipe(
-      tap(res => {
+      tap((res: any) => {
         this.total = res.data.length;
         this.currentPage = res.pagination.current_page;
         this.totalAll = res.pagination.total
@@ -357,7 +381,7 @@ export class ProjectsComponent implements OnInit {
     this.modalSvc.create({
       nzTitle: 'Update Project',
       nzContent: AddProjectsComponent,
-      nzComponentParams: {
+      nzData: {
         modal_type: this.modal_type,
         data: data
       },
@@ -388,7 +412,7 @@ export class ProjectsComponent implements OnInit {
       nzTitle: 'Add Project',
       nzContent: AddProjectsComponent,
       nzCentered: true,
-      nzComponentParams: {
+      nzData: {
         modal_type: this.modal_type
       },
       nzClosable: false,

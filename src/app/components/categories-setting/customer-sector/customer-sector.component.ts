@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Validators, FormBuilder, FormGroup } from '@angular/forms';
+import { Validators, UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
 import { NzModalService } from 'ng-zorro-antd/modal';
 import { Observable, tap } from 'rxjs';
 import { ApiService } from 'src/app/api.service';
@@ -22,7 +22,7 @@ export class CustomerSectorComponent implements OnInit {
 
   total_category: number = 0;
 
-  categoryForm: FormGroup;
+  categoryForm: UntypedFormGroup;
 
   categoryFormEdit = this.fb.group({
     id: [''],
@@ -34,7 +34,7 @@ export class CustomerSectorComponent implements OnInit {
 
   constructor(
     private apiSvc: ApiService,
-    private fb: FormBuilder,
+    private fb: UntypedFormBuilder,
     private spinnerSvc: SpinnerService,
     private modalSvc: NzModalService
   ) { 

@@ -1,7 +1,7 @@
 import { DatePipe } from '@angular/common';
-import { Component, Input, OnInit } from '@angular/core';
-import { Validators, FormBuilder, FormGroup, FormArray } from '@angular/forms';
-import { NzDrawerRef } from 'ng-zorro-antd/drawer';
+import { Component, inject, Input, OnInit } from '@angular/core';
+import { Validators, UntypedFormBuilder, UntypedFormGroup, UntypedFormArray } from '@angular/forms';
+import { NZ_DRAWER_DATA, NzDrawerRef } from 'ng-zorro-antd/drawer';
 import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
 import { Observable, tap, startWith, combineLatest } from 'rxjs';
 import { ApiService } from 'src/app/api.service';
@@ -15,11 +15,11 @@ import { EditCategoriesModalComponent } from '../categories-setting/edit-categor
   styleUrls: ['./add-assembly.component.scss']
 })
 export class AddAssemblyComponent implements OnInit {
-
-  @Input() modal_type: string = '';
-  @Input() dataDetail: IDataAssembly = {} as IDataAssembly;
-  @Input() inventoryList: any;
-  @Input() assemblyList: any;
+  nzData = inject(NZ_DRAWER_DATA);
+  modal_type: string = this.nzData.modal_type;
+  dataDetail: IDataAssembly = this.nzData.dataDetail;
+  inventoryList: any = this.nzData.inventoryList;
+  assemblyList: any = this.nzData.assemblyList;
 
   pic$!: Observable<any>;
 
@@ -71,7 +71,7 @@ export class AddAssemblyComponent implements OnInit {
   deletedOrderAdditional: string[] = [];
 
   constructor(
-    private fb: FormBuilder,
+    private fb: UntypedFormBuilder,
     private apiSvc: ApiService,
     private drawerRef: NzDrawerRef,
     private datePipe: DatePipe,
@@ -79,7 +79,12 @@ export class AddAssemblyComponent implements OnInit {
     private modalSvc: NzModalService,
   ) { }
 
-  ngOnInit(): void {
+    ngOnInit(): void {
+    // this.modal_type = this.nzModalData.modal_type;
+    // this.dataDetail = this.nzModalData.dataDetail;
+    // this.inventoryList = this.nzModalData.inventoryList;
+    // this.assemblyList = this.nzModalData.assemblyList;
+  
 
     this.assemblyForm.get('status')?.valueChanges.subscribe((value: boolean) => {
       this.assemblyForm.get('status')?.setValue(value ? 1 : 0, { emitEvent: false });
@@ -314,7 +319,7 @@ export class AddAssemblyComponent implements OnInit {
     this.ModalRefUnit = this.modalSvc.create({
       nzTitle: ' Add Unit of Measurment',
       nzContent: EditCategoriesModalComponent,
-      nzComponentParams: {
+      nzData: {
         form: this.categoryFormUnit,
         type: titleCat
       },
@@ -481,7 +486,7 @@ export class AddAssemblyComponent implements OnInit {
     this.drawerRef.close();
   }
 
-  updateTotalCostAdditional(orderRow: FormGroup): void{
+  updateTotalCostAdditional(orderRow: UntypedFormGroup): void{
     const qty = orderRow.get('qty')?.value || 0;
     const discount = orderRow.get('discount')?.value || 0;
     const discount_price = orderRow.get('discount_price')?.value || 0;
@@ -501,7 +506,7 @@ export class AddAssemblyComponent implements OnInit {
     orderRow.get('total_cost')?.setValue(totalCost, { emitEvent: false });
   }
 
-  updateTotalCost(orderRow: FormGroup): void {
+  updateTotalCost(orderRow: UntypedFormGroup): void {
     const type = orderRow.get('type')?.value;
     const qtyAssembly = this.assemblyForm.get('qty')?.value || 0;
     const qty = orderRow.get('qty')?.value || 0;
@@ -531,7 +536,7 @@ export class AddAssemblyComponent implements OnInit {
     orderRow.get('total_cost')?.setValue(totalCost, { emitEvent: false });
   }
 
-  cpValueChangeSubscriptionsAdditional(control: FormGroup){
+  cpValueChangeSubscriptionsAdditional(control: UntypedFormGroup){
     control.get('unit_id')?.valueChanges.subscribe(res => {
       const selectedUnit = this.unitList.filter(u => u.id === res).map(u => ({
         measurement: u.measurement,
@@ -560,7 +565,7 @@ export class AddAssemblyComponent implements OnInit {
     control.get('discount')?.valueChanges.subscribe(() => this.updateTotalCostAdditional(control))
   }
 
-  cpValueChangeSubscriptions(control: FormGroup){
+  cpValueChangeSubscriptions(control: UntypedFormGroup){
     let isUpdating = false;
 
     control.get('inventory_id')?.valueChanges.subscribe(value => {
@@ -640,7 +645,7 @@ export class AddAssemblyComponent implements OnInit {
     });
   }
 
-  changeValueOrder(control: FormGroup, product: any){
+  changeValueOrder(control: UntypedFormGroup, product: any){
     const type = control.get('type')?.value;
 
     if(type === 'inventory'){
@@ -661,12 +666,12 @@ export class AddAssemblyComponent implements OnInit {
 
   }
 
-  get order(): FormArray {
-    return this.assemblyForm.get('order') as FormArray;
+  get order(): UntypedFormArray {
+    return this.assemblyForm.get('order') as UntypedFormArray;
   }
 
-  get orderAdditional(): FormArray{
-    return this.assemblyForm.get('order_additional') as FormArray;
+  get orderAdditional(): UntypedFormArray{
+    return this.assemblyForm.get('order_additional') as UntypedFormArray;
   }
 
   formatter = (value: number | null): string => {

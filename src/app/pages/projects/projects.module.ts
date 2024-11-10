@@ -20,6 +20,7 @@ import { NzProgressModule } from 'ng-zorro-antd/progress';
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { NzCardModule } from 'ng-zorro-antd/card';
 import { NzSegmentedModule } from 'ng-zorro-antd/segmented';
+import { NzCheckboxModule } from 'ng-zorro-antd/checkbox';
 
 @NgModule({
   declarations: [ProjectsComponent],
@@ -43,7 +44,8 @@ import { NzSegmentedModule } from 'ng-zorro-antd/segmented';
     NzProgressModule,
     DragDropModule,
     NzCardModule,
-    NzSegmentedModule
+    NzSegmentedModule,
+    NzCheckboxModule
   ],
   exports: [ProjectsComponent]
 })

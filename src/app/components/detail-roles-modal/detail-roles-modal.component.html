@@ -8,7 +8,7 @@
 </div>
 
 <div class="mt-2">
-    <nz-tabset>
+    <nz-tabset [nzAnimated]="false">
         <nz-tab nzTitle="Access Rights">
             <nz-tree-view [nzTreeControl]="treeControl" [nzDataSource]="dataSource">
                 <nz-tree-node *nzTreeNodeDef="let node" nzTreeNodeIndentLine>

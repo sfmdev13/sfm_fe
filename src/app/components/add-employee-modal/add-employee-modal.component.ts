@@ -1,7 +1,7 @@
 import { DatePipe } from '@angular/common';
-import { Component, Input, OnInit } from '@angular/core';
-import { FormBuilder, Validators } from '@angular/forms';
-import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
+import { Component, inject, Input, OnInit } from '@angular/core';
+import { UntypedFormBuilder, Validators } from '@angular/forms';
+import { NZ_MODAL_DATA, NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
 import { Observable, tap } from 'rxjs';
 import { ApiService } from 'src/app/api.service';
 import { ICategories, IDataEmployee, IRootAllRoles } from 'src/app/interfaces';
@@ -13,9 +13,9 @@ import { SpinnerService } from 'src/app/spinner.service';
   styleUrls: ['./add-employee-modal.component.scss']
 })
 export class AddEmployeeModalComponent implements OnInit {
-
-  @Input() modal_type: string = 'add';
-  @Input() data: IDataEmployee = {} as IDataEmployee
+  nzData = inject(NZ_MODAL_DATA);
+  @Input() modal_type: string = this.nzData.modal_type;
+  @Input() data: IDataEmployee = this.nzData.data;
 
   roles$!: Observable<IRootAllRoles>
 
@@ -44,7 +44,7 @@ export class AddEmployeeModalComponent implements OnInit {
 
   constructor(
     private modal: NzModalRef,
-    private fb: FormBuilder,
+    private fb: UntypedFormBuilder,
     private apiSvc: ApiService,
     private spinnerSvc: SpinnerService,
     private modalSvc: NzModalService,

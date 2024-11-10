@@ -1,7 +1,7 @@
-import { Component, Input, OnInit } from '@angular/core';
-import { AbstractControl, FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { Component, inject, Input, OnInit } from '@angular/core';
+import { AbstractControl, UntypedFormArray, UntypedFormBuilder, FormControl, UntypedFormGroup, Validators } from '@angular/forms';
 import { NzMessageService } from 'ng-zorro-antd/message';
-import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
+import { NZ_MODAL_DATA, NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
 import { NzUploadFile } from 'ng-zorro-antd/upload';
 import { Observable, tap } from 'rxjs';
 import { ApiService } from 'src/app/api.service';
@@ -23,10 +23,11 @@ const getBase64 = (file: File): Promise<string | ArrayBuffer | null> =>
   styleUrls: ['./add-customer-modal.component.scss']
 })
 export class AddCustomerModalComponent implements OnInit {
+  nzData = inject(NZ_MODAL_DATA);
 
-  @Input() modal_type: string = 'add';
-  @Input() customerDetail: IDataCustomer = {} as IDataCustomer
-  @Input() listOfPic: any[] = [];
+  modal_type: string = this.nzData.modal_type;
+  customerDetail: IDataCustomer = this.nzData.customerDetail
+  listOfPic: any[] = this.nzData.listOfPic;
 
   provinces$!: Observable<any>;
 
@@ -109,7 +110,7 @@ export class AddCustomerModalComponent implements OnInit {
 
   constructor(
     private modal: NzModalRef,
-    private fb: FormBuilder,
+    private fb: UntypedFormBuilder,
     private apiSvc: ApiService,
     private spinnerSvc: SpinnerService,
     private modalSvc: NzModalService,
@@ -200,7 +201,7 @@ export class AddCustomerModalComponent implements OnInit {
       }
 
       this.contactPerson.controls.forEach((control: AbstractControl) => {
-        if(control instanceof FormGroup){
+        if(control instanceof UntypedFormGroup){
           const cpPic = control.get('cp_pic');
           const cpPicInternal = control.get('cp_is_pic_internal')
 
@@ -381,7 +382,7 @@ export class AddCustomerModalComponent implements OnInit {
     this.nestedModalRef = this.modalSvc.create({
       nzTitle: ' Add Category ' + titleCat,
       nzContent: EditCategoriesModalComponent,
-      nzComponentParams: {
+      nzData: {
         form: this.categoryForm
       },
       nzWidth: '500px',
@@ -540,8 +541,8 @@ export class AddCustomerModalComponent implements OnInit {
   }
 
 
-  get contactPerson(): FormArray {
-    return this.customerForm.get('contactPerson') as FormArray;
+  get contactPerson(): UntypedFormArray {
+    return this.customerForm.get('contactPerson') as UntypedFormArray;
   }
 
   addContactPerson(): void {
@@ -582,7 +583,7 @@ export class AddCustomerModalComponent implements OnInit {
     this.contactPerson.push(newCp);
   }
 
-  cpValueChangeSubscriptions(control: FormGroup): void {
+  cpValueChangeSubscriptions(control: UntypedFormGroup): void {
     control.get('cp_pic')?.valueChanges.subscribe(value => {
       this.updateFilteredCpListOfPic(control, value);
     });
@@ -592,7 +593,7 @@ export class AddCustomerModalComponent implements OnInit {
     })
   }
 
-  updateFilteredCpListOfPic(formGroup: FormGroup, selectedPicId: any): void {
+  updateFilteredCpListOfPic(formGroup: UntypedFormGroup, selectedPicId: any): void {
     // Filter your cpListOfPic based on the selectedPicId
     const filteredList = this.cpListOfPic.filter(pic => {
       // Adjust filtering logic as needed
@@ -607,7 +608,7 @@ export class AddCustomerModalComponent implements OnInit {
     formGroup.get('filteredCpListOfPic')?.setValue(filteredList, { emitEvent: false });
   }
 
-  updateFilteredCity(formGroup: FormGroup, selectedId: any): void {
+  updateFilteredCity(formGroup: UntypedFormGroup, selectedId: any): void {
     this.apiSvc.getRegenciesByProvince(selectedId).subscribe((res) => {
       formGroup.get('filteredCity')?.setValue(res, { emitEvent: false });
     })
@@ -978,7 +979,7 @@ export class AddCustomerModalComponent implements OnInit {
   }
 
   optionCustChange($event: number){
-    const contactPersonArray = this.customerForm.get('contactPerson') as FormArray;
+    const contactPersonArray = this.customerForm.get('contactPerson') as UntypedFormArray;
 
     if($event === 0) {
       this.optionCustSelected = 'company';

@@ -1,6 +1,6 @@
-import { Component, Input, OnInit } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
-import { NzModalRef } from 'ng-zorro-antd/modal';
+import { Component, inject, Input, OnInit } from '@angular/core';
+import { UntypedFormBuilder } from '@angular/forms';
+import { NZ_MODAL_DATA, NzModalRef } from 'ng-zorro-antd/modal';
 import { Observable } from 'rxjs';
 import { ApiService } from 'src/app/api.service';
 
@@ -10,8 +10,8 @@ import { ApiService } from 'src/app/api.service';
   styleUrls: ['./filter-all-inventories.component.scss']
 })
 export class FilterAllInventoriesComponent implements OnInit {
-
-  @Input() filtered: boolean = false
+  nzData = inject(NZ_MODAL_DATA)
+  filtered: boolean = this.nzData.filtered
 
   filterForm = this.fb.group({
     type: ['inventory'],
@@ -23,7 +23,7 @@ export class FilterAllInventoriesComponent implements OnInit {
 
   constructor(
     private modal: NzModalRef,
-    private fb: FormBuilder,
+    private fb: UntypedFormBuilder,
     private apiSvc: ApiService
   ) { }
 

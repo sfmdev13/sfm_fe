@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, Input, OnInit } from '@angular/core';
+import { AfterViewInit, Component, inject, Input, OnInit } from '@angular/core';
 import { NzTreeFlatDataSource, NzTreeFlattener } from 'ng-zorro-antd/tree-view';
 import { FlatTreeControl } from '@angular/cdk/tree';
 import { SelectionModel } from '@angular/cdk/collections';
@@ -6,6 +6,7 @@ import { IDataRoles, IRootAccessRights, IRootUserByRole } from 'src/app/interfac
 import { accessRights } from '../../constants/access-rights.contanst';
 import { ApiService } from 'src/app/api.service';
 import { debounceTime, distinctUntilChanged, Observable, Subject, tap } from 'rxjs';
+import { NZ_MODAL_DATA } from 'ng-zorro-antd/modal';
 
 interface TreeNode {
   name: string;
@@ -24,8 +25,8 @@ interface FlatNode {
   styleUrls: ['./detail-roles-modal.component.scss']
 })
 export class DetailRolesModalComponent implements OnInit, AfterViewInit {
-
-  @Input() roleDetail: IDataRoles = {} as IDataRoles
+  nzData = inject(NZ_MODAL_DATA)
+  @Input() roleDetail: IDataRoles = this.nzData.roleDetail
 
   employee$!: Observable<IRootUserByRole>
 

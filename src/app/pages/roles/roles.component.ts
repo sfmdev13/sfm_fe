@@ -76,7 +76,7 @@ export class RolesComponent implements OnInit {
     this.modalService.create({
       nzTitle: 'Add Roles',
       nzContent: AddRolesModalComponent,
-      nzComponentParams: {
+      nzData: {
         modal_type: 'add'
       },
       nzCentered: true,
@@ -88,7 +88,7 @@ export class RolesComponent implements OnInit {
     this.modalService.create({
       nzTitle: 'Edit Roles',
       nzContent: AddRolesModalComponent,
-      nzComponentParams: {
+      nzData: {
         modal_type: 'edit',
         roleDetail: data
       },
@@ -102,7 +102,7 @@ export class RolesComponent implements OnInit {
       nzTitle: 'Detail Roles',
       nzContent: DetailRolesModalComponent,
       nzCentered: true,
-      nzComponentParams: {
+      nzData: {
         roleDetail: data
       }
     })
@@ -113,7 +113,7 @@ export class RolesComponent implements OnInit {
       nzTitle: 'Delete Role',
       nzContent: DeleteRolesModalComponent,
       nzCentered: true,
-      nzComponentParams: {
+      nzData: {
         id: data.id
       }
     })

@@ -5,13 +5,16 @@
 
             <nz-form-item class="mb-4">
               <nz-form-label nzRequired nzFor="pic" class="fw-semibold">PIC SFM</nz-form-label>
-                  <nz-select nzShowSearch nzMode="tags" nzPlaceHolder="Select PIC" formControlName="pic">
-                      <nz-option
-                      *ngFor="let pic of listOfPic"
-                          [nzLabel]="pic.name" 
-                          [nzValue]="pic.pic_id"
-                      ></nz-option>
-                  </nz-select>
+              <nz-form-control>
+                <nz-select nzShowSearch nzMode="tags" nzPlaceHolder="Select PIC" formControlName="pic">
+                  <nz-option
+                  *ngFor="let pic of listOfPic"
+                      [nzLabel]="pic.name" 
+                      [nzValue]="pic.pic_id"
+                  ></nz-option>
+              </nz-select>
+              </nz-form-control>
+
           </nz-form-item>
 
             

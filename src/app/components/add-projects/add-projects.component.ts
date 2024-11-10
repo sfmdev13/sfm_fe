@@ -1,7 +1,7 @@
 import { DatePipe } from '@angular/common';
-import { Component, Input, OnInit } from '@angular/core';
-import { Validators, FormBuilder } from '@angular/forms';
-import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
+import { Component, inject, Input, OnInit } from '@angular/core';
+import { Validators, UntypedFormBuilder } from '@angular/forms';
+import { NZ_MODAL_DATA, NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
 import { Observable, tap } from 'rxjs';
 import { ApiService } from 'src/app/api.service';
 import { IDataEmployee, IRootAllRoles, ICategories, IRootCustomer, IContactPerson, IDataCustomer } from 'src/app/interfaces';
@@ -15,8 +15,9 @@ import { DetailCustomerModalComponent } from '../detail-customer-modal/detail-cu
   styleUrls: ['./add-projects.component.scss']
 })
 export class AddProjectsComponent implements OnInit {
-  @Input() modal_type: string = 'add';
-  @Input() data: IDataProject = {} as IDataProject
+  nzData = inject(NZ_MODAL_DATA);
+  modal_type: string = this.nzData.modal_type;
+  data: IDataProject = this.nzData.data;
 
   pic$!: Observable<any>;
   roles$!: Observable<IRootAllRoles>
@@ -73,7 +74,7 @@ export class AddProjectsComponent implements OnInit {
 
   constructor(
     private modal: NzModalRef,
-    private fb: FormBuilder,
+    private fb: UntypedFormBuilder,
     private apiSvc: ApiService,
     private spinnerSvc: SpinnerService,
     private modalSvc: NzModalService,
@@ -170,7 +171,7 @@ export class AddProjectsComponent implements OnInit {
       nzTitle: 'Detail Customer',
       nzContent: DetailCustomerModalComponent,
       nzCentered: true,
-      nzComponentParams: {
+      nzData: {
         data: this.customerDetail
       },
       nzWidth: '800px'

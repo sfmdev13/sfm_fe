@@ -53,7 +53,7 @@ export class AllInventoriesComponent implements OnInit {
       nzTitle: 'Filter Purchase Order',
       nzContent: FilterAllInventoriesComponent,
       nzCentered: true,
-      nzComponentParams: {
+      nzData: {
         filtered: this.filtered
       }
     })

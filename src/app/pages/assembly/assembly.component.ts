@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
+import { UntypedFormBuilder } from '@angular/forms';
 import { NzDrawerService } from 'ng-zorro-antd/drawer';
 import { NzModalService } from 'ng-zorro-antd/modal';
 import { debounceTime, distinctUntilChanged, Observable, Subject, tap } from 'rxjs';
@@ -66,7 +66,7 @@ export class AssemblyComponent implements OnInit {
 
   constructor(
     private apiSvc: ApiService,
-    private fb: FormBuilder,
+    private fb: UntypedFormBuilder,
     private spinnerSvc: SpinnerService,
     private modalSvc: NzModalService,
     public authSvc: AuthService,
@@ -177,7 +177,7 @@ export class AssemblyComponent implements OnInit {
       nzTitle: 'Filter Purchase Order',
       nzContent: FilterPurchaseOrderComponent,
       nzCentered: true,
-      nzComponentParams: {
+      nzData: {
         filteredPO: this.filtered
       }
     })
@@ -242,7 +242,7 @@ export class AssemblyComponent implements OnInit {
       nzContent: AddAssemblyComponent,
       nzPlacement: 'bottom',
       nzHeight: '100vh',
-      nzContentParams: {
+      nzData: {
         modal_type: this.modal_type,
         dataDetail: data,
         inventoryList: this.inventoryList,
@@ -254,11 +254,11 @@ export class AssemblyComponent implements OnInit {
   showModalDuplicate(data: IDataAssembly): void{
     this.modal_type = 'duplicate'
     this.drawerService.create({
-      nzTitle: 'Add Purchase',
+      nzTitle: 'Add Assembly Inventory',
       nzContent: AddAssemblyComponent,
       nzPlacement: 'bottom',
       nzHeight: '100vh',
-      nzContentParams: {
+      nzData: {
         modal_type: this.modal_type,
         dataDetail: data,
         inventoryList: this.inventoryList,
@@ -274,7 +274,7 @@ export class AssemblyComponent implements OnInit {
       nzContent: AddAssemblyComponent,
       nzPlacement: 'bottom',
       nzHeight: '100vh',
-      nzContentParams: {
+      nzData: {
         modal_type: this.modal_type,
         inventoryList: this.inventoryList,
         assemblyList: this.assemblyList

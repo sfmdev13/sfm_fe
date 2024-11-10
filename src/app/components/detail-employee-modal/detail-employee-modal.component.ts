@@ -1,5 +1,5 @@
-import { Component, Input, OnInit } from '@angular/core';
-import { NzModalRef } from 'ng-zorro-antd/modal';
+import { Component, inject, Input, OnInit } from '@angular/core';
+import { NZ_MODAL_DATA, NzModalRef } from 'ng-zorro-antd/modal';
 import { IDataEmployee } from 'src/app/interfaces';
 
 @Component({
@@ -9,7 +9,8 @@ import { IDataEmployee } from 'src/app/interfaces';
 })
 export class DetailEmployeeModalComponent implements OnInit {
 
-  @Input() data: IDataEmployee = {} as IDataEmployee
+  nzData = inject(NZ_MODAL_DATA)
+  @Input() data: IDataEmployee = this.nzData.data
 
   status: boolean = true;
 

@@ -1,6 +1,6 @@
 import { DatePipe } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
-import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { FormGroup, UntypedFormBuilder, Validators } from '@angular/forms';
 import { NzDrawerService } from 'ng-zorro-antd/drawer';
 import { NzModalService } from 'ng-zorro-antd/modal';
 import { Observable, Subject, tap, debounceTime, distinctUntilChanged } from 'rxjs';
@@ -69,7 +69,7 @@ export class PurchaseOrderComponent implements OnInit {
 
   constructor(
     private apiSvc: ApiService,
-    private fb: FormBuilder,
+    private fb: UntypedFormBuilder,
     private spinnerSvc: SpinnerService,
     private modalSvc: NzModalService,
     public authSvc: AuthService,
@@ -211,7 +211,7 @@ export class PurchaseOrderComponent implements OnInit {
       nzTitle: 'Filter Purchase Order',
       nzContent: FilterPurchaseOrderComponent,
       nzCentered: true,
-      nzComponentParams: {
+      nzData: {
         filteredPO: this.filtered
       }
     })
@@ -284,7 +284,7 @@ export class PurchaseOrderComponent implements OnInit {
       nzContent: AddPurchaseOrderComponent,
       nzPlacement: 'bottom',
       nzHeight: '100vh',
-      nzContentParams: {
+      nzData: {
         modal_type: this.modal_type,
         dataDetail: data,
         inventoryList: this.inventoryList
@@ -299,7 +299,7 @@ export class PurchaseOrderComponent implements OnInit {
       nzContent: AddPurchaseOrderComponent,
       nzPlacement: 'bottom',
       nzHeight: '100vh',
-      nzContentParams: {
+      nzData: {
         modal_type: this.modal_type,
         dataDetail: data,
         inventoryList: this.inventoryList
@@ -314,7 +314,7 @@ export class PurchaseOrderComponent implements OnInit {
       nzContent: AddPurchaseOrderComponent,
       nzPlacement: 'bottom',
       nzHeight: '100vh',
-      nzContentParams: {
+      nzData: {
         modal_type: this.modal_type,
         inventoryList: this.inventoryList
       }

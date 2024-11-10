@@ -1,5 +1,6 @@
-import { Component, Input, OnInit } from '@angular/core';
-import { FormGroup, FormBuilder } from '@angular/forms';
+import { Component, Inject, Input, OnInit, Optional } from '@angular/core';
+import { UntypedFormGroup, UntypedFormBuilder } from '@angular/forms';
+import { NZ_MODAL_DATA } from 'ng-zorro-antd/modal';
 import { IDataUnit } from 'src/app/interfaces';
 
 @Component({
@@ -10,13 +11,19 @@ import { IDataUnit } from 'src/app/interfaces';
 export class AddUnitReportComponent implements OnInit {
 
   @Input() type: string = ''
-  @Input() form!: FormGroup;
+  @Input() form!: UntypedFormGroup;
   @Input() unitList: IDataUnit[] = []
 
   constructor(
-    private fb: FormBuilder
+    private fb: UntypedFormBuilder,
+    @Optional() @Inject(NZ_MODAL_DATA) public nzData: any
   ) { }
 
   ngOnInit(): void {
+    if(this.nzData){
+      this.form = this.nzData.form,
+      this.type = this.nzData.type,
+      this.unitList = this.nzData.unitList
+    }
   }
 }
