@@ -1,5 +1,6 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Inject, inject, Input, OnInit, Optional } from '@angular/core';
 import { UntypedFormGroup } from '@angular/forms';
+import { NZ_MODAL_DATA } from 'ng-zorro-antd/modal';
 import { Observable, tap } from 'rxjs';
 import { ApiService } from 'src/app/api.service';
 
@@ -20,9 +21,13 @@ export class AddWarehouseAddressComponent implements OnInit {
 
   city: any[] = [];
   
-  constructor(private apiSvc: ApiService) { }
+  constructor(private apiSvc: ApiService, @Optional() @Inject(NZ_MODAL_DATA) public nzData: any) { }
 
   ngOnInit(): void {
+
+    if (this.nzData) {
+      this.form = this.nzData.form;
+    }
 
     this.provinces$ = this.apiSvc.getProvinces().pipe(
       tap(p => {

@@ -1,6 +1,6 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, inject, Input, OnInit } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
-import { NzModalRef } from 'ng-zorro-antd/modal';
+import { NZ_MODAL_DATA, NzModalRef } from 'ng-zorro-antd/modal';
 import { Observable } from 'rxjs';
 import { ApiService } from 'src/app/api.service';
 import { IRootAllRoles } from 'src/app/interfaces';
@@ -11,8 +11,8 @@ import { IRootAllRoles } from 'src/app/interfaces';
   styleUrls: ['./filter-employee-modal.component.scss']
 })
 export class FilterEmployeeModalComponent implements OnInit {
-
-  @Input() filteredEmp: boolean = false
+  nzData = inject(NZ_MODAL_DATA)
+  filteredEmp: boolean = this.nzData.filteredEmp
 
   filterEmpForm = this.fb.group({
     role_id: [''],

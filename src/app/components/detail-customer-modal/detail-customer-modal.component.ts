@@ -1,4 +1,5 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, inject, Input, OnInit } from '@angular/core';
+import { NZ_MODAL_DATA } from 'ng-zorro-antd/modal';
 import { ApiService } from 'src/app/api.service';
 import { IDataCustomer } from 'src/app/interfaces';
 
@@ -9,7 +10,8 @@ import { IDataCustomer } from 'src/app/interfaces';
 })
 export class DetailCustomerModalComponent implements OnInit {
 
-  @Input() data!: IDataCustomer;
+  readonly nzModalData = inject(NZ_MODAL_DATA);
+  data!: IDataCustomer;
 
   status: boolean = true;
 
@@ -21,6 +23,9 @@ export class DetailCustomerModalComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
+
+    this.data = this.nzModalData.data
+
     this.apiSvc.getProvinces().subscribe((res) => {
       this.provinceList = res
     })

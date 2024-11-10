@@ -1,6 +1,6 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, inject, Input, OnInit } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
-import { NzModalRef } from 'ng-zorro-antd/modal';
+import { NZ_MODAL_DATA, NzModalRef } from 'ng-zorro-antd/modal';
 import { Observable } from 'rxjs';
 import { ApiService } from 'src/app/api.service';
 
@@ -10,8 +10,8 @@ import { ApiService } from 'src/app/api.service';
   styleUrls: ['./filter-purchase-order.component.scss']
 })
 export class FilterPurchaseOrderComponent implements OnInit {
-
-  @Input() filteredPO: boolean = false
+  nzData = inject(NZ_MODAL_DATA)
+  filteredPO: boolean = this.nzData.filteredPO
 
   filterPOForm = this.fb.group({
     // supplier: [''],

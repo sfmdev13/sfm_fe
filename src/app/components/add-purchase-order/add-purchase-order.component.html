@@ -5,20 +5,22 @@
                 <div class="col-md-4">
                     <nz-form-item class="mb-4">
                         <nz-form-label nzRequired nzFor="pic" class="fw-semibold">PIC SFM</nz-form-label>
-                        <ng-container *ngIf="pic$ | async as pic; else picLoad">
-                            <nz-select nzShowSearch nzMode="tags" nzPlaceHolder="Select PIC" formControlName="pic">
-                                <nz-option
-                                *ngFor="let p of pic"
-                                    [nzLabel]="p.name" 
-                                    [nzValue]="p.pic_id"
-                                ></nz-option>
-                            </nz-select>
-                        </ng-container>
-                        <ng-template #picLoad>
-                            <nz-select nzShowSearch nzMode="tags" nzPlaceHolder="Select PIC" nzDisabled>
-                                <nz-option></nz-option>
-                            </nz-select>
-                        </ng-template>
+                        <nz-form-control>
+                            <ng-container *ngIf="pic$ | async as pic; else picLoad">
+                                <nz-select nzShowSearch nzMode="tags" nzPlaceHolder="Select PIC" formControlName="pic">
+                                    <nz-option
+                                    *ngFor="let p of pic"
+                                        [nzLabel]="p.name" 
+                                        [nzValue]="p.pic_id"
+                                    ></nz-option>
+                                </nz-select>
+                            </ng-container>
+                            <ng-template #picLoad>
+                                <nz-select nzShowSearch nzMode="tags" nzPlaceHolder="Select PIC" nzDisabled>
+                                    <nz-option></nz-option>
+                                </nz-select>
+                            </ng-template>
+                        </nz-form-control>
                     </nz-form-item>
                 </div>
 
@@ -101,7 +103,7 @@
                     </nz-form-item>
                 </div>
 
-                <nz-tabset>
+                <nz-tabset [nzAnimated]="false">
                     <nz-tab nzTitle="Inventory Purchase">
                         <div class="table-responsive">
                             <table class="table table-striped table-order table-purchase">
@@ -498,20 +500,22 @@
                             <div class="col-md-4">
                                 <nz-form-item class="mb-4">
                                     <nz-form-label nzRequired nzFor="pic_shipping" class="fw-semibold">Shipping PIC</nz-form-label>
-                                    <ng-container *ngIf="pic$ | async as pic; else picLoad">
-                                        <nz-select nzShowSearch nzMode="tags" nzPlaceHolder="Select PIC" formControlName="pic_shipping">
-                                            <nz-option
-                                            *ngFor="let p of pic"
-                                                [nzLabel]="p.name" 
-                                                [nzValue]="p.pic_id"
-                                            ></nz-option>
-                                        </nz-select>
-                                    </ng-container>
-                                    <ng-template #picLoad>
-                                        <nz-select nzShowSearch nzMode="tags" nzPlaceHolder="Select PIC" nzDisabled>
-                                            <nz-option></nz-option>
-                                        </nz-select>
-                                    </ng-template>
+                                    <nz-form-control>
+                                        <ng-container *ngIf="pic$ | async as pic; else picLoad">
+                                            <nz-select nzShowSearch nzMode="tags" nzPlaceHolder="Select PIC" formControlName="pic_shipping">
+                                                <nz-option
+                                                *ngFor="let p of pic"
+                                                    [nzLabel]="p.name" 
+                                                    [nzValue]="p.pic_id"
+                                                ></nz-option>
+                                            </nz-select>
+                                        </ng-container>
+                                        <ng-template #picLoad>
+                                            <nz-select nzShowSearch nzMode="tags" nzPlaceHolder="Select PIC" nzDisabled>
+                                                <nz-option></nz-option>
+                                            </nz-select>
+                                        </ng-template>
+                                    </nz-form-control>
                                 </nz-form-item>                                
                             </div>
                             <div class="col-md-4">
@@ -532,24 +536,26 @@
                                 <div class="col-md-4">
                                     <nz-form-item>
                                         <nz-form-label class="fw-semibold" for="warehouse_id">Warehouse</nz-form-label>
-                                        <ng-container *ngIf="warehouse$ | async as w; else warehouseLoad">
-                                            <nz-select nzShowSearch nzPlaceHolder="Select Warehouse" formControlName="warehouse_id" [nzDropdownRender]="warehouseRender">
-                                                <nz-option *ngFor="let warehouse of w.data" [nzLabel]="warehouse.name" [nzValue]="warehouse.id"></nz-option>
-                                                <ng-template #warehouseRender>
-                                                    <nz-divider class="m-0"></nz-divider>
-                                                    <div class="container">
-                                                    <a class="add-item" (click)="showModalAddWarehouse()">
-                                                        <span nz-icon nzType="plus"></span>
-                                                        Add Warehouse
-                                                    </a>
-                                                    </div>
-                                                </ng-template>
-                                            </nz-select>
-                                        </ng-container>
-                                        <ng-template #warehouseLoad>
-                                            <nz-select nzShowSearch nzPlaceHolder="Select Warehouse" nzDisabled>
-                                            </nz-select>  
-                                        </ng-template>
+                                        <nz-form-control>
+                                            <ng-container *ngIf="warehouse$ | async as w; else warehouseLoad">
+                                                <nz-select nzShowSearch nzPlaceHolder="Select Warehouse" formControlName="warehouse_id" [nzDropdownRender]="warehouseRender">
+                                                    <nz-option *ngFor="let warehouse of w.data" [nzLabel]="warehouse.name" [nzValue]="warehouse.id"></nz-option>
+                                                    <ng-template #warehouseRender>
+                                                        <nz-divider class="m-0"></nz-divider>
+                                                        <div class="container">
+                                                        <a class="add-item" (click)="showModalAddWarehouse()">
+                                                            <span nz-icon nzType="plus"></span>
+                                                            Add Warehouse
+                                                        </a>
+                                                        </div>
+                                                    </ng-template>
+                                                </nz-select>
+                                            </ng-container>
+                                            <ng-template #warehouseLoad>
+                                                <nz-select nzShowSearch nzPlaceHolder="Select Warehouse" nzDisabled>
+                                                </nz-select>  
+                                            </ng-template>
+                                        </nz-form-control>
                                     </nz-form-item>
                                 </div>
                             </ng-container>
@@ -640,20 +646,22 @@
                             <div class="col-md-4">
                                 <nz-form-item class="mb-4">
                                     <nz-form-label nzRequired nzFor="pic_billing" class="fw-semibold">Billing PIC</nz-form-label>
-                                    <ng-container *ngIf="pic$ | async as pic; else picLoad">
-                                        <nz-select nzShowSearch nzMode="tags" nzPlaceHolder="Select PIC" formControlName="pic_billing">
-                                            <nz-option
-                                            *ngFor="let p of pic"
-                                                [nzLabel]="p.name" 
-                                                [nzValue]="p.pic_id"
-                                            ></nz-option>
-                                        </nz-select>
-                                    </ng-container>
-                                    <ng-template #picLoad>
-                                        <nz-select nzShowSearch nzMode="tags" nzPlaceHolder="Select PIC" nzDisabled>
-                                            <nz-option></nz-option>
-                                        </nz-select>
-                                    </ng-template>
+                                    <nz-form-control>
+                                        <ng-container *ngIf="pic$ | async as pic; else picLoad">
+                                            <nz-select nzShowSearch nzMode="tags" nzPlaceHolder="Select PIC" formControlName="pic_billing">
+                                                <nz-option
+                                                *ngFor="let p of pic"
+                                                    [nzLabel]="p.name" 
+                                                    [nzValue]="p.pic_id"
+                                                ></nz-option>
+                                            </nz-select>
+                                        </ng-container>
+                                        <ng-template #picLoad>
+                                            <nz-select nzShowSearch nzMode="tags" nzPlaceHolder="Select PIC" nzDisabled>
+                                                <nz-option></nz-option>
+                                            </nz-select>
+                                        </ng-template>
+                                    </nz-form-control>
                                 </nz-form-item>                                
                             </div>
                             <div class="col-md-4">
@@ -674,24 +682,26 @@
                                 <div class="col-md-4">
                                     <nz-form-item>
                                         <nz-form-label class="fw-semibold" for="billing_id">Billing Address</nz-form-label>
-                                        <ng-container *ngIf="billing$ | async as b; else billingLoad">
-                                            <nz-select nzShowSearch nzPlaceHolder="Select Billing Address" formControlName="billing_id" [nzDropdownRender]="billingRender">
-                                                <nz-option *ngFor="let billing of b.data" [nzLabel]="billing.name" [nzValue]="billing.id"></nz-option>
-                                                <ng-template #billingRender>
-                                                    <nz-divider class="m-0"></nz-divider>
-                                                    <div class="container">
-                                                    <a class="add-item" (click)="showModalAddBilling()">
-                                                        <span nz-icon nzType="plus"></span>
-                                                        Add Billing Address
-                                                    </a>
-                                                    </div>
-                                                </ng-template>
-                                            </nz-select>
-                                        </ng-container>
-                                        <ng-template #billingLoad>
-                                            <nz-select nzShowSearch nzPlaceHolder="Select Billing Address" nzDisabled>
-                                            </nz-select>  
-                                        </ng-template>
+                                        <nz-form-control>
+                                            <ng-container *ngIf="billing$ | async as b; else billingLoad">
+                                                <nz-select nzShowSearch nzPlaceHolder="Select Billing Address" formControlName="billing_id" [nzDropdownRender]="billingRender">
+                                                    <nz-option *ngFor="let billing of b.data" [nzLabel]="billing.name" [nzValue]="billing.id"></nz-option>
+                                                    <ng-template #billingRender>
+                                                        <nz-divider class="m-0"></nz-divider>
+                                                        <div class="container">
+                                                        <a class="add-item" (click)="showModalAddBilling()">
+                                                            <span nz-icon nzType="plus"></span>
+                                                            Add Billing Address
+                                                        </a>
+                                                        </div>
+                                                    </ng-template>
+                                                </nz-select>
+                                            </ng-container>
+                                            <ng-template #billingLoad>
+                                                <nz-select nzShowSearch nzPlaceHolder="Select Billing Address" nzDisabled>
+                                                </nz-select>  
+                                            </ng-template>
+                                        </nz-form-control>
                                     </nz-form-item>
                                 </div>
                             </ng-container>

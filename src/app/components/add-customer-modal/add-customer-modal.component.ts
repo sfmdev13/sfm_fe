@@ -1,7 +1,7 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, inject, Input, OnInit } from '@angular/core';
 import { AbstractControl, UntypedFormArray, UntypedFormBuilder, FormControl, UntypedFormGroup, Validators } from '@angular/forms';
 import { NzMessageService } from 'ng-zorro-antd/message';
-import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
+import { NZ_MODAL_DATA, NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
 import { NzUploadFile } from 'ng-zorro-antd/upload';
 import { Observable, tap } from 'rxjs';
 import { ApiService } from 'src/app/api.service';
@@ -23,10 +23,11 @@ const getBase64 = (file: File): Promise<string | ArrayBuffer | null> =>
   styleUrls: ['./add-customer-modal.component.scss']
 })
 export class AddCustomerModalComponent implements OnInit {
+  nzData = inject(NZ_MODAL_DATA);
 
-  @Input() modal_type: string = 'add';
-  @Input() customerDetail: IDataCustomer = {} as IDataCustomer
-  @Input() listOfPic: any[] = [];
+  modal_type: string = this.nzData.modal_type;
+  customerDetail: IDataCustomer = this.nzData.customerDetail
+  listOfPic: any[] = this.nzData.listOfPic;
 
   provinces$!: Observable<any>;
 
@@ -381,7 +382,7 @@ export class AddCustomerModalComponent implements OnInit {
     this.nestedModalRef = this.modalSvc.create({
       nzTitle: ' Add Category ' + titleCat,
       nzContent: EditCategoriesModalComponent,
-      nzComponentParams: {
+      nzData: {
         form: this.categoryForm
       },
       nzWidth: '500px',

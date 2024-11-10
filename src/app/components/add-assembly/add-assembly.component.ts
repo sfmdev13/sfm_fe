@@ -1,7 +1,7 @@
 import { DatePipe } from '@angular/common';
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, inject, Input, OnInit } from '@angular/core';
 import { Validators, UntypedFormBuilder, UntypedFormGroup, UntypedFormArray } from '@angular/forms';
-import { NzDrawerRef } from 'ng-zorro-antd/drawer';
+import { NZ_DRAWER_DATA, NzDrawerRef } from 'ng-zorro-antd/drawer';
 import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
 import { Observable, tap, startWith, combineLatest } from 'rxjs';
 import { ApiService } from 'src/app/api.service';
@@ -15,11 +15,11 @@ import { EditCategoriesModalComponent } from '../categories-setting/edit-categor
   styleUrls: ['./add-assembly.component.scss']
 })
 export class AddAssemblyComponent implements OnInit {
-
-  @Input() modal_type: string = '';
-  @Input() dataDetail: IDataAssembly = {} as IDataAssembly;
-  @Input() inventoryList: any;
-  @Input() assemblyList: any;
+  nzData = inject(NZ_DRAWER_DATA);
+  modal_type: string = this.nzData.modal_type;
+  dataDetail: IDataAssembly = this.nzData.dataDetail;
+  inventoryList: any = this.nzData.inventoryList;
+  assemblyList: any = this.nzData.assemblyList;
 
   pic$!: Observable<any>;
 
@@ -79,7 +79,12 @@ export class AddAssemblyComponent implements OnInit {
     private modalSvc: NzModalService,
   ) { }
 
-  ngOnInit(): void {
+    ngOnInit(): void {
+    // this.modal_type = this.nzModalData.modal_type;
+    // this.dataDetail = this.nzModalData.dataDetail;
+    // this.inventoryList = this.nzModalData.inventoryList;
+    // this.assemblyList = this.nzModalData.assemblyList;
+  
 
     this.assemblyForm.get('status')?.valueChanges.subscribe((value: boolean) => {
       this.assemblyForm.get('status')?.setValue(value ? 1 : 0, { emitEvent: false });
@@ -314,7 +319,7 @@ export class AddAssemblyComponent implements OnInit {
     this.ModalRefUnit = this.modalSvc.create({
       nzTitle: ' Add Unit of Measurment',
       nzContent: EditCategoriesModalComponent,
-      nzComponentParams: {
+      nzData: {
         form: this.categoryFormUnit,
         type: titleCat
       },

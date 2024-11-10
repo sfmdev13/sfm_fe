@@ -1,6 +1,6 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, inject, Input, OnInit } from '@angular/core';
 import { UntypedFormGroup, Validators, UntypedFormBuilder, UntypedFormArray, AbstractControl } from '@angular/forms';
-import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
+import { NZ_MODAL_DATA, NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
 import { Observable, Subject, tap, debounceTime, distinctUntilChanged } from 'rxjs';
 import { ApiService } from 'src/app/api.service';
 import { AuthService } from 'src/app/auth.service';
@@ -19,9 +19,10 @@ import { NzNotificationService } from 'ng-zorro-antd/notification';
 })
 export class AddInventoriesComponent implements OnInit {
 
+ nzData = inject(NZ_MODAL_DATA);
 
- @Input() modal_type = 'add';
- @Input() dataDetail: IDataInventory = {} as IDataInventory;
+ modal_type = this.nzData.modal_type;
+ dataDetail: IDataInventory = this.nzData.dataDetail;
 
   unit$!: Observable<IRootUnit>;
   unitReport$!: Observable<IRootUnitReport>;
@@ -363,7 +364,7 @@ export class AddInventoriesComponent implements OnInit {
       this.nestedModalRef = this.modalSvc.create({
         nzTitle: ' Add Unit of Measurment',
         nzContent: EditCategoriesModalComponent,
-        nzComponentParams: {
+        nzData: {
           form: this.categoryForm,
           type: titleCat
         },
@@ -387,7 +388,7 @@ export class AddInventoriesComponent implements OnInit {
       this.nestedModalRef = this.modalSvc.create({
         nzTitle: ' Add Product Category',
         nzContent: EditCategoriesModalComponent,
-        nzComponentParams: {
+        nzData: {
           form: this.categoryFormBasic,
           type: titleCat
         },
@@ -411,7 +412,7 @@ export class AddInventoriesComponent implements OnInit {
       this.nestedModalRef = this.modalSvc.create({
         nzTitle: ' Add Product Sub Category',
         nzContent: EditCategoriesModalComponent,
-        nzComponentParams: {
+        nzData: {
           form: this.categoryFormBasic,
           type: titleCat
         },
@@ -435,7 +436,7 @@ export class AddInventoriesComponent implements OnInit {
       this.nestedModalRef = this.modalSvc.create({
         nzTitle: ' Add Manufacture',
         nzContent: EditCategoriesModalComponent,
-        nzComponentParams: {
+        nzData: {
           form: this.categoryFormBasic,
           type: titleCat
         },
@@ -459,7 +460,7 @@ export class AddInventoriesComponent implements OnInit {
       this.nestedModalRef = this.modalSvc.create({
         nzTitle: ' Add Unit of Report',
         nzContent: AddUnitReportComponent,
-        nzComponentParams: {
+        nzData: {
           form: this.categoryFormReport,
           type: titleCat,
           unitList: this.unitList.data

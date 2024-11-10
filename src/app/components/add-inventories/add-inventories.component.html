@@ -1,6 +1,6 @@
 <div>
     <form nz-form nzLayout="vertical" [formGroup]="inventoryForm">
-        <nz-tabset>
+        <nz-tabset [nzAnimated]="false">
             <nz-tab nzTitle="Basic Information">
                 <div class="row">
                     <div class="col-md-6">
@@ -110,7 +110,7 @@
                     </div>
         
                     <div class="col-md-3">
-                        <nz-form-item class="mb-4">
+                        <nz-form-item class="mb-4 flex-column">
                             <nz-form-label nzRequired nzFor="unit_id" class="fw-semibold">Unit of Measurement</nz-form-label>
                             <ng-container *ngIf="unit$ | async as unit; else unitLoad">
                                 <nz-select nzShowSearch nzPlaceHolder="Select Unit" formControlName="unit_id" [nzDropdownRender]="unitRender">
@@ -149,7 +149,7 @@
                     </div>
         
                     <div class="col-md-6">
-                        <nz-form-item>
+                        <nz-form-item class="flex-column">
                             <nz-form-label nzRequired nzFor="unit_report" class="fw-semibold">
                                 <span class="me-3">Unit of Report</span>
                                 <label nz-checkbox formControlName="isEqualMeasurement">Equal Measurement</label>
@@ -226,9 +226,11 @@
                             <nz-form-label nzRequired nzFor="tax" class="fw-semibold">
                                 Tax
                             </nz-form-label>
-                            <nz-input-number-group nzAddOnAfter="%">
-                                <nz-input-number formControlName="tax"></nz-input-number>
-                            </nz-input-number-group>
+                            <nz-form-control>
+                                <nz-input-number-group nzAddOnAfter="%">
+                                    <nz-input-number formControlName="tax"></nz-input-number>
+                                </nz-input-number-group>
+                            </nz-form-control>
                         </nz-form-item>
                     </div>
     

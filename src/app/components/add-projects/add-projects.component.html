@@ -30,7 +30,8 @@
             <div class="col-md-6">
                 <nz-form-item class="mb-4">
                     <nz-form-label nzRequired nzFor="pic" class="fw-semibold">Sales PIC</nz-form-label>
-                    <ng-container *ngIf="pic$ | async as pic; else picLoad">
+                    <nz-form-control>
+                      <ng-container *ngIf="pic$ | async as pic; else picLoad">
                         <nz-select nzShowSearch nzMode="tags" nzPlaceHolder="Select Sales" formControlName="sales_pic">
                             <nz-option
                             *ngFor="let p of pic"
@@ -44,13 +45,15 @@
                             <nz-option></nz-option>
                         </nz-select>
                     </ng-template>
+                    </nz-form-control>
                 </nz-form-item>
             </div>
 
             <div class="col-md-6">
               <nz-form-item class="mb-4">
                   <nz-form-label nzRequired nzFor="pic" class="fw-semibold">DCE PIC</nz-form-label>
-                  <ng-container *ngIf="pic$ | async as pic; else picLoad">
+                  <nz-form-control>
+                    <ng-container *ngIf="pic$ | async as pic; else picLoad">
                       <nz-select nzShowSearch nzMode="tags" nzPlaceHolder="Select DCE" formControlName="dce_pic">
                           <nz-option
                           *ngFor="let p of pic"
@@ -58,12 +61,13 @@
                               [nzValue]="p.pic_id"
                           ></nz-option>
                       </nz-select>
-                  </ng-container>
-                  <ng-template #picLoad>
-                      <nz-select nzShowSearch nzMode="tags" nzPlaceHolder="Select DCE" nzDisabled>
-                          <nz-option></nz-option>
-                      </nz-select>
-                  </ng-template>
+                    </ng-container>
+                    <ng-template #picLoad>
+                        <nz-select nzShowSearch nzMode="tags" nzPlaceHolder="Select DCE" nzDisabled>
+                            <nz-option></nz-option>
+                        </nz-select>
+                    </ng-template>
+                  </nz-form-control>
               </nz-form-item>
             </div>
 

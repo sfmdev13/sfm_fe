@@ -70,14 +70,16 @@
 
                       </a>
                       <nz-dropdown-menu #menu="nzDropdownMenu">
-                        <ul nz-menu class="dropdown-wrapper">
+                        <ul nz-menu class="dropdown-wrapper" style="width: 120px;">
                           <!-- <li nz-menu-item class="gap-2 list-dropdown">
                             <span nz-icon nzType="eye" nzTheme="twotone"></span>
                             <p class="m-0 p-0">Detail</p>
                           </li> -->
                           <li nz-menu-item class="gap-2 list-dropdown" (click)="showModalEdit(data)">
-                            <span nz-icon nzType="edit" nzTheme="twotone"></span>
-                            <p class="m-0 p-0">Edit</p>
+                            <div class="d-flex gap-2">
+                              <span nz-icon nzType="edit" nzTheme="twotone"></span>
+                              <p class="m-0 p-0">Edit</p>
+                            </div>
                           </li>
                           <!-- <li (click)="showModalDuplicate(data)" nz-menu-item class="gap-2 list-dropdown">
                             <span nz-icon nzType="copy" nzTheme="twotone" ></span>

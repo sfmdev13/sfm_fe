@@ -77,22 +77,30 @@
 
                     </a>
                     <nz-dropdown-menu #menu="nzDropdownMenu">
-                      <ul nz-menu class="dropdown-wrapper">
+                      <ul nz-menu class="dropdown-wrapper" style="width: 120px;">
                         <li (click)="showModalDetail(data)" nz-menu-item class="gap-2 list-dropdown">
-                          <span nz-icon nzType="eye" nzTheme="twotone"></span>
-                          <p class="m-0 p-0">Detail</p>
+                          <div class="d-flex gap-2">
+                            <span nz-icon nzType="eye" nzTheme="twotone"></span>
+                            <p class="m-0 p-0">Detail</p>
+                          </div>
                         </li>
                         <li nz-menu-item class="gap-2 list-dropdown" (click)="showModalEdit(data)">
-                          <span nz-icon nzType="edit" nzTheme="twotone"></span>
-                          <p class="m-0 p-0">Edit</p>
+                          <div class="d-flex gap-2">
+                            <span nz-icon nzType="edit" nzTheme="twotone"></span>
+                            <p class="m-0 p-0">Edit</p>
+                          </div>
                         </li>
                         <li (click)="showModalDuplicate(data)" nz-menu-item class="gap-2 list-dropdown">
+                          <div class="d-flex gap-2">
                             <span nz-icon nzType="copy" nzTheme="twotone" ></span>
-                            <p class="m-0 p-0">Duplicate</p>                
+                            <p class="m-0 p-0">Duplicate</p>    
+                          </div>
                         </li>
                         <li (click)="showModalDelete(data.id)" nz-menu-item class="gap-2 list-dropdown">
-                          <span nz-icon nzType="delete" nzTheme="twotone" [nzTwotoneColor]="'#f50'"></span>
-                          <p class="m-0 p-0" style="color: #f50;">Delete</p>                
+                          <div class="d-flex gap-2">
+                            <span nz-icon nzType="delete" nzTheme="twotone" [nzTwotoneColor]="'#f50'"></span>
+                            <p class="m-0 p-0" style="color: #f50;">Delete</p>            
+                          </div>
                         </li>
                       </ul>
                     </nz-dropdown-menu>
@@ -234,7 +242,7 @@
         </a>
       </div>
 
-      <nz-tabset>
+      <nz-tabset [nzAnimated]="false">
         <nz-tab nzTitle="Basic Information">
           <div class="row">
             <div class="col-md-4">
@@ -352,7 +360,7 @@
 
 
 <!-- delete modal -->
-<nz-modal class="delete-modal" nzCentered [(nzVisible)]="isVisibleDelete" nzTitle="Delete Inventories" (nzOnCancel)="handleCancelDelete()">
+<nz-modal class="delete-modal" nzCentered [(nzVisible)]="isVisibleDelete" (nzOnCancel)="handleCancelDelete()">
     <ng-container *nzModalContent>
       <nz-result nzStatus="warning" nzTitle="Are you sure want to delete this Inventories?">
       </nz-result>

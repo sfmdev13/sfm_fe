@@ -1,6 +1,6 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, inject, Input, OnInit } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
-import { NzModalRef } from 'ng-zorro-antd/modal';
+import { NZ_MODAL_DATA, NzModalRef } from 'ng-zorro-antd/modal';
 import { Observable } from 'rxjs';
 import { ApiService } from 'src/app/api.service';
 import { IRootCatContact } from 'src/app/interfaces';
@@ -12,7 +12,8 @@ import { IRootCatContact } from 'src/app/interfaces';
 })
 export class FilterCustomerModalComponent implements OnInit {
 
-  @Input() filteredCust: boolean = false;
+  nzData = inject(NZ_MODAL_DATA)
+  filteredCust: boolean = this.nzData.filteredCust
 
   loyalCustCat$!: Observable<IRootCatContact>;
   custSector$!: Observable<IRootCatContact>;

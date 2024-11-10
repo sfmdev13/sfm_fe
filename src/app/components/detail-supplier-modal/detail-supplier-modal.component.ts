@@ -1,5 +1,5 @@
-import { Component, Input, OnInit } from '@angular/core';
-import { NzModalRef } from 'ng-zorro-antd/modal';
+import { Component, inject, Input, OnInit } from '@angular/core';
+import { NZ_MODAL_DATA, NzModalRef } from 'ng-zorro-antd/modal';
 import { ApiService } from 'src/app/api.service';
 import { IDataSupplier } from 'src/app/interfaces';
 
@@ -9,8 +9,8 @@ import { IDataSupplier } from 'src/app/interfaces';
   styleUrls: ['./detail-supplier-modal.component.scss']
 })
 export class DetailSupplierModalComponent implements OnInit {
-
-  @Input() data!: IDataSupplier;
+  nzData = inject(NZ_MODAL_DATA)
+  @Input() data: IDataSupplier = this.nzData.data;
 
   status: boolean = true;
 

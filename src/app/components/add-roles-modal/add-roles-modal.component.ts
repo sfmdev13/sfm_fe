@@ -1,6 +1,6 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, inject, Input, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
-import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
+import { NZ_MODAL_DATA, NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
 import { debounceTime, distinctUntilChanged, Observable, Subject, tap } from 'rxjs';
 import { ApiService } from 'src/app/api.service';
 import { IDataRoles, IRootAccessRights, IRootDivision, IRootEmployee, IRootUserByRole } from 'src/app/interfaces';
@@ -13,9 +13,9 @@ import { SpinnerService } from 'src/app/spinner.service';
   styleUrls: ['./add-roles-modal.component.scss']
 })
 export class AddRolesModalComponent implements OnInit {
-
-  @Input() modal_type: string = 'add';
-  @Input() roleDetail: IDataRoles = {} as IDataRoles;
+  nzData = inject(NZ_MODAL_DATA)
+  modal_type: string = this.nzData.modal_type;
+  roleDetail: IDataRoles = this.nzData.roleDetail;
 
   roleName = '';
   status = true;

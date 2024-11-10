@@ -310,7 +310,7 @@ export class ProjectsComponent implements OnInit {
       nzTitle: 'Filter Purchase Order',
       nzContent: FilterPurchaseOrderComponent,
       nzCentered: true,
-      nzComponentParams: {
+      nzData: {
         filteredPO: this.filtered
       }
     })
@@ -381,7 +381,7 @@ export class ProjectsComponent implements OnInit {
     this.modalSvc.create({
       nzTitle: 'Update Project',
       nzContent: AddProjectsComponent,
-      nzComponentParams: {
+      nzData: {
         modal_type: this.modal_type,
         data: data
       },
@@ -412,7 +412,7 @@ export class ProjectsComponent implements OnInit {
       nzTitle: 'Add Project',
       nzContent: AddProjectsComponent,
       nzCentered: true,
-      nzComponentParams: {
+      nzData: {
         modal_type: this.modal_type
       },
       nzClosable: false,

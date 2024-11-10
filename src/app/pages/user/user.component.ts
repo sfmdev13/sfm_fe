@@ -197,7 +197,7 @@ export class UserComponent implements OnInit {
       this.modalService.create({
         nzTitle: 'Add Employee',
         nzContent: AddEmployeeModalComponent,
-        nzComponentParams: {
+        nzData: {
           modal_type: 'add',
         },
         nzCentered: true,
@@ -211,7 +211,7 @@ export class UserComponent implements OnInit {
       this.modalService.create({
         nzTitle: 'Add Customer',
         nzContent: AddCustomerModalComponent,
-        nzComponentParams: {
+        nzData: {
           modal_type: 'add',
           listOfPic: this.listOfPic
         },
@@ -226,7 +226,7 @@ export class UserComponent implements OnInit {
       this.modalService.create({
         nzTitle: 'Add Supplier',
         nzContent: AddSupplierModalComponent,
-        nzComponentParams: {
+        nzData: {
           modal_type: 'add',
           listOfPic: this.listOfPic
         },
@@ -242,7 +242,7 @@ export class UserComponent implements OnInit {
     this.modalService.create({
       nzTitle: 'Update Employee',
       nzContent: AddEmployeeModalComponent,
-      nzComponentParams: {
+      nzData: {
         modal_type: 'update',
         data
       },
@@ -258,7 +258,7 @@ export class UserComponent implements OnInit {
       nzTitle: 'Detail Employee',
       nzContent: DetailEmployeeModalComponent,
       nzCentered: true,
-      nzComponentParams: {
+      nzData: {
         data
       }
     });
@@ -269,7 +269,7 @@ export class UserComponent implements OnInit {
       nzTitle: 'Delete Employee',
       nzContent: DeleteEmployeeModalComponent,
       nzCentered: true,
-      nzComponentParams: {
+      nzData: {
         id
       }
     });
@@ -281,7 +281,7 @@ export class UserComponent implements OnInit {
         nzTitle: 'Filter Employee',
         nzContent: FilterEmployeeModalComponent,
         nzCentered: true,
-        nzComponentParams: {
+        nzData: {
           filteredEmp: this.filteredEmp
         }
       })
@@ -300,7 +300,7 @@ export class UserComponent implements OnInit {
         nzTitle: 'Filter Customer',
         nzContent: FilterCustomerModalComponent,
         nzCentered: true,
-        nzComponentParams: {
+        nzData: {
           filteredCust: this.filteredCust
         }
       })
@@ -320,7 +320,7 @@ export class UserComponent implements OnInit {
         nzTitle: 'Filter Supplier',
         nzContent: FilterSupplierModalComponent,
         nzCentered: true,
-        nzComponentParams: {
+        nzData: {
           filteredSupp: this.filteredSupp
         }
       })
@@ -341,7 +341,7 @@ export class UserComponent implements OnInit {
       nzTitle: 'Detail Customer',
       nzContent: DetailCustomerModalComponent,
       nzCentered: true,
-      nzComponentParams: {
+      nzData: {
         data: dataCustomer
       },
       nzWidth: '900px'
@@ -352,7 +352,7 @@ export class UserComponent implements OnInit {
     this.modalService.create({
       nzTitle: 'Edit Customer',
       nzContent: AddCustomerModalComponent,
-      nzComponentParams: {
+      nzData: {
         modal_type: 'update',
         customerDetail: dataCustomer,
         listOfPic: this.listOfPic
@@ -369,7 +369,7 @@ export class UserComponent implements OnInit {
       nzTitle: 'Delete Customer',
       nzContent: DeleteCustomerModalComponent,
       nzCentered: true,
-      nzComponentParams: {
+      nzData: {
         id
       }
     });
@@ -379,7 +379,7 @@ export class UserComponent implements OnInit {
     this.modalService.create({
       nzTitle: 'Update Supplier',
       nzContent: AddSupplierModalComponent,
-      nzComponentParams: {
+      nzData: {
         modal_type: 'update',
         supplierDetail: dataSupp,
         listOfPic: this.listOfPic
@@ -394,7 +394,7 @@ export class UserComponent implements OnInit {
       nzTitle: 'Detail Supplier',
       nzContent: DetailSupplierModalComponent,
       nzCentered: true,
-      nzComponentParams: {
+      nzData: {
         data: dataSupp
       },
       nzWidth: '900px'
@@ -406,7 +406,7 @@ export class UserComponent implements OnInit {
       nzTitle: 'Delete Supplier',
       nzContent: DeleteSupplierModalComponent,
       nzCentered: true,
-      nzComponentParams: {
+      nzData: {
         id
       }
     });

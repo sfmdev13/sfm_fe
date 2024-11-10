@@ -225,7 +225,7 @@ export class InventoriesListComponent implements OnInit {
     this.modalSvc.create({
       nzTitle: 'Edit Inventories',
       nzContent: AddInventoriesComponent,
-      nzComponentParams: {
+      nzData: {
         modal_type: this.modal_type,
         dataDetail: data
       },
@@ -242,7 +242,7 @@ export class InventoriesListComponent implements OnInit {
     this.modalSvc.create({
       nzTitle: 'Add Inventories',
       nzContent: AddInventoriesComponent,
-      nzComponentParams: {
+      nzData: {
         modal_type: this.modal_type,
         dataDetail: data
       },
@@ -260,7 +260,7 @@ export class InventoriesListComponent implements OnInit {
     this.modalSvc.create({
       nzTitle: 'Add Inventories',
       nzContent: AddInventoriesComponent,
-      nzComponentParams: {
+      nzData: {
         modal_type: this.modal_type
       },
       nzClosable: false,

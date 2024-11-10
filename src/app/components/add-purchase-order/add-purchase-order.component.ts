@@ -1,7 +1,7 @@
 import { DatePipe } from '@angular/common';
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, inject, Input, OnInit } from '@angular/core';
 import { UntypedFormArray, UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
-import { NzDrawerRef } from 'ng-zorro-antd/drawer';
+import { NZ_DRAWER_DATA, NzDrawerRef } from 'ng-zorro-antd/drawer';
 import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
 import { combineLatest, Observable, startWith, tap } from 'rxjs';
 import { ApiService } from 'src/app/api.service';
@@ -17,10 +17,11 @@ import { AddWarehouseAddressComponent } from '../categories-setting/add-warehous
 })
 export class AddPurchaseOrderComponent implements OnInit {
 
-
-  @Input() modal_type: string = '';
-  @Input() dataDetail: IDataPurchaseOrder = {} as IDataPurchaseOrder;
-  @Input() inventoryList: any;
+  nzData = inject(NZ_DRAWER_DATA)
+  
+  modal_type: string = this.nzData.modal_type;
+  dataDetail: IDataPurchaseOrder = this.nzData.dataDetail;
+  inventoryList: any = this.nzData.inventoryList;
 
   pic$!: Observable<any>;
   supplier$!: Observable<any>;
@@ -594,7 +595,7 @@ export class AddPurchaseOrderComponent implements OnInit {
       this.modalRefCat = this.modalSvc.create({
         nzTitle: ' Add Manufacture',
         nzContent: EditCategoriesModalComponent,
-        nzComponentParams: {
+        nzData: {
           form: this.categoryFormBasic,
           type: titleCat
         },
@@ -689,7 +690,7 @@ export class AddPurchaseOrderComponent implements OnInit {
     this.ModalRefUnit = this.modalSvc.create({
       nzTitle: ' Add Unit of Measurment',
       nzContent: EditCategoriesModalComponent,
-      nzComponentParams: {
+      nzData: {
         form: this.categoryFormUnit,
         type: titleCat
       },
@@ -804,7 +805,7 @@ export class AddPurchaseOrderComponent implements OnInit {
     this.modalRef = this.modalSvc.create({
       nzTitle: 'Add Warehouse',
       nzContent: AddWarehouseAddressComponent,
-      nzComponentParams: {
+      nzData: {
         form: this.categoryForm
       },
       nzCentered: true,
@@ -827,7 +828,7 @@ export class AddPurchaseOrderComponent implements OnInit {
     this.modalRefBilling  = this.modalSvc.create({
       nzTitle: 'Add Warehouse',
       nzContent: AddWarehouseAddressComponent,
-      nzComponentParams: {
+      nzData: {
         form: this.categoryForm
       },
       nzCentered: true,

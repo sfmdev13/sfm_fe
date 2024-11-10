@@ -1,6 +1,6 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, inject, Input, OnInit } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
-import { NzModalRef } from 'ng-zorro-antd/modal';
+import { NZ_MODAL_DATA, NzModalRef } from 'ng-zorro-antd/modal';
 import { filter, Observable } from 'rxjs';
 import { ApiService } from 'src/app/api.service';
 import { IRootCatContact } from 'src/app/interfaces';
@@ -11,8 +11,8 @@ import { IRootCatContact } from 'src/app/interfaces';
   styleUrls: ['./filter-supplier-modal.component.scss']
 })
 export class FilterSupplierModalComponent implements OnInit {
-
-  @Input() filteredSupp: boolean = false;
+  nzData = inject(NZ_MODAL_DATA)
+  filteredSupp: boolean = this.nzData.filteredSupp
   
   suppProduct$!: Observable<IRootCatContact>;
   suppSource$!: Observable<IRootCatContact>;
