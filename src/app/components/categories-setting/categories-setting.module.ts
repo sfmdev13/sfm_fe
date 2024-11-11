@@ -27,6 +27,8 @@ import { UnitOfReportsComponent } from './unit-of-reports/unit-of-reports.compon
 import { AddUnitReportComponent } from './add-unit-report/add-unit-report.component';
 import { SubCategoryComponent } from './sub-category/sub-category.component';
 import { ManufactureComponent } from './manufacture/manufacture.component';
+import { SegmentationComponent } from './segmentation/segmentation.component';
+import { MaterialComponent } from './material/material.component';
 
 
 @NgModule({
@@ -47,7 +49,9 @@ import { ManufactureComponent } from './manufacture/manufacture.component';
     UnitOfReportsComponent,
     AddUnitReportComponent,
     SubCategoryComponent,
-    ManufactureComponent
+    ManufactureComponent,
+    SegmentationComponent,
+    MaterialComponent
   ],
   imports: [
     CommonModule,
@@ -79,7 +83,9 @@ import { ManufactureComponent } from './manufacture/manufacture.component';
     UnitOfReportsComponent,
     AddUnitReportComponent,
     SubCategoryComponent,
-    ManufactureComponent
+    ManufactureComponent,
+    MaterialComponent,
+    SegmentationComponent
   ]
 })
 export class CategoriesSettingTableModule { }

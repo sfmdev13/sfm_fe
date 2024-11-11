@@ -20,7 +20,7 @@ export class CategoriesSettingComponent implements OnInit {
           slug: 'customer_sector'
         },
         {
-          name: 'Customer Firm',
+          name: 'Cluster',
           slug: 'customer_firm'
         },
         {
@@ -81,6 +81,19 @@ export class CategoriesSettingComponent implements OnInit {
         {
           name: 'Billing Address',
           slug: 'billing_address'
+        }
+      ]
+    },
+    {
+      name: 'Project',
+      sub_menu: [
+        {
+          name: 'Segmentation',
+          slug: 'segmentation'
+        },
+        {
+          name: 'Material',
+          slug: 'material'
         }
       ]
     }
