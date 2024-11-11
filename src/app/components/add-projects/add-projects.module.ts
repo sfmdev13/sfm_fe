@@ -12,6 +12,9 @@ import { NzSpinModule } from 'ng-zorro-antd/spin';
 import { NzSwitchModule } from 'ng-zorro-antd/switch';
 import { NzSpaceModule } from 'ng-zorro-antd/space';
 import { NzInputNumberModule } from 'ng-zorro-antd/input-number';
+import { NzDividerModule } from 'ng-zorro-antd/divider';
+import { CategoriesSettingTableModule } from '../categories-setting/categories-setting.module';
+import { NzIconModule } from 'ng-zorro-antd/icon';
 
 
 
@@ -30,7 +33,10 @@ import { NzInputNumberModule } from 'ng-zorro-antd/input-number';
     NzSpinModule,
     FormsModule,
     NzSpaceModule,
-    NzInputNumberModule
+    NzInputNumberModule,
+    NzDividerModule,
+    CategoriesSettingTableModule,
+    NzIconModule
   ],
   exports: [AddProjectsComponent],
   providers: [DatePipe]

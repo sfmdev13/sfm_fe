@@ -27,6 +27,32 @@
                 </nz-form-control>
               </nz-form-item>
             </div>
+
+            
+            <div class="col-md-6">
+              <nz-form-item >
+                <nz-form-label nzRequired nzFor="project_category" class="fw-semibold">Project Category</nz-form-label>
+                <nz-form-control>
+                  <nz-select  nzShowSearch nzPlaceHolder="Select Project Category" formControlName="project_category">
+                    <nz-option nzLabel="Awarded" nzValue="cat_awarded"></nz-option>
+                    <nz-option nzLabel="Category A+" nzValue="cat_a_plus"></nz-option>
+                    <nz-option nzLabel="Category A" nzValue="cat_a"></nz-option>
+                    <nz-option nzLabel="Category B" nzValue="cat_b"></nz-option>
+                    <nz-option nzLabel="Category C" nzValue="cat_c"></nz-option>
+                    <nz-option nzLabel="Category D" nzValue="cat_d"></nz-option>
+                    <nz-option nzLabel="Failed" nzValue="cat_f"></nz-option>
+                  </nz-select>
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+
+            <nz-form-item *ngIf="projectForm.get('project_category')?.value === 'cat_f'">
+              <nz-form-label nzRequired nzFor="reason_failed" class="fw-semibold">Reason Failed</nz-form-label>
+              <nz-form-control>
+                <input nz-input formControlName="reason_failed" id="reason_failed" />
+              </nz-form-control>
+            </nz-form-item>
+
             <div class="col-md-6">
                 <nz-form-item class="mb-4">
                     <nz-form-label nzRequired nzFor="pic" class="fw-semibold">Sales PIC</nz-form-label>
@@ -50,6 +76,19 @@
             </div>
 
             <div class="col-md-6">
+              <nz-form-item>
+                <nz-form-label nzRequired class="fw-semibold" nzFor="sales_pic_internal" nzRequired>Head of Sales PIC</nz-form-label>
+                <nz-form-control>
+                    <nz-select nzShowSearch nzPlaceHolder="Select Head" formControlName="sales_pic_internal">
+                    <ng-container *ngFor="let pic of filteredListOfPic">
+                      <nz-option [nzLabel]="pic.name" [nzValue]="pic.pic_id"></nz-option>
+                    </ng-container>
+                    </nz-select>
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+            
+            <div class="col-md-6">
               <nz-form-item class="mb-4">
                   <nz-form-label nzRequired nzFor="pic" class="fw-semibold">DCE PIC</nz-form-label>
                   <nz-form-control>
@@ -68,6 +107,19 @@
                         </nz-select>
                     </ng-template>
                   </nz-form-control>
+              </nz-form-item>
+            </div>
+
+            <div class="col-md-6">
+              <nz-form-item>
+                <nz-form-label nzRequired class="fw-semibold" nzFor="dce_pic_internal" nzRequired>Head of DCE PIC</nz-form-label>
+                <nz-form-control>
+                    <nz-select nzShowSearch nzPlaceHolder="Select Head" formControlName="dce_pic_internal">
+                    <ng-container *ngFor="let pic of filteredListOfPicDCE">
+                      <nz-option [nzLabel]="pic.name" [nzValue]="pic.pic_id"></nz-option>
+                    </ng-container>
+                    </nz-select>
+                </nz-form-control>
               </nz-form-item>
             </div>
 
@@ -129,6 +181,15 @@
               </nz-form-item>
             </div>
 
+            <div class="col-md-6">
+              <nz-form-item class="mb-4">
+                <nz-form-label nzRequired nzFor="maps_url" class="fw-semibold">Maps Url</nz-form-label>
+                <nz-form-control>
+                  <input nz-input formControlName="maps_url" id="maps_url"  />
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+
             <nz-form-item>
                 <nz-form-label nzRequired nzFor="address" class="fw-semibold">Full Address</nz-form-label>
                 <nz-form-control>
@@ -142,12 +203,26 @@
               <nz-form-item>
                 <nz-form-label nzRequired class="fw-semibold" nzFor="cluster" nzRequired>Cluster</nz-form-label>
                 <nz-form-control>
-                    <nz-select  nzShowSearch nzPlaceHolder="Select Cluster" formControlName="cluster">
-                      <nz-option nzLabel="Private" nzValue="private"></nz-option>
-                      <nz-option nzLabel="Central Government" nzValue="central_government"></nz-option>
-                      <nz-option nzLabel="Local Government" nzValue="local_goverment"></nz-option>
-                      <nz-option nzLabel="BUMN" nzValue="bumn"></nz-option>
+                  <ng-container *ngIf="cluster$ | async as cluster; else clusterLoad">
+                    <nz-select nzShowSearch nzPlaceHolder="Selet Cluster" formControlName="cluster" [nzDropdownRender]="clusterRender">
+                      <ng-container *ngFor="let c of cluster.data">
+                        <nz-option [nzLabel]="c.name" [nzValue]="c.id"></nz-option>
+                      </ng-container>
+                      <ng-template #clusterRender>
+                        <nz-divider class="m-0"></nz-divider>
+                        <div class="container">
+                          <a class="add-item" (click)="showModalCategoryAdd('cluster')">
+                            <span nz-icon nzType="plus"></span>
+                            Add Cluster
+                          </a>
+                        </div>
+                      </ng-template>
                     </nz-select>
+                  </ng-container>
+                  <ng-template #clusterLoad>
+                    <nz-select nzDisabled nzPlaceHolder="Select Cluster" formControlName="cluster">
+                    </nz-select>
+                  </ng-template>
                 </nz-form-control>
               </nz-form-item>
             </div>
@@ -156,12 +231,26 @@
               <nz-form-item>
                 <nz-form-label nzRequired class="fw-semibold" nzFor="segmentation" nzRequired>Segmentation</nz-form-label>
                 <nz-form-control>
-                    <nz-select  nzShowSearch nzPlaceHolder="Select Segmentation" formControlName="segmentation">
-                      <!-- <nz-option nzLabel="Private" nzValue="private"></nz-option>
-                      <nz-option nzLabel="Central Government" nzValue="central_government"></nz-option>
-                      <nz-option nzLabel="Local Government" nzValue="local_goverment"></nz-option>
-                      <nz-option nzLabel="BUMN" nzValue="bumn"></nz-option> -->
+                  <ng-container *ngIf="segmentation$ | async as segmentation; else segmentLoad">
+                    <nz-select nzShowSearch nzPlaceHolder="Selet Segmentation" formControlName="segmentation" [nzDropdownRender]="segmentRender">
+                      <ng-container *ngFor="let s of segmentation.data">
+                        <nz-option [nzLabel]="s.name" [nzValue]="s.id"></nz-option>
+                      </ng-container>
+                      <ng-template #segmentRender>
+                        <nz-divider class="m-0"></nz-divider>
+                        <div class="container">
+                          <a class="add-item" (click)="showModalCategoryAdd('segmentation')">
+                            <span nz-icon nzType="plus"></span>
+                            Add Segmentation
+                          </a>
+                        </div>
+                      </ng-template>
                     </nz-select>
+                  </ng-container>
+                  <ng-template #segmentLoad>
+                    <nz-select nzDisabled nzPlaceHolder="Select Segmentation" formControlName="segmentation">
+                    </nz-select>
+                  </ng-template>
                 </nz-form-control>
               </nz-form-item>
             </div>
@@ -180,13 +269,41 @@
 
             <div class="col-md-6">
               <nz-form-item>
+                <nz-form-label nzRequired class="fw-semibold" nzFor="remarks" nzRequired>Remarks</nz-form-label>
+                <nz-form-control>
+                    <nz-select  nzShowSearch nzPlaceHolder="Select Remarks" formControlName="remarks">
+                      <nz-option nzLabel="Siphonic System" nzValue="siphonic_system"></nz-option>
+                      <nz-option nzLabel="Fastflow" nzValue="fastflow"></nz-option>
+                    </nz-select>
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+
+
+            <div class="col-md-6">
+              <nz-form-item>
                 <nz-form-label nzRequired class="fw-semibold" nzFor="material" nzRequired>Material</nz-form-label>
                 <nz-form-control>
-                    <nz-select  nzShowSearch nzMode="tags" nzPlaceHolder="Select Material" formControlName="material">
-                      <nz-option nzLabel="uPVC" nzValue="upvc"></nz-option>
-                      <nz-option nzLabel="HDPE" nzValue="hdpe"></nz-option>
-                      <nz-option nzLabel="Cast Iron" nzValue="Cast Iron"></nz-option>
+                  <ng-container *ngIf="material$ | async as material; else matLoad">
+                    <nz-select nzShowSearch nzMode="tags" nzPlaceHolder="Selet Material" formControlName="material" [nzDropdownRender]="materialRender">
+                      <ng-container *ngFor="let m of material.data">
+                        <nz-option [nzLabel]="m.name" [nzValue]="m.id"></nz-option>
+                      </ng-container>
+                      <ng-template #materialRender>
+                        <nz-divider class="m-0"></nz-divider>
+                        <div class="container">
+                          <a class="add-item" (click)="showModalCategoryAdd('material')">
+                            <span nz-icon nzType="plus"></span>
+                            Add Material
+                          </a>
+                        </div>
+                      </ng-template>
                     </nz-select>
+                  </ng-container>
+                  <ng-template #matLoad>
+                    <nz-select nzDisabled nzPlaceHolder="Select Material" formControlName="material">
+                    </nz-select>
+                  </ng-template>
                 </nz-form-control>
               </nz-form-item>
             </div>
