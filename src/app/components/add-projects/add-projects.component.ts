@@ -178,35 +178,35 @@ export class AddProjectsComponent implements OnInit {
 
 
     if(this.modal_type === 'update'){
-      this.projectForm.patchValue({
-        id: this.data.id,
-        name: this.data.name,
-        description: this.data.description,
-        order_date: this.data.order_date,
-        delivery_date: this.data.delivery_date,
-        customer_id: this.data.customer.id,
-        status: this.data.status,
-        progress: this.data.progress
-      })
+      // this.projectForm.patchValue({
+      //   id: this.data.id,
+      //   name: this.data.name,
+      //   description: this.data.description,
+      //   order_date: this.data.order_date,
+      //   delivery_date: this.data.delivery_date,
+      //   customer_id: this.data.customer.id,
+      //   status: this.data.status,
+      //   progress: this.data.progress
+      // })
 
 
-      //update PIC
-      this.pic$ = this.apiSvc.getPic().pipe(
-        tap(res => {
-          this.listOfPic = res;
+      // //update PIC
+      // this.pic$ = this.apiSvc.getPic().pipe(
+      //   tap(res => {
+      //     this.listOfPic = res;
 
-          //extract pic id
-          const picIds = this.data.pic.map(item => item.pic_id);
+      //     //extract pic id
+      //     const picIds = this.data.pic.map(item => item.pic_id);
 
-          //find pic internal id
-          const isPicInternalId = this.data.pic.filter(item => item.is_pic_internal === 1);
+      //     //find pic internal id
+      //     const isPicInternalId = this.data.pic.filter(item => item.is_pic_internal === 1);
 
-          this.projectForm.patchValue({
-            pic: picIds,
-            is_pic_internal: isPicInternalId[0].pic_id,
-          });
-        })
-      )
+      //     this.projectForm.patchValue({
+      //       pic: picIds,
+      //       is_pic_internal: isPicInternalId[0].pic_id,
+      //     });
+      //   })
+      // )
 
     } 
 

@@ -3,12 +3,12 @@
 <ng-container *ngIf="selectedOptIndex === 0">
     <div class="d-flex align-items-center justify-content-between my-4">
       <h4 class="fw-bold">Project List</h4>
-      <nz-input-group [nzSuffix]="suffixIconSearch" nzSize="large" style="width: 320px;">
+      <!-- <nz-input-group [nzSuffix]="suffixIconSearch" nzSize="large" style="width: 320px;">
           <input [(ngModel)]="search" (ngModelChange)="searchHandler($event)" type="text" nz-input placeholder="Search Projects" />
       </nz-input-group>
       <ng-template #suffixIconSearch>
           <span nz-icon nzType="search"></span>
-      </ng-template>
+      </ng-template> -->
   </div>
   <div class="d-flex align-items-center justify-content-between mb-3">
       <span class="fw-light">Result of {{ total }} Projects</span>
@@ -21,81 +21,153 @@
                   </nz-select>
           </div>
           <button (click)="refreshTable()" class="me-2 filter-icon" nz-button nzType="default" nzSize="default"><span nz-icon nzType="reload"></span></button>
-          <button (click)="showFilter()" class="me-2 filter-icon" nz-button nzType="default" nzSize="default"><span nz-icon nzType="filter"></span></button>
+          <!-- <button (click)="showFilter()" class="me-2 filter-icon" nz-button nzType="default" nzSize="default"><span nz-icon nzType="filter"></span></button> -->
           <button (click)="showColumn()" class="me-2 filter-icon" nz-button nzType="default" nzSize="default"><span nz-icon nzType="setting"></span></button>
           <button  nzSize="default" nz-button nzType="primary" (click)="showModalAdd()">Add Projects</button>
       </div>
   </div>
-  <ng-container *ngIf="project$ | async as project; else loading">
-      <nz-table 
-          #basicTable 
-          [nzData]="project.data"         
-          [nzShowPagination]="true" 
-          nzBordered
-          [nzTotal]="totalAll"
-          [nzPageSize]="pageSize"
-          [nzPageIndex]="currentPage"
-          (nzPageIndexChange)="pageIndexChange($event)"
-      >
-          <thead>
-            <tr>
-              <th *ngIf="columns[0].visible">ID</th>
-              <th *ngIf="columns[1].visible">Project Name</th>
-              <th *ngIf="columns[2].visible">Project Location</th>
-              <th *ngIf="columns[3].visible">Issue Date</th>
-              <th *ngIf="columns[4].visible">Project Engineer</th>
-              <th *ngIf="columns[5].visible">Site Manager</th>
-              <th *ngIf="columns[6].visible">Project Supervisor</th>
-              <th *ngIf="columns[7].visible">Construction Head</th>
-              <th *ngIf="columns[8].visible">Action</th>
-            </tr>
-          </thead>
-          <tbody>
-              <tr *ngFor="let data of basicTable.data">
-                <td *ngIf="columns[0].visible">{{ data.project_pid }}</td>
-                <td *ngIf="columns[1].visible">{{ data.name }}</td>
-                <td *ngIf="columns[2].visible">-</td>
-                <td *ngIf="columns[3].visible">-</td>
-                <td *ngIf="columns[4].visible">-</td>
-                <td *ngIf="columns[5].visible">-</td>
-                <td *ngIf="columns[6].visible">-</td>
-                <td *ngIf="columns[7].visible">-</td>
-              <td *ngIf="columns[8].visible">
-                    <div class="d-flex gap-3">
-                      <a nz-dropdown nzTrigger="click" [nzDropdownMenu]="menu" style="text-decoration: none;" >
-                        <div class="d-flex align-items-center">
-                          <i nz-icon nzType="more" nzTheme="outline"></i>
-                          <p class="m-0 p-0">More</p>                       
-                        </div>
 
-                      </a>
-                      <nz-dropdown-menu #menu="nzDropdownMenu">
-                        <ul nz-menu class="dropdown-wrapper" style="width: 120px;">
-                          <!-- <li nz-menu-item class="gap-2 list-dropdown">
-                            <span nz-icon nzType="eye" nzTheme="twotone"></span>
-                            <p class="m-0 p-0">Detail</p>
-                          </li> -->
-                          <li nz-menu-item class="gap-2 list-dropdown" (click)="showModalEdit(data)">
-                            <div class="d-flex gap-2">
-                              <span nz-icon nzType="edit" nzTheme="twotone"></span>
-                              <p class="m-0 p-0">Edit</p>
-                            </div>
-                          </li>
-                          <!-- <li (click)="showModalDuplicate(data)" nz-menu-item class="gap-2 list-dropdown">
-                            <span nz-icon nzType="copy" nzTheme="twotone" ></span>
-                            <p class="m-0 p-0">Duplicate</p>                
-                          </li> -->
-                          <!-- <li (click)="showModalDelete(data.id)" nz-menu-item class="gap-2 list-dropdown">
-                            <span nz-icon nzType="delete" nzTheme="twotone" [nzTwotoneColor]="'#f50'"></span>
-                            <p class="m-0 p-0" style="color: #f50;">Delete</p>                
-                          </li> -->
-                        </ul>
-                      </nz-dropdown-menu>
+  <ng-container *ngIf="project$ | async as project; else loading">
+    <nz-table
+        #filterTable
+        [nzData]="filteredData"
+        [nzShowPagination]="true" 
+        nzBordered
+        [nzTableLayout]="'fixed'"
+        [nzScroll]="{ x: '100vw' }"
+        [nzTotal]="totalAll"
+        [nzPageSize]="pageSize"
+        [nzPageIndex]="currentPage"
+        (nzPageIndexChange)="pageIndexChange($event)"
+        (nzPageSizeChange)="pageSizeChange($event)"
+    >
+        <thead>
+          <tr>
+            <ng-container *ngFor="let col of columns">
+              <ng-container *ngIf="columnUnfilter.includes(col.name)">
+                <th 
+                nzWidth="200px" 
+                *ngIf="col.visible"
+                [nzSortOrder]="col.sortOrder"
+                [nzSortFn]="col.sortFn"
+                [nzSortDirections]="col.sortDirections"
+                nzCustomFilter
+                >
+                {{ col.name }}
+                <nz-filter-trigger [(nzVisible)]="col.searchVisible" [nzActive]="col.searchValue.length > 0" [nzDropdownMenu]="menu">
+                  <span nz-icon nzType="search"></span>
+                </nz-filter-trigger>
+                <!-- search filter table -->
+                <nz-dropdown-menu #menu="nzDropdownMenu">
+                  <div class="ant-table-filter-dropdown">
+                    <div class="search-box">
+                      <div class="d-flex flex-column gap-2">
+                        <nz-date-picker *ngIf="col.name === 'Issue Date'; else inputText" nzInline [(ngModel)]="col.searchValue"></nz-date-picker>
+                        <ng-template #inputText>
+                          <input type="text" nz-input placeholder="Search {{ col.name }}" [(ngModel)]="col.searchValue" />
+                        </ng-template>
+                        <div class="d-flex align-items-center">
+                          <button nz-button nzSize="small" nzType="primary" (click)="searchColumn(col)" class="search-button">Search</button>
+                          <button nz-button nzSize="small" (click)="resetColumn(col)">Reset</button>
+                        </div>
+                      </div>
                     </div>
-                </td>
-              </tr>
-          </tbody>
-        </nz-table>
+                  </div>
+                </nz-dropdown-menu>
+                </th>
+              </ng-container>
+              <ng-container *ngIf="!columnUnfilter.includes(col.name)">
+                <th 
+                nzWidth="200px" 
+                *ngIf="col.visible"
+                [nzSortOrder]="col.sortOrder"
+                [nzSortFn]="col.sortFn"
+                [nzSortDirections]="col.sortDirections"
+                [nzFilterMultiple]="col.filterMultiple"
+                [nzFilters]="col.listOfFilter"
+                [nzFilterFn]="col.filterFn"
+                >{{ col.name }}</th>
+              </ng-container>
+
+            </ng-container>
+            <th nzWidth="200px" nzRight>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let data of filterTable.data">
+              <td  *ngIf="columns[0].visible">{{ data.project_pid }}</td>
+              <td *ngIf="columns[1].visible">{{ data.name }}</td>
+              <td *ngIf="columns[2]">
+                <a [href]="data.maps_url" target="_blank" rel="noopener noreferrer">{{ data.address }}</a>
+              </td>
+              <td *ngIf="columns[3].visible">{{ data.issue_date | date: 'fullDate' }}</td>
+              <td *ngIf="columns[4].visible">{{ data.cluster.name }}</td>
+              <td *ngIf="columns[5].visible">{{ data.segmentation.name }}</td>
+              <td *ngIf="columns[6].visible">{{ data.remarks === 'siphonic_system' ? 'Siphonic System' : 'Fastflow'}}</td>
+              <td *ngIf="columns[7].visible">{{ findRoleContactPerson('owner', data.customer.contactPerson) }}</td>
+              <td *ngIf="columns[8].visible">{{ findRoleContactPerson('architect', data.customer.contactPerson) }}</td>
+              <td *ngIf="columns[9].visible">{{ findRoleContactPerson('contractor', data.customer.contactPerson) }}</td>
+              <td *ngIf="columns[10].visible">{{ findRoleContactPerson('mep consultant', data.customer.contactPerson) }}</td>
+              <td *ngIf="columns[11].visible">
+                <ng-container *ngFor="let s of data.specification; last as isLast">
+                  {{ s.specification === 'siphonic_system' ? 'Siphonic System' : 'Gravity System'}} <span *ngIf="!isLast">, </span>
+                </ng-container>
+              </td>
+              <td *ngIf="columns[12].visible">
+                <ng-container *ngFor="let m of data.material; last as isLast">
+                  {{ m.material.name}} <span *ngIf="!isLast">, </span>
+                </ng-container>
+              </td>
+              <td *ngIf="columns[13].visible">{{ data.competitor }}</td>
+              <td *ngIf="columns[14].visible">
+                <ng-container *ngFor="let pic of data.pic; last as isLast">
+                  {{ pic.name }} <span *ngIf="!isLast">, </span>
+                </ng-container>
+              </td>
+              <td *ngIf="columns[15].visible">
+                <ng-container *ngFor="let pic of data.dce_pic; last as isLast">
+                  {{ pic.name }} <span *ngIf="!isLast">, </span>
+                </ng-container>
+              </td>
+              <td *ngIf="columns[16].visible">{{ data.year }}</td>
+              <td *ngIf="columns[17].visible">{{ data.month }}</td>
+              <td *ngIf="columns[18].visible">-</td>
+              <td nzRight>
+                  <div class="d-flex gap-3">
+                    <a nz-dropdown nzTrigger="click" [nzDropdownMenu]="menu" style="text-decoration: none;" >
+                      <div class="d-flex align-items-center">
+                        <i nz-icon nzType="more" nzTheme="outline"></i>
+                        <p class="m-0 p-0">More</p>                       
+                      </div>
+
+                    </a>
+                    <nz-dropdown-menu #menu="nzDropdownMenu">
+                      <ul nz-menu class="dropdown-wrapper" style="width: 120px;">
+                        <!-- <li nz-menu-item class="gap-2 list-dropdown">
+                          <span nz-icon nzType="eye" nzTheme="twotone"></span>
+                          <p class="m-0 p-0">Detail</p>
+                        </li> -->
+                        <li nz-menu-item class="gap-2 list-dropdown" (click)="showModalEdit(data)">
+                          <div class="d-flex gap-2">
+                            <span nz-icon nzType="edit" nzTheme="twotone"></span>
+                            <p class="m-0 p-0">Edit</p>
+                          </div>
+                        </li>
+                        <!-- <li (click)="showModalDuplicate(data)" nz-menu-item class="gap-2 list-dropdown">
+                          <span nz-icon nzType="copy" nzTheme="twotone" ></span>
+                          <p class="m-0 p-0">Duplicate</p>                
+                        </li> -->
+                        <!-- <li (click)="showModalDelete(data.id)" nz-menu-item class="gap-2 list-dropdown">
+                          <span nz-icon nzType="delete" nzTheme="twotone" [nzTwotoneColor]="'#f50'"></span>
+                          <p class="m-0 p-0" style="color: #f50;">Delete</p>                
+                        </li> -->
+                      </ul>
+                    </nz-dropdown-menu>
+                  </div>
+              </td>
+            </tr>
+        </tbody>
+    </nz-table>
   </ng-container>
 
 </ng-container>
@@ -139,36 +211,6 @@
           </ng-template>
         </ng-container>
       </nz-card>
-
-      <!-- <nz-card 
-        style="width:400px;"
-        nzTitle="Category A"
-        cdkDropList
-        id="A"
-        [cdkDropListData]="CatA"
-        [cdkDropListConnectedTo]="['B']"
-        (cdkDropListDropped)="drop($event)"
-        class="card-list-wrapper"
-      >
-        <ng-container *ngFor="let item of CatA; let isLast = last">
-          <div nz-card-grid [ngStyle]="gridStyle" cdkDrag class="card-item" [ngClass]="isLast ? '' : 'mb-4'">{{ item }}</div>
-        </ng-container>
-      </nz-card>
-  
-      <nz-card 
-        style="width:400px;"
-        nzTitle="Category B"
-        cdkDropList
-        id="B"
-        [cdkDropListData]="CatB"
-        [cdkDropListConnectedTo]="['A']"
-        (cdkDropListDropped)="drop($event)"
-        class="card-list-wrapper"
-      >
-        <ng-container *ngFor="let item of CatB; let isLast = last">
-          <div nz-card-grid [ngStyle]="gridStyle" cdkDrag class="card-item" [ngClass]="isLast ? '' : 'mb-4'">{{ item }}</div>
-        </ng-container>
-      </nz-card> -->
     </div>
   </div>
 </ng-container>
@@ -179,18 +221,15 @@
     #basicTable 
     nzBordered 
     [nzLoading]="true"
+    [nzTableLayout]="'fixed'"
+    [nzScroll]="{ x: '100vw' }"
   >
       <thead>
         <tr>
-          <th>ID</th>
-          <th>Project Name</th>
-          <th>Project Location</th>
-          <th>Issue Date</th>
-          <th>Project Engineer</th>
-          <th>Site Manager</th>
-          <th>Project Supervisor</th>
-          <th>Construction Head</th>
-          <th>Action</th>
+          <ng-container *ngFor="let col of columns">
+            <th nzWidth="200px" *ngIf="col.visible">{{ col.name }}</th>
+          </ng-container>
+          <th nzWidth="200px" nzRight>Action</th>
         </tr>
       </thead>
       <tbody>
@@ -210,3 +249,5 @@
       <button nz-button nzType="primary" class="text-capitalize" (click)="handleCancelColumn()">Ok</button>        
   </ng-container>
 </nz-modal>
+
+

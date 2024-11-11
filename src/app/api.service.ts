@@ -2,7 +2,7 @@ import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, map, Observable, tap } from 'rxjs';
 import { environment } from 'src/environments/environment';
-import { ICategories, ICustomerDetail, IRootAllInventories, IRootAllRoles, IRootCatContact, IRootCustomer, IRootDivision, IRootEmployee, IRootInventory, IRootPurchaseOrder, IRootSupplier, IRootUnit, IRootUserByRole } from './interfaces';
+import { ICategories, ICustomerDetail, IRootAllInventories, IRootAllRoles, IRootCatContact, IRootCustomer, IRootDivision, IRootEmployee, IRootInventory, IRootProject, IRootPurchaseOrder, IRootSupplier, IRootUnit, IRootUserByRole } from './interfaces';
 
 @Injectable({
   providedIn: 'root'
@@ -1135,6 +1135,17 @@ export class ApiService {
     const url = `${this.apiUrl}/project?page=${page}&per_page=${per_page}`
 
     return this.http.get<any>(url, { headers })
+  }
+
+  getAllProject(): Observable<IRootProject>{
+    const token = localStorage.getItem('authToken');
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+    });
+
+    const url = `${this.apiUrl}/all-project`
+
+    return this.http.get<IRootProject>(url, { headers })
   }
 
   createProjects(body: any): Observable<any>{
