@@ -2,7 +2,7 @@ import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, map, Observable, tap } from 'rxjs';
 import { environment } from 'src/environments/environment';
-import { ICategories, ICustomerDetail, IRootAllInventories, IRootAllRoles, IRootCatContact, IRootCustomer, IRootDivision, IRootEmployee, IRootInventory, IRootPurchaseOrder, IRootSupplier, IRootUnit, IRootUserByRole } from './interfaces';
+import { ICategories, ICustomerDetail, IRootAllInventories, IRootAllRoles, IRootCatContact, IRootCustomer, IRootDivision, IRootEmployee, IRootInventory, IRootProject, IRootPurchaseOrder, IRootSupplier, IRootUnit, IRootUserByRole } from './interfaces';
 
 @Injectable({
   providedIn: 'root'
@@ -1137,6 +1137,17 @@ export class ApiService {
     return this.http.get<any>(url, { headers })
   }
 
+  getAllProject(): Observable<IRootProject>{
+    const token = localStorage.getItem('authToken');
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+    });
+
+    const url = `${this.apiUrl}/all-project`
+
+    return this.http.get<IRootProject>(url, { headers })
+  }
+
   createProjects(body: any): Observable<any>{
     const token = localStorage.getItem('authToken');
     const headers = new HttpHeaders({
@@ -1426,5 +1437,71 @@ export class ApiService {
 
     const url = `${this.apiUrl}/delete-inventory?id=${id}`;
     return this.http.delete<any>(url, { headers })
+  }
+
+  getSegmentation(): Observable<ICategories>{
+    const token = localStorage.getItem('authToken');
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+    })
+
+    const url = `${this.apiUrl}/segmentation`
+
+    return this.http.get<ICategories>(url, { headers })
+  }
+
+  createSegmentation(name: string, description: string): Observable<any>{
+    const token = localStorage.getItem('authToken');
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+    })
+
+    const url = `${this.apiUrl}/create-segmentation?name=${name}&description=${description}`
+
+    return this.http.post<any>(url, {} , { headers })
+  }
+
+  editSegmentation(id: string, name: string, description: string): Observable<any>{
+    const token = localStorage.getItem('authToken');
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+    })
+
+    const url = `${this.apiUrl}/update-segmentation?id=${id}&name=${name}&description=${description}`
+
+    return this.http.post<any>(url, {} , { headers })
+  }
+
+  getMaterial(): Observable<ICategories>{
+    const token = localStorage.getItem('authToken');
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+    })
+
+    const url = `${this.apiUrl}/material`
+
+    return this.http.get<ICategories>(url, { headers })
+  }
+
+  createMaterial(name: string, description: string): Observable<any>{
+    const token = localStorage.getItem('authToken');
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+    })
+
+    const url = `${this.apiUrl}/create-material?name=${name}&description=${description}`
+
+    return this.http.post<any>(url, {} , { headers })
+  }
+
+  editMaterial(id: string, name: string, description: string): Observable<any>{
+    const token = localStorage.getItem('authToken');
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+    })
+
+    const url = `${this.apiUrl}/update-material?id=${id}&name=${name}&description=${description}`
+
+    return this.http.post<any>(url, {} , { headers })
   }
 }

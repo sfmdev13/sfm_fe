@@ -21,6 +21,7 @@ import { DragDropModule } from '@angular/cdk/drag-drop';
 import { NzCardModule } from 'ng-zorro-antd/card';
 import { NzSegmentedModule } from 'ng-zorro-antd/segmented';
 import { NzCheckboxModule } from 'ng-zorro-antd/checkbox';
+import { NzDatePickerModule } from 'ng-zorro-antd/date-picker';
 
 @NgModule({
   declarations: [ProjectsComponent],
@@ -45,7 +46,8 @@ import { NzCheckboxModule } from 'ng-zorro-antd/checkbox';
     DragDropModule,
     NzCardModule,
     NzSegmentedModule,
-    NzCheckboxModule
+    NzCheckboxModule,
+    NzDatePickerModule
   ],
   exports: [ProjectsComponent]
 })

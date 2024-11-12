@@ -1,16 +1,16 @@
-<h4 class="fw-bold mb-4">Cluster</h4>
+<h4 class="fw-bold mb-4">Segmentation</h4>
 <div class="d-flex align-items-center justify-content-between mb-3">
-    <span class="fw-light">Result of {{ total_category}} category</span>
+    <span class="fw-light">Result of {{ total_category}} Segmentation</span>
     <div class="row">
         <div class="text-end">
             <button nzSize="default" nz-button nzType="primary" (click)="showModalAdd()">Add New Category</button>
         </div>
     </div>
 </div>
-<ng-container *ngIf="customerFirm$ | async as cust; else loading">
+<ng-container *ngIf="segmentation$ | async as s; else loading">
     <nz-table 
         #basicTable 
-        [nzData]="cust.data"         
+        [nzData]="s.data"         
         [nzShowPagination]="false" 
         nzBordered
     >
@@ -28,7 +28,7 @@
             <td>
                 <div class="d-flex gap-3">
                     <span (click)="showModalEdit(data)" nz-icon nzType="edit" nzTheme="twotone"></span>
-                    <span (click)="showModalDelete(data.id)" nz-icon nzType="delete" nzTheme="twotone"></span>
+                    <!-- <span (click)="showModalDelete(data.id)" nz-icon nzType="delete" nzTheme="twotone"></span> -->
                 </div>
             </td>
             </tr>
