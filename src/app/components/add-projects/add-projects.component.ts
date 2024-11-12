@@ -177,36 +177,62 @@ export class AddProjectsComponent implements OnInit {
     )
 
 
-    if(this.modal_type === 'update'){
-      // this.projectForm.patchValue({
-      //   id: this.data.id,
-      //   name: this.data.name,
-      //   description: this.data.description,
-      //   order_date: this.data.order_date,
-      //   delivery_date: this.data.delivery_date,
-      //   customer_id: this.data.customer.id,
-      //   status: this.data.status,
-      //   progress: this.data.progress
-      // })
+    if(this.modal_type === 'update' || this.modal_type === 'duplicate'){
 
 
-      // //update PIC
-      // this.pic$ = this.apiSvc.getPic().pipe(
-      //   tap(res => {
-      //     this.listOfPic = res;
+      //update specification
+      const specs = this.data.specification.map(item => item.specification);
+      const materials = this.data.material.map(item => parseInt(item.material_id));
 
-      //     //extract pic id
-      //     const picIds = this.data.pic.map(item => item.pic_id);
+      this.projectForm.patchValue({
+        id: this.data.id,
+        project_id: this.data.project_pid,
+        name: this.data.name,
+        issue_date: this.data.issue_date,
+        project_category: this.data.project_category,
 
-      //     //find pic internal id
-      //     const isPicInternalId = this.data.pic.filter(item => item.is_pic_internal === 1);
 
-      //     this.projectForm.patchValue({
-      //       pic: picIds,
-      //       is_pic_internal: isPicInternalId[0].pic_id,
-      //     });
-      //   })
-      // )
+        province: parseInt(this.data.province),
+        city: parseInt(this.data.city),
+        postal_code: this.data.postal_code,
+        address: this.data.address,
+        maps_url: this.data.maps_url,
+        
+        cluster: this.data.cluster.id,
+        remarks: this.data.remarks,
+        segmentation: this.data.segmentation.id,
+        specification: specs,
+        material: materials,
+        competitor: this.data.competitor,
+        reason_failed: this.data.reason_failed,
+
+        customer_id: this.data.customer.id,
+        status: this.data.status
+      })
+
+
+      //update PIC
+      this.pic$ = this.apiSvc.getPic().pipe(
+        tap(res => {
+          this.listOfPic = res;
+
+          //extract pic id
+          const picIds = this.data.pic.map(item => item.pic_id);
+          const dcePic = this.data.dce_pic.map(item => item.pic_id);
+
+          //find pic internal id
+          const isPicInternalId = this.data.pic.filter(item => item.is_pic_internal === 1);
+          const isDcePicInternalId = this.data.dce_pic.filter(item => item.is_pic_internal === 1);
+
+          this.projectForm.patchValue({
+            sales_pic: picIds,
+            sales_pic_internal: isPicInternalId[0].pic_id,
+            dce_pic: dcePic,
+            dce_pic_internal: isDcePicInternalId[0].pic_id
+          });
+          
+        })
+      )
 
     } 
 
@@ -373,7 +399,7 @@ export class AddProjectsComponent implements OnInit {
       }))
 
 
-      if(this.modal_type === 'add'){
+      if(this.modal_type === 'add' || this.modal_type === 'duplicate'){
 
         let body = {
           id: this.projectForm.get('id')?.value,
@@ -436,11 +462,29 @@ export class AddProjectsComponent implements OnInit {
 
         let body = {
           id: this.projectForm.get('id')?.value,
+          project_pid: this.projectForm.get('project_id')?.value,
           name: this.projectForm.get('name')?.value,
-          description: this.projectForm.get('description')?.value,
+          issue_date: this.projectForm.get('issue_date')?.value,
           customer_id: this.projectForm.get('customer_id')?.value,
-          status: this.projectForm.get('status')?.value,
-          pic_new: this.picComplete
+          pic_new: this.picComplete,
+          dce_pic_new: this.dcePicComplete,
+          specification_new: this.projectForm.get('specification')?.value,
+          material_new: this.projectForm.get('material')?.value,
+          project_category: this.projectForm.get('project_category')?.value,
+          remarks: this.projectForm.get('remarks')?.value,
+          address: this.projectForm.get('address')?.value,
+          city: this.projectForm.get('city')?.value.toString(),
+          province: this.projectForm.get('province')?.value.toString(),
+          country: 'Indonesia',
+          postal_code: this.projectForm.get('postal_code')?.value,
+          maps_url: this.projectForm.get('maps_url')?.value,
+          segmentation_id: this.projectForm.get('segmentation')?.value,
+          customer_firm_id: this.projectForm.get('cluster')?.value,
+          competitor: this.projectForm.get('competitor')?.value,
+          year: this.year,
+          month: this.month,
+          reason_failed: this.projectForm.get('reason_failed')?.value,
+          status: 1,
         }
         
         this.apiSvc.updateProjects(body).subscribe({

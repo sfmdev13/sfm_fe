@@ -64,83 +64,6 @@ export class ProjectsComponent implements OnInit {
 
   filterParams: any;
 
-  awarded = ['Get to work', 'Pick up groceries', 'Go home', 'Fall asleep'];
-  CatAPlus = ['Get up', 'Brush teeth', 'Take a shower', 'Check e-mail', 'Walk dog'];
-  CatA = ['Get up', 'Brush teeth', 'Take a shower', 'Check e-mail', 'Walk dog'];
-  CatB = ['Get up', 'Brush teeth', 'Take a shower', 'Check e-mail', 'Walk dog'];
-  CatC = ['Get up', 'Brush teeth', 'Take a shower', 'Check e-mail', 'Walk dog'];
-  CatC1 = ['Get up', 'Brush teeth', 'Take a shower', 'Check e-mail', 'Walk dog'];
-  CatC2 = ['Get up', 'Brush teeth', 'Take a shower', 'Check e-mail', 'Walk dog'];
-  CatC3 = ['Get up', 'Brush teeth', 'Take a shower', 'Check e-mail', 'Walk dog'];
-  CatD = ['Get up', 'Brush teeth', 'Take a shower', 'Check e-mail', 'Walk dog'];
-  CatE = ['Get up', 'Brush teeth', 'Take a shower', 'Check e-mail', 'Walk dog'];
-  failed = ['Get up', 'Brush teeth', 'Take a shower', 'Check e-mail', 'Walk dog'];
-
-
-  listBoard = [
-    {
-      id: 'awarded',
-      title: 'Awarded',
-      project_list: [
-        {
-          id: 1,
-          title: 'Project Test 1',
-          description: 'pemasangan pipa SFM di bagian atap stadion',
-          date: new Date()
-        },
-        {
-          id: 2,
-          title: 'Project Test 2',
-          description: 'pemasangan pipa SFM bandara internasional',
-          date: new Date()
-        },
-        {
-          id: 3,
-          title: 'Project Test 3',
-          description: 'pemasangan pipa SFM 3',
-          date: new Date()
-        },
-        {
-          id: 4,
-          title: 'Project Test 4',
-          description: 'pemasangan pipa SFM 4',
-          date: new Date()
-        }
-      ]
-    },
-    {
-      id: 'cataplus',
-      title: 'Category A+',
-      project_list: []
-    },
-    {
-      id: 'cata',
-      title: 'Category A',
-      project_list: [],
-    },
-    {
-      id: 'catb',
-      title: 'Category B',
-      project_list: [],
-    },
-    {
-      id: 'catc',
-      title: 'Category C',
-      project_list: []
-    },
-    {
-      id: 'catd',
-      title: 'Category D',
-      project_list: []
-    },
-    {
-      id: 'cate',
-      title: 'Category E',
-      project_list: []
-    }
-    
-  ]
-
   gridStyle = {
     width: '100%'
   }
@@ -180,6 +103,39 @@ export class ProjectsComponent implements OnInit {
     'Year',
     'Month',
     'Value'
+  ]
+
+  listBoard: any[] = [];
+
+  categoryList: {text: string, value: string}[] = [
+    {
+      text: 'Awarded',
+      value: 'cat_awarded'
+    },
+    {
+      text: 'Category A+',
+      value: 'cat_a_plus'
+    },
+    {
+      text: 'Category A',
+      value: 'cat_a'
+    },
+    {
+      text: 'Category B',
+      value: 'cat_b'
+    },
+    {
+      text: 'Category C',
+      value: 'cat_c'
+    },
+    {
+      text: 'Category D',
+      value: 'cat_d'
+    },
+    {
+      text: 'Category F',
+      value: 'cat_f'
+    }
   ]
 
   constructor(
@@ -236,6 +192,52 @@ export class ProjectsComponent implements OnInit {
 
   }
 
+  getTextCatByValue(value: string): string{
+    const category = this.categoryList.find(item => item.value === value);
+    return category ? category.text : '-';
+  }
+
+  addListBoard(){
+    this.listBoard = [
+      {
+        id: 'cat_awarded',
+        title: 'Awarded',
+        project_list: [this.data.filter(res => res.project_category === 'cat_awarded')]
+      },
+      {
+        id: 'cat_a_plus',
+        title: 'Category A+',
+        project_list: [this.data.filter(res => res.project_category === 'cat_a_plus')]
+      },
+      {
+        id: 'cat_a',
+        title: 'Category A',
+        project_list: [this.data.filter(res => res.project_category === 'cat_a')]
+      },
+      {
+        id: 'cat_b',
+        title: 'Category B',
+        project_list: [this.data.filter(res => res.project_category === 'cat_b')]
+      },
+      {
+        id: 'cat_c',
+        title: 'Category C',
+        project_list: [this.data.filter(res => res.project_category === 'cat_c')]
+      },
+      {
+        id: 'cat_d',
+        title: 'Category D',
+        project_list: [this.data.filter(res => res.project_category === 'cat_d')]
+      },
+      {
+        id: 'cat_f',
+        title: 'Category E',
+        project_list: [this.data.filter(res => res.project_category === 'cat_f')]
+      }
+      
+    ]
+  }
+
   addColumnTable(){
     this.columns = [
       { 
@@ -261,6 +263,18 @@ export class ProjectsComponent implements OnInit {
         filterFn: null,
         searchVisible: false,
         searchValue: ''
+      },
+      {
+        name: 'Project Category', 
+        visible: true,
+        sortOrder: null,
+        sortDirections: ['ascend', 'descend', null],
+        sortFn: (a: IDataProject, b: IDataProject) => a.project_category.localeCompare(b.project_category),
+        filterMultiple: true,
+        listOfFilter: this.categoryList,
+        filterFn: (list: string[], item: IDataProject) => list.some(v => item.project_category.indexOf(v) !== -1),
+        searchVisible: false,
+        searchValue: ''   
       },
       { 
         name: 'Project Location', 
@@ -728,7 +742,9 @@ export class ProjectsComponent implements OnInit {
   }
 
   pageSizeChange(newSize: number): void {
+    console.log('masuk')
     this.pageSize = newSize;
+    this.currentPage = 1;
     this.updateDisplayedData();
   }
 
@@ -768,6 +784,8 @@ export class ProjectsComponent implements OnInit {
         this.total = res.data.length;
         this.data = res.data;
         this.filteredData = res.data;
+
+        this.addListBoard();
       })
     );
   }
@@ -788,19 +806,21 @@ export class ProjectsComponent implements OnInit {
     });
   }
 
-  // showModalDuplicate(data:IDataPurchaseOrder): void{
-  //   this.modal_type = 'duplicate'
-  //   this.drawerService.create({
-  //     nzTitle: 'Add Purchase',
-  //     nzContent: AddProjectsComponent,
-  //     nzPlacement: 'bottom',
-  //     nzHeight: '100vh',
-  //     nzContentParams: {
-  //       modal_type: this.modal_type,
-  //       dataDetail: data
-  //     }
-  //   });
-  // }
+  showModalDuplicate(data:IDataProject): void{
+    this.modal_type = 'duplicate'
+    this.modalSvc.create({
+      nzTitle: 'Update Project',
+      nzContent: AddProjectsComponent,
+      nzData: {
+        modal_type: this.modal_type,
+        data: data
+      },
+      nzClosable: false,
+      nzMaskClosable: false,
+      nzCentered: true,
+      nzWidth: '800px'
+    });
+  }
 
   showModalAdd(): void {
     this.modal_type = 'add'

@@ -28,6 +28,7 @@ export interface IDataProject {
   cluster: Cluster
   specification: Specification[]
   material: Material[]
+  reason_failed: string;
 }
 
 export interface Customer {
