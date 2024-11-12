@@ -180,6 +180,18 @@ export class AddProjectsComponent implements OnInit {
     if(this.modal_type === 'update' || this.modal_type === 'duplicate'){
 
 
+
+      //update year month
+      this.year = this.data.year,
+      this.month = this.data.month
+
+      const year = parseInt(this.year, 10);
+      const month = parseInt(this.month, 10) - 1;
+      
+      const date = new Date(year, month, 1); 
+      this.projectForm.get('year_month')?.setValue(date);
+      
+
       //update specification
       const specs = this.data.specification.map(item => item.specification);
       const materials = this.data.material.map(item => parseInt(item.material_id));
