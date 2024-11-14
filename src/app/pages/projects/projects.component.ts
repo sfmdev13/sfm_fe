@@ -9,6 +9,7 @@ import { ApiService } from 'src/app/api.service';
 import { AuthService } from 'src/app/auth.service';
 import { AddProjectsComponent } from 'src/app/components/add-projects/add-projects.component';
 import { FilterPurchaseOrderComponent } from 'src/app/components/filter-purchase-order/filter-purchase-order.component';
+import { ProjectCategory } from 'src/app/constants/project-enum';
 import { IRootPurchaseOrder, IRootUnit, ICategories, IDataInventory, IDataPurchaseOrder, IRootProject } from 'src/app/interfaces';
 import { IDataProject } from 'src/app/interfaces/project';
 import { SpinnerService } from 'src/app/spinner.service';
@@ -202,43 +203,54 @@ export class ProjectsComponent implements OnInit {
       {
         id: 'cat_awarded',
         title: 'Awarded',
-        project_list: [this.data.filter(res => res.project_category === 'cat_awarded')]
+        project_list: this.data.filter(res => res.project_category === 'cat_awarded')
       },
       {
         id: 'cat_a_plus',
         title: 'Category A+',
-        project_list: [this.data.filter(res => res.project_category === 'cat_a_plus')]
+        project_list: this.data.filter(res => res.project_category === 'cat_a_plus')
       },
       {
         id: 'cat_a',
         title: 'Category A',
-        project_list: [this.data.filter(res => res.project_category === 'cat_a')]
+        project_list: this.data.filter(res => res.project_category === 'cat_a')
       },
       {
         id: 'cat_b',
         title: 'Category B',
-        project_list: [this.data.filter(res => res.project_category === 'cat_b')]
+        project_list: this.data.filter(res => res.project_category === 'cat_b')
       },
       {
         id: 'cat_c',
         title: 'Category C',
-        project_list: [this.data.filter(res => res.project_category === 'cat_c')]
+        project_list: this.data.filter(res => res.project_category === 'cat_c')
       },
       {
         id: 'cat_d',
         title: 'Category D',
-        project_list: [this.data.filter(res => res.project_category === 'cat_d')]
+        project_list: this.data.filter(res => res.project_category === 'cat_d')
       },
       {
         id: 'cat_f',
         title: 'Category E',
-        project_list: [this.data.filter(res => res.project_category === 'cat_f')]
+        project_list: this.data.filter(res => res.project_category === 'cat_f')
       }
       
     ]
   }
 
   addColumnTable(){
+
+    const projectCategoryOrder = [
+      ProjectCategory.CAT_AWARDED,
+      ProjectCategory.CAT_A_PLUS,
+      ProjectCategory.CAT_A,
+      ProjectCategory.CAT_B,
+      ProjectCategory.CAT_C,
+      ProjectCategory.CAT_D,
+      ProjectCategory.CAT_F
+    ];
+    
     this.columns = [
       { 
         name: 'ID', 
@@ -267,9 +279,14 @@ export class ProjectsComponent implements OnInit {
       {
         name: 'Project Category', 
         visible: true,
-        sortOrder: null,
-        sortDirections: ['ascend', 'descend', null],
-        sortFn: (a: IDataProject, b: IDataProject) => a.project_category.localeCompare(b.project_category),
+        sortOrder: 'ascend',
+        sortDirections: ['ascend', 'descend'],
+        sortFn: (a: IDataProject, b: IDataProject) => {
+          return (
+            projectCategoryOrder.indexOf(a.project_category as ProjectCategory) -
+            projectCategoryOrder.indexOf(b.project_category as ProjectCategory)
+          );
+        },
         filterMultiple: true,
         listOfFilter: this.categoryList,
         filterFn: (list: string[], item: IDataProject) => list.some(v => item.project_category.indexOf(v) !== -1),
@@ -320,7 +337,7 @@ export class ProjectsComponent implements OnInit {
         sortFn: (a: IDataProject, b: IDataProject) => a.segmentation.name.localeCompare(b.segmentation.name),
         filterMultiple: true,
         listOfFilter: this.segmentationData,
-        filterFn: (list: number[], item: IDataProject) => list.some(v => item.cluster.id === v),
+        filterFn: (list: number[], item: IDataProject) => list.some(v => item.segmentation.id === v),
         searchVisible: false,
         searchValue: ''        
       },
@@ -660,17 +677,62 @@ export class ProjectsComponent implements OnInit {
 
   drop(event: CdkDragDrop<any[]>) {
     if (event.previousContainer === event.container) {
+      // Item is moved within the same list
       moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
     } else {
-      transferArrayItem(
-        event.previousContainer.data,
-        event.container.data,
-        event.previousIndex,
-        event.currentIndex,
-      );
+      // Item is transferred to a different list
+      const previousList = event.previousContainer.data;
+      const currentList = event.container.data;
+      const previousIndex = event.previousIndex;
+      const currentIndex = event.currentIndex;
+      const movedItem = event.item.data;
+      const previousListId = event.previousContainer.id;
+      const currentListId = event.container.id;
+  
+      // Optimistic update: move the item to the new list
+      transferArrayItem(previousList, currentList, previousIndex, currentIndex);
+  
+      const body = {
+        id: movedItem.id,
+        project_category: currentListId
+      };
+  
+      // Show spinner while the API call is in progress
+      this.spinnerSvc.show();
+  
+      this.apiSvc.editProjectCategory(body).subscribe({
+        next: () => {
+          // Success response
+          this.modalSvc.success({
+            nzTitle: 'Success',
+            nzContent: 'Successfully updated project category.',
+            nzOkText: 'Ok',
+            nzCentered: true
+          });
+          // Trigger refresh and hide the spinner
+          this.apiSvc.triggerRefreshProject();
+          this.spinnerSvc.hide();
+        },
+        error: (error) => {
+          // Error handling: revert the item to the previous list
+          console.error(error);
+          this.spinnerSvc.hide();
+  
+          // Move the item back to the original list
+          transferArrayItem(currentList, previousList, currentIndex, previousIndex);
+  
+          // Show error message to user
+          this.modalSvc.error({
+            nzTitle: 'Error',
+            nzContent: 'Failed to update project category. Item has been moved back.',
+            nzOkText: 'Ok',
+            nzCentered: true
+          });
+        }
+      });
     }
   }
-
+  
   changeStatus(status: string, id: any): void{
     this.spinnerSvc.show();
 
@@ -742,7 +804,6 @@ export class ProjectsComponent implements OnInit {
   }
 
   pageSizeChange(newSize: number): void {
-    console.log('masuk')
     this.pageSize = newSize;
     this.currentPage = 1;
     this.updateDisplayedData();

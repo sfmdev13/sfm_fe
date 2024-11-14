@@ -190,29 +190,25 @@
         class="card-list-wrapper"
         [ngClass]="isLast ? '' : 'me-3'"
       >
-        <ng-container *ngFor="let item of data; let isLast = last">
-          <ng-container *ngIf="item.project_category === cat.id">
-            <nz-card 
-              class="card-item p-3" 
-              cdkDrag 
-              [nzActions]="[actionDetail, actionEdit, actionDelete]" 
-              [ngClass]="isLast ? '' : 'mb-4'"
-            >
-              <nz-card-meta
-                [nzTitle]="item.name"
-                [nzDescription]="item.issue_date"
-              ></nz-card-meta>
-            </nz-card>
-            <ng-template #actionDetail>
-              <span nz-icon nzType="eye" nzTheme="twotone"></span>
-            </ng-template>
-            <ng-template #actionEdit>
-              <span nz-icon nzType="edit" nzTheme="twotone"></span>
-            </ng-template>
-            <ng-template #actionDelete>
-              <span nz-icon nzType="delete" nzTheme="twotone" [nzTwotoneColor]="'#f50'"></span>
-            </ng-template>
-          </ng-container>
+        <ng-container *ngFor="let item of cat.project_list; let isLast = last">
+          <nz-card 
+            class="card-item p-3" 
+            cdkDrag 
+            [cdkDragData]="item"
+            [nzActions]="[actionDetail, actionEdit]" 
+            [ngClass]="isLast ? '' : 'mb-4'"
+          >
+            <nz-card-meta
+              [nzTitle]="item.name"
+              [nzDescription]="item.issue_date"
+            ></nz-card-meta>
+          </nz-card>
+          <ng-template #actionDetail>
+            <span nz-icon nzType="copy" nzTheme="twotone" (click)="showModalDuplicate(item)"></span>
+          </ng-template>
+          <ng-template #actionEdit>
+            <span nz-icon nzType="edit" nzTheme="twotone"  (click)="showModalEdit(item)"></span>
+          </ng-template>
         </ng-container>
       </nz-card>
     </div>
