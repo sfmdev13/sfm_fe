@@ -1,0 +1,67 @@
+<div class="d-flex flex-column gap-2">
+    <div>
+        <p class="m-0 p-0 fw-semibold">Current Revision</p>
+        <p class="fw-light">R2</p>
+    </div>
+    <nz-tabset [nzAnimated]="false">
+        <nz-tab nzTitle="General Information">
+            <div>
+                <p class="m-0 p-0 fw-semibold">Project ID</p>
+                <p class="fw-light">PRJASD123</p>
+            </div>
+            <div>
+                <p class="m-0 p-0 fw-semibold">Project Name</p>
+                <p class="fw-light">T1 HANG NADIM BATAM</p>
+            </div>
+            <div>
+                <p class="m-0 p-0 fw-semibold">Project Location</p>
+                <p class="fw-light">BATAM KEPRI</p>
+            </div>
+            <div>
+                <p class="m-0 p-0 fw-semibold">Date</p>
+                <p class="fw-light">{{ date | date: 'fullDate' }}</p>
+            </div>
+            <div>
+                <p class="m-0 p-0 fw-semibold">Consultant</p>
+                <p class="fw-light">-</p>
+            </div>
+            <div>
+                <p class="m-0 p-0 fw-semibold">Consultant Location</p>
+                <p class="fw-light">-</p>
+            </div>
+            <div>
+                <p class="m-0 p-0 fw-semibold">Engineer</p>
+                <p class="fw-light">DIKA</p>
+            </div>
+            <div>
+                <p class="m-0 p-0 fw-semibold">Engineer Phone No.</p>
+                <p class="fw-light">085717548873</p>
+            </div>
+        </nz-tab>
+        <nz-tab nzTitle="Revision Log">
+            <ng-container *ngFor="let log of logMsg">                
+                <div>
+                    <nz-table #basicTable [nzData]="log.changes" nzBordered>
+                        <thead>
+                          <tr>
+                            <th>Name</th>
+                            <th>Message</th>
+                            <th>Revision</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let data of basicTable.data" >
+                              <td>{{ data.name }}</td>
+                              <td>{{ data.message }}</td>
+                              <td>{{ data.revision }}</td>
+                            </tr>
+                        </tbody>
+                      </nz-table>
+                </div>
+            </ng-container>
+        </nz-tab>
+    </nz-tabset>
+
+</div>
+
+    

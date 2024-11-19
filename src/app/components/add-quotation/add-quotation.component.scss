@@ -1,0 +1,62 @@
+.container {
+    display: flex;
+    flex-wrap: nowrap;
+    padding: 8px;
+}
+
+.add-item {
+    padding: 8px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.ant-divider{
+    border-top: 3px solid rgba(0, 0, 0, 0.06);
+}
+
+.table-order{
+    thead {
+        position: sticky;
+        top: 0;
+        z-index: 1;
+    }
+    tbody{
+        tr{
+            td{
+                padding: 16px;
+            }
+        }
+    }    
+}
+
+.total-children{
+    border-top: 3px solid rgba(0, 0, 0, 0.1);
+    padding-top: 12px;
+}
+
+.total-order{
+    width: 55%;
+    padding-left: 12px !important;
+}
+
+.form-body{
+    padding-bottom: 64px;
+}
+
+.footer{
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    width: 100%;
+    border-top: 2px solid #f0f0f0;
+    background: white;
+    height: 64px;
+    padding-top: 16px;
+    padding-right: 20px;
+}
+
+.table-purchase th, .table-purchase td {
+    min-width: 132px; /* Set this to whatever minimum width works best */
+    white-space: nowrap; /* Prevent text from wrapping */
+}
