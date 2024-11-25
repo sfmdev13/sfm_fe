@@ -1,15 +1,17 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { NzDrawerService } from 'ng-zorro-antd/drawer';
 import { NzModalService } from 'ng-zorro-antd/modal';
+import { ApiService } from 'src/app/api.service';
 import { AddQuotationComponent } from 'src/app/components/add-quotation/add-quotation.component';
 import { DetailQuotationComponent } from 'src/app/components/detail-quotation/detail-quotation.component';
+import { IDataCategories, IDataInventory } from 'src/app/interfaces';
 
 @Component({
   selector: 'app-quotation',
   templateUrl: './quotation.component.html',
   styleUrl: './quotation.component.scss'
 })
-export class QuotationComponent {
+export class QuotationComponent implements OnInit {
 
   pageSize: number = 5;
 
@@ -32,11 +34,26 @@ export class QuotationComponent {
       revision: 'R4',
     },
   ];
+  
+  inventoryList: IDataInventory[] = []
+  productCategory: IDataCategories[] = []
 
   constructor(
     private drawerService: NzDrawerService,
-    private modalService: NzModalService
+    private modalService: NzModalService,
+    private apiSvc: ApiService
   ){}
+
+  ngOnInit(): void {
+    this.apiSvc.getInventoryList().subscribe((res) => {
+      this.inventoryList = res.data;
+    })
+
+    this.apiSvc.getInventoryList().subscribe((res) => {
+      this.productCategory = res.data
+    })
+
+  }
 
   showAddModal(){
     this.drawerService.create({
@@ -44,6 +61,10 @@ export class QuotationComponent {
       nzContent: AddQuotationComponent,
       nzPlacement: 'bottom',
       nzHeight: '100vh',
+      nzData: {
+        inventoryList: this.inventoryList,
+        productCategory: this.productCategory
+      }
     });
   }
 
