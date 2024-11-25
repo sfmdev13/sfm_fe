@@ -165,6 +165,10 @@ export class AddInventoriesComponent implements OnInit {
 
     if(this.modal_type === 'edit' || this.modal_type === 'duplicate'){
 
+      if(this.modal_type === 'edit'){
+        this.inventoryForm.get('part_number')?.disable();
+      }
+
       const newUpdateFileList: NzUploadFile = {
         uid: this.dataDetail.attachment.id ?? 'picture',
         name: this.dataDetail.attachment.file_name,
@@ -189,31 +193,29 @@ export class AddInventoriesComponent implements OnInit {
         alias: this.dataDetail.alias,
         hs_code: this.dataDetail.hs_code,
         source: this.dataDetail.inventory_source,
-        price_list: parseInt(this.dataDetail.price_list),
+        price_list: parseFloat(this.dataDetail.price_list),
         part_number: this.dataDetail.code,
         isEqualMeasurement: this.dataDetail.unit_report === null ? true : false,
-        attachment: newUpdateFileList
+        attachment: this.modal_type === 'edit' ?  newUpdateFileList : ''
       })
-
-      this.inventoryForm.get('part_number')?.disable();
 
       this.getFormattedLabel(this.dataDetail.unit.measurement, this.dataDetail.unit.unit);
 
       this.dataDetail.inventory_items.forEach((item) => {
         const updateInvent = this.fb.group({
-          id: item.id,
-          supplier_id: item.supplier.id,
-          discount_1: parseInt(item.discount_1),
-          discount_type_1: item.discount_type_1,
-          discount_2: parseInt(item.discount_2),
-          discount_type_2: item.discount_type_2,
-          price_factor: parseInt(item.price_factor),
-          total_1: parseInt(item.product_cost_1),
-          total_2: parseInt(item.product_cost_2),
-          selling_price: parseInt(item.selling_price),
-          qty: parseInt(item.qty),
-          gross_margin: parseInt(item.gross_margin),
-          is_default: item.is_default === 1 ? true : false
+          id: [item.id],
+          supplier_id: [item.supplier.id],
+          discount_1: [parseInt(item.discount_1)],
+          discount_type_1: [item.discount_type_1],
+          discount_2: [parseInt(item.discount_2)],
+          discount_type_2: [item.discount_type_2],
+          price_factor: [parseInt(item.price_factor)],
+          total_1: [{value: parseInt(item.product_cost_1), disabled: true}],
+          total_2: [{value: parseInt(item.product_cost_2), disabled: true}],
+          selling_price: [parseInt(item.selling_price)],
+          qty: [parseInt(item.qty)],
+          gross_margin: [parseInt(item.gross_margin)],
+          is_default: [item.is_default === 1 ? true : false]
         })
 
         this.inventoryItem.push(updateInvent)
@@ -257,7 +259,7 @@ export class AddInventoriesComponent implements OnInit {
   inventoryChangeHandler(control: UntypedFormGroup) {
     // Calculate all dependent values
     const calculateValues = () => {
-        const priceList = parseInt(this.inventoryForm.get('price_list')?.value || '0');
+        const priceList = parseFloat(this.inventoryForm.get('price_list')?.value || '0');
         // const tax = parseInt(this.inventoryForm.get('tax')?.value || '0');
 
         console.log(priceList)
@@ -783,13 +785,17 @@ export class AddInventoriesComponent implements OnInit {
   handleSubmitAdd(): void{
 
     this.spinnerSvc.show();
+    console.log('masuk')
 
     if(this.inventoryForm.valid){
       
       const equal = this.inventoryForm.get('isEqualMeasurement')?.value;
 
       const attachment = this.inventoryForm.get('attachment')?.value
+      console.log(attachment)
       const file = this.dataURLtoFile(attachment.url, `${attachment.uid}.png`);
+      console.log(attachment)
+      console.log(file);
 
       const inventoryItemComplete = this.inventoryItem.value.map((item: any) => ({
         supplier_id: item.supplier_id,
