@@ -21,11 +21,16 @@ export interface IDataInventory {
   attachment: Attachment
   status: number
   total_qty: number
-  highest_selling_price: string,
-  default_selling_price: string,
-  default_product_cost_2: string,
-  default_gross_margin: string
-  inventory_items: InventoryItem[]
+  highest_selling_price: string;
+  default_selling_price: string;
+  default_product_cost_2: string;
+  default_gross_margin: string;
+  inventory_items: InventoryItem[];
+  product_category: {
+    id: number;
+    name: string;
+    description: string;
+  }
 }
 
 interface ISubCategory{

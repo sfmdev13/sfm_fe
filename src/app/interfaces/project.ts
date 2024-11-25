@@ -89,6 +89,7 @@ export interface DcePic {
   pic_id: string
   is_pic_internal: number
   name: string
+  phone: string
 }
 
 export interface Segmentation {

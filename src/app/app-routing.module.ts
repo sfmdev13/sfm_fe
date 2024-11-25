@@ -43,8 +43,20 @@ const routes: Routes = [
         data: { action: 'view_reports' }
       },
       {
-        path: 'projects',
+        path: 'projects/project-list',
         loadChildren: () => import('./pages/projects/projects.module').then(m => m.ProjectsModule),
+        canActivate: [ActionGuard],
+        data: { action: 'view_projects' }
+      },
+      {
+        path: 'projects',
+        loadChildren: () => import('./pages/project-home/project-home.module').then(m => m.ProjectHomeModule),
+        canActivate: [ActionGuard],
+        data: { action: 'view_projects' }
+      },
+      {
+        path: 'projects/quotation',
+        loadChildren: () => import('./pages/quotation/quotation.module').then( m => m.QuotationModule),
         canActivate: [ActionGuard],
         data: { action: 'view_projects' }
       },

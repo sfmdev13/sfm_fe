@@ -212,7 +212,7 @@ export class AddPurchaseOrderComponent implements OnInit {
           return
         }
 
-        this.terminDueDate = parseInt(res)
+        this.terminDueDate = parseFloat(res)
 
         this.calculateDueDate(date, this.terminDueDate)
       }
@@ -322,8 +322,8 @@ export class AddPurchaseOrderComponent implements OnInit {
       const selectedWarehouse = this.warehouseList.find(w => w.id === value);
 
       this.purchaseForm.patchValue({
-        province: parseInt(selectedWarehouse?.province),
-        city: parseInt(selectedWarehouse?.city),
+        province: parseFloat(selectedWarehouse?.province),
+        city: parseFloat(selectedWarehouse?.city),
         address: selectedWarehouse?.address,
         postal_code: selectedWarehouse?.postal_code
       })
@@ -333,8 +333,8 @@ export class AddPurchaseOrderComponent implements OnInit {
       const selectedBilling =  this.billingList.find(b => b.id === value)
 
       this.purchaseForm.patchValue({
-        province_billing: parseInt(selectedBilling?.province),
-        city_billing:  parseInt(selectedBilling?.city),
+        province_billing: parseFloat(selectedBilling?.province),
+        city_billing:  parseFloat(selectedBilling?.city),
         address_billing: selectedBilling?.address,
         postal_code_billing: selectedBilling?.postal_code
       })
@@ -427,14 +427,14 @@ export class AddPurchaseOrderComponent implements OnInit {
         tax2: parseFloat(this.dataDetail.tax),
         project_type: this.dataDetail.type,
         warehouse_id: this.dataDetail.type === 'stock' ? this.dataDetail.shipping.id : '',
-        province: parseInt(this.dataDetail.shipping.province),
-        city: parseInt(this.dataDetail.shipping.city),
+        province: parseFloat(this.dataDetail.shipping.province),
+        city: parseFloat(this.dataDetail.shipping.city),
         address: this.dataDetail.shipping.address,
         postal_code: this.dataDetail.shipping.postal_code,
         telephone_shipping: this.dataDetail.telephone_shipping,
         billing_id: this.dataDetail.type === 'stock' ?  this.dataDetail.billing.id : '',
-        province_billing: parseInt(this.dataDetail.billing.province),
-        city_billing: parseInt(this.dataDetail.billing.city),
+        province_billing: parseFloat(this.dataDetail.billing.province),
+        city_billing: parseFloat(this.dataDetail.billing.city),
         telephone_billing: this.dataDetail.telephone_billing,
         postal_code_billing: this.dataDetail.billing.postal_code,
         maps_url_billing: this.dataDetail.billing.maps_url,
@@ -490,24 +490,24 @@ export class AddPurchaseOrderComponent implements OnInit {
       this.dataDetail.po_items.forEach((order) => {
         const product = this.inventoryList.data.find((p: any) => p.id === order.inventory_items.inventory.id);
 
-        const productCostTaxed = parseInt(order.inventory_items.product_cost_2) + ( parseInt(order.inventory_items.product_cost_2) * (parseFloat(product.tax) / 100) )
+        const productCostTaxed = parseFloat(order.inventory_items.product_cost_2) + ( parseFloat(order.inventory_items.product_cost_2) * (parseFloat(product.tax) / 100) )
 
         const updateOrder = this.fb.group({
           inventory_id: [order.inventory_items.inventory.id, Validators.required],
-          qty: [parseInt(order.qty), Validators.required],
+          qty: [parseFloat(order.qty), Validators.required],
           product_code: [order.inventory_items.inventory.id],
           unit_measurement: [order.inventory_items.inventory.unit.measurement],
           unit_unit: [order.inventory_items.inventory.unit.unit],
-          total_cost: [parseInt(order.total_cost_per_product)],
-          discount: [parseInt(order.discount)],
+          total_cost: [parseFloat(order.total_cost_per_product)],
+          discount: [parseFloat(order.discount)],
           discount_type: [order.discount_type],
           alias: [order.inventory_items.inventory.alias],
           suppliersList: [product.inventory_items],
           supplier: [order.inventory_items.id],
-          product_cost_2: [{value: parseInt(order.inventory_items.product_cost_2), disabled: true}],
+          product_cost_2: [{value: parseFloat(order.inventory_items.product_cost_2), disabled: true}],
           product_cost_2_taxed: [{value: productCostTaxed, disabled: true}],
           include_tax: [order.include_inventory_tax === 1 ? true : false],
-          tax: [parseInt(product.tax)]
+          tax: [parseFloat(product.tax)]
         })
 
         this.order.push(updateOrder);
@@ -518,12 +518,12 @@ export class AddPurchaseOrderComponent implements OnInit {
         const updateOrderAdd = this.fb.group({
           id: order.id,
           product_description: order.product_description,
-          qty: parseInt(order.qty),
+          qty: parseFloat(order.qty),
           unit_id: order.unit.id,
-          price_list: parseInt(order.price_list),
-          discount: parseInt(order.discount),
+          price_list: parseFloat(order.price_list),
+          discount: parseFloat(order.discount),
           discount_type: order.discount_type,
-          total_cost: parseInt(order.total_cost_per_product),
+          total_cost: parseFloat(order.total_cost_per_product),
           measurement: order.unit.measurement,
           unit: order.unit.unit          
         })
@@ -1054,7 +1054,7 @@ export class AddPurchaseOrderComponent implements OnInit {
     }
 
     if(orderRow.get('discount_type')?.value === 'price'){
-      totalCost = totalCost - parseInt(discount);
+      totalCost = totalCost - parseFloat(discount);
     }
 
     orderRow.get('total_cost')?.setValue(totalCost, { emitEvent: false });
@@ -1068,12 +1068,12 @@ export class AddPurchaseOrderComponent implements OnInit {
 
     if(includeTax){
       console.log('masuk sini')
-      productCost2 = parseInt(orderRow.get('product_cost_2_taxed')?.value) || 0;
+      productCost2 = parseFloat(orderRow.get('product_cost_2_taxed')?.value) || 0;
     }
 
     if(!includeTax){
       console.log('masuk sini')
-      productCost2 = parseInt(orderRow.get('product_cost_2')?.value) || 0;
+      productCost2 = parseFloat(orderRow.get('product_cost_2')?.value) || 0;
     }
 
     let totalCost = qty * productCost2;
@@ -1083,7 +1083,7 @@ export class AddPurchaseOrderComponent implements OnInit {
     }
 
     if(orderRow.get('discount_type')?.value === 'price'){
-      totalCost = totalCost - parseInt(discount);
+      totalCost = totalCost - parseFloat(discount);
     }
 
     orderRow.get('total_cost')?.setValue(totalCost, { emitEvent: false });
@@ -1165,9 +1165,9 @@ export class AddPurchaseOrderComponent implements OnInit {
       const product_cost_2 = selectedSupplier?.product_cost_2 ?? 0
       const tax = control.get('tax')?.value;
       console.log(tax);
-      const product_taxed = parseInt(product_cost_2) + (parseInt(product_cost_2) * (parseFloat(tax)/100))
+      const product_taxed = parseFloat(product_cost_2) + (parseFloat(product_cost_2) * (parseFloat(tax)/100))
       // Update form control with selling price or handle it as needed
-      control.get('product_cost_2')?.setValue(parseInt(product_cost_2) ?? 0);
+      control.get('product_cost_2')?.setValue(parseFloat(product_cost_2) ?? 0);
       control.get('product_cost_2_taxed')?.setValue(product_taxed);
     });
 
