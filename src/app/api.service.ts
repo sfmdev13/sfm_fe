@@ -2,7 +2,7 @@ import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, map, Observable, tap } from 'rxjs';
 import { environment } from 'src/environments/environment';
-import { ICategories, ICustomerDetail, IRootAllInventories, IRootAllRoles, IRootCatContact, IRootCustomer, IRootDivision, IRootEmployee, IRootInventory, IRootProject, IRootPurchaseOrder, IRootSupplier, IRootUnit, IRootUserByRole } from './interfaces';
+import { ICategories, ICustomerDetail, IRootAllInventories, IRootAllRoles, IRootCatContact, IRootCustomer, IRootDivision, IRootEmployee, IRootInventory, IRootProject, IRootPurchaseOrder, IRootQuotation, IRootSupplier, IRootUnit, IRootUserByRole } from './interfaces';
 
 @Injectable({
   providedIn: 'root'
@@ -54,6 +54,9 @@ export class ApiService {
 
   private refreshGetAssembly = new BehaviorSubject<void>(undefined);
   refreshGetAssembly$ = this.refreshGetAssembly.asObservable();
+
+  private refreshGetQuotation = new BehaviorSubject<void>(undefined);
+  refreshGetQuotation$ = this.refreshGetQuotation.asObservable();
 
   getProfile(): Observable<any> {
     const token = localStorage.getItem('authToken');
@@ -111,6 +114,10 @@ export class ApiService {
 
   triggerRefreshAssembly(){
     this.refreshGetAssembly.next();
+  }
+
+  triggerRefreshQuotation(){
+    this.refreshGetQuotation.next();
   }
 
   setFilteredCustomerData(data: IRootCustomer) {
@@ -1524,6 +1531,28 @@ export class ApiService {
     })
 
     const url = `${this.apiUrl}/create-quotation`
+
+    return this.http.post<any>(url, body , { headers })
+  }
+
+  getQuotation(): Observable<IRootQuotation>{
+    const token = localStorage.getItem('authToken');
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+    })
+
+    const url = `${this.apiUrl}/all-quotation`
+
+    return this.http.get<IRootQuotation>(url, { headers })
+  }
+
+  editQuotation(body: any): Observable<any>{
+    const token = localStorage.getItem('authToken');
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+    })
+
+    const url = `${this.apiUrl}/update-quotation`
 
     return this.http.post<any>(url, body , { headers })
   }

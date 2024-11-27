@@ -17,17 +17,17 @@
                 <nz-option nzLabel="10" [nzValue]="10"></nz-option>
             </nz-select>
         </div>
-        <button class="me-2 filter-icon" nz-button nzType="default" nzSize="default"><span nz-icon nzType="reload"></span></button>
-        <button class="me-2 filter-icon" nz-button nzType="default" nzSize="default"><span nz-icon nzType="setting"></span></button>
+        <button (click)="getQuotation()" class="me-2 filter-icon" nz-button nzType="default" nzSize="default"><span nz-icon nzType="reload"></span></button>
         <button (click)="showAddModal()"  nzSize="default" nz-button nzType="primary">Add Quotation</button>
     </div>
 </div>
 
-<nz-table 
+<ng-container *ngIf="quotation$ | async as quotation; else loadingTable">
+  <nz-table 
     #basicTable 
-    [nzData]="listOfData"
+    [nzData]="quotation.data"
     nzBordered
->
+  >
     <thead>
       <tr>
         <th>Project ID</th>
@@ -39,9 +39,9 @@
     <tbody>
         <ng-container *ngFor="let data of basicTable.data">
             <tr>
-                <td>{{ data.id }}</td>
+                <td>{{ data.project_pid }}</td>
                 <td>{{ data.name }}</td>
-                <td>{{ data.revision }}</td>
+                <td>{{ data.quotation?.revision }}</td>
                 <td>
                     <div class="d-flex gap-3">
                         <a nz-dropdown nzTrigger="click" [nzDropdownMenu]="menu" style="text-decoration: none;" >
@@ -59,18 +59,24 @@
                                     <p class="m-0 p-0">Detail</p>
                                 </div>
                             </li>
-                            <li nz-menu-item class="gap-2 list-dropdown">
+                            <li nz-menu-item class="gap-2 list-dropdown"  (click)="showEdit(data, 'edit')">
                               <div class="d-flex gap-2">
                                 <span nz-icon nzType="edit" nzTheme="twotone"></span>
                                 <p class="m-0 p-0">Edit</p>
                               </div>
                             </li>
-                            <li nz-menu-item class="gap-2 list-dropdown">
+                            <li nz-menu-item class="gap-2 list-dropdown"  (click)="showEdit(data, 'revision')">
+                              <div class="d-flex gap-2">
+                                <span nz-icon nzType="diff" nzTheme="twotone"></span>
+                                <p class="m-0 p-0">Revision</p>
+                              </div>
+                            </li>
+                            <!-- <li nz-menu-item class="gap-2 list-dropdown">
                               <div class="d-flex gap-2">
                                 <span nz-icon nzType="copy" nzTheme="twotone" ></span>
                                 <p class="m-0 p-0">Duplicate</p>  
                               </div>
-                            </li>
+                            </li> -->
                             <li nz-menu-item class="gap-2 list-dropdown">
                                 <div class="d-flex gap-2">
                                     <span nz-icon nzType="delete" nzTheme="twotone" [nzTwotoneColor]="'#f50'"></span>
@@ -85,3 +91,25 @@
         </ng-container>
     </tbody>
   </nz-table>
+</ng-container>
+
+<ng-template #loadingTable>
+  <nz-table 
+    #basicTable 
+    nzBordered 
+    [nzLoading]="true"
+    [nzTableLayout]="'fixed'"
+    [nzScroll]="{ x: '100vw' }"
+  >
+      <thead>
+        <tr>
+          <th>Project ID</th>
+          <th>Project Name</th>
+          <th>Last Revision</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+      </tbody>
+    </nz-table>
+</ng-template>
