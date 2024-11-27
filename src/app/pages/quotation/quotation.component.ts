@@ -1,10 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { NzDrawerService } from 'ng-zorro-antd/drawer';
 import { NzModalService } from 'ng-zorro-antd/modal';
+import { Observable } from 'rxjs';
 import { ApiService } from 'src/app/api.service';
 import { AddQuotationComponent } from 'src/app/components/add-quotation/add-quotation.component';
 import { DetailQuotationComponent } from 'src/app/components/detail-quotation/detail-quotation.component';
-import { IDataCategories, IDataInventory } from 'src/app/interfaces';
+import { IDataCategories, IDataInventory, IDataQuotation, IRootQuotation } from 'src/app/interfaces';
 
 @Component({
   selector: 'app-quotation',
@@ -38,6 +39,8 @@ export class QuotationComponent implements OnInit {
   inventoryList: IDataInventory[] = []
   productCategory: IDataCategories[] = []
 
+  quotation$!: Observable<IRootQuotation>
+
   constructor(
     private drawerService: NzDrawerService,
     private modalService: NzModalService,
@@ -45,14 +48,20 @@ export class QuotationComponent implements OnInit {
   ){}
 
   ngOnInit(): void {
+
+    this.getQuotation();
+
+    this.apiSvc.refreshGetQuotation$.subscribe(() => {
+      this.getQuotation();
+    })
+
     this.apiSvc.getInventoryList().subscribe((res) => {
       this.inventoryList = res.data;
     })
+  }
 
-    this.apiSvc.getInventoryList().subscribe((res) => {
-      this.productCategory = res.data
-    })
-
+  getQuotation(){
+    this.quotation$ = this.apiSvc.getQuotation();
   }
 
   showAddModal(){
@@ -63,7 +72,8 @@ export class QuotationComponent implements OnInit {
       nzHeight: '100vh',
       nzData: {
         inventoryList: this.inventoryList,
-        productCategory: this.productCategory
+        productCategory: this.productCategory,
+        modal_type: 'add'
       }
     });
   }
@@ -74,6 +84,22 @@ export class QuotationComponent implements OnInit {
       nzContent: DetailQuotationComponent,
       nzCentered: true,
       nzWidth: '900px'
+    });
+  }
+
+
+  showEdit(data: IDataQuotation, modal_type: string){
+    this.drawerService.create({
+      nzTitle: modal_type === 'edit' ? 'Edit Quotation' : 'Revise Quotation',
+      nzContent: AddQuotationComponent,
+      nzPlacement: 'bottom',
+      nzHeight: '100vh',
+      nzData: {
+        inventoryList: this.inventoryList,
+        productCategory: this.productCategory,
+        dataQuotation: data,
+        modal_type
+      }
     });
   }
 }
