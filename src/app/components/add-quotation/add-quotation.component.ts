@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+import { CommonModule, DatePipe } from '@angular/common';
 import { ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
 import { AbstractControl, FormGroup, FormsModule, ReactiveFormsModule, UntypedFormArray, UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { NzButtonModule } from 'ng-zorro-antd/button';
@@ -18,6 +18,8 @@ import { IDataProject } from 'src/app/interfaces/project';
 import * as XLSX from 'xlsx';
 import { NzAlertModule } from 'ng-zorro-antd/alert';
 import { NzDividerModule } from 'ng-zorro-antd/divider';
+import { SpinnerService } from 'src/app/spinner.service';
+import { NzModalModule, NzModalService } from 'ng-zorro-antd/modal';
 
 @Component({
   selector: 'app-add-quotation',
@@ -36,8 +38,10 @@ import { NzDividerModule } from 'ng-zorro-antd/divider';
     NzUploadModule,
     NzMessageModule,
     NzAlertModule,
-    NzDividerModule
+    NzDividerModule,
+    NzModalModule
   ],
+  providers: [DatePipe],
   templateUrl: './add-quotation.component.html',
   styleUrl: './add-quotation.component.scss'
 })
@@ -49,9 +53,11 @@ export class AddQuotationComponent implements OnInit {
   productCategory: IDataCategories[] = this.nzData.productCategory;
 
   modal_type: string = 'add'
+  pic_id = localStorage.getItem('pic_id')!;
 
   quotationForm = this.fb.group({
     id: [null],
+    prepared_by: [{value: this.pic_id, disabled: true }],
     project_type: ['manual', [Validators.required]],
     project_file: [''],
     project_id: ['', [Validators.required]],
@@ -95,19 +101,31 @@ export class AddQuotationComponent implements OnInit {
   groupedItems: { [category: string]: any[] } = {};
   uncategorizedItems: any[] = [];
 
+  isLoadingPic = true;
+
   constructor(
     private drawerRef: NzDrawerRef,
     private fb: UntypedFormBuilder,
     private nzMsgSvc: NzMessageService,
     private cd: ChangeDetectorRef,
-    private apiSvc: ApiService
+    private apiSvc: ApiService,
+    private spinnerSvc: SpinnerService,
+    private modalSvc: NzModalService,
+    private datePipe: DatePipe,
   ){}
 
   ngOnInit(): void {
 
+    this.quotationForm.get('date')?.valueChanges.subscribe((value) => {
+      const formattedDate = this.datePipe.transform(new Date(value), 'yyyy-MM-dd') || '';
+
+      this.quotationForm.patchValue({date: formattedDate})
+    })
+
     this.pic$ = this.apiSvc.getPic().pipe(
       tap((res) => {
         this.listOfPic = res;
+        this.isLoadingPic = false;
       })
     )
 
@@ -405,6 +423,7 @@ export class AddQuotationComponent implements OnInit {
   }
 
   changeValueOrder(control: UntypedFormGroup, product: any){
+    control.get('inventory_id')?.setValue(product?.id)
     control.get('unit')?.setValue(product?.unit.name);
     control.get('category')?.setValue(product?.product_category.name);
     control.get('gross_margin')?.setValue(product?.default_gross_margin);
@@ -449,7 +468,7 @@ export class AddQuotationComponent implements OnInit {
   addStacks(){
     const newStacks = this.fb.group({
       name: ['', Validators.required],
-      stack_file: [[]],
+      stack_file: [[], Validators.required],
       stack_attachmentDeleteIds: [[]]
     })
 
@@ -462,6 +481,7 @@ export class AddQuotationComponent implements OnInit {
 
   addItems(){
     const newItems = this.fb.group({
+      inventory_id: [''],
       part_number: ['', [Validators.required]],
       description: ['', [Validators.required]],
       alias: [''],
@@ -496,6 +516,110 @@ export class AddQuotationComponent implements OnInit {
   }
 
   submit(){
+
+    this.spinnerSvc.show();
+
+    if(this.quotationForm.valid){
+
+      const stackComplete = this.stacks.value.map((stack: any) => ({
+        name: stack.name,
+        stack_document: stack.stack_file
+      }))
+      
+      const inventoryComplete = this.items.value.map((item: any) => ({
+        inventory_id: item.part_number,
+        qty: item.qty,
+        dn_1: item.dn1,
+        dn_2: item.dn2
+      }))
+
+      const body = {
+        project_id: this.quotationForm.get('project_id')?.value,
+        quotation_type: this.quotationForm.get('project_type')?.value,
+        issued_date: this.quotationForm.get('date')?.value,
+        inventories: inventoryComplete
+      }
+
+      const formData = new FormData();
+
+      //append basic body
+      Object.keys(body).forEach(key => {
+        if(typeof (body as any)[key] === 'object'){
+          formData.append(key, JSON.stringify((body as any)[key]))
+        } else {
+          formData.append(key, ( body as any )[key]);
+        }
+      })
+
+      //append project document
+      if (this.fileList.length > 0) {
+        this.fileList.forEach((file: any) => {
+          formData.append('project_document', file);
+        });
+      }
+
+      //append stack
+      stackComplete.forEach((stack: any, index: number) => {
+        Object.keys(stack).forEach(key => {
+          if (key !== 'stack_document') {
+            formData.append(`quotation_stack[${index}][${key}]`, stack[key]);
+          }
+        })
+
+        //append stack file
+        if (stack.stack_document.length > 0) {
+          stack.stack_document.forEach((file: any, fileIndex: number) => {
+            formData.append(`quotation_stack[${index}][stack_document]`, file);
+          });
+        }
+      })
+
+      this.apiSvc.createQuotation(formData).subscribe({
+        next: (response) => {
+          this.spinnerSvc.hide();
+
+          this.modalSvc.success({
+            nzTitle: 'Success',
+            nzContent: 'Successfully Add Customer',
+            nzOkText: 'Ok',
+            nzCentered: true
+          });
+        },
+        error: (error) => {
+          this.spinnerSvc.hide();
+
+          this.modalSvc.error({
+            nzTitle: 'Unable to Add Customer',
+            nzContent: error.error.meta.message,
+            nzOkText: 'Ok',
+            nzCentered: true
+          });
+        },
+        complete: () => {
+          this.drawerRef.close();
+        }
+      });
+
+
+    } else {
+      Object.values(this.quotationForm.controls).forEach(control => {
+        if (control.invalid) {
+          console.log('Invalid Control:', control);
+          console.log('Errors:', control.errors);
+          control.markAsDirty();
+          control.updateValueAndValidity({ onlySelf: true });
+        }
+      });
+
+      this.spinnerSvc.hide();
+
+      this.modalSvc.error({
+        nzTitle: 'Unable to add customer',
+        nzContent: 'Need to fill all the input',
+        nzOkText: 'Ok',
+        nzCentered: true
+      });
+    }
 
   }
 
