@@ -3,7 +3,41 @@ export interface IRootQuotation {
     pagination: Pagination
     meta: Meta
   }
+
+  export interface IRootDetailQuotation{
+    data: IDetailDataQuotation
+    pagination: Pagination
+    meta: Meta
+  }
   
+  export interface IDetailDataQuotation{
+    id: string
+    project_pid: string
+    name: string
+    issue_date: string
+    customer: Customer
+    project_category: string
+    remarks: string
+    address: string
+    city: string
+    province: string
+    country: string
+    postal_code: string
+    maps_url: string
+    competitor: string
+    reason_failed: any
+    year: string
+    month: string
+    status: number
+    pic: Pic[]
+    dce_pic: DcePic[]
+    segmentation: Segmentation
+    cluster: Cluster
+    specification: Specification[]
+    material: Material[]
+    quotation: IQuotation[]
+  }
+
   export interface IDataQuotation {
     id: string
     project_pid: string
@@ -29,7 +63,7 @@ export interface IRootQuotation {
     cluster: Cluster
     specification: Specification[]
     material: Material[]
-    quotation: Quotation
+    quotation: IQuotation
   }
   
   export interface Customer {
@@ -128,7 +162,7 @@ export interface IRootQuotation {
     updated_at: string
   }
   
-  export interface Quotation {
+  export interface IQuotation {
     id: string
     quotation_no: string
     project_id: string

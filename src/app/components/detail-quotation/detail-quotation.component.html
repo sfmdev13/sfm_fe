@@ -1,41 +1,177 @@
 <div class="d-flex flex-column gap-2">
     <div>
-        <p class="m-0 p-0 fw-semibold">Current Revision</p>
-        <p class="fw-light">R2</p>
+        <div>
+            <p class="m-0 p-0 fw-semibold">Current Revision</p>
+            <p class="fw-light">{{ dataDetail.revision }}</p>       
+        </div>
     </div>
     <nz-tabset [nzAnimated]="false">
         <nz-tab nzTitle="General Information">
             <div>
+                <p class="m-0 p-0 fw-semibold">Quotation No.</p>
+                <p class="fw-light">{{ dataDetail.quotation_no }}</p>       
+            </div>
+            <div>
+                <p class="m-0 p-0 fw-semibold">Newest Revision</p>
+                <p class="fw-light">{{data.quotation.revision}}</p>      
+            </div>
+            <div>
                 <p class="m-0 p-0 fw-semibold">Project ID</p>
-                <p class="fw-light">PRJASD123</p>
+                <p class="fw-light">{{ data.project_pid }}</p>
             </div>
             <div>
                 <p class="m-0 p-0 fw-semibold">Project Name</p>
-                <p class="fw-light">T1 HANG NADIM BATAM</p>
+                <p class="fw-light">{{ data.name }}</p>
             </div>
             <div>
                 <p class="m-0 p-0 fw-semibold">Project Location</p>
-                <p class="fw-light">BATAM KEPRI</p>
+                <p class="fw-light">{{ projectLocation }}</p>   
+            </div>
+            <div>
+                <p class="m-0 p-0 fw-semibold">Project File</p>
+                <a [href]="dataDetail.project_document.file_url" target="_blank" rel="noopener noreferrer">
+                    <p class="fw-light">{{dataDetail.project_document.file_name}}</p>
+                </a>
             </div>
             <div>
                 <p class="m-0 p-0 fw-semibold">Date</p>
-                <p class="fw-light">{{ date | date: 'fullDate' }}</p>
+                <p class="fw-light">{{ data.issue_date | date: 'fullDate' }}</p>
+            </div>
+            <nz-divider></nz-divider>
+
+            <div class="row">
+                <div class="col-4">
+                    <p class="m-0 p-0 fw-semibold">Engineer PIC</p>
+                    <p class="fw-light">
+                        <ng-container *ngFor="let dce of data.dce_pic; let isLast = last">
+                            {{ dce.name }} <span *ngIf="!isLast"> ,</span>
+                        </ng-container>
+                    </p>   
+                </div>
+
+                <div class="col-4">
+                    <p class="m-0 p-0 fw-semibold">Head Engineer PIC</p>
+                    <p class="fw-light">
+                        <ng-container *ngFor="let dce of data.dce_pic">
+                            <ng-container *ngIf="dce.is_pic_internal === 1">
+                                {{ dce.name }}
+                            </ng-container>
+                        </ng-container>
+                    </p>
+                </div>
+
+                <div class="col-4">
+                    <p class="m-0 p-0 fw-semibold">Engineer Phone No.</p>
+                    <p class="fw-light">
+                        <ng-container *ngFor="let dce of data.dce_pic">
+                            <ng-container *ngIf="dce.is_pic_internal === 1">
+                                {{ dce.phone }}
+                            </ng-container>
+                        </ng-container>
+                    </p>
+                </div>
+            </div>
+
+            <nz-divider></nz-divider>
+
+            <div>
+                <p class="m-0 p-0 fw-semibold">Customer</p>
+                <p class="fw-light">{{ data.customer.name }}</p>
             </div>
             <div>
-                <p class="m-0 p-0 fw-semibold">Consultant</p>
-                <p class="fw-light">-</p>
+                <p class="m-0 p-0 fw-semibold">Customer Location</p>
+                <p class="fw-light">{{ customerLocation }}</p>
             </div>
-            <div>
-                <p class="m-0 p-0 fw-semibold">Consultant Location</p>
-                <p class="fw-light">-</p>
+
+            <h6 class="fw-bold">Contact Person</h6>
+            <div class="row">
+                <ng-container *ngFor="let cp of data.customer.contactPerson">
+                    <div class="col-6">
+                        <p class="m-0 p-0 fw-semibold">Role</p>
+                        <p class="fw-light">{{ cp.customer_category.name }}</p>
+                    </div>
+
+                    <div class="col-6">
+                        <p class="m-0 p-0 fw-semibold">Name</p>
+                        <p class="fw-light">{{ cp.name }}</p>
+                    </div>
+                </ng-container>
             </div>
-            <div>
-                <p class="m-0 p-0 fw-semibold">Engineer</p>
-                <p class="fw-light">DIKA</p>
+        </nz-tab>
+        <nz-tab nzTitle="Project Item">
+            <div class="table-responsive">
+                <table class="table table-order table-purchase">
+                    <thead style="position: unset;">
+                        <tr>
+                            <th scope="col">Part Number</th>
+                            <th scope="col">Product Description</th>
+                            <th scope="col">Alias</th>
+                            <th scope="col">DN</th>
+                            <th scope="col">DN</th>
+                            <th scope="col">Qty</th>
+                            <th scope="col">Unit</th>
+                            <th scope="col">Unit Price</th>
+                            <th scope="col">Total Cost</th>
+                            <th scope="col">Gross Margin</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let item of dataDetail.quotation_items">
+                            <td>
+                                <p class="m-0 p-0 fw-light">{{ item.inventory.code }}</p>
+                            </td>
+                            <td>
+                                <p class="m-0 p-0 fw-light">{{ item.inventory.description }}</p>
+                            </td>
+                            <td>
+                                <p class="m-0 p-0 fw-light">{{ item.inventory.alias }}</p>
+                            </td>
+                            <td>
+                                <p class="m-0 p-0 fw-light">{{ item.dn_1 }}</p>
+                            </td>
+                            <td>
+                                <p class="m-0 p-0 fw-light">{{ item.dn_2 }}</p>
+                            </td>
+                            <td>
+                                <p class="m-0 p-0 fw-light">{{ item.qty }}</p>
+                            </td>
+                            <td>
+                                <p class="m-0 p-0 fw-light">{{ item.inventory.unit.name }}</p>
+                            </td>
+                            <td>
+                                <p class="m-0 p-0 fw-light">Rp. {{ item.inventory.default_selling_price | number: '1.0-0'}}</p>
+                            </td>
+                            <td>
+                                <p class="m-0 p-0 fw-light">Rp. {{ item.total_price_per_product | number: '1.0-0' }}</p>
+                            </td>
+                            <td>
+                                <p class="m-0 p-0 fw-light">% {{ item.inventory.default_gross_margin }}</p>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
-            <div>
-                <p class="m-0 p-0 fw-semibold">Engineer Phone No.</p>
-                <p class="fw-light">085717548873</p>
+
+            <nz-divider></nz-divider>
+            <div class="my-4 d-flex gap-2 w-100">
+                <span class="fw-bold">Total Grand Cost:</span>
+                <span class="fw-bold"> Rp.  {{ dataDetail.total_price| number:'1.0-0' }}</span>
+            </div>
+        </nz-tab>
+        <nz-tab nzTitle="Stacks">
+            <div class="row">
+                <ng-container *ngFor="let s of dataDetail.quotation_stack">
+                    <div class="col-6">
+                        <p class="m-0 p-0 fw-semibold">Stack Name</p>
+                        <p class="fw-light">{{ s.name }}</p>                         
+                    </div>
+                    <div class="col-6">
+                        <p class="m-0 p-0 fw-semibold">Stack File</p>
+                        <a [href]="s.stack_file.file_url" target="_blank" rel="noopener noreferrer">
+                            <p class="fw-light">{{s.stack_file.file_name}}</p>
+                        </a>                       
+                    </div>
+                </ng-container>
             </div>
         </nz-tab>
         <nz-tab nzTitle="Revision Log">
