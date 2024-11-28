@@ -202,8 +202,10 @@ export class AddQuotationComponent implements OnInit {
         quotation_no: this.dataQuotation.quotation?.quotation_no
       })
 
-      this.quotationForm.get('project_id')?.disable();
-      this.quotationForm.get('project_name')?.disable();
+      if(this.modal_type === 'revision'){
+        this.quotationForm.get('project_id')?.disable();
+        this.quotationForm.get('project_name')?.disable();
+      }
 
       //edit location
       this.getProvinceCity(this.dataQuotation.province, this.dataQuotation.city).subscribe((projectLocation) => {
