@@ -5,7 +5,7 @@ import { NZ_DRAWER_DATA, NzDrawerRef } from 'ng-zorro-antd/drawer';
 import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
 import { combineLatest, Observable, startWith, tap } from 'rxjs';
 import { ApiService } from 'src/app/api.service';
-import { ICategories, IDataPurchaseOrder, IRootInvenSupplier, IRootInventory } from 'src/app/interfaces';
+import { ICategories, IDataPurchaseOrder, IRootInvenSupplier, IRootInventory, IRootProject } from 'src/app/interfaces';
 import { SpinnerService } from 'src/app/spinner.service';
 import { EditCategoriesModalComponent } from '../categories-setting/edit-categories-modal/edit-categories-modal.component';
 import { AddWarehouseAddressComponent } from '../categories-setting/add-warehouse-address/add-warehouse-address.component';
@@ -139,6 +139,8 @@ export class AddPurchaseOrderComponent implements OnInit {
   discountNominal: number = 0;
 
   manufacture$!: Observable<ICategories>;
+
+  projects$!: Observable<IRootProject>;
   
   constructor(
     private fb: UntypedFormBuilder,
@@ -150,6 +152,8 @@ export class AddPurchaseOrderComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
+
+    this.projects$ = this.apiSvc.getAllProject();
 
     this.purchaseForm.get('discount_total_type_2')?.valueChanges.subscribe((value) => {
       this.purchaseForm.get('discount_total_type_1')?.setValue(value, { emitEvent: false })
@@ -218,15 +222,15 @@ export class AddPurchaseOrderComponent implements OnInit {
       }
     })
 
-    // this.purchaseForm.get('province')?.disable();
-    // this.purchaseForm.get('city')?.disable();
-    // this.purchaseForm.get('address')?.disable();
-    // this.purchaseForm.get('postal_code')?.disable();
+    this.purchaseForm.get('province')?.disable();
+    this.purchaseForm.get('city')?.disable();
+    this.purchaseForm.get('address')?.disable();
+    this.purchaseForm.get('postal_code')?.disable();
 
-    // this.purchaseForm.get('province_billing')?.disable();
-    // this.purchaseForm.get('city_billing')?.disable();
-    // this.purchaseForm.get('address_billing')?.disable();
-    // this.purchaseForm.get('postal_code_billing')?.disable();
+    this.purchaseForm.get('province_billing')?.disable();
+    this.purchaseForm.get('city_billing')?.disable();
+    this.purchaseForm.get('address_billing')?.disable();
+    this.purchaseForm.get('postal_code_billing')?.disable();
 
     this.purchaseForm.get('project_type')?.valueChanges.subscribe((value) => {
       if(value === 'stock'){
@@ -248,16 +252,26 @@ export class AddPurchaseOrderComponent implements OnInit {
         this.purchaseForm.get('address')?.enable();
         this.purchaseForm.get('postal_code')?.enable();
 
-        this.purchaseForm.patchValue({
-          province: '',
-          city: '',
-          address : '',
-          postal_code: ''
-        })
+        this.purchaseForm.get('province_billing')?.enable();
+        this.purchaseForm.get('city_billing')?.enable();
+        this.purchaseForm.get('address_billing')?.enable();
+        this.purchaseForm.get('postal_code_billing')?.enable();
       }
+
+      this.purchaseForm.patchValue({
+        province: '',
+        city: '',
+        address : '',
+        postal_code: '',
+        province_billing: '',
+        city_billing: '',
+        address_billing: '',
+        postal_code_billing: ''
+      })
     })
 
     this.purchaseForm.get('province')?.valueChanges.subscribe((value) => {
+      console.log('masuk')
       this.apiSvc.getRegenciesByProvince(value).subscribe((res) => {
         this.city = res;
       })
@@ -265,7 +279,7 @@ export class AddPurchaseOrderComponent implements OnInit {
 
     this.purchaseForm.get('province_billing')?.valueChanges.subscribe((value) => {
       this.apiSvc.getRegenciesByProvince(value).subscribe((res) => {
-        this.city = res;
+        this.cityBillingList = res;
       })
     })
 
@@ -426,25 +440,23 @@ export class AddPurchaseOrderComponent implements OnInit {
         tax1: parseFloat(this.dataDetail.tax),
         tax2: parseFloat(this.dataDetail.tax),
         project_type: this.dataDetail.type,
-        warehouse_id: this.dataDetail.type === 'stock' ? this.dataDetail.shipping.id : '',
+        project_id: this.dataDetail.project_id,
+        warehouse_id:  parseInt(this.dataDetail.shipping.id),
         province: parseFloat(this.dataDetail.shipping.province),
         city: parseFloat(this.dataDetail.shipping.city),
         address: this.dataDetail.shipping.address,
         postal_code: this.dataDetail.shipping.postal_code,
         telephone_shipping: this.dataDetail.telephone_shipping,
-        billing_id: this.dataDetail.type === 'stock' ?  this.dataDetail.billing.id : '',
+        billing_id: parseInt(this.dataDetail.billing.id),
         province_billing: parseFloat(this.dataDetail.billing.province),
         city_billing: parseFloat(this.dataDetail.billing.city),
         telephone_billing: this.dataDetail.telephone_billing,
         postal_code_billing: this.dataDetail.billing.postal_code,
-        maps_url_billing: this.dataDetail.billing.maps_url,
         address_billing: this.dataDetail.billing.address,
         payment_term: this.dataDetail.payment_term,
         shipping_term: this.dataDetail.shipping_term,
         remarks: this.dataDetail.remarks,
-        maps_url: this.dataDetail.shipping.maps_url,
         manufacture: this.dataDetail.manufacture.id,
-        project_id: this.dataDetail.project_id,
         payment_due_date: this.dataDetail.payment_due_date,
         discount_total_type: this.dataDetail.discount_type,
         discount_total_type_1: this.dataDetail.discount_type,
@@ -974,8 +986,21 @@ export class AddPurchaseOrderComponent implements OnInit {
         po_shipping_pic: picShippingComplete,
         telephone_billing: this.purchaseForm.get('telephone_billing')?.value,
         telephone_shipping: this.purchaseForm.get('telephone_shipping')?.value,
-        billing_id: this.purchaseForm.get('billing_id')?.value,
-        shipping_id: this.purchaseForm.get('warehouse_id')?.value,
+        billing_id: this.purchaseForm.get('project_type')?.value === 'stock' ? this.purchaseForm.get('billing_id')?.value : null,
+        shipping_id: this.purchaseForm.get('project_type')?.value === 'stock' ? this.purchaseForm.get('warehouse_id')?.value : null,
+
+        address_shipping: this.purchaseForm.get('project_type')?.value === 'stock' ? null : this.purchaseForm.get('address')?.value,
+        city_shipping: this.purchaseForm.get('project_type')?.value === 'stock' ? null : this.purchaseForm.get('city')?.value,
+        province_shipping: this.purchaseForm.get('project_type')?.value === 'stock' ? null : this.purchaseForm.get('province')?.value,
+        country_shipping: this.purchaseForm.get('project_type')?.value === 'stock' ? null : 'indonesia',
+        postal_code_shipping: this.purchaseForm.get('project_type')?.value === 'stock' ? null : this.purchaseForm.get('postal_code')?.value,
+
+        address_billing: this.purchaseForm.get('project_type')?.value === 'stock' ? null : this.purchaseForm.get('address_billing')?.value,
+        city_billing: this.purchaseForm.get('project_type')?.value === 'stock' ? null : this.purchaseForm.get('city_billing')?.value,
+        province_billing: this.purchaseForm.get('project_type')?.value === 'stock' ? null : this.purchaseForm.get('province_billing')?.value,
+        country_billing: this.purchaseForm.get('project_type')?.value === 'stock' ? null : 'indonesia',
+        postal_code_billing: this.purchaseForm.get('project_type')?.value === 'stock' ? null : this.purchaseForm.get('postal_code_billing')?.value,
+
         type: this.purchaseForm.get('project_type')?.value,
         project_id: this.purchaseForm.get('project_id')?.value,
         payment_term: this.purchaseForm.get('payment_term')?.value,
