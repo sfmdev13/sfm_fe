@@ -596,7 +596,7 @@ export class AddQuotationComponent implements OnInit {
       return false;
     }
 
-    this.fileList = this.fileList.concat(file);
+    this.fileList = [file];
     return false; // Stop the auto upload
   };
 
@@ -807,9 +807,7 @@ export class AddQuotationComponent implements OnInit {
 
         //append stack
         stackComplete.forEach((stack: any, index: number) => {
-          if(stack.stack_updated){
-            formData.append(`quotation_stack[${index}][id]`, stack.id);
-          }
+          formData.append(`quotation_stack[${index}][id]`, stack.id);
           formData.append(`quotation_stack[${index}][name]`, stack.name);
   
           //append stack file
@@ -830,7 +828,7 @@ export class AddQuotationComponent implements OnInit {
   
             this.modalSvc.success({
               nzTitle: 'Success',
-              nzContent: 'Successfully Add Customer',
+              nzContent: `Successfully ${this.modal_type === 'Edit' ? 'Edit' : 'Revised'} Quotation`,
               nzOkText: 'Ok',
               nzCentered: true
             });
@@ -841,7 +839,7 @@ export class AddQuotationComponent implements OnInit {
             this.spinnerSvc.hide();
   
             this.modalSvc.error({
-              nzTitle: 'Unable to Add Customer',
+              nzTitle: `Unable to ${this.modal_type === 'Edit' ? 'Edit' : 'Revised'} Quotation`,
               nzContent: error.error.meta.message,
               nzOkText: 'Ok',
               nzCentered: true
@@ -889,7 +887,7 @@ export class AddQuotationComponent implements OnInit {
       const stacksForm = this.stacks.at(index);
   
       const fileList = stacksForm.get('stack_file')?.value || [];
-      stacksForm.get('stack_file')?.setValue([...fileList, file]);
+      stacksForm.get('stack_file')?.setValue([file]);
       stacksForm.get('stack_updated')?.setValue(true);
   
       return false;
