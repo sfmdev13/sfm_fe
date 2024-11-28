@@ -274,7 +274,7 @@ export class AddQuotationComponent implements OnInit {
         const editItems = this.fb.group({
           part_number: [item.inventory.id, Validators.required],
           description: [item.inventory.id, Validators.required],
-          alias: [item.inventory.alias, Validators.required],
+          alias: [{value: item.inventory.alias, disabled: true}, Validators.required],
           dn1: [item.dn_1],
           dn2: [item.dn_2],
           qty: [item.qty],
@@ -408,7 +408,7 @@ export class AddQuotationComponent implements OnInit {
         updatedItemAdd = this.fb.group({
           part_number: [filteredInventory[0].id || '', [Validators.required]], // Match JSON keys
           description: [filteredInventory[0].id || '', [Validators.required]],
-          alias: [value.partNo],
+          alias: [{value: value.partNo, disabled: true}],
           dn1: [value.dn1 || ''],
           dn2: [value.dn2 || ''],
           qty: [value.qty || ''],
@@ -571,7 +571,8 @@ export class AddQuotationComponent implements OnInit {
   }
 
   changeValueOrder(control: UntypedFormGroup, product: any){
-    control.get('inventory_id')?.setValue(product?.id)
+    control.get('inventory_id')?.setValue(product?.id);
+    control.get('alias')?.setValue(product?.alias);
     control.get('unit')?.setValue(product?.unit.name);
     control.get('category')?.setValue(product?.product_category.name);
     control.get('gross_margin')?.setValue(product?.default_gross_margin);
@@ -640,7 +641,7 @@ export class AddQuotationComponent implements OnInit {
       inventory_id: [''],
       part_number: ['', [Validators.required]],
       description: ['', [Validators.required]],
-      alias: [''],
+      alias: [{value: '', disabled: true}],
       dn1: [''],
       dn2: [''],
       qty: [0],
