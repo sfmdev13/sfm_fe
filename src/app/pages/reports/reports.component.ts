@@ -8,12 +8,26 @@ import { SpinnerService } from 'src/app/spinner.service';
 })
 export class ReportsComponent implements OnInit {
 
+  projectCards = [
+    {
+      title: 'Quotation Comparison',
+      description: 'Compare quotation for each revision',
+      cover: '/assets/images/quotation-comparison.png',
+      link: '/reports/quotation-comparison'
+    },
+  ];
+  
   constructor(
     private spinnerSvc: SpinnerService
   ) { }
 
   ngOnInit(): void {
     this.spinnerSvc.hide();
+    
+  }
+
+  cardCoverTemplate(cover: string) {
+    return cover;
   }
 
 }
