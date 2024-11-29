@@ -1,0 +1,266 @@
+<div class="d-flex align-items-center justify-content-center w-100">
+    <h4 class="fw-bold">Quotation Comparison</h4>
+</div>
+
+<div class="d-flex gap-2 flex-column mt-4 align-items-center justify-content-center w-100">
+    <span class="fw-semibold">Select quotation</span>
+
+    <ng-container *ngIf="quotationList$ | async as quotationList; else loadingQuotation">
+        <nz-select nzShowSearch nzAllowClear nzPlaceHolder="Select quotation" [(ngModel)]="selectedQuotation" (ngModelChange)="quotationChange()" style="width: 320px;">
+            <nz-option *ngFor="let q of quotationList.data" [nzLabel]="q.name" [nzValue]="q.id"></nz-option>
+        </nz-select>
+    </ng-container>
+    <ng-template #loadingQuotation>
+        <nz-select nzShowSearch nzAllowClear nzPlaceHolder="loading..." nzDisabled [(ngModel)]="selectedQuotation" style="width: 320px;">
+        
+        </nz-select>
+    </ng-template>
+
+    <ng-container *ngIf="selectedQuotation !== ''">
+        <span class="fw-semibold mt-3">Select revision to compare</span>
+        <div class="row">
+            <ng-container *ngIf="this.quotationDetail$ | async as quotationDetail; else loadingDetail">
+                <div class="col-md-6">
+                    <nz-select nzShowSearch nzAllowClear nzPlaceHolder="Select Revision" style="width: 320px;" [(ngModel)]="revision1" (ngModelChange)="revisionChange()" >
+                        <nz-option *ngFor="let rev of revisionList" [nzLabel]="rev" [nzValue]="rev"></nz-option>
+                    </nz-select>  
+                </div>
+                <div class="col-md-6">
+                    <nz-select nzShowSearch nzAllowClear nzPlaceHolder="Select Revision" style="width: 320px;" [(ngModel)]="revision2" (ngModelChange)="revisionChange()">
+                        <nz-option *ngFor="let rev of revisionList" [nzLabel]="rev" [nzValue]="rev"></nz-option>
+                    </nz-select>  
+                </div>
+            </ng-container>
+            <ng-template #loadingDetail>
+                <div class="col-md-6">
+                    <nz-select nzShowSearch nzAllowClear nzPlaceHolder="loading..." nzDisabled style="width: 320px;">
+            
+                    </nz-select>  
+                </div>
+                <div class="col-md-6">
+                    <nz-select nzShowSearch nzAllowClear nzPlaceHolder="loading..." nzDisabled style="width: 320px;">
+            
+                    </nz-select>  
+                </div>
+            </ng-template>
+
+ 
+        </div>
+
+        <ng-container *ngIf="result">
+            <nz-tabset nzCentered [nzAnimated]="false">
+                <ng-container *ngFor="let key of objectKeys(result)">
+                    <nz-tab *ngIf="key !== 'id' && key !== 'prepared_by' && key !== 'revision' && key !== 'total_price'" [nzTitle]="formatTitleTab(key)">
+                        <!-- <ng-container *ngIf="key === 'total_price'">
+                            <nz-table #basicTable nzBordered [nzData]="['test']" [nzShowPagination]="false">
+                                <thead>
+                                  <tr>
+                                    <th>{{revision1}}</th>
+                                    <th>{{revision2}}</th>
+                                  </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>Rp. {{ result[key]['obj1Value'] | number:'1.0-0' }}</td>
+                                        <td>Rp. {{ result[key]['obj2Value'] | number:'1.0-0' }}</td>
+                                    </tr>
+                                </tbody>
+                              </nz-table>
+                        </ng-container> -->
+
+                        <ng-container *ngIf="key === 'project_document'">
+                            <nz-table #basicTable nzBordered [nzData]="['test']" [nzShowPagination]="false">
+                                <thead>
+                                  <tr>
+                                    <th>{{revision1}}</th>
+                                    <th>{{revision2}}</th>
+                                  </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>
+                                            <a [href]="result[key]['obj1Value']['file_url']" target="_blank" rel="noopener noreferrer">
+                                                <p class="fw-light">{{ result[key]['obj1Value']['file_name'] }}</p>
+                                            </a>  
+                                        </td>
+                                        <td>
+                                            <a [href]="result[key]['obj2Value']['file_url']" target="_blank" rel="noopener noreferrer">
+                                                <p class="fw-light">{{ result[key]['obj2Value']['file_name'] }}</p>
+                                            </a>  
+                                        </td>
+                                    </tr>
+                                </tbody>
+                              </nz-table>
+                        </ng-container>
+
+                        <ng-container *ngIf="key === 'quotation_items'">
+                            <span class="fw-semibold">{{revision1}}</span>
+                            <nz-table #basicTable nzBordered [nzData]="['test']" [nzShowPagination]="false" class="mb-4">
+                                <thead>
+                                  <tr>
+                                    <th>Part Number</th>
+                                    <th>Product Description</th>
+                                    <th>Alias</th>
+                                    <th>DN</th>
+                                    <th>DN</th>
+                                    <th>Qty</th>
+                                    <th>Unit</th>
+                                    <th>Unit Price</th>
+                                    <th>Total Cost</th>
+                                    <th>Gross Margin</th>
+                                  </tr>
+                                </thead>
+                                <tbody>
+                                    <tbody>
+                                        <tr *ngFor="let item1 of result[key]['obj1Value']; let i = index"
+                                        [ngClass]="{
+                                            'highlight-red': isFirstInOnlyObj1(key, i)
+                                        }">
+                                            <td [ngClass]="{'highlight': compareValues('code', item1.inventory, result[key]['obj2Value'][i]?.inventory)}">
+                                                {{item1['inventory']['code']}}
+                                            </td>
+                                            <td [ngClass]="{'highlight': compareValues('description', item1.inventory, result[key]['obj2Value'][i]?.inventory)}">
+                                                {{item1['inventory']['description']}}
+                                            </td>
+                                            <td [ngClass]="{'highlight': compareValues('alias', item1.inventory, result[key]['obj2Value'][i]?.inventory)}">
+                                                {{item1['inventory']['alias']}}
+                                            </td>
+                                            <td [ngClass]="{'highlight': compareValues('dn_1', item1, result[key]['obj2Value'][i])}">
+                                                {{item1['dn_1']}}
+                                            </td>
+                                            <td [ngClass]="{'highlight': compareValues('dn_2', item1, result[key]['obj2Value'][i])}">
+                                                {{item1['dn_2']}}
+                                            </td>
+                                            <td [ngClass]="{'highlight': compareValues('qty', item1, result[key]['obj2Value'][i])}">
+                                                {{item1['qty']}}
+                                            </td>
+                                            <td [ngClass]="{'highlight': compareValues('name', item1.inventory.unit, result[key]['obj2Value'][i]?.inventory?.unit)}">
+                                                {{item1['inventory']['unit']['name']}}
+                                            </td>
+                                            <td [ngClass]="{'highlight': compareValues('default_selling_price', item1.inventory, result[key]['obj2Value'][i]?.inventory)}">
+                                                Rp. {{item1['inventory']['default_selling_price'] | number:'1.0-0' }}
+                                            </td>
+                                            <td [ngClass]="{'highlight': compareValues('total_price_per_product', item1, result[key]['obj2Value'][i])}">
+                                                Rp. {{item1['total_price_per_product'] | number:'1.0-0' }}
+                                            </td>
+                                            <td [ngClass]="{'highlight': compareValues('default_gross_margin', item1.inventory, result[key]['obj2Value'][i]?.inventory)}">
+                                                {{item1['inventory']['default_gross_margin']}} %
+                                            </td>
+                                    </tbody>
+                              </nz-table>
+
+                              <span class="fw-semibold mt-4">{{revision2}}</span>
+                              <nz-table #basicTable nzBordered [nzData]="['test']" [nzShowPagination]="false">
+                                  <thead>
+                                    <tr>
+                                      <th>Part Number</th>
+                                      <th>Product Description</th>
+                                      <th>Alias</th>
+                                      <th>DN</th>
+                                      <th>DN</th>
+                                      <th>Qty</th>
+                                      <th>Unit</th>
+                                      <th>Unit Price</th>
+                                      <th>Total Cost</th>
+                                      <th>Gross Margin</th>
+                                    </tr>
+                                  </thead>
+                                  <tbody>
+                                    <tr *ngFor="let item2 of result[key]['obj2Value']; let j = index"
+                                    [ngClass]="{
+                                        'highlight-green': isFirstInOnlyObj2(key, j)
+                                    }">
+                                            <td [ngClass]="{'highlight': compareValues('code', item2.inventory, result[key]['obj1Value'][j]?.inventory)}">
+                                                {{item2['inventory']['code']}}
+                                            </td>
+                                            <td [ngClass]="{'highlight': compareValues('description', item2.inventory, result[key]['obj1Value'][j]?.inventory)}">
+                                                {{item2['inventory']['description']}}
+                                            </td>
+                                            <td [ngClass]="{'highlight': compareValues('alias', item2.inventory, result[key]['obj1Value'][j]?.inventory)}">
+                                                {{item2['inventory']['alias']}}
+                                            </td>
+                                            <td [ngClass]="{'highlight': compareValues('dn_1', item2, result[key]['obj1Value'][j])}">
+                                                {{item2['dn_1']}}
+                                            </td>
+                                            <td [ngClass]="{'highlight': compareValues('dn_2', item2, result[key]['obj1Value'][j])}">
+                                                {{item2['dn_2']}}
+                                            </td>
+                                            <td [ngClass]="{'highlight': compareValues('qty', item2, result[key]['obj1Value'][j])}">
+                                                {{item2['qty']}}
+                                            </td>
+                                            <td [ngClass]="{'highlight': compareValues('name', item2.inventory.unit, result[key]['obj1Value'][j]?.inventory?.unit)}">
+                                                {{item2['inventory']['unit']['name']}}
+                                            </td>
+                                            <td [ngClass]="{'highlight': compareValues('default_selling_price', item2.inventory, result[key]['obj1Value'][j]?.inventory)}">
+                                                Rp. {{item2['inventory']['default_selling_price'] | number:'1.0-0' }}
+                                            </td>
+                                            <td [ngClass]="{'highlight': compareValues('total_price_per_product', item2, result[key]['obj1Value'][j])}">
+                                                Rp. {{item2['total_price_per_product'] | number:'1.0-0' }}
+                                            </td>
+                                            <td [ngClass]="{'highlight': compareValues('default_gross_margin', item2.inventory, result[key]['obj1Value'][j]?.inventory)}">
+                                                % {{item2['inventory']['default_gross_margin']}}
+                                            </td>
+                                    </tr>
+                                  </tbody>
+                                </nz-table>
+                        </ng-container>
+
+                        <ng-container *ngIf="key === 'quotation_stack'">
+                            <div class="row">
+                               <div class="col-6">
+                                    <span class="fw-semibold">{{revision1}}</span>
+                                    <nz-table #basicTable nzBordered [nzData]="['test']" [nzShowPagination]="false" class="mb-4">
+                                        <thead>
+                                        <tr>
+                                            <th>Name</th>
+                                            <th>Stack File</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr *ngFor="let item1 of result[key]['obj1Value']; let i = index">
+                                                <td>
+                                                    <p class="fw-light">{{ item1.name }}</p>
+                                                </td>
+                                                <td>
+                                                    <a [href]="item1.stack_file.file_url" target="_blank" rel="noopener noreferrer">
+                                                        <p class="fw-light">{{ item1.stack_file.file_name }}</p>
+                                                    </a>  
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </nz-table>
+                               </div>
+                               <div class="col-6">
+                                <span class="fw-semibold">{{revision2}}</span>
+                                <nz-table #basicTable nzBordered [nzData]="['test']" [nzShowPagination]="false" class="mb-4">
+                                    <thead>
+                                      <tr>
+                                        <tr>
+                                            <th>Name</th>
+                                            <th>Stack File</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr *ngFor="let item2 of result[key]['obj2Value']; let i = index">
+                                            <td>
+                                                <p class="fw-light">{{ item2.name }}</p>
+                                            </td>
+                                            <td>
+                                                <a [href]="item2.stack_file.file_url" target="_blank" rel="noopener noreferrer">
+                                                    <p class="fw-light">{{ item2.stack_file.file_name }}</p>
+                                                </a>  
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </nz-table>
+                               </div>
+                            </div>
+                        </ng-container>
+                    </nz-tab>
+                </ng-container>
+            </nz-tabset>
+        </ng-container>
+
+    </ng-container>
+</div>
+

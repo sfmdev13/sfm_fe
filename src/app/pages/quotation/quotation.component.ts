@@ -5,7 +5,7 @@ import { Observable } from 'rxjs';
 import { ApiService } from 'src/app/api.service';
 import { AddQuotationComponent } from 'src/app/components/add-quotation/add-quotation.component';
 import { DetailQuotationComponent } from 'src/app/components/detail-quotation/detail-quotation.component';
-import { IDataCategories, IDataInventory, IDataQuotation, IRootQuotation } from 'src/app/interfaces';
+import { IDataCategories, IDataInventory, IDataQuotation, IQuotation, IRootQuotation } from 'src/app/interfaces';
 
 @Component({
   selector: 'app-quotation',
@@ -17,29 +17,19 @@ export class QuotationComponent implements OnInit {
   pageSize: number = 5;
 
   total: number = 0;
-
-  listOfData= [
-    {
-      id: 'PRJK123',
-      name: 'Project Name 1',
-      revision: 'R0',
-    },
-    {
-      id: 'PRJK124',
-      name: 'Project Name 2',
-      revision: 'R0',
-    },
-    {
-      id: 'PRJK127',
-      name: 'Project Name 3',
-      revision: 'R4',
-    },
-  ];
   
   inventoryList: IDataInventory[] = []
   productCategory: IDataCategories[] = []
 
   quotation$!: Observable<IRootQuotation>
+
+  isVisibleDetail: boolean = false;
+
+  revisionList: string[] = [];
+  isLoadingRevList = true;
+  revision: string = 'RA';
+  detailQuotation: IQuotation[] = [];
+  selectedDataBasic: IDataQuotation = {} as IDataQuotation;
 
   constructor(
     private drawerService: NzDrawerService,
@@ -78,12 +68,33 @@ export class QuotationComponent implements OnInit {
     });
   }
 
+  showOptionDetailModal(data: IDataQuotation, id: string){
+    this.isVisibleDetail = true;
+    this.isLoadingRevList = true;
+    this.selectedDataBasic = data;
+
+    this.apiSvc.getDetailQuotation(id).subscribe((res) => {
+      this.detailQuotation = res
+      this.revisionList = res.map((res) => res.revision);
+      this.isLoadingRevList = false;
+    })
+  }
+
   showDetailModal(){
+
+    this.isVisibleDetail = false;
+
+    const selectedDetailQuotation = this.detailQuotation.filter(q => q.revision === this.revision);
+
     this.modalService.create({
       nzTitle: 'Detail Quotation',
       nzContent: DetailQuotationComponent,
       nzCentered: true,
-      nzWidth: '900px'
+      nzData: {
+        dataDetail: selectedDetailQuotation[0],
+        dataBasic: this.selectedDataBasic
+      },
+      nzWidth: '100vw',
     });
   }
 

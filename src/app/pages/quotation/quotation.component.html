@@ -53,7 +53,7 @@
                         </a>
                         <nz-dropdown-menu #menu="nzDropdownMenu">
                           <ul nz-menu class="dropdown-wrapper" style="width: 120px;">
-                            <li nz-menu-item class="gap-2 list-dropdown" (click)="showDetailModal()">
+                            <li nz-menu-item class="gap-2 list-dropdown" (click)="showOptionDetailModal(data, data.id)">
                                 <div class="d-flex gap-2">
                                     <span nz-icon nzType="eye" nzTheme="twotone"></span>
                                     <p class="m-0 p-0">Detail</p>
@@ -113,3 +113,24 @@
       </tbody>
     </nz-table>
 </ng-template>
+
+<nz-modal [(nzVisible)]="isVisibleDetail" nzTitle="Detail Quotation" (nzOnCancel)="isVisibleDetail = false">
+  <div *nzModalContent>
+    <div class="d-flex flex-column gap-3">
+      <span class="fw-semibold">Choose Revision</span>
+      <ng-container *ngIf="!isLoadingRevList; else loadRevList">
+        <nz-select nzShowSearch nzAllowClear nzPlaceHolder="Select Revision" style="width: 320px;" [(ngModel)]="revision">
+          <nz-option *ngFor="let rev of revisionList" [nzLabel]="rev" [nzValue]="rev"></nz-option>
+        </nz-select>  
+      </ng-container>
+      <ng-template #loadRevList>
+        <nz-select nzShowSearch nzAllowClear nzPlaceHolder="loading..." style="width: 320px;" [(ngModel)]="revision" nzDisabled>
+        </nz-select>  
+      </ng-template>
+    </div>
+  </div>
+  <div *nzModalFooter>
+    <button nz-button nzType="default" (click)="isVisibleDetail = false">Cancel</button>
+    <button nz-button nzType="primary" (click)="showDetailModal()">Open Detail Revision</button>
+  </div>
+</nz-modal>

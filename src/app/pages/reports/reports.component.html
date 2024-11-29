@@ -1,1 +1,13 @@
-<p>reports works!</p>
+<div class="row row-gap-4">
+    <div class="col-md-3" *ngFor="let card of projectCards">
+        <nz-card
+        nzHoverable
+        style="width: 90%;"
+        [routerLink]="card.link"
+      >
+        <img class="img-fluid" [src]="card.cover" alt="example" nz-card-cover />
+        <nz-card-meta [nzTitle]="card.title" [nzDescription]="card.description"></nz-card-meta>
+      </nz-card>
+    </div>
+  </div>
+  
