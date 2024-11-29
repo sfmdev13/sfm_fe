@@ -2,7 +2,7 @@ import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, map, Observable, tap } from 'rxjs';
 import { environment } from 'src/environments/environment';
-import { ICategories, ICustomerDetail, IRootAllInventories, IRootAllRoles, IRootCatContact, IRootCustomer, IRootDivision, IRootEmployee, IRootInventory, IRootProject, IRootPurchaseOrder, IRootQuotation, IRootSupplier, IRootUnit, IRootUserByRole } from './interfaces';
+import { ICategories, ICustomerDetail, IQuotation, IRootAllInventories, IRootAllRoles, IRootCatContact, IRootCustomer, IRootDetailQuotation, IRootDivision, IRootEmployee, IRootInventory, IRootProject, IRootPurchaseOrder, IRootQuotation, IRootSupplier, IRootUnit, IRootUserByRole } from './interfaces';
 
 @Injectable({
   providedIn: 'root'
@@ -1555,5 +1555,18 @@ export class ApiService {
     const url = `${this.apiUrl}/update-quotation`
 
     return this.http.post<any>(url, body , { headers })
+  }
+
+  getDetailQuotation(id: any): Observable<IQuotation[]>{
+    const token = localStorage.getItem('authToken');
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+    })
+
+    const url = `${this.apiUrl}/quotation/${id}`
+
+    return this.http.get<IRootDetailQuotation>(url, { headers }).pipe(
+      map(res => res.data.quotation)
+    )
   }
 }

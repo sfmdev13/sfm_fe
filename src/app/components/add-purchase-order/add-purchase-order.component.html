@@ -89,6 +89,7 @@
                         <nz-form-control>
                             <nz-select nzShowSearch nzPlaceHolder="Select PO Type" formControlName="project_type">
                                 <nz-option [nzLabel]="'Stock'" [nzValue]="'stock'"></nz-option>
+                                <nz-option [nzLabel]="'Project'" [nzValue]="'project'"></nz-option>
                             </nz-select>
                         </nz-form-control>
                     </nz-form-item>
@@ -98,7 +99,15 @@
                     <nz-form-item class="mb-4">
                         <nz-form-label nzRequired nzFor="project_id" class="fw-semibold">Project</nz-form-label>
                         <nz-form-control>
-                            <input nz-input formControlName="project_id" id="project_id" />
+                            <ng-container *ngIf="projects$ | async as projects; else loadProject">
+                                <nz-select nzShowSearch nzPlaceHolder="Select Type" formControlName="project_id">
+                                    <nz-option *ngFor="let project of projects.data" [nzLabel]="project.name" [nzValue]="project.id"></nz-option>
+                                </nz-select>
+                            </ng-container>
+                            <ng-template #loadProject>
+                                <nz-select nzPlaceHolder="Loading" nzDisabled>
+                                </nz-select>
+                            </ng-template>
                         </nz-form-control>
                     </nz-form-item>
                 </div>
@@ -732,12 +741,12 @@
                             </div>
                 
                             <div class="col-md-4">
-                            <ng-container *ngIf="city.length > 0; else loadingCity">
+                            <ng-container *ngIf="cityBillingList.length > 0; else loadingCity">
                                 <nz-form-item>
                                 <nz-form-label nzRequired class="fw-semibold" nzFor="city_billing" nzRequired>City</nz-form-label>
                                 <nz-form-control>
                                     <nz-select  nzShowSearch nzPlaceHolder="Select city" formControlName="city_billing">
-                                    <ng-container *ngFor="let c of city">
+                                    <ng-container *ngFor="let c of cityBillingList">
                                         <nz-option [nzLabel]="c.regency" [nzValue]="c.id"></nz-option>
                                     </ng-container>
                                     </nz-select>

@@ -139,7 +139,7 @@ export interface ShippingPic {
 }
 
 export interface Shipping {
-  id: number
+  id: string
   name: string
   description: string
   address: string
@@ -151,7 +151,7 @@ export interface Shipping {
 }
 
 export interface Billing {
-  id: number
+  id: string
   name: string
   description: string
   address: string
