@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Observable, tap } from 'rxjs';
+import { Observable, of, tap } from 'rxjs';
 import { ApiService } from 'src/app/api.service';
 import { IQuotation, IRootQuotation } from 'src/app/interfaces';
 
@@ -108,6 +108,36 @@ export class QuotationComparisonComponent implements OnInit {
         }
         return;
       }
+
+      //special condition for `quotation stack`
+      if(key === 'quotation_stack'){
+        const items1 = obj1[key] || [];
+        const items2 = obj2[key] || [];
+
+        const filteredDifferences = items1.filter((item1: any, index: any) => {
+          const item2 = items2[index];
+
+          if (
+            item1?.name === item2?.name &&
+            item1?.stack_file?.name === item2?.stack_file?.name 
+          ) {
+            // If all conditions match, it's considered identical, so return false to filter out this item
+            return false;
+          }
+  
+          // If any condition doesn't match, include the item in the filteredDifferences array
+          return true;
+        });
+  
+        // If there are differences, add them to the differences object
+        if (filteredDifferences.length > 0) {
+          differences[key] = {
+            obj1Value: items1,
+            obj2Value: items2,
+          };
+        }
+        return;
+      }
   
       // General comparison for other fields
       if (JSON.stringify(obj1[key]) !== JSON.stringify(obj2[key])) {
@@ -138,6 +168,29 @@ export class QuotationComparisonComponent implements OnInit {
       .join(' '); // Join the words with spaces
   }
 
+  isStacksByIndexObj1(key: string, index: number): boolean {
+    const obj1Value = this.result[key]['obj1Value'];
+    const obj2Value = this.result[key]['obj2Value'];
+
+    // Get the current item from obj1Value
+    const item1 = obj1Value[index];
+    const item2 = obj2Value[index];
+
+    return item1 && !item2
+  }
+
+
+  isStacksByIndexObj2(key: string, index: number): boolean {
+    const obj1Value = this.result[key]['obj1Value'];
+    const obj2Value = this.result[key]['obj2Value'];
+
+    // Get the current item from obj1Value
+    const item1 = obj1Value[index];
+    const item2 = obj2Value[index];
+
+    return item2 && !item1
+    
+  }
 
   isFirstInOnlyObj1(key: string, index: number): boolean {
     const obj1Value = this.result[key]['obj1Value'];
@@ -146,29 +199,16 @@ export class QuotationComparisonComponent implements OnInit {
     // Get the current item from obj1Value
     const item1 = obj1Value[index];
     
-    let existsInObj2;
     // Check if this item exists in obj2Value
-    if(key === 'quotation_items'){
-      existsInObj2 = obj2Value.some((item2: any) => item2.id === item1.id);
-    } else{
-      existsInObj2 = obj2Value.some((item2: any) => item2.id === item1.id);
-    }
+    const existsInObj2 = obj2Value.some((item2: any) => item2.inventory.id === item1.inventory.id);
   
     // Highlight red only if:
     // - The item does not exist in obj2Value
     // - It is the first unmatched item in obj1Value
 
-    let firstUnmatchedIndex;
-
-    if(key === 'quotation_items'){
-      firstUnmatchedIndex = obj1Value.findIndex(
-        (item: any) => !obj2Value.some((item2: any) => item2.inventory.id === item.inventory.id)
-      );
-    } else{
-      firstUnmatchedIndex = obj1Value.findIndex(
-        (item: any) => !obj2Value.some((item2: any) => item2.id === item.id)
-      );
-    }
+    const firstUnmatchedIndex = obj1Value.findIndex(
+      (item: any) => !obj2Value.some((item2: any) => item2.inventory.id === item.inventory.id)
+    );
   
     return !existsInObj2 && firstUnmatchedIndex === index;
   }
