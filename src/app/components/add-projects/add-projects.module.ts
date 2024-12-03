@@ -15,6 +15,7 @@ import { NzInputNumberModule } from 'ng-zorro-antd/input-number';
 import { NzDividerModule } from 'ng-zorro-antd/divider';
 import { CategoriesSettingTableModule } from '../categories-setting/categories-setting.module';
 import { NzIconModule } from 'ng-zorro-antd/icon';
+import { NzTabsModule } from 'ng-zorro-antd/tabs';
 
 
 
@@ -36,7 +37,8 @@ import { NzIconModule } from 'ng-zorro-antd/icon';
     NzInputNumberModule,
     NzDividerModule,
     CategoriesSettingTableModule,
-    NzIconModule
+    NzIconModule,
+    NzTabsModule
   ],
   exports: [AddProjectsComponent],
   providers: [DatePipe]

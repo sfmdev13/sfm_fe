@@ -43,7 +43,6 @@ export interface IRootQuotation {
     project_pid: string
     name: string
     issue_date: string
-    customer: Customer
     project_category: string
     remarks: string
     address: string
@@ -165,6 +164,7 @@ export interface IRootQuotation {
   export interface IQuotation {
     id: string
     quotation_no: string
+    customer: Customer
     project_id: string
     prepared_by: PreparedBy
     quotation_type: string

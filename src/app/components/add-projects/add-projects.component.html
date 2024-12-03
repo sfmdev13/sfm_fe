@@ -1,6 +1,8 @@
 <div>
     <form nz-form nzLayout="vertical" [formGroup]="projectForm">
-        <div class="row">
+      <nz-tabset [nzAnimated]="false">
+        <nz-tab nzTitle="Basic Information">
+          <div class="row">
             <div class="col-md-6">
               <nz-form-item>
                 <nz-form-label nzRequired nzFor="project_id" class="fw-semibold">Project ID</nz-form-label>
@@ -326,7 +328,7 @@
               </nz-form-item>
             </div>
 
-            <div class="col-md-6">
+            <!-- <div class="col-md-6">
               <ng-container *ngIf="customerList$ | async as emp; else loadingEmp">
                 <nz-form-item>
                   <nz-form-label nzFor="customer_id" nzRequired class="fw-semibold">Customer</nz-form-label>
@@ -360,9 +362,219 @@
               <ng-container *ngIf="this.isCustomerDetail">
                 <a (click)="showDetail()">Click for Customer Detail</a>
               </ng-container>
-            </div>
+            </div> -->
             
         </div>
+        </nz-tab>
+        <nz-tab nzTitle="Customer Selection">
+          <div class="table-responsive">
+            <table class="table table-striped table-order">
+              <thead style="position: unset">
+                <tr>
+                  <th scope="col">Customer Name</th>
+                  <th scope="col">Contact Person</th>
+                  <th scope="col">#</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td colspan="3">
+                    <span class="fw-bold">Owner</span>
+                  </td>
+                </tr>
+                <ng-container formArrayName="owner">
+                  <tr *ngFor="let owner of owners.controls; let i = index" [formGroupName]="i">
+                    <td>
+                      <ng-container *ngIf="!isLoadingCustomerList; else loadCustomerArr">
+                        <nz-form-control>
+                          <nz-select nzShowSearch nzPlaceHolder="Select Customer" formControlName="customer_id">
+                            <nz-option
+                              *ngFor="let cust of customers"
+                              [nzLabel]="cust.name"
+                              [nzValue]="cust.id"
+                            ></nz-option>
+                          </nz-select>
+                        </nz-form-control>
+                      </ng-container>
+                    </td>
+                    <td>
+                      <ng-container *ngIf="owner.get('customer_id')?.value !== ''">
+                        <ng-container formArrayName="contact_person">
+                          <ng-container *ngIf="owner.get('isLoadingCp')?.value === false; else loadCp">
+                            <ul>
+                              <ng-container 
+                              *ngFor="let cp of getContactPersons(owner).controls; let j = index" 
+                              [formGroupName]="j">
+                                <li> {{ cp.get('name')?.value }} as {{ cp.get('role')?.value }}</li>
+                              </ng-container>
+                            </ul>
+                          </ng-container>
+                          <ng-template #loadCp>
+                            <nz-spin nzSimple nzSize="small"></nz-spin>
+                          </ng-template>
+                        </ng-container>
+                      </ng-container>
+                    </td>
+                    <td>
+                      <span (click)="removeCust(i, 'owner')" nz-icon nzType="delete" nzTheme="twotone" [nzTwotoneColor]="'#ED0000'"></span>
+                    </td>
+                  </tr>
+                </ng-container>
+                <tr>
+                  <td class="text-center" colspan="3">
+                    <button nz-button nzType="primary" class="w-75" (click)="addCustomer('owner')">Add Owner</button>
+                  </td>
+                </tr>
+                <tr>
+                  <td colspan="3">
+                    <span class="fw-bold">Architect</span>
+                  </td>
+                </tr>
+                <ng-container formArrayName="architect">
+                  <tr *ngFor="let architect of architects.controls; let i = index" [formGroupName]="i">
+                    <td>
+                      <ng-container *ngIf="!isLoadingCustomerList; else loadCustomerArr">
+                        <nz-form-control>
+                          <nz-select nzShowSearch nzPlaceHolder="Select Customer" formControlName="customer_id">
+                            <nz-option
+                              *ngFor="let cust of customers"
+                              [nzLabel]="cust.name"
+                              [nzValue]="cust.id"
+                            ></nz-option>
+                          </nz-select>
+                        </nz-form-control>
+                      </ng-container>
+                    </td>
+                    <td>
+                      <ng-container *ngIf="architect.get('customer_id')?.value !== ''">
+                        <ng-container formArrayName="contact_person">
+                          <ng-container *ngIf="architect.get('isLoadingCp')?.value === false; else loadCp">
+                            <ul>
+                              <ng-container 
+                              *ngFor="let cp of getContactPersons(architect).controls; let j = index" 
+                              [formGroupName]="j">
+                                <li> {{ cp.get('name')?.value }} as {{ cp.get('role')?.value }}</li>
+                              </ng-container>
+                            </ul>
+                          </ng-container>
+                          <ng-template #loadCp>
+                            <nz-spin nzSimple nzSize="small"></nz-spin>
+                          </ng-template>
+                        </ng-container>
+                      </ng-container>
+                    </td>
+                    <td>
+                      <span (click)="removeCust(i, 'architect')" nz-icon nzType="delete" nzTheme="twotone" [nzTwotoneColor]="'#ED0000'"></span>
+                    </td>
+                  </tr>
+                </ng-container>
+                <tr>
+                  <td class="text-center" colspan="3">
+                    <button nz-button nzType="primary" class="w-75" (click)="addCustomer('architect')">Add Architect</button>
+                  </td>
+                </tr>
+                <tr>
+                  <td colspan="3">
+                    <span class="fw-bold">Contractor</span>
+                  </td>
+                </tr>
+                <ng-container formArrayName="contractor">
+                  <tr *ngFor="let contractor of contractors.controls; let i = index" [formGroupName]="i">
+                    <td>
+                      <ng-container *ngIf="!isLoadingCustomerList; else loadCustomerArr">
+                        <nz-form-control>
+                          <nz-select nzShowSearch nzPlaceHolder="Select Customer" formControlName="customer_id">
+                            <nz-option
+                              *ngFor="let cust of customers"
+                              [nzLabel]="cust.name"
+                              [nzValue]="cust.id"
+                            ></nz-option>
+                          </nz-select>
+                        </nz-form-control>
+                      </ng-container>
+                    </td>
+                    <td>
+                      <ng-container *ngIf="contractor.get('customer_id')?.value !== ''">
+                        <ng-container formArrayName="contact_person">
+                          <ng-container *ngIf="contractor.get('isLoadingCp')?.value === false; else loadCp">
+                            <ul>
+                              <ng-container 
+                              *ngFor="let cp of getContactPersons(contractor).controls; let j = index" 
+                              [formGroupName]="j">
+                                <li> {{ cp.get('name')?.value }} as {{ cp.get('role')?.value }}</li>
+                              </ng-container>
+                            </ul>
+                          </ng-container>
+                          <ng-template #loadCp>
+                            <nz-spin nzSimple nzSize="small"></nz-spin>
+                          </ng-template>
+                        </ng-container>
+                      </ng-container>
+                    </td>
+                    <td>
+                      <span (click)="removeCust(i, 'contractor')" nz-icon nzType="delete" nzTheme="twotone" [nzTwotoneColor]="'#ED0000'"></span>
+                    </td>
+                  </tr>
+                </ng-container>
+                <tr>
+                  <td class="text-center" colspan="3">
+                    <button nz-button nzType="primary" class="w-75" (click)="addCustomer('contractor')">Add Contractor</button>
+                  </td>
+                </tr>
+                <tr>
+                  <td colspan="3">
+                    <span class="fw-bold">MEP Consultant</span>
+                  </td>
+                </tr>
+                <ng-container formArrayName="consultant">
+                  <tr *ngFor="let consultants of consultants.controls; let i = index" [formGroupName]="i">
+                    <td>
+                      <ng-container *ngIf="!isLoadingCustomerList; else loadCustomerArr">
+                        <nz-form-control>
+                          <nz-select nzShowSearch nzPlaceHolder="Select Customer" formControlName="customer_id">
+                            <nz-option
+                              *ngFor="let cust of customers"
+                              [nzLabel]="cust.name"
+                              [nzValue]="cust.id"
+                            ></nz-option>
+                          </nz-select>
+                        </nz-form-control>
+                      </ng-container>
+                    </td>
+                    <td>
+                      <ng-container *ngIf="consultants.get('customer_id')?.value !== ''">
+                        <ng-container formArrayName="contact_person">
+                          <ng-container *ngIf="consultants.get('isLoadingCp')?.value === false; else loadCp">
+                            <ul>
+                              <ng-container 
+                              *ngFor="let cp of getContactPersons(consultants).controls; let j = index" 
+                              [formGroupName]="j">
+                                <li> {{ cp.get('name')?.value }} as {{ cp.get('role')?.value }}</li>
+                              </ng-container>
+                            </ul>
+                          </ng-container>
+                          <ng-template #loadCp>
+                            <nz-spin nzSimple nzSize="small"></nz-spin>
+                          </ng-template>
+                        </ng-container>
+                      </ng-container>
+                    </td>
+                    <td>
+                      <span (click)="removeCust(i, 'consultant')" nz-icon nzType="delete" nzTheme="twotone" [nzTwotoneColor]="'#ED0000'"></span>
+                    </td>
+                  </tr>
+                </ng-container>
+                <tr>
+                  <td class="text-center" colspan="3">
+                    <button nz-button nzType="primary" class="w-75" (click)="addCustomer('consultant')">Add Consultant</button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </nz-tab>
+      </nz-tabset>
+
     </form>
 </div>
 
@@ -379,3 +591,11 @@
     </button>
   </nz-form-item>
 </div>
+
+<ng-template #loadCustomerArr>
+  <nz-form-control>
+    <nz-select nzShowSearch nzPlaceHolder="Loading..." nzDisabled>
+
+    </nz-select>
+  </nz-form-control>
+</ng-template>

@@ -10,7 +10,7 @@ export { IRootDivision, IDataDivision } from "./division";
 export { IRootUnit, IDataUnit } from "./unit-measurement";
 export { IRootInventory, IDataInventory, IRootInvenSupplier } from "./inventory";
 export { IRootPurchaseOrder, IDataPurchaseOrder } from "./purchase-order";
-export { IRootProject } from "./project"
+export { IRootProject, ICustomerProject, IProjectCustomer } from "./project"
 export { IRootAssembly, IDataAssembly } from "./assembly"
 export { IRootUnitReport, IDataUnitReport } from "./unit-report"
 export { IRootAllInventories, IDataAllInventories } from "./all-inventories";

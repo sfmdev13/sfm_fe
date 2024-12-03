@@ -76,7 +76,7 @@
 
             <div>
                 <p class="m-0 p-0 fw-semibold">Customer</p>
-                <p class="fw-light">{{ data.customer.name }}</p>
+                <p class="fw-light">{{ data.quotation.customer.name }}</p>
             </div>
             <div>
                 <p class="m-0 p-0 fw-semibold">Customer Location</p>
@@ -85,7 +85,7 @@
 
             <h6 class="fw-bold">Contact Person</h6>
             <div class="row">
-                <ng-container *ngFor="let cp of data.customer.contactPerson">
+                <ng-container *ngFor="let cp of data.quotation.customer.contactPerson">
                     <div class="col-6">
                         <p class="m-0 p-0 fw-semibold">Role</p>
                         <p class="fw-light">{{ cp.customer_category.name }}</p>
