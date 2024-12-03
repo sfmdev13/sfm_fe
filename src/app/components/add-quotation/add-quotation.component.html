@@ -64,15 +64,15 @@
                             <nz-form-item>
                                 <nz-form-label nzRequired class="fw-semibold" nzFor="project_name">Project Name</nz-form-label>
                                 <nz-form-control>
-                                    <ng-container *ngIf="projects$ | async as projects; else loadProject">
+                                    <ng-container *ngIf="projectsData.length > 0; else loadProject">
                                         <nz-select nzShowSearch nzPlaceHolder="Select Type" formControlName="project_name">
-                                            <nz-option *ngFor="let project of projects.data" [nzLabel]="project.name" [nzValue]="project.id"></nz-option>
+                                            <nz-option *ngFor="let project of projectsData" [nzLabel]="project.name" [nzValue]="project.id"></nz-option>
                                         </nz-select>
                                     </ng-container>
-                                    <ng-template #loadProject>
+                                    <!-- <ng-template #loadProject>
                                         <nz-select nzPlaceHolder="Loading" nzDisabled>
                                         </nz-select>
-                                    </ng-template>
+                                    </ng-template> -->
                                 </nz-form-control>
                             </nz-form-item>
                         </div>
@@ -167,7 +167,11 @@
                             <nz-form-item>
                                 <nz-form-label nzRequired nzFor="customer" class="fw-semibold">Customer</nz-form-label>
                                 <nz-form-control>
-                                    <input nz-input formControlName="customer" id="customer" />
+                                    <nz-select nzShowSearch nzPlaceHolder="Select Customer" formControlName="customer">
+                                        <nz-option *ngFor="let cust of selectedCustomer" [nzLabel]="cust.customer.name" [nzValue]="cust.customer.id">
+                                            
+                                        </nz-option>
+                                    </nz-select>
                                 </nz-form-control>
                             </nz-form-item>
                         </div>

@@ -13,8 +13,8 @@ import { NzTabsModule } from 'ng-zorro-antd/tabs';
 import { NzUploadFile, NzUploadModule } from 'ng-zorro-antd/upload';
 import { map, Observable, tap } from 'rxjs';
 import { ApiService } from 'src/app/api.service';
-import { IDataCategories, IDataInventory, IDataQuotation, IRootProject } from 'src/app/interfaces';
-import { IDataProject } from 'src/app/interfaces/project';
+import { IDataCategories, IDataCustomer, IDataInventory, IDataQuotation, IRootProject } from 'src/app/interfaces';
+import { ICustomerProject, IDataProject, IProjectCustomer } from 'src/app/interfaces/project';
 import * as XLSX from 'xlsx';
 import { NzAlertModule } from 'ng-zorro-antd/alert';
 import { NzDividerModule } from 'ng-zorro-antd/divider';
@@ -66,14 +66,11 @@ export class AddQuotationComponent implements OnInit {
     project_name: ['',[Validators.required]],
     location: [{value: '', disabled: true}],
 
-    customer: [{value: '', disabled: true}],
+    customer: [''],
     customer_location: [{value: '', disabled: true}],
 
-    // consultant: [{value: '', disabled: true}],
-    // consultant_location: [{value: '', disabled: true}],
 
-
-    revision: [{value: 'R0', disabled: true}],
+    revision: [{value: '', disabled: true}],
     date: [''],
     engineer_pic: [{value: [''], disabled: true}],
     engineer_pic_internal: [{value: '', disabled: true}],
@@ -112,6 +109,8 @@ export class AddQuotationComponent implements OnInit {
 
   deletedStackIds: string[] = [];
 
+  selectedCustomer: IProjectCustomer[] = []
+
   constructor(
     private drawerRef: NzDrawerRef,
     private fb: UntypedFormBuilder,
@@ -128,6 +127,27 @@ export class AddQuotationComponent implements OnInit {
     this.items.valueChanges.subscribe(() => {
       this.calculateGrandTotalPrice();
     });
+
+    this.quotationForm.get('customer')?.valueChanges.subscribe((value) => {
+      this.apiSvc.getCustomerDetail(value).subscribe((res) => {
+        this.getProvinceCity(res.data.province, res.data.city).subscribe((customerLocation) => {
+          this.quotationForm.get('customer_location')?.setValue(customerLocation)
+        })
+
+        this.contactPersons.clear();
+
+        res.data.contactPerson.forEach((cp) => {
+          const existContactPerson = this.fb.group({
+            name: [{value: cp.name, disabled: true}],
+            role: [{value: cp.customer_category.name, disabled: true}]
+          })
+
+          this.contactPersons.push(existContactPerson);
+        })
+      })
+
+
+    })
 
     this.quotationForm.get('date')?.valueChanges.subscribe((value) => {
       const formattedDate = this.datePipe.transform(new Date(value), 'yyyy-MM-dd') || '';
@@ -158,14 +178,143 @@ export class AddQuotationComponent implements OnInit {
     this.apiSvc.getProvinces().subscribe((res) => {
       this.provinceList = res
 
-      this.projects$ = this.apiSvc.getAllProject().pipe(
-        tap(res => {
-          this.projectsData = res.data
-        })
-      );
+      this.apiSvc.getAllProject().subscribe((res) => {
+        this.projectsData = res.data
+
+        if(this.modal_type === 'edit' || this.modal_type === 'revision'){
+
+          const projectData: IDataProject = this.projectsData.filter((project) => project.id === this.dataQuotation.id)[0];
+    
+          this.selectedCustomer = [...projectData.project_customer.owner, ...projectData.project_customer.architect, ...projectData.project_customer.contractor, ...projectData.project_customer.mep_consultant]
+    
+          const newUpdateFileList: NzUploadFile[] = [{
+            uid: this.dataQuotation.quotation?.project_document.id,
+            name: this.dataQuotation.quotation?.project_document.file_name,
+            status: 'done',
+            url: this.dataQuotation.quotation?.project_document.file_url,
+            response: {
+              id: this.dataQuotation.quotation?.project_document.id,
+              attachment_path: this.dataQuotation.quotation?.project_document.attachment_path
+            } 
+          }]
+    
+          this.fileList = newUpdateFileList; 
+    
+          this.quotationForm.get('project_id')?.setValue(this.dataQuotation.id, { emitEvent: false })
+          this.quotationForm.get('project_name')?.setValue(this.dataQuotation.id, { emitEvent: false })
+    
+          this.quotationForm.patchValue({
+            id: this.dataQuotation.quotation.id,
+            prepared_by: this.dataQuotation.pic[0].pic_id,
+            customer: this.dataQuotation.quotation.customer.id,
+            date: this.dataQuotation.issue_date,
+            revision: this.dataQuotation.quotation?.revision,
+            quotation_no: this.dataQuotation.quotation?.quotation_no,
+          })
+    
+          if(this.modal_type === 'revision'){
+            this.quotationForm.get('project_id')?.disable();
+            this.quotationForm.get('project_name')?.disable();
+          }
+    
+          //edit location
+          this.getProvinceCity(this.dataQuotation.province, this.dataQuotation.city).subscribe((projectLocation) => {
+            this.quotationForm.get('location')?.setValue(projectLocation);
+          });
+    
+          this.getProvinceCity(this.dataQuotation.quotation.customer.province, this.dataQuotation.quotation.customer.city).subscribe((customerLocation) => {
+            this.quotationForm.get('customer_location')?.setValue(customerLocation)
+          })
+    
+          //edit contact person
+          // this.dataQuotation.quotation.customer.contactPerson.forEach((cp) => {
+          //   const existCp = this.fb.group({
+          //     name: [{value: cp.name, disabled: true}],
+          //     role: [{value: cp.customer_category.name, disabled: true}]
+          //   })
+    
+          //   this.contactPersons.push(existCp);
+          // })
+    
+          //edit pic
+    
+          const dcePicIds = this.dataQuotation.dce_pic.map((item) => item.pic_id);
+    
+          const isHeadPicId = this.dataQuotation.dce_pic.filter((item) => item.is_pic_internal === 1);
+    
+    
+          this.quotationForm.patchValue({
+            engineer_pic: dcePicIds,
+            engineer_pic_internal: isHeadPicId[0].pic_id,
+            engineer_phone_number: isHeadPicId[0].phone
+          })
+    
+    
+          //edit stack
+          this.dataQuotation.quotation.quotation_stack.forEach((stack) => {
+    
+            const updateStackFile: NzUploadFile[] = [{
+              uid: stack.stack_file.id,
+              name: stack.stack_file.file_name,
+              status: 'done',
+              url: stack.stack_file.file_url,
+              response: {
+                id: stack.stack_file.id,
+                attachment_path: stack.stack_file.attachment_path
+              },
+              isImageUrl: true
+            }]
+    
+            const updateStack = this.fb.group({
+              id: [stack.id],
+              name: [stack.name, Validators.required],
+              stack_file: [updateStackFile, Validators.required],
+              stack_new: [false],
+              stack_updated: [false],
+              stack_attachmentDeleteIds: [[]]
+            })
+    
+            this.stacks.push(updateStack);
+          })
+    
+          //edit item
+          this.dataQuotation.quotation?.quotation_items.forEach((item) => {
+            const totalPrice = parseFloat(item.inventory.default_selling_price) * parseFloat(item.qty)
+    
+            const editItems = this.fb.group({
+              part_number: [item.inventory.id, Validators.required],
+              description: [item.inventory.id, Validators.required],
+              alias: [{value: item.inventory.alias, disabled: true}, Validators.required],
+              dn1: [item.dn_1],
+              dn2: [item.dn_2],
+              qty: [item.qty],
+              unit:[{value: item.inventory.unit.name, disabled: true}],
+              exist: [true],
+              unit_price: [item.inventory.default_selling_price],
+              gross_margin: [item.inventory.default_gross_margin],
+              total_price: [totalPrice],
+              category: [item.inventory.supplier_product.name]
+            })
+    
+            this.items.push(editItems);
+            this.itemValueChangeSubscription(editItems);
+          })
+    
+          this.updateGroupedItems();
+    
+    
+          // Explicitly mark the form array as dirty or updated
+          this.items.markAsDirty();
+          this.items.updateValueAndValidity();
+    
+          // Trigger change detection
+          this.cd.detectChanges();
+        }
+      });
   
     })
 
+  
 
     this.quotationForm.get('pic')?.valueChanges.subscribe((value) => {
       this.filteredListOfPic = this.listOfPic.filter(pic => value.includes(pic.pic_id));
@@ -175,131 +324,7 @@ export class AddQuotationComponent implements OnInit {
       }
     })
 
-    if(this.modal_type === 'edit' || this.modal_type === 'revision'){
 
-      const newUpdateFileList: NzUploadFile[] = [{
-        uid: this.dataQuotation.quotation?.project_document.id,
-        name: this.dataQuotation.quotation?.project_document.file_name,
-        status: 'done',
-        url: this.dataQuotation.quotation?.project_document.file_url,
-        response: {
-          id: this.dataQuotation.quotation?.project_document.id,
-          attachment_path: this.dataQuotation.quotation?.project_document.attachment_path
-        } 
-      }]
-
-      this.fileList = newUpdateFileList;
-
-
-      this.quotationForm.patchValue({
-        id: this.dataQuotation.quotation.id,
-        prepared_by: this.dataQuotation.pic[0].pic_id,
-        project_id: this.dataQuotation.id,
-        project_name: this.dataQuotation.id,
-        customer: this.dataQuotation.customer.name,
-        date: this.dataQuotation.issue_date,
-        revision: this.dataQuotation.quotation?.revision,
-        quotation_no: this.dataQuotation.quotation?.quotation_no
-      })
-
-      if(this.modal_type === 'revision'){
-        this.quotationForm.get('project_id')?.disable();
-        this.quotationForm.get('project_name')?.disable();
-      }
-
-      //edit location
-      this.getProvinceCity(this.dataQuotation.province, this.dataQuotation.city).subscribe((projectLocation) => {
-        this.quotationForm.get('location')?.setValue(projectLocation);
-      });
-
-      this.getProvinceCity(this.dataQuotation.customer.province, this.dataQuotation.customer.city).subscribe((customerLocation) => {
-        this.quotationForm.get('customer_location')?.setValue(customerLocation)
-      })
-
-      //edit contact person
-      this.dataQuotation.customer.contactPerson.forEach((cp) => {
-        const existCp = this.fb.group({
-          name: [{value: cp.name, disabled: true}],
-          role: [{value: cp.customer_category.name, disabled: true}]
-        })
-
-        this.contactPersons.push(existCp);
-      })
-
-      //edit pic
-
-      const dcePicIds = this.dataQuotation.dce_pic.map((item) => item.pic_id);
-
-      const isHeadPicId = this.dataQuotation.dce_pic.filter((item) => item.is_pic_internal === 1);
-
-
-      this.quotationForm.patchValue({
-        engineer_pic: dcePicIds,
-        engineer_pic_internal: isHeadPicId[0].pic_id,
-        engineer_phone_number: isHeadPicId[0].phone
-      })
-
-
-      //edit stack
-      this.dataQuotation.quotation.quotation_stack.forEach((stack) => {
-
-        const updateStackFile: NzUploadFile[] = [{
-          uid: stack.stack_file.id,
-          name: stack.stack_file.file_name,
-          status: 'done',
-          url: stack.stack_file.file_url,
-          response: {
-            id: stack.stack_file.id,
-            attachment_path: stack.stack_file.attachment_path
-          },
-          isImageUrl: true
-        }]
-
-        const updateStack = this.fb.group({
-          id: [stack.id],
-          name: [stack.name, Validators.required],
-          stack_file: [updateStackFile, Validators.required],
-          stack_new: [false],
-          stack_updated: [false],
-          stack_attachmentDeleteIds: [[]]
-        })
-
-        this.stacks.push(updateStack);
-      })
-
-      //edit item
-      this.dataQuotation.quotation?.quotation_items.forEach((item) => {
-        const totalPrice = parseFloat(item.inventory.default_selling_price) * parseFloat(item.qty)
-
-        const editItems = this.fb.group({
-          part_number: [item.inventory.id, Validators.required],
-          description: [item.inventory.id, Validators.required],
-          alias: [{value: item.inventory.alias, disabled: true}, Validators.required],
-          dn1: [item.dn_1],
-          dn2: [item.dn_2],
-          qty: [item.qty],
-          unit:[{value: item.inventory.unit.name, disabled: true}],
-          exist: [true],
-          unit_price: [item.inventory.default_selling_price],
-          gross_margin: [item.inventory.default_gross_margin],
-          total_price: [totalPrice],
-          category: [item.inventory.supplier_product.name]
-        })
-
-        this.items.push(editItems);
-        this.itemValueChangeSubscription(editItems);
-      })
-
-      this.updateGroupedItems();
-
-
-      // Explicitly mark the form array as dirty or updated
-      this.items.markAsDirty();
-      this.items.updateValueAndValidity();
-
-      // Trigger change detection
-      this.cd.detectChanges();
-    }
   }
 
   calculateGrandTotalPrice() {
@@ -312,44 +337,32 @@ export class AddQuotationComponent implements OnInit {
 
   private handleProjectChange(res: any): void {
     const projectData: IDataProject = this.projectsData.filter((project) => project.id === res)[0];
-  
-    // const consultant = projectData.customer.contactPerson
-    //   .filter(res => res.customer_category.name.toLowerCase().includes('consultant'))
-    //   .map(res => ({
-    //     name: res.name,
-    //     province: res.province,
-    //     city: res.city
-    //   }));
-  
+    
+    this.selectedCustomer = [...projectData.project_customer.owner, ...projectData.project_customer.architect, ...projectData.project_customer.contractor, ...projectData.project_customer.mep_consultant]
+
     // Update location and consultant location
     this.getProvinceCity(projectData.province, projectData.city).subscribe((projectLocation) => {
       this.quotationForm.get('location')?.setValue(projectLocation);
     });
   
-    // if (consultant.length > 0) {
-    //   this.getProvinceCity(consultant[0].province, consultant[0].city).subscribe((consultantLocation) => {
-    //     this.quotationForm.get('consultant_location')?.setValue(consultantLocation);
-    //   });
-    // }
 
-    this.getProvinceCity(projectData.customer.province, projectData.customer.city).subscribe((customerLocation) => {
-      this.quotationForm.get('customer_location')?.setValue(customerLocation)
-    })
+    // this.getProvinceCity(projectData.customer.province, projectData.customer.city).subscribe((customerLocation) => {
+    //   this.quotationForm.get('customer_location')?.setValue(customerLocation)
+    // })
 
-    projectData.customer.contactPerson.forEach((cp) => {
-      const existContactPerson = this.fb.group({
-        name: [{value: cp.name, disabled: true}],
-        role: [{value: cp.customer_category.name, disabled: true}]
-      })
+    // projectData.customer.contactPerson.forEach((cp) => {
+    //   const existContactPerson = this.fb.group({
+    //     name: [{value: cp.name, disabled: true}],
+    //     role: [{value: cp.customer_category.name, disabled: true}]
+    //   })
 
-      this.contactPersons.push(existContactPerson);
-    })
+    //   this.contactPersons.push(existContactPerson);
+    // })
 
     // Update form with project and consultant details
-    this.quotationForm.patchValue({
-      // consultant: consultant[0]?.name || null,
-      customer: projectData.customer.name
-    });
+    // this.quotationForm.patchValue({
+    //   customer: projectData.customer.name
+    // });
   
     // Handle PIC-related operations
     this.pic$ = this.apiSvc.getPic().pipe(
@@ -695,6 +708,7 @@ export class AddQuotationComponent implements OnInit {
           project_id: this.quotationForm.get('project_id')?.value,
           quotation_type: this.quotationForm.get('project_type')?.value,
           issued_date: this.quotationForm.get('date')?.value,
+          customer_id: this.quotationForm.get('customer')?.value,
           inventories: inventoryComplete
         }
   
@@ -785,6 +799,7 @@ export class AddQuotationComponent implements OnInit {
           quotation_type: this.quotationForm.get('project_type')?.value,
           issued_date: this.quotationForm.get('date')?.value,
           quotation_stack_deleted_ids: this.deletedStackIds,
+          customer_id: this.quotationForm.get('customer')?.value,
           inventories: inventoryComplete,
         }
   
@@ -831,7 +846,7 @@ export class AddQuotationComponent implements OnInit {
   
             this.modalSvc.success({
               nzTitle: 'Success',
-              nzContent: `Successfully ${this.modal_type === 'Edit' ? 'Edit' : 'Revised'} Quotation`,
+              nzContent: `Successfully ${this.modal_type === 'edit' ? 'Edit' : 'Revised'} Quotation`,
               nzOkText: 'Ok',
               nzCentered: true
             });
@@ -842,7 +857,7 @@ export class AddQuotationComponent implements OnInit {
             this.spinnerSvc.hide();
   
             this.modalSvc.error({
-              nzTitle: `Unable to ${this.modal_type === 'Edit' ? 'Edit' : 'Revised'} Quotation`,
+              nzTitle: `Unable to ${this.modal_type === 'edit' ? 'Edit' : 'Revised'} Quotation`,
               nzContent: error.error.meta.message,
               nzOkText: 'Ok',
               nzCentered: true

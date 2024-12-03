@@ -18,27 +18,33 @@
 
     <ng-container *ngIf="selectedQuotation !== ''">
         <span class="fw-semibold mt-3">Select revision to compare</span>
-        <div class="row">
+        <div class="d-flex gap-2 align-items-center">
             <ng-container *ngIf="this.quotationDetail$ | async as quotationDetail; else loadingDetail">
-                <div class="col-md-6">
-                    <nz-select nzShowSearch nzAllowClear nzPlaceHolder="Select Revision" style="width: 320px;" [(ngModel)]="revision1" (ngModelChange)="revisionChange()" >
+                <div>
+                    <nz-select style="width: 320px;" nzShowSearch nzAllowClear nzPlaceHolder="Select Revision" [(ngModel)]="revision1" (ngModelChange)="revisionChange()" >
                         <nz-option *ngFor="let rev of revisionList" [nzLabel]="rev" [nzValue]="rev"></nz-option>
                     </nz-select>  
                 </div>
-                <div class="col-md-6">
-                    <nz-select nzShowSearch nzAllowClear nzPlaceHolder="Select Revision" style="width: 320px;" [(ngModel)]="revision2" (ngModelChange)="revisionChange()">
+                <div>
+                    <span>to</span>
+                </div>
+                <div>
+                    <nz-select style="width: 320px;" nzShowSearch nzAllowClear nzPlaceHolder="Select Revision" [(ngModel)]="revision2" (ngModelChange)="revisionChange()">
                         <nz-option *ngFor="let rev of revisionList" [nzLabel]="rev" [nzValue]="rev"></nz-option>
                     </nz-select>  
                 </div>
             </ng-container>
             <ng-template #loadingDetail>
-                <div class="col-md-6">
-                    <nz-select nzShowSearch nzAllowClear nzPlaceHolder="loading..." nzDisabled style="width: 320px;">
+                <div>
+                    <nz-select style="width: 320px;" nzShowSearch nzAllowClear nzPlaceHolder="loading..." nzDisabled>
             
                     </nz-select>  
                 </div>
-                <div class="col-md-6">
-                    <nz-select nzShowSearch nzAllowClear nzPlaceHolder="loading..." nzDisabled style="width: 320px;">
+                <div>
+                    <span>to</span>
+                </div>
+                <div>
+                    <nz-select style="width: 320px;" nzShowSearch nzAllowClear nzPlaceHolder="loading..." nzDisabled>
             
                     </nz-select>  
                 </div>
@@ -217,7 +223,12 @@
                                         </tr>
                                         </thead>
                                         <tbody>
-                                            <tr *ngFor="let item1 of result[key]['obj1Value']; let i = index">
+                                            <tr 
+                                                *ngFor="let item1 of result[key]['obj1Value']; let i = index"
+                                                [ngClass]="{
+                                                    'highlight-green': isStacksByIndexObj1(key, i)
+                                                }"
+                                            >
                                                 <td>
                                                     <p class="fw-light">{{ item1.name }}</p>
                                                 </td>
@@ -241,7 +252,12 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <tr *ngFor="let item2 of result[key]['obj2Value']; let i = index">
+                                        <tr 
+                                            *ngFor="let item2 of result[key]['obj2Value']; let i = index"
+                                            [ngClass]="{
+                                                'highlight-red': isStacksByIndexObj2(key, i)
+                                            }"
+                                        >
                                             <td>
                                                 <p class="fw-light">{{ item2.name }}</p>
                                             </td>

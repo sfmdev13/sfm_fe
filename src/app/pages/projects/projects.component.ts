@@ -575,36 +575,32 @@ export class ProjectsComponent implements OnInit {
 
     if(col.name === 'Owner'){
       this.filteredData = this.data.filter((item: IDataProject) => 
-        item.customer.contactPerson.some(cp => 
-          cp.customer_category.name.toLowerCase() === 'owner' &&
-          cp.name.toLowerCase().includes(value.toLowerCase())
+        item.project_customer.owner.some(cp => 
+          cp.customer.name.toLowerCase().includes(value.toLowerCase())
         )
       );
     }
 
     if(col.name === 'Architect'){
       this.filteredData = this.data.filter((item: IDataProject) => 
-        item.customer.contactPerson.some(cp => 
-          cp.customer_category.name.toLowerCase() === 'architect' &&
-          cp.name.toLowerCase().includes(value.toLowerCase())
+        item.project_customer.architect.some((architect) =>
+          architect.customer.name.toLowerCase().includes(value.toLowerCase())
         )
       );
     }
 
     if(col.name === 'Contractor'){
       this.filteredData = this.data.filter((item: IDataProject) => 
-        item.customer.contactPerson.some(cp => 
-          cp.customer_category.name.toLowerCase() === 'contractor' &&
-          cp.name.toLowerCase().includes(value.toLowerCase())
+        item.project_customer.contractor.some((contractor) => 
+          contractor.customer.name.toLowerCase().includes(value.toLowerCase())
         )
       );
     }
 
     if(col.name === 'MEP Consultant'){
       this.filteredData = this.data.filter((item: IDataProject) => 
-        item.customer.contactPerson.some(cp => 
-          cp.customer_category.name.toLowerCase() === 'mep consultant' &&
-          cp.name.toLowerCase().includes(value.toLowerCase())
+        item.project_customer.mep_consultant.some((consultant) => 
+          consultant.customer.name.toLowerCase().includes(value.toLowerCase())
         )
       );
     }
@@ -863,7 +859,7 @@ export class ProjectsComponent implements OnInit {
       nzClosable: false,
       nzMaskClosable: false,
       nzCentered: true,
-      nzWidth: '800px'
+      nzWidth: '900px'
     });
   }
 
@@ -879,7 +875,7 @@ export class ProjectsComponent implements OnInit {
       nzClosable: false,
       nzMaskClosable: false,
       nzCentered: true,
-      nzWidth: '800px'
+      nzWidth: '900px'
     });
   }
 
@@ -894,7 +890,7 @@ export class ProjectsComponent implements OnInit {
       },
       nzClosable: false,
       nzMaskClosable: false,
-      nzWidth: '800px'
+      nzWidth: '900px'
     });
   }
 

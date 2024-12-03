@@ -11,6 +11,7 @@ import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzDropDownModule } from 'ng-zorro-antd/dropdown';
 import { NzDrawerModule } from 'ng-zorro-antd/drawer';
 import { NzModalModule } from 'ng-zorro-antd/modal';
+import { NzDatePickerModule } from 'ng-zorro-antd/date-picker';
 
 @NgModule({
   declarations: [QuotationComponent],
@@ -25,7 +26,8 @@ import { NzModalModule } from 'ng-zorro-antd/modal';
     NzIconModule,
     NzDropDownModule,
     NzDrawerModule,
-    NzModalModule
+    NzModalModule,
+    NzDatePickerModule
   ],
   exports: [QuotationComponent]
 })

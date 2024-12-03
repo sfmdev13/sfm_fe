@@ -104,10 +104,26 @@
               <td *ngIf="columns[5].visible">{{ data.cluster.name }}</td>
               <td *ngIf="columns[6].visible">{{ data.segmentation.name }}</td>
               <td *ngIf="columns[7].visible">{{ data.remarks === 'siphonic_system' ? 'Siphonic System' : 'Fastflow'}}</td>
-              <td *ngIf="columns[8].visible">{{ findRoleContactPerson('owner', data.customer.contactPerson) }}</td>
-              <td *ngIf="columns[9].visible">{{ findRoleContactPerson('architect', data.customer.contactPerson) }}</td>
-              <td *ngIf="columns[10].visible">{{ findRoleContactPerson('contractor', data.customer.contactPerson) }}</td>
-              <td *ngIf="columns[11].visible">{{ findRoleContactPerson('mep consultant', data.customer.contactPerson) }}</td>
+              <td *ngIf="columns[8].visible">
+                <ng-container *ngFor="let owner of data.project_customer.owner; let isLast = last">
+                  {{ owner.customer.name }} <span *ngIf="!isLast">, </span>
+                </ng-container>
+              </td>
+              <td *ngIf="columns[9].visible">
+                <ng-container *ngFor="let architect of data.project_customer.architect; let isLast = last">
+                  {{ architect.customer.name }} <span *ngIf="!isLast">, </span>
+                </ng-container>
+              </td>
+              <td *ngIf="columns[10].visible">
+                <ng-container *ngFor="let contractor of data.project_customer.contractor; let isLast = last">
+                  {{ contractor.customer.name }} <span *ngIf="!isLast">, </span>
+                </ng-container>
+              </td>
+              <td *ngIf="columns[11].visible">
+                <ng-container *ngFor="let consultant of data.project_customer.mep_consultant; let isLast = last">
+                  {{ consultant.customer.name }} <span *ngIf="!isLast">, </span>
+                </ng-container>
+              </td>
               <td *ngIf="columns[12].visible">
                 <ng-container *ngFor="let s of data.specification; last as isLast">
                   {{ s.specification === 'siphonic_system' ? 'Siphonic System' : 'Gravity System'}} <span *ngIf="!isLast">, </span>
