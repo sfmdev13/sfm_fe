@@ -48,9 +48,9 @@
                             <nz-form-item>
                                 <nz-form-label nzRequired class="fw-semibold" nzFor="project_id">Project ID</nz-form-label>
                                 <nz-form-control>
-                                    <ng-container *ngIf="projects$ | async as projects; else loadProject">
+                                    <ng-container *ngIf="projectsData.length > 0; else loadProject">
                                         <nz-select nzShowSearch nzPlaceHolder="Select Type" formControlName="project_id">
-                                            <nz-option *ngFor="let project of projects.data" [nzLabel]="project.project_pid" [nzValue]="project.id"></nz-option>
+                                            <nz-option *ngFor="let project of projectsData" [nzLabel]="project.project_pid" [nzValue]="project.id"></nz-option>
                                         </nz-select>
                                     </ng-container>
                                     <ng-template #loadProject>
