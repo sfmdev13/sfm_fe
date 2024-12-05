@@ -202,12 +202,18 @@
                     </div>
                     <h6 class="fw-bold mb-4">Contact Person</h6>
                     <div class="row">
-                        <div class="col-md-4 fw-bold">Role</div>
                         <div class="col-md-4 fw-bold">Name</div>
+                        <div class="col-md-4 fw-bold">Role</div>
+                        <div class="col-md-4 fw-bold">Attention</div>
                     </div>
                     <ng-container formArrayName="contactPerson">
                         <ng-container *ngFor="let cp of contactPersons.controls; let i = index" [formGroupName]="i">
                             <div class="row mt-4">
+                                <div class="col-md-4">
+                                    <nz-form-control>
+                                        <input nz-input formControlName="name" id="name" />
+                                    </nz-form-control>
+                                </div>
                                 <div class="col-md-4">
                                     <nz-form-control>
                                         <input nz-input formControlName="role" id="role" />
@@ -215,7 +221,7 @@
                                 </div>
                                 <div class="col-md-4">
                                     <nz-form-control>
-                                        <input nz-input formControlName="name" id="name" />
+                                        <label nz-checkbox formControlName="attention" id="attention"></label>
                                     </nz-form-control>
                                 </div>
                             </div>

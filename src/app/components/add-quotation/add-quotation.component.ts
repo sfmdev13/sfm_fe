@@ -20,6 +20,7 @@ import { NzAlertModule } from 'ng-zorro-antd/alert';
 import { NzDividerModule } from 'ng-zorro-antd/divider';
 import { SpinnerService } from 'src/app/spinner.service';
 import { NzModalModule, NzModalService } from 'ng-zorro-antd/modal';
+import { NzCheckboxModule } from 'ng-zorro-antd/checkbox';
 
 @Component({
   selector: 'app-add-quotation',
@@ -39,7 +40,8 @@ import { NzModalModule, NzModalService } from 'ng-zorro-antd/modal';
     NzMessageModule,
     NzAlertModule,
     NzDividerModule,
-    NzModalModule
+    NzModalModule,
+    NzCheckboxModule
   ],
   providers: [DatePipe],
   templateUrl: './add-quotation.component.html',
@@ -53,6 +55,7 @@ export class AddQuotationComponent implements OnInit {
   productCategory: IDataCategories[] = this.nzData.productCategory;
   modal_type: string = this.nzData.modal_type;
   dataQuotation: IDataQuotation = this.nzData.dataQuotation;
+  projectsData: IDataProject[] = this.nzData.projectData;
 
   pic_id = localStorage.getItem('pic_id')!;
 
@@ -92,9 +95,6 @@ export class AddQuotationComponent implements OnInit {
 
   uploadedData: any[] = [];
   headers: string[] = [];
-
-  projects$!: Observable<IRootProject>;
-  projectsData: IDataProject[] = [];
 
   provinceList: any[] = [];
 
@@ -139,7 +139,8 @@ export class AddQuotationComponent implements OnInit {
         res.data.contactPerson.forEach((cp) => {
           const existContactPerson = this.fb.group({
             name: [{value: cp.name, disabled: true}],
-            role: [{value: cp.customer_category.name, disabled: true}]
+            role: [{value: cp.customer_category.name, disabled: true}],
+            attention: [false]
           })
 
           this.contactPersons.push(existContactPerson);
@@ -177,142 +178,138 @@ export class AddQuotationComponent implements OnInit {
 
     this.apiSvc.getProvinces().subscribe((res) => {
       this.provinceList = res
-
-      this.apiSvc.getAllProject().subscribe((res) => {
-        this.projectsData = res.data
-
-        if(this.modal_type === 'edit' || this.modal_type === 'revision'){
-
-          const projectData: IDataProject = this.projectsData.filter((project) => project.id === this.dataQuotation.id)[0];
-    
-          this.selectedCustomer = [...projectData.project_customer.owner, ...projectData.project_customer.architect, ...projectData.project_customer.contractor, ...projectData.project_customer.mep_consultant]
-    
-          const newUpdateFileList: NzUploadFile[] = [{
-            uid: this.dataQuotation.quotation?.project_document.id,
-            name: this.dataQuotation.quotation?.project_document.file_name,
-            status: 'done',
-            url: this.dataQuotation.quotation?.project_document.file_url,
-            response: {
-              id: this.dataQuotation.quotation?.project_document.id,
-              attachment_path: this.dataQuotation.quotation?.project_document.attachment_path
-            } 
-          }]
-    
-          this.fileList = newUpdateFileList; 
-    
-          this.quotationForm.get('project_id')?.setValue(this.dataQuotation.id, { emitEvent: false })
-          this.quotationForm.get('project_name')?.setValue(this.dataQuotation.id, { emitEvent: false })
-    
-          this.quotationForm.patchValue({
-            id: this.dataQuotation.quotation.id,
-            prepared_by: this.dataQuotation.pic[0].pic_id,
-            customer: this.dataQuotation.quotation.customer.id,
-            date: this.dataQuotation.issue_date,
-            revision: this.dataQuotation.quotation?.revision,
-            quotation_no: this.dataQuotation.quotation?.quotation_no,
-          })
-    
-          if(this.modal_type === 'revision'){
-            this.quotationForm.get('project_id')?.disable();
-            this.quotationForm.get('project_name')?.disable();
-          }
-    
-          //edit location
-          this.getProvinceCity(this.dataQuotation.province, this.dataQuotation.city).subscribe((projectLocation) => {
-            this.quotationForm.get('location')?.setValue(projectLocation);
-          });
-    
-          this.getProvinceCity(this.dataQuotation.quotation.customer.province, this.dataQuotation.quotation.customer.city).subscribe((customerLocation) => {
-            this.quotationForm.get('customer_location')?.setValue(customerLocation)
-          })
-    
-          //edit contact person
-          // this.dataQuotation.quotation.customer.contactPerson.forEach((cp) => {
-          //   const existCp = this.fb.group({
-          //     name: [{value: cp.name, disabled: true}],
-          //     role: [{value: cp.customer_category.name, disabled: true}]
-          //   })
-    
-          //   this.contactPersons.push(existCp);
-          // })
-    
-          //edit pic
-    
-          const dcePicIds = this.dataQuotation.dce_pic.map((item) => item.pic_id);
-    
-          const isHeadPicId = this.dataQuotation.dce_pic.filter((item) => item.is_pic_internal === 1);
-    
-    
-          this.quotationForm.patchValue({
-            engineer_pic: dcePicIds,
-            engineer_pic_internal: isHeadPicId[0].pic_id,
-            engineer_phone_number: isHeadPicId[0].phone
-          })
-    
-    
-          //edit stack
-          this.dataQuotation.quotation.quotation_stack.forEach((stack) => {
-    
-            const updateStackFile: NzUploadFile[] = [{
-              uid: stack.stack_file.id,
-              name: stack.stack_file.file_name,
-              status: 'done',
-              url: stack.stack_file.file_url,
-              response: {
-                id: stack.stack_file.id,
-                attachment_path: stack.stack_file.attachment_path
-              },
-              isImageUrl: true
-            }]
-    
-            const updateStack = this.fb.group({
-              id: [stack.id],
-              name: [stack.name, Validators.required],
-              stack_file: [updateStackFile, Validators.required],
-              stack_new: [false],
-              stack_updated: [false],
-              stack_attachmentDeleteIds: [[]]
-            })
-    
-            this.stacks.push(updateStack);
-          })
-    
-          //edit item
-          this.dataQuotation.quotation?.quotation_items.forEach((item) => {
-            const totalPrice = parseFloat(item.inventory.default_selling_price) * parseFloat(item.qty)
-    
-            const editItems = this.fb.group({
-              part_number: [item.inventory.id, Validators.required],
-              description: [item.inventory.id, Validators.required],
-              alias: [{value: item.inventory.alias, disabled: true}, Validators.required],
-              dn1: [item.dn_1],
-              dn2: [item.dn_2],
-              qty: [item.qty],
-              unit:[{value: item.inventory.unit.name, disabled: true}],
-              exist: [true],
-              unit_price: [item.inventory.default_selling_price],
-              gross_margin: [item.inventory.default_gross_margin],
-              total_price: [totalPrice],
-              category: [item.inventory.supplier_product.name]
-            })
-    
-            this.items.push(editItems);
-            this.itemValueChangeSubscription(editItems);
-          })
-    
-          this.updateGroupedItems();
-    
-    
-          // Explicitly mark the form array as dirty or updated
-          this.items.markAsDirty();
-          this.items.updateValueAndValidity();
-    
-          // Trigger change detection
-          this.cd.detectChanges();
-        }
-      });
-  
     })
+
+
+    if(this.modal_type === 'edit' || this.modal_type === 'revision'){
+
+      const projectData: IDataProject = this.projectsData.filter((project) => project.id === this.dataQuotation.id)[0];
+
+      this.selectedCustomer = [...projectData.project_customer]
+
+      const newUpdateFileList: NzUploadFile[] = [{
+        uid: this.dataQuotation.quotation?.project_document.id,
+        name: this.dataQuotation.quotation?.project_document.file_name,
+        status: 'done',
+        url: this.dataQuotation.quotation?.project_document.file_url,
+        response: {
+          id: this.dataQuotation.quotation?.project_document.id,
+          attachment_path: this.dataQuotation.quotation?.project_document.attachment_path
+        } 
+      }]
+
+      this.fileList = newUpdateFileList; 
+
+      this.quotationForm.get('project_id')?.setValue(this.dataQuotation.id, { emitEvent: false })
+      this.quotationForm.get('project_name')?.setValue(this.dataQuotation.id, { emitEvent: false })
+
+      this.quotationForm.patchValue({
+        id: this.dataQuotation.quotation.id,
+        prepared_by: this.dataQuotation.pic[0].pic_id,
+        customer: this.dataQuotation.quotation.customer.id,
+        date: this.dataQuotation.issue_date,
+        revision: this.dataQuotation.quotation?.revision,
+        quotation_no: this.dataQuotation.quotation?.quotation_no,
+      })
+
+      if(this.modal_type === 'revision'){
+        this.quotationForm.get('project_id')?.disable();
+        this.quotationForm.get('project_name')?.disable();
+      }
+
+      //edit location
+      this.getProvinceCity(this.dataQuotation.province, this.dataQuotation.city).subscribe((projectLocation) => {
+        this.quotationForm.get('location')?.setValue(projectLocation);
+      });
+
+      this.getProvinceCity(this.dataQuotation.quotation.customer.province, this.dataQuotation.quotation.customer.city).subscribe((customerLocation) => {
+        this.quotationForm.get('customer_location')?.setValue(customerLocation)
+      })
+
+      //edit contact person
+      // this.dataQuotation.quotation.customer.contactPerson.forEach((cp) => {
+      //   const existCp = this.fb.group({
+      //     name: [{value: cp.name, disabled: true}],
+      //     role: [{value: cp.customer_category.name, disabled: true}]
+      //   })
+
+      //   this.contactPersons.push(existCp);
+      // })
+
+      //edit pic
+
+      const dcePicIds = this.dataQuotation.dce_pic.map((item) => item.pic_id);
+
+      const isHeadPicId = this.dataQuotation.dce_pic.filter((item) => item.is_pic_internal === 1);
+
+
+      this.quotationForm.patchValue({
+        engineer_pic: dcePicIds,
+        engineer_pic_internal: isHeadPicId[0].pic_id,
+        engineer_phone_number: isHeadPicId[0].phone
+      })
+
+
+      //edit stack
+      this.dataQuotation.quotation.quotation_stack.forEach((stack) => {
+
+        const updateStackFile: NzUploadFile[] = [{
+          uid: stack.stack_file.id,
+          name: stack.stack_file.file_name,
+          status: 'done',
+          url: stack.stack_file.file_url,
+          response: {
+            id: stack.stack_file.id,
+            attachment_path: stack.stack_file.attachment_path
+          },
+          isImageUrl: true
+        }]
+
+        const updateStack = this.fb.group({
+          id: [stack.id],
+          name: [stack.name, Validators.required],
+          stack_file: [updateStackFile, Validators.required],
+          stack_new: [false],
+          stack_updated: [false],
+          stack_attachmentDeleteIds: [[]]
+        })
+
+        this.stacks.push(updateStack);
+      })
+
+      //edit item
+      this.dataQuotation.quotation?.quotation_items.forEach((item) => {
+        const totalPrice = parseFloat(item.inventory.default_selling_price) * parseFloat(item.qty)
+
+        const editItems = this.fb.group({
+          part_number: [item.inventory.id, Validators.required],
+          description: [item.inventory.id, Validators.required],
+          alias: [{value: item.inventory.alias, disabled: true}, Validators.required],
+          dn1: [item.dn_1],
+          dn2: [item.dn_2],
+          qty: [item.qty],
+          unit:[{value: item.inventory.unit.name, disabled: true}],
+          exist: [true],
+          unit_price: [item.inventory.default_selling_price],
+          gross_margin: [item.inventory.default_gross_margin],
+          total_price: [totalPrice],
+          category: [item.inventory.supplier_product.name]
+        })
+
+        this.items.push(editItems);
+        this.itemValueChangeSubscription(editItems);
+      })
+
+      this.updateGroupedItems();
+
+
+      // Explicitly mark the form array as dirty or updated
+      this.items.markAsDirty();
+      this.items.updateValueAndValidity();
+
+      // Trigger change detection
+      this.cd.detectChanges();
+    }
 
   
 
@@ -338,7 +335,7 @@ export class AddQuotationComponent implements OnInit {
   private handleProjectChange(res: any): void {
     const projectData: IDataProject = this.projectsData.filter((project) => project.id === res)[0];
     
-    this.selectedCustomer = [...projectData.project_customer.owner, ...projectData.project_customer.architect, ...projectData.project_customer.contractor, ...projectData.project_customer.mep_consultant]
+    this.selectedCustomer = [...projectData.project_customer]
 
     // Update location and consultant location
     this.getProvinceCity(projectData.province, projectData.city).subscribe((projectLocation) => {
