@@ -406,26 +406,26 @@ export class ApiService {
   }
 
 
-  createCustomerSector(name: string, description: string): Observable<any>{
+  createCustomerSector(body: any): Observable<any>{
     const token = localStorage.getItem('authToken');
     const headers = new HttpHeaders({
       Authorization: `Bearer ${token}`,
     })
 
-    const url = `${this.apiUrl}/create/customer-sector?name=${name}&description=${description}`
+    const url = `${this.apiUrl}/create/customer-sector`
 
-    return this.http.post<any>(url, {} , { headers })
+    return this.http.post<any>(url, body , { headers })
   }
 
-  editCustomerSector(id: string, name: string, description: string): Observable<any>{
+  editCustomerSector(body: any): Observable<any>{
     const token = localStorage.getItem('authToken');
     const headers = new HttpHeaders({
       Authorization: `Bearer ${token}`,
     })
 
-    const url = `${this.apiUrl}/edit/customer-sector?id=${id}&name=${name}&description=${description}`
+    const url = `${this.apiUrl}/edit/customer-sector`
 
-    return this.http.post<any>(url, {} , { headers })
+    return this.http.post<any>(url, body , { headers })
   }
 
   

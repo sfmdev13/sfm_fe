@@ -48,9 +48,9 @@
                             <nz-form-item>
                                 <nz-form-label nzRequired class="fw-semibold" nzFor="project_id">Project ID</nz-form-label>
                                 <nz-form-control>
-                                    <ng-container *ngIf="projects$ | async as projects; else loadProject">
+                                    <ng-container *ngIf="projectsData.length > 0; else loadProject">
                                         <nz-select nzShowSearch nzPlaceHolder="Select Type" formControlName="project_id">
-                                            <nz-option *ngFor="let project of projects.data" [nzLabel]="project.project_pid" [nzValue]="project.id"></nz-option>
+                                            <nz-option *ngFor="let project of projectsData" [nzLabel]="project.project_pid" [nzValue]="project.id"></nz-option>
                                         </nz-select>
                                     </ng-container>
                                     <ng-template #loadProject>
@@ -202,12 +202,18 @@
                     </div>
                     <h6 class="fw-bold mb-4">Contact Person</h6>
                     <div class="row">
-                        <div class="col-md-4 fw-bold">Role</div>
                         <div class="col-md-4 fw-bold">Name</div>
+                        <div class="col-md-4 fw-bold">Role</div>
+                        <div class="col-md-4 fw-bold">Attention</div>
                     </div>
                     <ng-container formArrayName="contactPerson">
                         <ng-container *ngFor="let cp of contactPersons.controls; let i = index" [formGroupName]="i">
                             <div class="row mt-4">
+                                <div class="col-md-4">
+                                    <nz-form-control>
+                                        <input nz-input formControlName="name" id="name" />
+                                    </nz-form-control>
+                                </div>
                                 <div class="col-md-4">
                                     <nz-form-control>
                                         <input nz-input formControlName="role" id="role" />
@@ -215,7 +221,7 @@
                                 </div>
                                 <div class="col-md-4">
                                     <nz-form-control>
-                                        <input nz-input formControlName="name" id="name" />
+                                        <label nz-checkbox formControlName="attention" id="attention"></label>
                                     </nz-form-control>
                                 </div>
                             </div>

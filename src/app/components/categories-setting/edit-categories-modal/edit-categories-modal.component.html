@@ -32,5 +32,11 @@
                 <input nz-input formControlName="description" id="description" />
             </nz-form-control>
         </nz-form-item>
+        <ng-container *ngIf="type === 'customer_sector'">
+            <nz-form-label nzRequired nzFor="level" class="fw-semibold">Level</nz-form-label>
+            <nz-form-control>
+                <input nz-input formControlName="level" id="level" />
+            </nz-form-control>
+        </ng-container>
     </form>
 </div>

@@ -465,7 +465,7 @@ export class AddCustomerModalComponent implements OnInit {
       }
 
       if(this.titleCat.toLowerCase() === 'sector'){
-        this.apiSvc.createCustomerSector(this.categoryForm.value.name, this.categoryForm.value.description).subscribe({
+        this.apiSvc.createCustomerSector(this.categoryForm.value).subscribe({
           next: () => {
             this.spinnerSvc.hide();
             this.modalSvc.success({

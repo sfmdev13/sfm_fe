@@ -28,164 +28,169 @@
   </div>
 
   <ng-container *ngIf="project$ | async as project; else loading">
-    <nz-table
-        #filterTable
-        [nzData]="filteredData"
-        [nzShowPagination]="true" 
-        nzBordered
-        [nzTableLayout]="'fixed'"
-        [nzScroll]="{ x: '100vw' }"
-        [nzTotal]="totalAll"
-        [nzPageSize]="pageSize"
-        [nzPageIndex]="currentPage"
-        (nzPageIndexChange)="pageIndexChange($event)"
-    >
-        <thead>
-          <tr>
-            <ng-container *ngFor="let col of columns">
-              <ng-container *ngIf="columnUnfilter.includes(col.name)">
-                <th 
-                nzWidth="200px" 
-                *ngIf="col.visible"
-                [nzSortOrder]="col.sortOrder"
-                [nzSortFn]="col.sortFn"
-                [nzSortDirections]="col.sortDirections"
-                nzCustomFilter
-                >
-                {{ col.name }}
-                <nz-filter-trigger [(nzVisible)]="col.searchVisible" [nzActive]="col.searchValue.length > 0" [nzDropdownMenu]="menu">
-                  <span nz-icon nzType="search"></span>
-                </nz-filter-trigger>
-                <!-- search filter table -->
-                <nz-dropdown-menu #menu="nzDropdownMenu">
-                  <div class="ant-table-filter-dropdown">
-                    <div class="search-box">
-                      <div class="d-flex flex-column gap-2">
-                        <nz-date-picker *ngIf="col.name === 'Issue Date'; else inputText" nzInline [(ngModel)]="col.searchValue"></nz-date-picker>
-                        <ng-template #inputText>
-                          <input type="text" nz-input placeholder="Search {{ col.name }}" [(ngModel)]="col.searchValue" />
-                        </ng-template>
-                        <div class="d-flex align-items-center">
-                          <button nz-button nzSize="small" nzType="primary" (click)="searchColumn(col)" class="search-button">Search</button>
-                          <button nz-button nzSize="small" (click)="resetColumn(col)">Reset</button>
+    <ng-container *ngIf="columns.length > 0; else loading">
+      <nz-table
+          #filterTable
+          [nzData]="filteredData"
+          [nzShowPagination]="true" 
+          nzBordered
+          [nzTableLayout]="'fixed'"
+          [nzScroll]="{ x: '100vw' }"
+          [nzTotal]="totalAll"
+          [nzPageSize]="pageSize"
+          [nzPageIndex]="currentPage"
+          (nzPageIndexChange)="pageIndexChange($event)"
+      >
+          <thead>
+            <tr>
+              <ng-container *ngFor="let col of columns">
+                <ng-container *ngIf="col.showSearch; else showFilter">
+                  <th 
+                  nzWidth="200px" 
+                  *ngIf="col.visible"
+                  [nzSortOrder]="col.sortOrder"
+                  [nzSortFn]="col.sortFn"
+                  [nzSortDirections]="col.sortDirections"
+                  [nzShowFilter]="col.showFilter"
+                  [nzShowSort]="col.showSort"
+                  nzCustomFilter
+                  >
+                  {{ col.name }}
+                    <nz-filter-trigger [(nzVisible)]="col.searchVisible" [nzActive]="col.searchValue.length > 0" [nzDropdownMenu]="menu">
+                      <span nz-icon nzType="search"></span>
+                    </nz-filter-trigger>
+                    <!-- search filter table -->
+                    <nz-dropdown-menu #menu="nzDropdownMenu">
+                      <div class="ant-table-filter-dropdown">
+                        <div class="search-box">
+                          <div class="d-flex flex-column gap-2">
+                            <nz-date-picker *ngIf="col.name === 'Issue Date'; else inputText" nzInline [(ngModel)]="col.searchValue"></nz-date-picker>
+                            <ng-template #inputText>
+                              <input type="text" nz-input placeholder="Search {{ col.name }}" [(ngModel)]="col.searchValue" />
+                            </ng-template>
+                            <div class="d-flex align-items-center">
+                              <ng-container *ngIf="col.unique === ''; else searchSector">
+                                <button nz-button nzSize="small" nzType="primary" (click)="searchColumn(col)" class="search-button">Search</button>
+                                <button nz-button nzSize="small" (click)="resetColumn(col)">Reset</button>
+                              </ng-container>
+                              <ng-template #searchSector>
+                                <button nz-button nzSize="small" nzType="primary" (click)="searchCust(col)" class="search-button">Search</button>
+                                <button nz-button nzSize="small" (click)="resetSector(col)">Reset</button>
+                              </ng-template>
+                            </div>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  </div>
-                </nz-dropdown-menu>
-                </th>
-              </ng-container>
-              <ng-container *ngIf="!columnUnfilter.includes(col.name)">
-                <th 
-                nzWidth="200px" 
-                *ngIf="col.visible"
-                [nzSortOrder]="col.sortOrder"
-                [nzSortFn]="col.sortFn"
-                [nzSortDirections]="col.sortDirections"
-                [nzFilterMultiple]="col.filterMultiple"
-                [nzFilters]="col.listOfFilter"
-                [nzFilterFn]="col.filterFn"
-                >{{ col.name }}</th>
-              </ng-container>
-
-            </ng-container>
-            <th nzWidth="200px" nzRight>Action</th>
-          </tr>
-        </thead>
-        <tbody>
-            <tr *ngFor="let data of filterTable.data">
-              <td  *ngIf="columns[0].visible">{{ data.project_pid }}</td>
-              <td *ngIf="columns[1].visible">{{ data.name }}</td>
-              <td *ngIf="columns[2].visible">{{ getTextCatByValue(data.project_category )}}</td>
-              <td *ngIf="columns[3]">
-                <a [href]="data.maps_url" target="_blank" rel="noopener noreferrer">{{ data.address }}</a>
-              </td>
-              <td *ngIf="columns[4].visible">{{ data.issue_date | date: 'fullDate' }}</td>
-              <td *ngIf="columns[5].visible">{{ data.cluster.name }}</td>
-              <td *ngIf="columns[6].visible">{{ data.segmentation.name }}</td>
-              <td *ngIf="columns[7].visible">{{ data.remarks === 'siphonic_system' ? 'Siphonic System' : 'Fastflow'}}</td>
-              <td *ngIf="columns[8].visible">
-                <ng-container *ngFor="let owner of data.project_customer.owner; let isLast = last">
-                  {{ owner.customer.name }} <span *ngIf="!isLast">, </span>
-                </ng-container>
-              </td>
-              <td *ngIf="columns[9].visible">
-                <ng-container *ngFor="let architect of data.project_customer.architect; let isLast = last">
-                  {{ architect.customer.name }} <span *ngIf="!isLast">, </span>
-                </ng-container>
-              </td>
-              <td *ngIf="columns[10].visible">
-                <ng-container *ngFor="let contractor of data.project_customer.contractor; let isLast = last">
-                  {{ contractor.customer.name }} <span *ngIf="!isLast">, </span>
-                </ng-container>
-              </td>
-              <td *ngIf="columns[11].visible">
-                <ng-container *ngFor="let consultant of data.project_customer.mep_consultant; let isLast = last">
-                  {{ consultant.customer.name }} <span *ngIf="!isLast">, </span>
-                </ng-container>
-              </td>
-              <td *ngIf="columns[12].visible">
-                <ng-container *ngFor="let s of data.specification; last as isLast">
-                  {{ s.specification === 'siphonic_system' ? 'Siphonic System' : 'Gravity System'}} <span *ngIf="!isLast">, </span>
-                </ng-container>
-              </td>
-              <td *ngIf="columns[13].visible">
-                <ng-container *ngFor="let m of data.material; last as isLast">
-                  {{ m.material.name}} <span *ngIf="!isLast">, </span>
-                </ng-container>
-              </td>
-              <td *ngIf="columns[14].visible">{{ data.competitor }}</td>
-              <td *ngIf="columns[15].visible">
-                <ng-container *ngFor="let pic of data.pic; last as isLast">
-                  {{ pic.name }} <span *ngIf="!isLast">, </span>
-                </ng-container>
-              </td>
-              <td *ngIf="columns[16].visible">
-                <ng-container *ngFor="let pic of data.dce_pic; last as isLast">
-                  {{ pic.name }} <span *ngIf="!isLast">, </span>
-                </ng-container>
-              </td>
-              <td *ngIf="columns[17].visible">{{ data.year }}</td>
-              <td *ngIf="columns[18].visible">{{ data.month }}</td>
-              <td *ngIf="columns[19].visible">-</td>
-              <td nzRight>
-                  <div class="d-flex gap-3">
-                    <a nz-dropdown nzTrigger="click" [nzDropdownMenu]="menu" style="text-decoration: none;" >
-                      <div class="d-flex align-items-center">
-                        <i nz-icon nzType="more" nzTheme="outline"></i>
-                        <p class="m-0 p-0">More</p>                       
-                      </div>
-
-                    </a>
-                    <nz-dropdown-menu #menu="nzDropdownMenu">
-                      <ul nz-menu class="dropdown-wrapper" style="width: 120px;">
-                        <!-- <li nz-menu-item class="gap-2 list-dropdown">
-                          <span nz-icon nzType="eye" nzTheme="twotone"></span>
-                          <p class="m-0 p-0">Detail</p>
-                        </li> -->
-                        <li nz-menu-item class="gap-2 list-dropdown" (click)="showModalEdit(data)">
-                          <div class="d-flex gap-2">
-                            <span nz-icon nzType="edit" nzTheme="twotone"></span>
-                            <p class="m-0 p-0">Edit</p>
-                          </div>
-                        </li>
-                        <li (click)="showModalDuplicate(data)" nz-menu-item class="gap-2 list-dropdown">
-                          <div class="d-flex gap-2">
-                            <span nz-icon nzType="copy" nzTheme="twotone" ></span>
-                            <p class="m-0 p-0">Duplicate</p>  
-                          </div>
-                        </li>
-                        <!-- <li (click)="showModalDelete(data.id)" nz-menu-item class="gap-2 list-dropdown">
-                          <span nz-icon nzType="delete" nzTheme="twotone" [nzTwotoneColor]="'#f50'"></span>
-                          <p class="m-0 p-0" style="color: #f50;">Delete</p>                
-                        </li> -->
-                      </ul>
                     </nz-dropdown-menu>
-                  </div>
-              </td>
+                  </th>
+                </ng-container>
+                <ng-template #showFilter>
+                  <th 
+                  nzWidth="200px" 
+                  *ngIf="col.visible"
+                  [nzSortOrder]="col.sortOrder"
+                  [nzSortFn]="col.sortFn"
+                  [nzSortDirections]="col.sortDirections"
+                  [nzFilterMultiple]="col.filterMultiple"
+                  [nzFilters]="col.listOfFilter"
+                  [nzFilterFn]="col.filterFn"
+                  [nzShowFilter]="col.showFilter"
+                  [nzShowSort]="col.showSort"
+                  >
+                    {{ col.name }}
+                  </th>
+                </ng-template>
+              </ng-container>
+              <th nzWidth="200px" nzRight>Action</th>
             </tr>
-        </tbody>
-    </nz-table>
+          </thead>
+          <tbody>
+              <tr *ngFor="let data of filterTable.data">
+                <td  *ngIf="columns[0].visible">{{ data.project_pid }}</td>
+                <td *ngIf="columns[1].visible">{{ data.name }}</td>
+                <td *ngIf="columns[2].visible">{{ getTextCatByValue(data.project_category )}}</td>
+                <td *ngIf="columns[3]">
+                  <a [href]="data.maps_url" target="_blank" rel="noopener noreferrer">{{ data.address }}</a>
+                </td>
+                <td *ngIf="columns[4].visible">{{ data.issue_date | date: 'fullDate' }}</td>
+                <td *ngIf="columns[5].visible">{{ data.cluster.name }}</td>
+                <td *ngIf="columns[6].visible">{{ data.segmentation.name }}</td>
+                <td *ngIf="columns[7].visible">{{ data.remarks === 'siphonic_system' ? 'Siphonic System' : 'Fastflow'}}</td>
+
+                <!-- dynamic customer sector -->
+                <ng-container *ngFor="let sec of sectorData; let i = index">
+                  <td *ngIf="columns[8+i].visible">
+                    <ng-container *ngFor="let cust of data.project_customer">
+                      <ng-container *ngIf="cust.customer_sector.id === sec.value">
+                        {{ cust.customer.name }}
+                      </ng-container>
+                    </ng-container>
+                  </td>
+                </ng-container>
+                <!-- end dynamic customer sector -->
+                <td *ngIf="columns[this.sectorDataLength + 8].visible">
+                  <ng-container *ngFor="let s of data.specification; last as isLast">
+                    {{ s.specification === 'siphonic_system' ? 'Siphonic System' : 'Gravity System'}} <span *ngIf="!isLast">, </span>
+                  </ng-container>
+                </td>
+                <td *ngIf="columns[this.sectorDataLength + 9].visible">
+                  <ng-container *ngFor="let m of data.material; last as isLast">
+                    {{ m.material.name}} <span *ngIf="!isLast">, </span>
+                  </ng-container>
+                </td>
+                <td *ngIf="columns[this.sectorDataLength + 10].visible">{{ data.competitor }}</td>
+                <td *ngIf="columns[this.sectorDataLength + 11].visible">
+                  <ng-container *ngFor="let pic of data.pic; last as isLast">
+                    {{ pic.name }} <span *ngIf="!isLast">, </span>
+                  </ng-container>
+                </td>
+                <td *ngIf="columns[this.sectorDataLength + 12].visible">
+                  <ng-container *ngFor="let pic of data.dce_pic; last as isLast">
+                    {{ pic.name }} <span *ngIf="!isLast">, </span>
+                  </ng-container>
+                </td>
+                <td *ngIf="columns[this.sectorDataLength + 13].visible">{{ data.year }}</td>
+                <td *ngIf="columns[this.sectorDataLength + 14].visible">{{ data.month }}</td>
+                <td *ngIf="columns[this.sectorDataLength + 15].visible">-</td>
+                <td nzRight>
+                    <div class="d-flex gap-3">
+                      <a nz-dropdown nzTrigger="click" [nzDropdownMenu]="menu" style="text-decoration: none;" >
+                        <div class="d-flex align-items-center">
+                          <i nz-icon nzType="more" nzTheme="outline"></i>
+                          <p class="m-0 p-0">More</p>                       
+                        </div>
+
+                      </a>
+                      <nz-dropdown-menu #menu="nzDropdownMenu">
+                        <ul nz-menu class="dropdown-wrapper" style="width: 120px;">
+                          <!-- <li nz-menu-item class="gap-2 list-dropdown">
+                            <span nz-icon nzType="eye" nzTheme="twotone"></span>
+                            <p class="m-0 p-0">Detail</p>
+                          </li> -->
+                          <li nz-menu-item class="gap-2 list-dropdown" (click)="showModalEdit(data)">
+                            <div class="d-flex gap-2">
+                              <span nz-icon nzType="edit" nzTheme="twotone"></span>
+                              <p class="m-0 p-0">Edit</p>
+                            </div>
+                          </li>
+                          <li (click)="showModalDuplicate(data)" nz-menu-item class="gap-2 list-dropdown">
+                            <div class="d-flex gap-2">
+                              <span nz-icon nzType="copy" nzTheme="twotone" ></span>
+                              <p class="m-0 p-0">Duplicate</p>  
+                            </div>
+                          </li>
+                          <!-- <li (click)="showModalDelete(data.id)" nz-menu-item class="gap-2 list-dropdown">
+                            <span nz-icon nzType="delete" nzTheme="twotone" [nzTwotoneColor]="'#f50'"></span>
+                            <p class="m-0 p-0" style="color: #f50;">Delete</p>                
+                          </li> -->
+                        </ul>
+                      </nz-dropdown-menu>
+                    </div>
+                </td>
+              </tr>
+          </tbody>
+      </nz-table>
+    </ng-container>
   </ng-container>
 
 </ng-container>

@@ -6,6 +6,7 @@ import { ApiService } from 'src/app/api.service';
 import { AddQuotationComponent } from 'src/app/components/add-quotation/add-quotation.component';
 import { DetailQuotationComponent } from 'src/app/components/detail-quotation/detail-quotation.component';
 import { IDataCategories, IDataInventory, IDataQuotation, IQuotation, IRootQuotation } from 'src/app/interfaces';
+import { IDataProject } from 'src/app/interfaces/project';
 
 @Component({
   selector: 'app-quotation',
@@ -182,6 +183,8 @@ export class QuotationComponent implements OnInit {
     },
   ]
 
+  projectsData: IDataProject[] = [];
+
   constructor(
     private drawerService: NzDrawerService,
     private modalService: NzModalService,
@@ -291,6 +294,10 @@ export class QuotationComponent implements OnInit {
         this.total = res.data.length;
         this.listOfData = res.data
         this.listOfDisplayData = [...this.listOfData]
+        
+        this.apiSvc.getAllProject().subscribe((res) => {
+          this.projectsData = res.data
+        })
       })
     );
   }
@@ -304,7 +311,8 @@ export class QuotationComponent implements OnInit {
       nzData: {
         inventoryList: this.inventoryList,
         productCategory: this.productCategory,
-        modal_type: 'add'
+        modal_type: 'add',
+        projectData: this.projectsData
       }
     });
   }

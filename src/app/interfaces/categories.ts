@@ -7,6 +7,7 @@ export interface IDataCategories{
     id: number;
     name: string;
     description: string;
+    level?: string;
 }
 
 interface IMeta{
