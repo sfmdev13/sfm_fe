@@ -86,25 +86,10 @@ export class ProjectsComponent implements OnInit {
   clusterData: any[] = [];
   segmentationData: any[] = [];
   materialData: any[] = [];
+  sectorData: any[] = [];
+  sectorDataLength = 0;
 
-  columns: any;
-
-  columnUnfilter: string[] = [
-    'ID', 
-    'Project Name', 
-    'Project Location', 
-    'Issue Date', 
-    'Owner',
-    'Architect',
-    'Contractor',
-    'MEP Consultant',
-    'Competitor',
-    'Sales',
-    'DCE',
-    'Year',
-    'Month',
-    'Value'
-  ]
+  columns: any[] = [];
 
   listBoard: any[] = [];
 
@@ -153,9 +138,10 @@ export class ProjectsComponent implements OnInit {
     forkJoin({
       cluster: this.apiSvc.getCustomerFirm(),
       segmentation: this.apiSvc.getSegmentation(),
-      material: this.apiSvc.getMaterial()
+      material: this.apiSvc.getMaterial(),
+      sector: this.apiSvc.getCustomerSector()
     }).pipe(
-      tap(({ cluster, segmentation, material }) => {
+      tap(({ cluster, segmentation, material, sector }) => {
         this.clusterData = cluster.data.map(v => ({
           text: v.name,
           value: v.id
@@ -170,6 +156,13 @@ export class ProjectsComponent implements OnInit {
           text: v.name,
           value: v.id
         }))
+
+        this.sectorData = sector.data.map(v => ({
+          text: v.name,
+          value: v.id
+        }))
+
+        this.sectorDataLength = this.sectorData.length;
     
         // Call addColumnTable() after both API calls are complete
         this.addColumnTable();
@@ -262,7 +255,11 @@ export class ProjectsComponent implements OnInit {
         listOfFilter: [],
         filterFn: null,
         searchVisible: false,
-        searchValue: ''
+        searchValue: '',
+        showSort: true,
+        showFilter: false,
+        showSearch: true,
+        unique: ''
       },
       { 
         name: 'Project Name', 
@@ -274,7 +271,11 @@ export class ProjectsComponent implements OnInit {
         listOfFilter: [],
         filterFn: null,
         searchVisible: false,
-        searchValue: ''
+        searchValue: '',
+        showFilter: false,
+        showSort: true,
+        showSearch: true,
+        unique: ''
       },
       {
         name: 'Project Category', 
@@ -291,7 +292,11 @@ export class ProjectsComponent implements OnInit {
         listOfFilter: this.categoryList,
         filterFn: (list: string[], item: IDataProject) => list.some(v => item.project_category.indexOf(v) !== -1),
         searchVisible: false,
-        searchValue: ''   
+        searchValue: '',
+        showSort: true,
+        showFilter: true,
+        showSearch: false,
+        unique: ''
       },
       { 
         name: 'Project Location', 
@@ -303,7 +308,11 @@ export class ProjectsComponent implements OnInit {
         listOfFilter: [],
         filterFn: null,
         searchVisible: false,
-        searchValue: ''
+        searchValue: '',
+        showSort: true,
+        showFilter: false,
+        showSearch: true,
+        unique: ''
       },
       { 
         name: 'Issue Date', 
@@ -315,7 +324,11 @@ export class ProjectsComponent implements OnInit {
         listOfFilter: [],
         filterFn: null,
         searchVisible: false,
-        searchValue: ''
+        searchValue: '',
+        showSort: true,
+        showFilter: false,
+        showSearch: true,
+        unique: ''
       },
       { 
         name: 'Cluster', 
@@ -327,7 +340,11 @@ export class ProjectsComponent implements OnInit {
         listOfFilter: this.clusterData,
         filterFn: (list: string[], item: IDataProject) => list.some(v => item.cluster.id.toString().indexOf(v.toString()) !== -1),
         searchVisible: false,
-        searchValue: ''        
+        searchValue: '' ,
+        showSort: true,
+        showFilter: true,
+        showSearch: false,
+        unique: ''    
       },
       { 
         name: 'Segmentation', 
@@ -339,7 +356,11 @@ export class ProjectsComponent implements OnInit {
         listOfFilter: this.segmentationData,
         filterFn: (list: number[], item: IDataProject) => list.some(v => item.segmentation.id === v),
         searchVisible: false,
-        searchValue: ''        
+        searchValue: '',
+        showSort: true,
+        showFilter: true,
+        showSearch: false,
+        unique: ''      
       },
       { 
         name: 'Remarks', 
@@ -360,55 +381,11 @@ export class ProjectsComponent implements OnInit {
         ],
         filterFn: (list: string[], item: IDataProject) => list.some(v => item.remarks.indexOf(v) !== -1),
         searchVisible: false,
-        searchValue: ''        
-      },
-      { 
-        name: 'Owner', 
-        visible: true,
-        sortOrder: null,
-        sortDirections: [null],
-        sortFn: (a: IDataProject, b: IDataProject) => 0,
-        filterMultiple: true,
-        listOfFilter: [],
-        filterFn: null,
-        searchVisible: false,
-        searchValue: ''       
-      },
-      { 
-        name: 'Architect', 
-        visible: true,
-        sortOrder: null,
-        sortDirections: [null],
-        sortFn: (a: IDataProject, b: IDataProject) => 0,
-        filterMultiple: true,
-        listOfFilter: [],
-        filterFn: null,
-        searchVisible: false,
-        searchValue: ''        
-      },
-      { 
-        name: 'Contractor', 
-        visible: true,
-        sortOrder: null,
-        sortDirections: [null],
-        sortFn: (a: IDataProject, b: IDataProject) => 0,
-        filterMultiple: true,
-        listOfFilter: [],
-        filterFn: null,
-        searchVisible: false,
-        searchValue: ''        
-      },
-      { 
-        name: 'MEP Consultant', 
-        visible: true,
-        sortOrder: null,
-        sortDirections: [null],
-        sortFn: (a: IDataProject, b: IDataProject) => 0,
-        filterMultiple: true,
-        listOfFilter: [],
-        filterFn: null,
-        searchVisible: false,
-        searchValue: ''        
+        searchValue: '',
+        showSort: true,
+        showFilter: true,
+        showSearch: false,
+        unique: ''     
       },
       { 
         name: 'Specification', 
@@ -441,7 +418,11 @@ export class ProjectsComponent implements OnInit {
           return list.some(value => specifications.includes(value));
         },
         searchVisible: false,
-        searchValue: ''        
+        searchValue: '',
+        showSort: true,
+        showFilter: true,
+        showSearch: false,
+        unique: ''  
       },
       { 
         name: 'Material', 
@@ -461,7 +442,11 @@ export class ProjectsComponent implements OnInit {
           return list.length > 1 && list.every(value => materials.includes(value));
         },
         searchVisible: false,
-        searchValue: ''        
+        searchValue: '',
+        showSort: true,
+        showFilter: true,
+        showSearch: false,
+        unique: ''     
       },
       { 
         name: 'Competitor',
@@ -473,7 +458,11 @@ export class ProjectsComponent implements OnInit {
         listOfFilter: [],
         filterFn: null,
         searchVisible: false,
-        searchValue: ''       
+        searchValue: '',
+        showSort: true,
+        showFilter: false,
+        showSearch: true,
+        unique: ''        
       },
       { 
         name: 'Sales', 
@@ -485,7 +474,11 @@ export class ProjectsComponent implements OnInit {
         listOfFilter: [],
         filterFn: null,
         searchVisible: false,
-        searchValue: ''
+        searchValue: '',
+        showSort: false,
+        showFilter: false,
+        showSearch: true,
+        unique: '' 
       },
       { 
         name: 'DCE', 
@@ -497,7 +490,11 @@ export class ProjectsComponent implements OnInit {
         listOfFilter: [],
         filterFn: null,
         searchVisible: false,
-        searchValue: ''        
+        searchValue: '',
+        showSort: false,
+        showFilter: false,
+        showSearch: true,
+        unique: ''        
       },
       { 
         name: 'Year', 
@@ -509,7 +506,11 @@ export class ProjectsComponent implements OnInit {
         listOfFilter: [],
         filterFn: null,
         searchVisible: false,
-        searchValue: ''        
+        searchValue: '',
+        showSort: true,
+        showFilter: false,
+        showSearch: true,
+        unique: ''        
       },
       { 
         name: 'Month', 
@@ -521,7 +522,11 @@ export class ProjectsComponent implements OnInit {
         listOfFilter: [],
         filterFn: null,
         searchVisible: false,
-        searchValue: ''       
+        searchValue: '',
+        showSort: true,
+        showFilter: false,
+        showSearch: true,
+        unique: ''          
       },
       { 
         name: 'Value', 
@@ -533,9 +538,56 @@ export class ProjectsComponent implements OnInit {
         listOfFilter: [],
         filterFn: null,
         searchVisible: false,
-        searchValue: ''       
+        searchValue: '',
+        showSort: false,
+        showFilter: false,
+        showSearch: true,
+        unique: ''          
       }
     ];
+
+    this.sectorData.forEach((sec, i) => {
+      const newSec = {
+        id: sec.value,
+        name: sec.text,
+        visible: true,
+        sortOrder: null,
+        sortDirections: [null],
+        sortFn: (a: IDataProject, b: IDataProject) => 0,
+        filterMultiple: true,
+        listOfFilter: [],
+        filterFn: null,
+        searchVisible: false,
+        searchValue: '',
+        showSort: false,
+        showFilter: false,
+        showSearch: true,
+        unique: 'sector'
+      }
+
+      this.columns.splice(8+i, 0, newSec);
+    })
+  }
+
+  resetSector(col: any): void {
+    col.searchValue = '';
+    this.searchCust(col)
+  }
+
+
+  searchCust(col: any): void{
+    console.log('masuk')
+    const value = col.searchValue;
+
+    this.sectorData.forEach((sec:any) => {
+
+        this.filteredData = this.data.filter((item: IDataProject) => 
+          item.project_customer.some((cust) => 
+            cust.customer_sector.id === col.id &&
+            cust.customer.name.toLowerCase().includes(value.toLowerCase())
+          )
+        )
+    })
   }
 
   searchColumn(col: any): void {
@@ -575,32 +627,36 @@ export class ProjectsComponent implements OnInit {
 
     if(col.name === 'Owner'){
       this.filteredData = this.data.filter((item: IDataProject) => 
-        item.project_customer.owner.some(cp => 
-          cp.customer.name.toLowerCase().includes(value.toLowerCase())
+        item.project_customer.some((cust) => 
+          cust.customer_sector.name.toLowerCase() === 'owner' &&
+          cust.customer.name.toLowerCase().includes(value.toLowerCase())
         )
       );
     }
 
     if(col.name === 'Architect'){
       this.filteredData = this.data.filter((item: IDataProject) => 
-        item.project_customer.architect.some((architect) =>
-          architect.customer.name.toLowerCase().includes(value.toLowerCase())
+        item.project_customer.some((cust) => 
+          cust.customer_sector.name.toLowerCase() === 'arsitek' &&
+          cust.customer.name.toLowerCase().includes(value.toLowerCase())
         )
       );
     }
 
     if(col.name === 'Contractor'){
       this.filteredData = this.data.filter((item: IDataProject) => 
-        item.project_customer.contractor.some((contractor) => 
-          contractor.customer.name.toLowerCase().includes(value.toLowerCase())
+        item.project_customer.some((cust) => 
+          cust.customer_sector.name.toLowerCase() === 'kontraktor' &&
+          cust.customer.name.toLowerCase().includes(value.toLowerCase())
         )
       );
     }
 
-    if(col.name === 'MEP Consultant'){
+    if(col.name === 'Consultant'){
       this.filteredData = this.data.filter((item: IDataProject) => 
-        item.project_customer.mep_consultant.some((consultant) => 
-          consultant.customer.name.toLowerCase().includes(value.toLowerCase())
+        item.project_customer.some((cust) => 
+          cust.customer_sector.name.toLowerCase() === 'konsultan' &&
+          cust.customer.name.toLowerCase().includes(value.toLowerCase())
         )
       );
     }
@@ -640,6 +696,8 @@ export class ProjectsComponent implements OnInit {
     }
   }
   
+
+
   resetColumn(col: any): void {
     col.searchValue = '';
     this.searchColumn(col)

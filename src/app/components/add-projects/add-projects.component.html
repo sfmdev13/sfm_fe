@@ -377,7 +377,69 @@
                 </tr>
               </thead>
               <tbody>
-                <tr>
+                <ng-container formArrayName="customers">
+                  <ng-container *ngIf="customerSector$ | async as sector">
+                    <ng-container *ngFor="let s of sector.data">
+                      <tr>
+                        <td colspan="3">
+                          <span class="fw-bold">{{ s.name }}</span>
+                        </td>
+                      </tr>
+                      <tr *ngFor="let cust of customersArrForm.controls; let i = index" [formGroupName]="i">
+                        <ng-container *ngIf="cust.get('type')?.value === s.id">
+                          <td>
+                            <ng-container *ngIf="!isLoadingCustomerList; else loadCustomerArr">
+                              <nz-form-control>
+                                <nz-select nzShowSearch nzPlaceHolder="Select Customer" formControlName="customer_id">
+                                  <nz-option
+                                    *ngFor="let cust of customers"
+                                    [nzLabel]="cust.name"
+                                    [nzValue]="cust.id"
+                                  ></nz-option>
+                                </nz-select>
+                              </nz-form-control>
+                            </ng-container>
+                          </td>
+                          <td>
+                            <ng-container *ngIf="cust.get('customer_id')?.value !== ''">
+                              <ng-container *ngIf="cust.get('isLoadingCp')?.value === false; else loadCp">
+                                <nz-form-control>
+                                  <nz-select nzShowSearch nzMode="multiple" nzPlaceHolder="Select CP" formControlName="selected_contact_person">
+                                    <nz-option 
+                                      *ngFor="let cp of getContactPersons(cust).controls; let j = index"  
+                                      nzCustomContent 
+                                      [nzLabel]="cp.get('name')?.value + ' as ' + cp.get('role')?.value + (cp.get('dm')?.value === 1 ? ' (DM)' : '')" 
+                                      [nzValue]="cp.get('id')?.value"
+                                    >
+                                      <span class="fw-bold">{{cp.get('name')?.value}}</span> 
+                                      as 
+                                      <span class="fw-bold">{{cp.get('role')?.value}}</span>
+                                      <span *ngIf="cp.get('dm')?.value === 1" class="fw-bold">(DM)</span>
+                                    </nz-option>
+                                  </nz-select>
+                                </nz-form-control>
+                              </ng-container>
+                              <ng-template #loadCp>
+                                <nz-spin nzSimple nzSize="small"></nz-spin>
+                              </ng-template>
+                            </ng-container>
+                          </td>
+                          <td>
+                            <span (click)="removeCust(i)" nz-icon nzType="delete" nzTheme="twotone" [nzTwotoneColor]="'#ED0000'"></span>
+                          </td>
+                        </ng-container>
+
+                      </tr>
+                      <tr>
+                        <td class="text-center" colspan="3">
+                          <button nz-button nzType="primary" class="w-75" (click)="addCustomer(s.id)">Add {{ s.name }}</button>
+                        </td>
+                      </tr>
+                    </ng-container>
+                  </ng-container>
+                </ng-container>
+
+                <!-- <tr>
                   <td colspan="3">
                     <span class="fw-bold">Owner</span>
                   </td>
@@ -568,7 +630,7 @@
                   <td class="text-center" colspan="3">
                     <button nz-button nzType="primary" class="w-75" (click)="addCustomer('consultant')">Add Consultant</button>
                   </td>
-                </tr>
+                </tr> -->
               </tbody>
             </table>
           </div>
@@ -585,7 +647,7 @@
     nz-button 
     nzType="primary" 
     class="text-capitalize" 
-    [disabled]="!projectForm.valid"
+
     (click)="submitForm()">
       {{ modal_type }} Project
     </button>

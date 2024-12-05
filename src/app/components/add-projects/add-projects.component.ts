@@ -63,11 +63,7 @@ export class AddProjectsComponent implements OnInit {
     year_month: ['', Validators.required],
 
     // customer_id: ['', Validators.required],
-
-    owner: this.fb.array([]),
-    architect: this.fb.array([]),
-    contractor: this.fb.array([]),
-    consultant: this.fb.array([])
+    customers: this.fb.array([])
   })
 
   listOfPic: any[] = [];
@@ -100,6 +96,8 @@ export class AddProjectsComponent implements OnInit {
 
   customers: IDataCustomer[] = [];
 
+  customerSector$!: Observable<ICategories>;
+
   constructor(
     private modal: NzModalRef,
     private fb: UntypedFormBuilder,
@@ -110,6 +108,8 @@ export class AddProjectsComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+
+    this.customerSector$ = this.apiSvc.getCustomerSector();
 
     this.projectForm.get('year_month')?.valueChanges.subscribe((res) => {
       const date = new Date(res);
@@ -249,144 +249,12 @@ export class AddProjectsComponent implements OnInit {
         })
       )
 
-      //update Customer owner
-      this.data.project_customer.owner.forEach((item) => {
-        const newCust = this.fb.group({
-          customer_id: [item.customer.id],
-          type: ['owner'],
-          contact_person: this.fb.array([]),
-          isLoadingCp: [false]
-        })
-
-        this.owners.push(newCust);
-        this.valueChangeCust(newCust);
-
-        const contactPersons = newCust.get('contact_person') as UntypedFormArray;
-
-        contactPersons.clear();
-        newCust.get('isLoadingCp')?.setValue(true);
-        this.apiSvc.getCustomerDetail(item.customer.id).subscribe((res) => {
-          res.data.contactPerson.forEach((cp) => {
-            const newCp = this.fb.group({
-              name: [cp.name],
-              role: [cp.customer_category.name]
-            })
-      
-            contactPersons.push(newCp)
-          }) 
-  
-          newCust.get('isLoadingCp')?.setValue(false);
-        })
-      })
-
-      //update customer architect
-      this.data.project_customer.architect.forEach((item) => {
-        const newCust = this.fb.group({
-          customer_id: [item.customer.id],
-          type: ['architect'],
-          contact_person: this.fb.array([]),
-          isLoadingCp: [false]
-        })
-
-        this.architects.push(newCust);
-        this.valueChangeCust(newCust);
-
-        const contactPersons = newCust.get('contact_person') as UntypedFormArray;
-
-        contactPersons.clear();
-        newCust.get('isLoadingCp')?.setValue(true);
-        this.apiSvc.getCustomerDetail(item.customer.id).subscribe((res) => {
-          res.data.contactPerson.forEach((cp) => {
-            const newCp = this.fb.group({
-              name: [cp.name],
-              role: [cp.customer_category.name]
-            })
-      
-            contactPersons.push(newCp)
-          }) 
-  
-          newCust.get('isLoadingCp')?.setValue(false);
-        })
-      })
-      
-
-      //update customer contractor
-      this.data.project_customer.contractor.forEach((item) => {
-        const newCust = this.fb.group({
-          customer_id: [item.customer.id],
-          type: ['contractor'],
-          contact_person: this.fb.array([]),
-          isLoadingCp: [false]
-        })
-
-        this.architects.push(newCust);
-        this.valueChangeCust(newCust);
-
-        const contactPersons = newCust.get('contact_person') as UntypedFormArray;
-
-        contactPersons.clear();
-        newCust.get('isLoadingCp')?.setValue(true);
-        this.apiSvc.getCustomerDetail(item.customer.id).subscribe((res) => {
-          res.data.contactPerson.forEach((cp) => {
-            const newCp = this.fb.group({
-              name: [cp.name],
-              role: [cp.customer_category.name]
-            })
-      
-            contactPersons.push(newCp)
-          }) 
-  
-          newCust.get('isLoadingCp')?.setValue(false);
-        })
-      })
-
-      this.data.project_customer.mep_consultant.forEach((item) => {
-        const newCust = this.fb.group({
-          customer_id: [item.customer.id],
-          type: ['mep_consultant'],
-          contact_person: this.fb.array([]),
-          isLoadingCp: [false]
-        })
-
-        this.consultants.push(newCust);
-        this.valueChangeCust(newCust);
-
-        const contactPersons = newCust.get('contact_person') as UntypedFormArray;
-
-        contactPersons.clear();
-        newCust.get('isLoadingCp')?.setValue(true);
-        this.apiSvc.getCustomerDetail(item.customer.id).subscribe((res) => {
-          res.data.contactPerson.forEach((cp) => {
-            const newCp = this.fb.group({
-              name: [cp.name],
-              role: [cp.customer_category.name]
-            })
-      
-            contactPersons.push(newCp)
-          }) 
-  
-          newCust.get('isLoadingCp')?.setValue(false);
-        })
-      })
-
     } 
 
   }
 
-  get owners(): UntypedFormArray {
-    return this.projectForm.get('owner') as UntypedFormArray;
-  }
-
-  get architects(): UntypedFormArray {
-    return this.projectForm.get('architect') as UntypedFormArray;
-  }
-
-  get contractors(): UntypedFormArray {
-    return this.projectForm.get('contractor') as UntypedFormArray;
-  }
-
-  get consultants(): UntypedFormArray {
-    return this.projectForm.get('consultant') as UntypedFormArray;
+  get customersArrForm(): UntypedFormArray {
+    return this.projectForm.get('customers') as UntypedFormArray;
   }
 
   getContactPersons(owner: AbstractControl): FormArray {
@@ -404,8 +272,10 @@ export class AddProjectsComponent implements OnInit {
       this.apiSvc.getCustomerDetail(custId).subscribe((res) => {
         res.data.contactPerson.forEach((cp) => {
           const newCp = this.fb.group({
+            id: [cp.id],
             name: [cp.name],
-            role: [cp.customer_category.name]
+            role: [cp.customer_category.name],
+            dm: [cp.is_pic_company]
           })
     
           contactPersons.push(newCp)
@@ -418,75 +288,22 @@ export class AddProjectsComponent implements OnInit {
 
   }
 
-  removeCust(i: number, type: string){
-    if(type === 'owner'){
-      this.owners.removeAt(i);
-    }
-
-    if(type === 'architect'){
-      this.architects.removeAt(i);
-    }
-
-    if(type === 'contractor'){
-      this.contractors.removeAt(i);
-    }
-
-    if(type === 'consultant'){
-      this.consultants.removeAt(i);
-    }
+  removeCust(i: number){
+    this.customersArrForm.removeAt(i);
   }
 
-  addCustomer(type: string){
+  addCustomer(id: number){
 
-    if(type === 'owner'){
+    const newCust = this.fb.group({
+      customer_id: ['', Validators.required],
+      type: [id],
+      contact_person: this.fb.array([]),
+      selected_contact_person: [[], Validators.required],
+      isLoadingCp: [false]
+    })
 
-      const newCust = this.fb.group({
-        customer_id: [],
-        type: ['owner'],
-        contact_person: this.fb.array([]),
-        isLoadingCp: [false]
-      })
-
-      this.owners.push(newCust)
-      this.valueChangeCust(newCust)
-    }
-
-    if(type === 'architect'){
-      const newCust = this.fb.group({
-        customer_id: [],
-        type: ['architect'],
-        contact_person: this.fb.array([]),
-        isLoadingCp: [false]
-      })
-
-      this.architects.push(newCust)
-      this.valueChangeCust(newCust)
-    }
-
-    if(type === 'contractor'){
-      const newCust = this.fb.group({
-        customer_id: [],
-        type: ['contractor'],
-        contact_person: this.fb.array([]),
-        isLoadingCp: [false]
-      })
-
-      this.contractors.push(newCust)
-      this.valueChangeCust(newCust)
-    }
-
-    if(type === 'consultant'){
-
-      const newCust = this.fb.group({
-        customer_id: [],
-        type: ['mep_consultant'],
-        contact_person: this.fb.array([]),
-        isLoadingCp: [false]
-      })
-
-      this.consultants.push(newCust)
-      this.valueChangeCust(newCust)
-    }
+    this.customersArrForm.push(newCust)
+    this.valueChangeCust(newCust)
 
   }
 
@@ -640,47 +457,11 @@ export class AddProjectsComponent implements OnInit {
 
     if(this.projectForm.valid){
 
-      let completeCustomer: any[] = [];
-
-      this.owners.value.forEach((cust: any) => {
-        const custOwner = 
-          {
-            customer_id: cust.customer_id,
-            type: cust.type
-          }
-
-        completeCustomer.push(custOwner)
-      })
-
-      this.architects.value.forEach((cust: any) => {
-        const custOwner = 
-          {
-            customer_id: cust.customer_id,
-            type: cust.type
-          }
-  
-        completeCustomer.push(custOwner)
-      })
-
-      this.contractors.value.forEach((cust: any) => {
-        const custOwner = 
-          {
-            customer_id: cust.customer_id,
-            type: cust.type
-          }
-        
-        completeCustomer.push(custOwner)
-      })
-
-      this.consultants.value.forEach((cust: any) => {
-        const custOwner = 
-          {
-            customer_id: cust.customer_id,
-            type: cust.type
-          }
-        
-        completeCustomer.push(custOwner)
-      })
+      const completeCustomer =  this.projectForm.value.customers.map((item: any) => ({
+        customer_id: item.customer_id,
+        customer_sector_id: item.type.toString(),
+        cp_ids: item.contact_person.map((cp: any) => cp.id)
+      }))
 
       this.picComplete = this.projectForm.get('sales_pic')!.value.map((pic_id: any) => ({
         pic_id: pic_id,

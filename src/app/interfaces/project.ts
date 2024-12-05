@@ -9,12 +9,7 @@ export interface IDataProject {
   project_pid: string
   name: string
   issue_date: string
-  project_customer: {
-    owner: IProjectCustomer[]
-    architect: IProjectCustomer[]
-    contractor: IProjectCustomer[]
-    mep_consultant: IProjectCustomer[]
-  }
+  project_customer: IProjectCustomer[]
   project_category: string
   remarks: string
   address: string
@@ -39,6 +34,12 @@ export interface IDataProject {
 export interface IProjectCustomer{
   id: string;
   project_id: string;
+  customer_sector: {
+    id: string;
+    name: string;
+    description: string;
+    level: string
+  }
   customer: ICustomerProject;
 }
 
