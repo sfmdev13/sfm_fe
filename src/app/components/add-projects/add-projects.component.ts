@@ -255,7 +255,7 @@ export class AddProjectsComponent implements OnInit {
           customer_id: [cust.customer.id, Validators.required],
           type: [cust.customer_sector.id],
           contact_person: this.fb.array([]),
-          selected_contact_person: [cust.customer.contactPerson.map(({id}) => id), Validators.required],
+          selected_contact_person: [cust.selected_contact_persons.map(({id}) => id), Validators.required],
           isLoadingCp: [false]
         })
 
@@ -491,11 +491,11 @@ export class AddProjectsComponent implements OnInit {
 
     if(this.projectForm.valid){
 
-      const completeCustomer =  this.projectForm.value.customers.map((item: any) => ({
+      const completeCustomer =  this.customersArrForm.value.map((item: any) => ({
         customer_id: item.customer_id,
         customer_sector_id: item.type.toString(),
-        cp_ids: item.contact_person.map((cp: any) => cp.id)
-      }))
+        cp_ids: item.selected_contact_person
+      }))  
 
       this.picComplete = this.projectForm.get('sales_pic')!.value.map((pic_id: any) => ({
         pic_id: pic_id,
