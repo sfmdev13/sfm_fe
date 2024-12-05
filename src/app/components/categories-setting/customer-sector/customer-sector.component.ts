@@ -27,7 +27,8 @@ export class CustomerSectorComponent implements OnInit {
   categoryFormEdit = this.fb.group({
     id: [''],
     name: ['', Validators.required],
-    description: ['', Validators.required]
+    description: ['', Validators.required],
+    level: ['', Validators.required]
   })
 
   selectedIdDelete: number = 0;
@@ -41,7 +42,8 @@ export class CustomerSectorComponent implements OnInit {
     this.categoryForm = this.fb.group({
       id: [''],
       name: ['', Validators.required],
-      description: ['', Validators.required]
+      description: ['', Validators.required],
+      level: ['', Validators.required]
     })
    }
 
@@ -88,7 +90,7 @@ export class CustomerSectorComponent implements OnInit {
     this.spinnerSvc.show();
 
     if(this.categoryFormEdit.valid){
-      this.apiSvc.editCustomerSector(this.categoryFormEdit.value.id,this.categoryFormEdit.value.name, this.categoryFormEdit.value.description).subscribe({
+      this.apiSvc.editCustomerSector(this.categoryFormEdit.value).subscribe({
         next: () => {
           this.spinnerSvc.hide();
           this.modalSvc.success({
@@ -123,7 +125,7 @@ export class CustomerSectorComponent implements OnInit {
     this.spinnerSvc.show();
 
     if(this.categoryForm.valid){
-      this.apiSvc.createCustomerSector(this.categoryForm.value.name, this.categoryForm.value.description).subscribe({
+      this.apiSvc.createCustomerSector(this.categoryForm.value).subscribe({
         next: () => {
           this.spinnerSvc.hide();
           this.modalSvc.success({
