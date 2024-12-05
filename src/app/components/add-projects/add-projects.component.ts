@@ -255,7 +255,7 @@ export class AddProjectsComponent implements OnInit {
           customer_id: [cust.customer.id, Validators.required],
           type: [cust.customer_sector.id],
           contact_person: this.fb.array([]),
-          selected_contact_person: [cust.customer.contactPerson.map(({id}) => id), Validators.required],
+          selected_contact_person: [cust.selected_contact_persons.map(({id}) => id), Validators.required],
           isLoadingCp: [false]
         })
 

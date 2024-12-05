@@ -41,6 +41,7 @@ export interface IProjectCustomer{
     level: string
   }
   customer: ICustomerProject;
+  selected_contact_persons: IContactPerson[];
 }
 
 export interface ICustomerProject {
