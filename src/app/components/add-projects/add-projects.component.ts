@@ -249,6 +249,41 @@ export class AddProjectsComponent implements OnInit {
         })
       )
 
+      //update customer
+      this.data.project_customer.forEach((cust) => {
+        const newCust = this.fb.group({
+          customer_id: [cust.customer.id, Validators.required],
+          type: [cust.customer_sector.id],
+          contact_person: this.fb.array([]),
+          selected_contact_person: [cust.customer.contactPerson.map(({id}) => id), Validators.required],
+          isLoadingCp: [false]
+        })
+
+        const contactPersons = newCust.get('contact_person') as UntypedFormArray;
+
+        contactPersons.clear();
+        newCust.get('isLoadingCp')?.setValue(true);
+        this.apiSvc.getCustomerDetail(cust.customer.id).subscribe((res) => {
+          res.data.contactPerson.forEach((cp) => {
+            const newCp = this.fb.group({
+              id: [cp.id],
+              name: [cp.name],
+              role: [cp.customer_category.name],
+              dm: [cp.is_pic_company]
+            })
+      
+            contactPersons.push(newCp)
+          }) 
+  
+          newCust.get('isLoadingCp')?.setValue(false);
+        })
+
+        this.customersArrForm.push(newCust)
+        this.valueChangeCust(newCust)
+
+
+      })
+
     } 
 
   }
@@ -264,7 +299,6 @@ export class AddProjectsComponent implements OnInit {
   valueChangeCust(control: UntypedFormGroup){
 
     control.get('customer_id')?.valueChanges.subscribe((custId) => {
-
       const contactPersons = control.get('contact_person') as UntypedFormArray;
 
       contactPersons.clear();
