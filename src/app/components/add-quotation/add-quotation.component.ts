@@ -688,17 +688,44 @@ export class AddQuotationComponent implements OnInit {
 
     if(this.quotationForm.valid){
 
+      const hasFalseExist = this.items.value.some((item: any) => item.exist === false);
+      if(hasFalseExist){
+        this.modalSvc.error({
+          nzTitle: 'Error',
+          nzContent: `Project Item need to be registered`,
+          nzOkText: 'Ok',
+          nzCentered: true
+        });
+
+        this.spinnerSvc.hide();
+
+        return;
+      }
+      
+      const inventoryComplete = this.items.value.map((item: any) => ({
+        inventory_id: item.part_number,
+        qty: item.qty,
+        dn_1: item.dn1,
+        dn_2: item.dn2
+      }))
+
+      if(inventoryComplete.length === 0) {
+        this.modalSvc.error({
+          nzTitle: 'Error',
+          nzContent: `Project Item need to be fill`,
+          nzOkText: 'Ok',
+          nzCentered: true
+        });
+      
+        this.spinnerSvc.hide();
+
+        return;
+      }
+
       if(this.modal_type === 'add'){
         const stackComplete = this.stacks.value.map((stack: any) => ({
           name: stack.name,
           stack_document: stack.stack_file
-        }))
-        
-        const inventoryComplete = this.items.value.map((item: any) => ({
-          inventory_id: item.part_number,
-          qty: item.qty,
-          dn_1: item.dn1,
-          dn_2: item.dn2
         }))
 
         const body = {
@@ -781,13 +808,7 @@ export class AddQuotationComponent implements OnInit {
           stack_new: stack.stack_new,
           stack_updated: stack.stack_updated
         }))
-        
-        const inventoryComplete = this.items.value.map((item: any) => ({
-          inventory_id: item.part_number,
-          qty: item.qty,
-          dn_1: item.dn1,
-          dn_2: item.dn2
-        }))
+      
 
         const body = {
           id: this.quotationForm.get('id')?.value,

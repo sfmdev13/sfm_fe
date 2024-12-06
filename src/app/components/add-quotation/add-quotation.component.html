@@ -356,7 +356,7 @@
                                                     Rp. {{ item.get('total_price')?.value | number:'1.0-0' }}
                                                 </td>
                                                 <td>
-                                                    % {{ item.get('gross_margin')?.value }}
+                                                    {{ item.get('gross_margin')?.value }} %
                                                 </td>
                                                 <td>
                                                     <span (click)="removeItem(item)" nz-icon nzType="delete" nzTheme="twotone" [nzTwotoneColor]="'#ED0000'"></span>
@@ -375,7 +375,7 @@
                         </table>
                         
                         <nz-divider></nz-divider>
-                        <div class="my-4 d-flex gap-2 w-100">
+                        <div class="my-4 d-flex gap-2 w-100 justify-content-end">
                             <span class="fw-bold">Total Grand Cost:</span>
                             <span class="fw-bold"> Rp.  {{ totalGrandCost | number:'1.0-0' }}</span>
                         </div>

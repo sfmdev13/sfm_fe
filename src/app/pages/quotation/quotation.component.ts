@@ -358,7 +358,8 @@ export class QuotationComponent implements OnInit {
         inventoryList: this.inventoryList,
         productCategory: this.productCategory,
         dataQuotation: data,
-        modal_type
+        modal_type,
+        projectData: this.projectsData
       }
     });
   }
