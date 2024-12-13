@@ -368,9 +368,11 @@ export class ApiService {
       Authorization: `Bearer ${token}`,
     })
 
-    const url = `${this.apiUrl}/create/loyal-customer?name=${name}&description=${description}`
+    let body = { name, description }
 
-    return this.http.post<any>(url, {} , { headers })
+    const url = `${this.apiUrl}/create/loyal-customer`
+
+    return this.http.post<any>(url, body , { headers })
   }
 
   editLoyalCustomer(id: string, name: string, description: string): Observable<any>{
@@ -379,9 +381,11 @@ export class ApiService {
       Authorization: `Bearer ${token}`,
     })
 
-    const url = `${this.apiUrl}/edit/loyal-customer?id=${id}&name=${name}&description=${description}`
+    let body = { id, name, description }
 
-    return this.http.post<any>(url, {} , { headers })
+    const url = `${this.apiUrl}/edit/loyal-customer`
+
+    return this.http.post<any>(url, body , { headers })
   }
 
   deleteLoyalCustomer(id: number): Observable<any>{
@@ -456,9 +460,11 @@ export class ApiService {
       Authorization: `Bearer ${token}`,
     })
 
-    const url = `${this.apiUrl}/create/customer-firm?name=${name}&description=${description}`
+    let body = { name, description }
 
-    return this.http.post<any>(url, {} , { headers })
+    const url = `${this.apiUrl}/create/customer-firm`
+
+    return this.http.post<any>(url, body , { headers })
   }
 
   editCustomerFirm(id: string, name: string, description: string): Observable<any>{
@@ -467,9 +473,11 @@ export class ApiService {
       Authorization: `Bearer ${token}`,
     })
 
-    const url = `${this.apiUrl}/edit/customer-firm?id=${id}&name=${name}&description=${description}`
+    let body = { id, name, description }
 
-    return this.http.post<any>(url, {} , { headers })
+    const url = `${this.apiUrl}/edit/customer-firm`
+
+    return this.http.post<any>(url, body , { headers })
   }
 
   deleteCustomerFirm(id: number): Observable<any>{
@@ -499,9 +507,11 @@ export class ApiService {
       Authorization: `Bearer ${token}`,
     })
 
-    const url = `${this.apiUrl}/create/supplier-product?name=${name}&description=${description}`
+    let body = { name, description }
 
-    return this.http.post<any>(url, {} , { headers })
+    const url = `${this.apiUrl}/create/supplier-product`
+
+    return this.http.post<any>(url, body , { headers })
   }
 
   editSupplierProduct(id: string, name: string, description: string): Observable<any>{
@@ -510,9 +520,11 @@ export class ApiService {
       Authorization: `Bearer ${token}`,
     })
 
-    const url = `${this.apiUrl}/edit/supplier-product?id=${id}&name=${name}&description=${description}`
+    let body = { id, name, description }
 
-    return this.http.post<any>(url, {} , { headers })
+    const url = `${this.apiUrl}/edit/supplier-product`
+
+    return this.http.post<any>(url, body , { headers })
   }
 
   deleteSupplierProduct(id: number): Observable<any>{
@@ -542,9 +554,11 @@ export class ApiService {
       Authorization: `Bearer ${token}`,
     })
 
-    const url = `${this.apiUrl}/create/supplier-source?name=${name}&description=${description}`
+    let body = { name, description }
 
-    return this.http.post<any>(url, {} , { headers })
+    const url = `${this.apiUrl}/create/supplier-source`
+
+    return this.http.post<any>(url, body , { headers })
   }
 
   editSupplierSource(id: string, name: string, description: string): Observable<any>{
@@ -553,9 +567,11 @@ export class ApiService {
       Authorization: `Bearer ${token}`,
     })
 
-    const url = `${this.apiUrl}/edit/supplier-source?id=${id}&name=${name}&description=${description}`
+    let body = { id, name, description }
 
-    return this.http.post<any>(url, {} , { headers })
+    const url = `${this.apiUrl}/edit/supplier-source`
+
+    return this.http.post<any>(url, body , { headers })
   }
 
   deleteSupplierSource(id: number): Observable<any>{
@@ -715,9 +731,11 @@ export class ApiService {
       Authorization: `Bearer ${token}`,
     })
 
-    const url = `${this.apiUrl}/create/employee-contract?name=${name}&description=${description}`
+    let body = { name, description }
 
-    return this.http.post<any>(url, {} , { headers })
+    const url = `${this.apiUrl}/create/employee-contract`
+
+    return this.http.post<any>(url, body , { headers })
   }
 
   editEmployeeContract(id: string, name: string, description: string): Observable<any>{
@@ -726,9 +744,11 @@ export class ApiService {
       Authorization: `Bearer ${token}`,
     })
 
-    const url = `${this.apiUrl}/edit/employee-contract?id=${id}&name=${name}&description=${description}`
+    let body = { id, name, description }
 
-    return this.http.post<any>(url, {} , { headers })
+    const url = `${this.apiUrl}/edit/employee-contract`
+
+    return this.http.post<any>(url, body , { headers })
   }
 
   deleteEmployeeContract(id: number): Observable<any>{
@@ -760,9 +780,11 @@ export class ApiService {
       Authorization: `Bearer ${token}`,
     })
 
-    const url = `${this.apiUrl}/create/customer-category?name=${name}&description=${description}`
+    let body = { name, description }
 
-    return this.http.post<any>(url, {} , { headers })
+    const url = `${this.apiUrl}/create/customer-category`
+
+    return this.http.post<any>(url, body , { headers })
   }
 
   editContactType(id: string, name: string, description: string): Observable<any>{
@@ -771,9 +793,11 @@ export class ApiService {
       Authorization: `Bearer ${token}`,
     })
 
-    const url = `${this.apiUrl}/edit/customer-category?id=${id}&name=${name}&description=${description}`
+    let body = { id, name, description }
 
-    return this.http.post<any>(url, {} , { headers })
+    const url = `${this.apiUrl}/edit/customer-category`
+
+    return this.http.post<any>(url, body , { headers })
   }
 
   deleteContactType(id: number): Observable<any>{
@@ -802,9 +826,11 @@ export class ApiService {
       Authorization: `Bearer ${token}`,
     })
 
-    const url = `${this.apiUrl}/create-division?name=${name}&description=${description}`
+    let body = { name, description }
 
-    return this.http.post<any>(url, {} , { headers })
+    const url = `${this.apiUrl}/create-division`
+
+    return this.http.post<any>(url, body , { headers })
   }
 
   editDivision(id: string, name: string, description: string): Observable<any>{
@@ -813,9 +839,11 @@ export class ApiService {
       Authorization: `Bearer ${token}`,
     })
 
-    const url = `${this.apiUrl}/edit-division?id=${id}&name=${name}&description=${description}`
+    let body = { id, name, description }
 
-    return this.http.post<any>(url, {} , { headers })
+    const url = `${this.apiUrl}/edit-division`
+
+    return this.http.post<any>(url, body , { headers })
   }
 
   deleteDivision(id: number): Observable<any>{
@@ -1337,9 +1365,11 @@ export class ApiService {
       Authorization: `Bearer ${token}`,
     })
 
-    const url = `${this.apiUrl}/create/sub-category?name=${name}&description=${description}`
+    let body = { name, description }
 
-    return this.http.post<any>(url, {} , { headers })
+    const url = `${this.apiUrl}/create/sub-category`
+
+    return this.http.post<any>(url, body , { headers })
   }
 
   editSubCategory(id: string, name: string, description: string): Observable<any>{
@@ -1348,9 +1378,11 @@ export class ApiService {
       Authorization: `Bearer ${token}`,
     })
 
-    const url = `${this.apiUrl}/edit/sub-category?id=${id}&name=${name}&description=${description}`
+    let body = { id, name, description }
 
-    return this.http.post<any>(url, {} , { headers })
+    const url = `${this.apiUrl}/edit/sub-category`
+
+    return this.http.post<any>(url, body , { headers })
   }
 
   getManufacture(): Observable<ICategories>{
@@ -1370,9 +1402,11 @@ export class ApiService {
       Authorization: `Bearer ${token}`,
     })
 
-    const url = `${this.apiUrl}/create/manufacture?name=${name}&description=${description}`
+    let body = { name, description }
 
-    return this.http.post<any>(url, {} , { headers })
+    const url = `${this.apiUrl}/create/manufacture`
+
+    return this.http.post<any>(url, body , { headers })
   }
 
   editManufacture(id: string, name: string, description: string): Observable<any>{
@@ -1381,9 +1415,11 @@ export class ApiService {
       Authorization: `Bearer ${token}`,
     })
 
-    const url = `${this.apiUrl}/edit/manufacture?id=${id}&name=${name}&description=${description}`
+    let body = { id, name, description }
 
-    return this.http.post<any>(url, {} , { headers })
+    const url = `${this.apiUrl}/edit/manufacture`
+
+    return this.http.post<any>(url, body , { headers })
   }
 
   deleteUnitReport(id: number): Observable<any>{
@@ -1463,9 +1499,14 @@ export class ApiService {
       Authorization: `Bearer ${token}`,
     })
 
-    const url = `${this.apiUrl}/create-segmentation?name=${name}&description=${description}`
+    let body = {
+      name,
+      description
+    }
 
-    return this.http.post<any>(url, {} , { headers })
+    const url = `${this.apiUrl}/create-segmentation`
+
+    return this.http.post<any>(url, body , { headers })
   }
 
   editSegmentation(id: string, name: string, description: string): Observable<any>{
@@ -1474,9 +1515,11 @@ export class ApiService {
       Authorization: `Bearer ${token}`,
     })
 
-    const url = `${this.apiUrl}/update-segmentation?id=${id}&name=${name}&description=${description}`
+    let body = { id, name, description }
 
-    return this.http.post<any>(url, {} , { headers })
+    const url = `${this.apiUrl}/update-segmentation`
+
+    return this.http.post<any>(url, body , { headers })
   }
 
   getMaterial(): Observable<ICategories>{
@@ -1496,9 +1539,11 @@ export class ApiService {
       Authorization: `Bearer ${token}`,
     })
 
-    const url = `${this.apiUrl}/create-material?name=${name}&description=${description}`
+    let body = { name, description }
 
-    return this.http.post<any>(url, {} , { headers })
+    const url = `${this.apiUrl}/create-material`
+
+    return this.http.post<any>(url, body , { headers })
   }
 
   editMaterial(id: string, name: string, description: string): Observable<any>{
@@ -1507,9 +1552,11 @@ export class ApiService {
       Authorization: `Bearer ${token}`,
     })
 
-    const url = `${this.apiUrl}/update-material?id=${id}&name=${name}&description=${description}`
+    let body = { id, name, description }
 
-    return this.http.post<any>(url, {} , { headers })
+    const url = `${this.apiUrl}/update-material`
+
+    return this.http.post<any>(url, body , { headers })
   }
 
   editProjectCategory(body: any): Observable<any>{

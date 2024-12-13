@@ -10,8 +10,7 @@
 <ng-container *ngIf="segmentation$ | async as s; else loading">
     <nz-table 
         #basicTable 
-        [nzData]="s.data"         
-        [nzShowPagination]="false" 
+        [nzData]="s.data"
         nzBordered
     >
         <thead>
