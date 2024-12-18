@@ -1,7 +1,7 @@
 import { Component, inject, Input, OnInit } from '@angular/core';
 import { UntypedFormGroup, Validators, UntypedFormBuilder, UntypedFormArray, AbstractControl } from '@angular/forms';
 import { NZ_MODAL_DATA, NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
-import { Observable, Subject, tap, debounceTime, distinctUntilChanged } from 'rxjs';
+import { Observable, Subject, tap, debounceTime, distinctUntilChanged, subscribeOn } from 'rxjs';
 import { ApiService } from 'src/app/api.service';
 import { AuthService } from 'src/app/auth.service';
 import { IRootInventory, IRootUnit, ICategories, IDataInventory, IRootUnitReport } from 'src/app/interfaces';
@@ -87,6 +87,16 @@ export class AddInventoriesComponent implements OnInit {
     price_list: [0, Validators.required],
     part_number: ['', Validators.required],
     isEqualMeasurement: [false],
+
+    installation_unit_inch_qty: [0],
+    installation_unit_price: [0, Validators.required],
+    installation_unit_price_type: ['price'],
+    installation_price_per_unit: [0],
+    installation_price_factor: [0, Validators.required],
+    installation_selling_price: [0],
+    installation_gross_margin: [0],
+
+
     inventory_items: this.fb.array([])
   })
 
@@ -118,6 +128,19 @@ export class AddInventoriesComponent implements OnInit {
    }
 
   ngOnInit(): void {
+
+    this.inventoryForm.get('installation_unit_price')?.valueChanges.subscribe((res) => {
+      this.changeInstallationValue();
+    })
+
+    this.inventoryForm.get('installation_unit_price_type')?.valueChanges.subscribe((res) => {
+      this.inventoryForm.get('installation_unit_price')?.setValue(0, { emitEvent: false })
+      this.changeInstallationValue();
+    })
+
+    this.inventoryForm.get('installation_price_factor')?.valueChanges.subscribe((res) => {
+      this.changeInstallationValue();
+    })
 
     this.inventoryForm.get('isEqualMeasurement')?.valueChanges.subscribe((res) => {
       if(res === true){
@@ -196,7 +219,7 @@ export class AddInventoriesComponent implements OnInit {
         price_list: parseFloat(this.dataDetail.price_list),
         part_number: this.dataDetail.code,
         isEqualMeasurement: this.dataDetail.unit_report === null ? true : false,
-        attachment: this.modal_type === 'edit' ?  newUpdateFileList : ''
+        attachment: this.modal_type === 'edit' ?  newUpdateFileList : '',
       })
 
       this.getFormattedLabel(this.dataDetail.unit.measurement, this.dataDetail.unit.unit);
@@ -205,23 +228,59 @@ export class AddInventoriesComponent implements OnInit {
         const updateInvent = this.fb.group({
           id: [item.id],
           supplier_id: [item.supplier.id],
-          discount_1: [parseInt(item.discount_1)],
+          discount_1: [parseFloat(item.discount_1)],
           discount_type_1: [item.discount_type_1],
-          discount_2: [parseInt(item.discount_2)],
+          discount_2: [parseFloat(item.discount_2)],
           discount_type_2: [item.discount_type_2],
-          price_factor: [parseInt(item.price_factor)],
-          total_1: [{value: parseInt(item.product_cost_1), disabled: true}],
-          total_2: [{value: parseInt(item.product_cost_2), disabled: true}],
-          selling_price: [parseInt(item.selling_price)],
-          qty: [parseInt(item.qty)],
-          gross_margin: [parseInt(item.gross_margin)],
+          price_factor: [parseFloat(item.price_factor)],
+          total_1: [{value: parseFloat(item.product_cost_1), disabled: true}],
+          total_2: [{value: parseFloat(item.product_cost_2), disabled: true}],
+          selling_price: [parseFloat(item.selling_price)],
+          qty: [parseFloat(item.qty)],
+          gross_margin: [parseFloat(item.gross_margin)],
           is_default: [item.is_default === 1 ? true : false]
         })
 
         this.inventoryItem.push(updateInvent)
         this.inventoryChangeHandler(updateInvent);
       })
+
+      this.inventoryForm.patchValue({
+        installation_unit_inch_qty: parseFloat(this.dataDetail.inventory_installation.unit_inch_qty),
+        installation_unit_price_type: this.dataDetail.inventory_installation.price_type,
+        installation_unit_price: parseFloat(this.dataDetail.inventory_installation.price),
+        installation_price_per_unit: parseFloat(this.dataDetail.inventory_installation.price_per_unit),
+        installation_price_factor: parseFloat(this.dataDetail.inventory_installation.price_factor),
+        installation_selling_price: parseFloat(this.dataDetail.inventory_installation.selling_price),
+        installation_gross_margin: parseFloat(this.dataDetail.inventory_installation.gross_margin),
+    
+      })
     }
+  }
+
+  changeInstallationValue(){
+    const sellingPrice = this.inventoryItem.getRawValue().filter((item: any) => item.is_default === true)[0].selling_price;
+    const unitInchQty = this.inventoryForm.get('installation_unit_inch_qty')?.value;
+    const unitPrice = this.inventoryForm.get('installation_unit_price')?.value;
+    const unitPriceType = this.inventoryForm.get('installation_unit_price_type')?.value;
+    const priceFactor = this.inventoryForm.get('installation_price_factor')?.value;
+    let pricePerUnit = 0;
+
+
+    if(unitPriceType === 'price'){
+      pricePerUnit = parseFloat(unitInchQty) * parseFloat(unitPrice);
+      this.inventoryForm.get('installation_price_per_unit')?.setValue(pricePerUnit, { emitEvent: false });
+    } else {
+      pricePerUnit = parseFloat(sellingPrice) * parseFloat(unitPrice);
+      this.inventoryForm.get('installation_price_per_unit')?.setValue(pricePerUnit, { emitEvent: false });
+    }
+
+    const installationSellingPrice = parseFloat(priceFactor) * pricePerUnit;
+    const installationGrossMargin = (pricePerUnit / installationSellingPrice) * 100;
+
+    this.inventoryForm.get('installation_selling_price')?.setValue(installationSellingPrice, { emitEvent: false });
+    this.inventoryForm.get('installation_gross_margin')?.setValue(installationGrossMargin, { emitEvent: false })
+  
   }
 
   checkButton(i: number){
@@ -257,30 +316,30 @@ export class AddInventoriesComponent implements OnInit {
 
 
   inventoryChangeHandler(control: UntypedFormGroup) {
+
     // Calculate all dependent values
     const calculateValues = () => {
         const priceList = parseFloat(this.inventoryForm.get('price_list')?.value || '0');
         // const tax = parseInt(this.inventoryForm.get('tax')?.value || '0');
 
-        console.log(priceList)
         // Calculate total_1 based on discount_1 and price_list
         control.patchValue({ total_1: priceList }, { emitEvent: false });
         control.patchValue({ total_2: priceList }, { emitEvent: false });
 
-        const discount1 = parseInt(control.get('discount_1')?.value || '0');
+        const discount1 = parseFloat(control.get('discount_1')?.value || '0');
         const discountType1 = control.get('discount_type_1')?.value;
         const total1 = calculateTotal(priceList, discountType1, discount1);
-        console.log(total1)
+
         control.patchValue({ total_1: total1 }, { emitEvent: false });
 
         // Calculate total_2 based on discount_2 and total_1
-        const discount2 = parseInt(control.get('discount_2')?.value || '0');
+        const discount2 = parseFloat(control.get('discount_2')?.value || '0');
         const discountType2 = control.get('discount_type_2')?.value;
         const total2 = calculateTotal(total1, discountType2, discount2);
         control.patchValue({ total_2: total2 }, { emitEvent: false });
 
         // Calculate selling price based on total_2 and price_factor
-        const priceFactor = parseInt(control.get('price_factor')?.value || '1');
+        const priceFactor = parseFloat(control.get('price_factor')?.value || '1');
         const baseSellingPrice = total2 * priceFactor;
         // const sellingPrice = baseSellingPrice + (baseSellingPrice * tax / 100);
         const sellingPrice = baseSellingPrice
@@ -288,7 +347,9 @@ export class AddInventoriesComponent implements OnInit {
         const grossMargin = ((baseSellingPrice - total2) / baseSellingPrice) * 100 || 0;
 
         control.patchValue({ selling_price: sellingPrice }, { emitEvent: false });
-        control.patchValue({ gross_margin: grossMargin }, { emitEvent: false })
+        control.patchValue({ gross_margin: grossMargin }, { emitEvent: false });
+
+        this.changeInstallationValue();
     };
 
     // Helper function to calculate total based on discount type and value
@@ -317,7 +378,7 @@ export class AddInventoriesComponent implements OnInit {
     control.get('discount_1')?.valueChanges.subscribe(() => calculateValues());
     control.get('discount_2')?.valueChanges.subscribe(() => calculateValues());
     control.get('price_factor')?.valueChanges.subscribe(() => calculateValues());
-
+    control.get('is_default')?.valueChanges.subscribe(() => calculateValues());
     
   }
 
@@ -728,6 +789,10 @@ export class AddInventoriesComponent implements OnInit {
         inventory_source: this.inventoryForm.get('source')?.value,
         hs_code: this.inventoryForm.get('hs_code')?.value,
         inventory_items_new: inventoryItemComplete,
+        i_unit_inch_qty: this.inventoryForm.get('installation_unit_inch_qty')?.value?.toString() || '0',
+        i_price: this.inventoryForm.get('installation_unit_price')?.value?.toString() || '0',
+        i_price_type: this.inventoryForm.get('installation_unit_price_type')?.value,
+        i_price_factor: this.inventoryForm.get('installation_price_factor')?.value?.toString() || '0'
       }
 
       const formData = new FormData();
@@ -785,17 +850,14 @@ export class AddInventoriesComponent implements OnInit {
   handleSubmitAdd(): void{
 
     this.spinnerSvc.show();
-    console.log('masuk')
 
     if(this.inventoryForm.valid){
       
       const equal = this.inventoryForm.get('isEqualMeasurement')?.value;
 
       const attachment = this.inventoryForm.get('attachment')?.value
-      console.log(attachment)
+
       const file = this.dataURLtoFile(attachment.url, `${attachment.uid}.png`);
-      console.log(attachment)
-      console.log(file);
 
       const inventoryItemComplete = this.inventoryItem.value.map((item: any) => ({
         supplier_id: item.supplier_id,
@@ -822,6 +884,10 @@ export class AddInventoriesComponent implements OnInit {
         inventory_source: this.inventoryForm.get('source')?.value,
         hs_code: this.inventoryForm.get('hs_code')?.value,
         inventory_items: inventoryItemComplete,
+        i_unit_inch_qty: this.inventoryForm.get('installation_unit_inch_qty')?.value?.toString() || '0',
+        i_price: this.inventoryForm.get('installation_unit_price')?.value?.toString() || '0',
+        i_price_type: this.inventoryForm.get('installation_unit_price_type')?.value,
+        i_price_factor: this.inventoryForm.get('installation_price_factor')?.value?.toString() || '0'
       }
 
       const formData = new FormData();

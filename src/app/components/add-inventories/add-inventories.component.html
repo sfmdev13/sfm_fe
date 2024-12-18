@@ -389,6 +389,71 @@
                     </table>
                 </div>
             </nz-tab>
+            <nz-tab nzTitle="Installation">
+                <div class="table-responsive">
+                    <table class="table table-striped table-order table-supplier">
+                        <thead style="position: unset;" >
+                            <tr>
+                                <th scope="col">Inch</th>
+                                <th scope="col">Cost m'</th>
+                                <th scope="col">Cost m'/inch</th>
+                                <th scope="col">Price Factor</th>
+                                <th scope="col">Selling Price</th>
+                                <th scope="col">Gross Margin</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <ng-container *ngIf="inventoryForm.get('installation_unit_price_type')?.value === 'price'; else emptyUnitPrice">
+                                        <nz-input-number-group class="w-100">
+                                            <nz-input-number class="w-100" [nzMin]="0" formControlName="installation_unit_inch_qty"></nz-input-number>
+                                        </nz-input-number-group>
+                                    </ng-container>
+                                    <ng-template #emptyUnitPrice>
+                                        -
+                                    </ng-template>
+                                </td>
+                                <td>
+                                    <div class="d-flex flex-column">
+                                        <ng-container *ngIf="inventoryForm.get('installation_unit_price_type')?.value === 'percent';else price">
+                                            <nz-input-number-group nzAddOnAfter="%">
+                                                <nz-input-number formControlName="installation_unit_price"></nz-input-number>
+                                            </nz-input-number-group>
+                                        </ng-container>
+                                        <ng-template #price>
+                                            <nz-input-number-group nzAddOnBefore="Rp. ">
+                                                <nz-input-number     
+                                                formControlName="installation_unit_price"
+                                                [nzFormatter]="formatter"
+                                                ></nz-input-number>
+                                            </nz-input-number-group>
+                                        </ng-template>
+                                        <nz-radio-group formControlName="installation_unit_price_type" class="mt-2">
+                                            <label nz-radio nzValue="percent">Percent</label>
+                                            <label nz-radio nzValue="price">Price</label>
+                                        </nz-radio-group>
+                                    </div>
+                                </td>
+                                <td>
+                                    Rp. {{ inventoryForm.get('installation_price_per_unit')?.value | number:'1.0-0' }}
+                                </td>
+                                <td>
+                                    <nz-input-number-group class="w-100">
+                                        <nz-input-number class="w-100" [nzMin]="0" formControlName="installation_price_factor"></nz-input-number>
+                                    </nz-input-number-group>
+                                </td>
+                                <td>
+                                    Rp. {{ inventoryForm.get('installation_selling_price')?.value | number:'1.0-0' }}
+                                </td>
+                                <td>
+                                    {{ inventoryForm.get('installation_gross_margin')?.value }} %
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </nz-tab>
             <nz-tab nzTitle="Picture">
                 <div class="col-md-6">
                     <nz-form-item>

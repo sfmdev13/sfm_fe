@@ -25,12 +25,25 @@ export interface IDataInventory {
   default_selling_price: string;
   default_product_cost_2: string;
   default_gross_margin: string;
+  inventory_installation: InventoryInstallation;
   inventory_items: InventoryItem[];
   product_category: {
     id: number;
     name: string;
     description: string;
   }
+}
+
+interface InventoryInstallation{
+  id: string
+  inventory_id: string
+  unit_inch_qty: string
+  price: string
+  price_type: string
+  price_per_unit: string
+  price_factor: string
+  selling_price: string
+  gross_margin: string
 }
 
 interface ISubCategory{

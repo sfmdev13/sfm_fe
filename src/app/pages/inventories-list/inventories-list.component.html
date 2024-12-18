@@ -237,6 +237,7 @@
     <div class="d-flex flex-column gap-2">  
 
       <div class="mt-3">
+        <p class="m-0 p-0 fw-semibold">Product Picture</p>
         <a [href]="dataDetail.attachment.file_url" target="_blank" rel="noopener noreferrer">
             <nz-avatar [nzSize]="100" [nzSrc]="dataDetail.attachment.file_url" class="mb-3"></nz-avatar>
         </a>
@@ -260,6 +261,10 @@
             <div class="col-md-4">
                 <p class="m-0 p-0 fw-semibold">Inventory Code</p>
                 <p class="fw-light text-capitalize">{{ dataDetail.code }}</p>
+            </div>
+            <div class="col-md-4">
+              <p class="m-0 p-0 fw-semibold">Alias</p>
+              <p class="fw-light text-capitalize">{{ dataDetail.alias }}</p>
             </div>
             <div class="col-md-4">
                 <p class="m-0 p-0 fw-semibold">Unit of Measurement</p>
@@ -347,6 +352,41 @@
 
             </div>
           </ng-container>
+        </nz-tab>
+        <nz-tab nzTitle="Installation">
+          <div class="row">
+            <div class="col-md-4">
+              <p class="m-0 p-0 fw-semibold">Inch</p>
+              <p class="fw-light">
+                {{ 
+                  dataDetail.inventory_installation.price_type === 'percent' 
+                  ? '-'
+                  : dataDetail.inventory_installation.unit_inch_qty
+                }}
+              </p>
+            </div>
+            <div class="col-md-4">
+              <p class="m-0 p-0 fw-semibold">Cost M'</p>
+              <ng-container *ngIf="dataDetail.inventory_installation.price_type === 'percent'; else iPriceType">
+                <p class="fw-light">{{ dataDetail.inventory_installation.price }} %</p>
+              </ng-container>
+              <ng-template #iPriceType>
+                <p class="fw-light">{{ dataDetail.inventory_installation.price| currency:'Rp. ':'symbol':'1.0-0' }}</p>                
+              </ng-template>
+            </div>
+            <div class="col-md-4">
+              <p class="m-0 p-0 fw-semibold">Cost M'/inch</p>
+              <p class="fw-light">{{ dataDetail.inventory_installation.price_per_unit | currency: 'Rp. ':'symbol': '1.0-0' }}</p>
+            </div>
+            <div class="col-md-4">
+              <p class="m-0 p-0 fw-semibold">Selling Price</p>
+              <p class="fw-light">{{ dataDetail.inventory_installation.selling_price | currency: 'Rp. ':'symbol': '1.0-0' }}</p>
+            </div>
+            <div class="col-md-4">
+              <p class="m-0 p-0 fw-semibold">Gross Margin</p>
+              <p class="fw-light">{{ dataDetail.inventory_installation.gross_margin }} %</p>
+            </div>
+          </div>
         </nz-tab>
       </nz-tabset>
 
