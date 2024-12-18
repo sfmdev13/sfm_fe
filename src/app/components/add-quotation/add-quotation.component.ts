@@ -21,6 +21,7 @@ import { NzDividerModule } from 'ng-zorro-antd/divider';
 import { SpinnerService } from 'src/app/spinner.service';
 import { NzModalModule, NzModalService } from 'ng-zorro-antd/modal';
 import { NzCheckboxModule } from 'ng-zorro-antd/checkbox';
+import { DetailStackComponent } from './detail-stack/detail-stack.component';
 
 @Component({
   selector: 'app-add-quotation',
@@ -271,7 +272,7 @@ export class AddQuotationComponent implements OnInit {
           stack_file: [updateStackFile, Validators.required],
           stack_new: [false],
           stack_updated: [false],
-          stack_attachmentDeleteIds: [[]]
+          stack_attachmentDeleteIds: [[]],
         })
 
         this.stacks.push(updateStack);
@@ -322,6 +323,21 @@ export class AddQuotationComponent implements OnInit {
     })
 
 
+  }
+
+  openStackDetail(i: number){
+    const stackDetail = this.stacks.at(i).value;
+
+    this.modalSvc.create({
+      nzTitle: 'Detail Stacks',
+      nzContent: DetailStackComponent,
+      nzCentered: true,
+      nzData: {
+        stackDetail,
+        inventoryList: this.inventoryList
+      },
+      nzWidth: '100vw'
+    })
   }
 
   calculateGrandTotalPrice() {
@@ -633,7 +649,19 @@ export class AddQuotationComponent implements OnInit {
       stack_file: [[], Validators.required],
       stack_new: [true],
       stack_updated: [false],
-      stack_attachmentDeleteIds: [[]]
+      stack_attachmentDeleteIds: [[]],
+
+      revision_stack: [{value: '', disabled: true}],
+      stack_file_contract: ['', Validators.required],
+      stack_new_contact: [true],
+      stack_updated_contract: [false],
+      stack_attachmentDeleteIds_contract: [[]],
+
+      revision_bom_contract: [{value: '', disabled: true}],
+      revision_contract: [{value: '', disabled: true}],
+
+      is_total_quotation: [false],
+      active: [true]
     })
 
     this.stacks.push(newStacks);
@@ -930,6 +958,25 @@ export class AddQuotationComponent implements OnInit {
     };
   }
 
+  beforeUploadStacksContract(index: number) {
+    return (file: NzUploadFile): boolean => {
+
+      const isLt5M = file.size! / 1024 / 1024 < 1
+      if (!isLt5M) {
+        this.nzMsgSvc.error('Image must be smaller than 1MB!');
+        return false;
+      }
+      
+      const stacksForm = this.stacks.at(index);
+
+      const fileList = stacksForm.get('stack_file_contract')?.value || [];
+      stacksForm.get('stack_file_contract')?.setValue([file]);
+      stacksForm.get('stack_updated_contract')?.setValue(true);  
+
+      return false;
+    }
+  }
+
   handleRemoveAttachmentStacks(index: number) {
     return (file: NzUploadFile): boolean => {
       const stacksForm = this.stacks.at(index);
@@ -956,6 +1003,33 @@ export class AddQuotationComponent implements OnInit {
       return true; // Return true to allow removal
     }
 
+  }
+
+  handleRemoveAttachmentStacksContract(index: number) {
+    return (file: NzUploadFile): boolean => {
+      const stacksForm = this.stacks.at(index);
+
+      // Get the current file list
+      const fileList = stacksForm.get('stack_file_contract')?.value || [];
+
+      // For updating deleted attachment
+      const matchingFile = fileList
+        .filter((item: NzUploadFile) => item.uid === file.uid)
+        .map((item: any) => item.uid);
+
+      // Get or initialize 'cp_attachmentDeleteIds'
+      const currentDeleteIds = stacksForm.get('stack_attachmentDeleteIds_contract')?.value || [];
+      const updatedDeleteIds = [...currentDeleteIds, ...matchingFile];
+      stacksForm.get('stack_attachmentDeleteIds_contract')?.setValue(updatedDeleteIds);
+
+      // Filter out the file to be removed
+      const updatedFileList = fileList.filter((item: NzUploadFile) => item.uid !== file.uid);
+      
+      // Update the form control value
+      stacksForm.get('stack_file_contract')?.setValue(updatedFileList);
+  
+      return true; // Return true to allow removal
+    }
   }
 
   get objectKeys() {
