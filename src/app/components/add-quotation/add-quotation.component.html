@@ -76,7 +76,7 @@
                                 </nz-form-control>
                             </nz-form-item>
                         </div>
-                        <div class="col-md-4">
+                        <!-- <div class="col-md-4">
                             <nz-form-item>
                                 <nz-form-label nzRequired class="fw-semibold" nzFor="project_id">Project File</nz-form-label>
                                 <nz-form-control>
@@ -96,7 +96,7 @@
                                     </nz-upload>
                                   </nz-form-control>
                             </nz-form-item>
-                        </div>
+                        </div> -->
                         <div class="col-md-4">
                             <nz-form-item>
                                 <nz-form-label nzRequired nzFor="location" class="fw-semibold">Project Location</nz-form-label>
@@ -322,10 +322,10 @@
                                         </td>
                                     </tr>
                                     <tr>
-                                        <td colspan="5" class="text-center">
+                                        <td [colSpan]="modal_type === 'add' ? '10' : '5'" class="text-center">
                                             <button (click)="addStacks()" nz-button nzType="primary" class="w-75">Add Stack</button>
                                         </td>
-                                        <td colspan="5" class="text-center">
+                                        <td colspan="5" class="text-center" *ngIf="modal_type === 'edit' || modal_type === 'revision'">
                                             <button (click)="addStacks()" nz-button nzType="default" class="w-75">Create Quotation Total</button>
                                         </td>
                                     </tr>
@@ -334,7 +334,7 @@
                         </table>
                     </div>
                 </nz-tab>
-                <nz-tab nzTitle="Quotation">
+                <nz-tab *ngIf="modal_type !== 'add'" nzTitle="Quotation">
                     <div class="row">
                         <div [ngClass]="quotationForm.get('project_type')?.value === 'automatic' ? 'col-6' : 'col-12'">
                             <nz-form-item>
@@ -496,7 +496,7 @@
     <div class="footer">
         <div class="d-flex gap-2 justify-content-end">
             <button nz-button nzType="default" (click)="closeDrawer()">Cancel</button>
-            <button nz-button nzType="primary" (click)="submit()" [disabled]="!quotationForm.valid">
+            <button nz-button nzType="primary" (click)="submit()">
                 <ng-container *ngIf="modal_type === 'add'">Add Quotation</ng-container>
                 <ng-container *ngIf="modal_type === 'edit'">Edit Quotation</ng-container>
                 <ng-container *ngIf="modal_type === 'revision'">Revised Quotation</ng-container>

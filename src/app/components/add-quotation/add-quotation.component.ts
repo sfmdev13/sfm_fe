@@ -65,7 +65,7 @@ export class AddQuotationComponent implements OnInit {
     quotation_no: [{value: '', disabled: true}],
     prepared_by: [{value: this.pic_id, disabled: true }],
     project_type: ['manual', [Validators.required]],
-    project_file: [''],
+    // project_file: [''],
     project_id: ['', [Validators.required]],
     project_name: ['',[Validators.required]],
     location: [{value: '', disabled: true}],
@@ -139,6 +139,7 @@ export class AddQuotationComponent implements OnInit {
 
         res.data.contactPerson.forEach((cp) => {
           const existContactPerson = this.fb.group({
+            id: [{value: cp.id, disabled: true}],
             name: [{value: cp.name, disabled: true}],
             role: [{value: cp.customer_category.name, disabled: true}],
             attention: [false]
@@ -326,15 +327,15 @@ export class AddQuotationComponent implements OnInit {
   }
 
   openStackDetail(i: number){
-    const stackDetail = this.stacks.at(i).value;
-
+    const stackForm = this.stacks.at(i) as FormGroup;
     this.modalSvc.create({
       nzTitle: 'Detail Stacks',
       nzContent: DetailStackComponent,
       nzCentered: true,
       nzData: {
-        stackDetail,
-        inventoryList: this.inventoryList
+        stackForm,
+        inventoryList: this.inventoryList,
+        modal_type: this.modal_type
       },
       nzWidth: '100vw'
     })
@@ -643,17 +644,17 @@ export class AddQuotationComponent implements OnInit {
   };
 
   addStacks(){
+
     const newStacks = this.fb.group({
       id: [''],
-      name: ['', Validators.required],
-      stack_file: [[], Validators.required],
+      name: [''],
+      stack_file: [[]],
       stack_new: [true],
       stack_updated: [false],
       stack_attachmentDeleteIds: [[]],
 
       revision_stack: [{value: '', disabled: true}],
-      stack_file_contract: ['', Validators.required],
-      stack_new_contact: [true],
+      stack_file_contract: [''],
       stack_updated_contract: [false],
       stack_attachmentDeleteIds_contract: [[]],
 
@@ -661,7 +662,10 @@ export class AddQuotationComponent implements OnInit {
       revision_contract: [{value: '', disabled: true}],
 
       is_total_quotation: [false],
-      active: [true]
+      active: [true],
+      
+      stack_type: ['manual'],
+      items: this.fb.array([])
     })
 
     this.stacks.push(newStacks);
@@ -716,19 +720,23 @@ export class AddQuotationComponent implements OnInit {
 
     if(this.quotationForm.valid){
 
-      const hasFalseExist = this.items.value.some((item: any) => item.exist === false);
-      if(hasFalseExist){
-        this.modalSvc.error({
-          nzTitle: 'Error',
-          nzContent: `Project Item need to be registered`,
-          nzOkText: 'Ok',
-          nzCentered: true
-        });
+      this.stacks.value.forEach((s: any) => {
+        const hasFalseExist = s.items.some((item: any) => item.exist === false);
+        if(hasFalseExist){
+          this.modalSvc.error({
+            nzTitle: 'Error',
+            nzContent: `Project Item need to be registered`,
+            nzOkText: 'Ok',
+            nzCentered: true
+          });
+  
+          this.spinnerSvc.hide();
+  
+          return;
+        }
+      })
 
-        this.spinnerSvc.hide();
-
-        return;
-      }
+      const customer_cp_ids = this.contactPersons.getRawValue().map((cp: any) => cp.id);
       
       const inventoryComplete = this.items.value.map((item: any) => ({
         inventory_id: item.part_number,
@@ -737,31 +745,42 @@ export class AddQuotationComponent implements OnInit {
         dn_2: item.dn2
       }))
 
-      if(inventoryComplete.length === 0) {
-        this.modalSvc.error({
-          nzTitle: 'Error',
-          nzContent: `Project Item need to be fill`,
-          nzOkText: 'Ok',
-          nzCentered: true
-        });
+      // if(inventoryComplete.length === 0) {
+      //   this.modalSvc.error({
+      //     nzTitle: 'Error',
+      //     nzContent: `Project Item need to be fill`,
+      //     nzOkText: 'Ok',
+      //     nzCentered: true
+      //   });
       
-        this.spinnerSvc.hide();
+      //   this.spinnerSvc.hide();
 
-        return;
-      }
+      //   return;
+      // }
 
       if(this.modal_type === 'add'){
         const stackComplete = this.stacks.value.map((stack: any) => ({
-          name: stack.name,
-          stack_document: stack.stack_file
+          quotation_stack_name: stack.name,
+          quotation_stack_is_active: stack.active ? 1 : 0,
+          quotation_stack_bom_quotation_file: stack.stack_file,
+          quotation_stack_bom_contract_rev_file: stack.stack_file_contract,
+          quotation_stack_items: stack.items.map((item: any) => ({
+            inventory_id: item.part_number,
+            qty: item.qty,
+            dn_1: item.dn1,
+            dn_2: item.dn2
+          }))
         }))
+
 
         const body = {
           project_id: this.quotationForm.get('project_id')?.value,
+          customer_id: this.quotationForm.get('customer')?.value,
+          customer_cp_ids,
           quotation_type: this.quotationForm.get('project_type')?.value,
           issued_date: this.quotationForm.get('date')?.value,
-          customer_id: this.quotationForm.get('customer')?.value,
-          inventories: inventoryComplete
+
+          // inventories: inventoryComplete
         }
   
         const formData = new FormData();
@@ -785,18 +804,40 @@ export class AddQuotationComponent implements OnInit {
         //append stack
         stackComplete.forEach((stack: any, index: number) => {
           Object.keys(stack).forEach(key => {
-            if (key !== 'stack_document') {
+            if(![
+              'quotation_stack_bom_quotation_file', 
+              'quotation_stack_bom_contract_rev_file',
+              'quotation_stack_items'
+              ].includes(key)
+            ){
               formData.append(`quotation_stack[${index}][${key}]`, stack[key]);
             }
           })
-  
+
           //append stack file
-          if (stack.stack_document.length > 0) {
-            stack.stack_document.forEach((file: any, fileIndex: number) => {
-              formData.append(`quotation_stack[${index}][stack_document]`, file);
+          if (stack.quotation_stack_bom_quotation_file.length > 0) {
+            stack.quotation_stack_bom_quotation_file.forEach((file: any, fileIndex: number) => {
+              formData.append(`quotation_stack[${index}][quotation_stack_bom_quotation_file]`, file);
+            });
+          }
+
+          if (stack.quotation_stack_bom_contract_rev_file.length > 0) {
+            stack.quotation_stack_bom_contract_rev_file.forEach((file: any, fileIndex: number) => {
+              formData.append(`quotation_stack[${index}][quotation_stack_bom_contract_rev_file]`, file);
+            });
+          }
+
+          //append stack item
+          if(stack.quotation_stack_items.length > 0){
+            stack.quotation_stack_items.forEach((item: any,iItems: number) => {
+              formData.append(`quotation_stack[${index}][quotation_stack_items][${iItems}][inventory_id]`, item.inventory_id);
+              formData.append(`quotation_stack[${index}][quotation_stack_items][${iItems}][qty]`, item.qty);
+              formData.append(`quotation_stack[${index}][quotation_stack_items][${iItems}][dn_1]`, item.dn_1);
+              formData.append(`quotation_stack[${index}][quotation_stack_items][${iItems}][dn_2]`, item.dn_2);
             });
           }
         })
+        
   
         this.apiSvc.createQuotation(formData).subscribe({
           next: (response) => {
@@ -1035,4 +1076,11 @@ export class AddQuotationComponent implements OnInit {
   get objectKeys() {
     return Object.keys;
   }
+
+  get generateUniqueId(): string {
+    const timestamp = Date.now();
+    const randomNumber = Math.random().toString(36).substring(2, 10);
+    return `${timestamp}-${randomNumber}`;
+  }
+  
 }

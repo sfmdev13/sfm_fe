@@ -4,7 +4,7 @@
             <nz-tabset [nzAnimated]="false"> 
                 <nz-tab nzTitle="Material">
                     <div class="row">
-                        <div [ngClass]="stackForm.get('stack_type')?.value === 'automatic' ? 'col-6' : 'col-12'">
+                        <div [ngClass]="stackForm.get('stack_type')?.value === 'automatic' ? 'col-4' : 'col-12'">
                             <nz-form-item>
                                 <nz-form-label nzRequired class="fw-semibold" nzFor="stack_type">Stack Type</nz-form-label>
                                 <nz-form-control>
@@ -15,12 +15,19 @@
                                 </nz-form-control>
                             </nz-form-item>
                         </div>
-                        <div *ngIf="stackForm.get('stack_type')?.value === 'automatic'" class="col-md-6">
-                            <nz-form-item class="flex-column">
-                                <nz-form-label  class="fw-semibold">Upload BOM Excel File</nz-form-label>
-                                <input type="file" (change)="onFileExcelChange($event)" accept=".xls,.xlsx" />
-                              </nz-form-item>
-                        </div>
+                        <ng-container *ngIf="stackForm.get('stack_type')?.value === 'automatic'">
+                            <div  class="col-md-4">
+                                <nz-form-item class="flex-column">
+                                    <nz-form-label  class="fw-semibold">Upload BOM Excel File</nz-form-label>
+                                    <input type="file" (change)="onFileExcelChange($event)" accept=".xls,.xlsx" />
+                                </nz-form-item>
+                            </div>
+                            <div class="col-md-4">  
+                                <nz-form-item>
+                                    <button nz-button nzType="primary" nzDanger (click)="clearAllItem()">Clear All</button>
+                                </nz-form-item>
+                            </div>
+                        </ng-container>
                     </div>
         
                     <div class="table-responsive">
@@ -246,17 +253,19 @@
     </div>
 </div>
 <div *nzModalFooter>
-    <button nz-button nzType="default" (click)="destroyModal()">Cancel</button>
-    <button nz-button nzType="primary" (click)="destroyModal()">
-        <div class="d-flex align-items-center gap-2">
-            <span nz-icon nzType="edit"></span>
-            Edit Stack
-        </div>
-    </button>
-    <button nz-button nzType="primary" (click)="destroyModal()">
-        <div class="d-flex align-items-center gap-2">
-            <span nz-icon nzType="diff"></span>
-            Revise Stack
-        </div>
-    </button>
+    <button nz-button nzType="default" (click)="destroyModal()">{{modalType !== 'add' ? 'Cancel': 'Ok'}}</button>
+    <ng-container *ngIf="modalType !== 'add'">
+        <button nz-button nzType="primary" (click)="destroyModal()">
+            <div class="d-flex align-items-center gap-2">
+                <span nz-icon nzType="edit"></span>
+                Edit Stack
+            </div>
+        </button>
+        <button nz-button nzType="primary" (click)="destroyModal()">
+            <div class="d-flex align-items-center gap-2">
+                <span nz-icon nzType="diff"></span>
+                Revise Stack
+            </div>
+        </button>
+    </ng-container>
 </div>

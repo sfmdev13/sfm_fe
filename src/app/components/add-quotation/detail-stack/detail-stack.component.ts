@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectorRef, Component, inject } from '@angular/core';
-import { FormBuilder, ReactiveFormsModule, UntypedFormArray, UntypedFormGroup, Validators } from '@angular/forms';
+import { ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup, ReactiveFormsModule, UntypedFormArray, UntypedFormGroup, Validators } from '@angular/forms';
 import { NzAlertModule } from 'ng-zorro-antd/alert';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzFormModule } from 'ng-zorro-antd/form';
@@ -34,20 +34,20 @@ import * as XLSX from 'xlsx';
   templateUrl: './detail-stack.component.html',
   styleUrl: './detail-stack.component.scss'
 })
-export class DetailStackComponent {
+export class DetailStackComponent implements OnInit {
   private nzData = inject(NZ_MODAL_DATA);
 
-  stackDetail = this.nzData.stackDetail;
   inventoryList: IDataInventory[] = this.nzData.inventoryList;
-
+  modalType: string = this.nzData.modal_type;
+  stackForm: FormGroup = this.nzData.stackForm;
   
   groupedItems: { [category: string]: any[] } = {};
   uncategorizedItems: any[] = [];
 
-  stackForm = this.fb.group({
-    stack_type: ['manual'],
-    items: this.fb.array([])
-  })
+  // stackForm = this.fb.group({
+  //   stack_type: ['manual'],
+  //   items: this.fb.array([])
+  // })
 
   uploadedData: any[] = [];
 
@@ -55,7 +55,80 @@ export class DetailStackComponent {
     private modal: NzModalRef,
     private fb: FormBuilder,
     private cd: ChangeDetectorRef
-  ) {}
+  ) {
+
+  }
+
+  ngOnInit(): void {
+
+    // console.log(this.stackForm.value);
+    // this.items.push(this.stackForm.value.items);
+
+    this.updateGroupedItems();
+    
+    // if(this.modalType === 'add'){
+    //   if(!sessionStorage.getItem(this.stackDetail.id_detail)){
+    //     return
+    //   }
+
+    //   const existingStack =  JSON.parse(sessionStorage.getItem(this.stackDetail.id_detail)!);
+
+    //   //edit item
+    //   existingStack.items.forEach((item: any) => {
+
+    //     const selectedInventory = this.inventoryList.filter((invent) => invent.id === item.description)[0];
+
+    //     const totalPrice = parseFloat(selectedInventory.default_selling_price) * parseFloat(item.qty)
+        
+    //     const editItems = this.fb.group({
+    //       part_number: [selectedInventory.id, Validators.required],
+    //       description: [selectedInventory.id, Validators.required],
+    //       alias: [{value: selectedInventory.alias, disabled: true}, Validators.required],
+    //       dn1: [item.dn1],
+    //       dn2: [item.dn2],
+    //       qty: [item.qty],
+    //       unit:[{value: selectedInventory.unit.name, disabled: true}],
+    //       exist: [item.exist],
+    //       unit_price: [selectedInventory.alias],
+    //       gross_margin: [selectedInventory.default_gross_margin],
+    //       total_price: [totalPrice],
+    //       category: [selectedInventory.product_category.name],
+    //       i_part_number: [selectedInventory.code],
+    //       i_description: [selectedInventory.description],
+    //       installation_unit_inch_qty: [{value: parseFloat(selectedInventory.inventory_installation.unit_inch_qty) ,disabled: true}],
+    //       installation_unit_price: [{value: parseFloat(selectedInventory.inventory_installation.price), disabled: true}],
+    //       installation_unit_price_type: [{value: selectedInventory.inventory_installation.price_type, disabled: true}],
+    //       installation_price_per_unit: [{value: parseFloat(selectedInventory.inventory_installation.price_per_unit), disabled: true}],
+    //       installation_price_factor: [{value: parseFloat(selectedInventory.inventory_installation.price_factor), disabled: true}],
+    //       installation_selling_price: [{value: parseFloat(selectedInventory.inventory_installation.selling_price), disabled: true}],
+    //       installation_gross_margin: [{value: parseFloat(selectedInventory.inventory_installation.gross_margin), disabled: true}],
+    //     })
+
+    //     this.items.push(editItems);
+    //     this.itemValueChangeSubscription(editItems);
+    //   })
+
+    //   this.updateGroupedItems();
+
+
+    //   // Explicitly mark the form array as dirty or updated
+    //   this.items.markAsDirty();
+    //   this.items.updateValueAndValidity();
+
+    //   // Trigger change detection
+    //   this.cd.detectChanges();
+    // }
+  }
+
+  clearAllItem(){
+    this.items.clear()
+  }
+
+  submitStackTemp(){
+    
+    // sessionStorage.setItem(this.stackDetail.id_detail, JSON.stringify(this.stackForm.value));
+    this.destroyModal();
+  }
 
   get items(): UntypedFormArray {
     return this.stackForm.get('items') as UntypedFormArray
