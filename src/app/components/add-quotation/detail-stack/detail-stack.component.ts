@@ -120,9 +120,7 @@ export class DetailStackComponent implements OnInit {
     // }
   }
 
-  clearAllItem(){
-    this.items.clear()
-  }
+
 
   submitStackTemp(){
     
@@ -132,6 +130,11 @@ export class DetailStackComponent implements OnInit {
 
   get items(): UntypedFormArray {
     return this.stackForm.get('items') as UntypedFormArray
+  }
+
+  clearAllItem(){
+    this.items.clear();
+    this.updateGroupedItems();
   }
 
   onFileExcelChange(event: Event) {

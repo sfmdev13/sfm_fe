@@ -112,6 +112,8 @@ export class AddQuotationComponent implements OnInit {
 
   selectedCustomer: IProjectCustomer[] = []
 
+  isCreateQuotationTotal = false;
+
   constructor(
     private drawerRef: NzDrawerRef,
     private fb: UntypedFormBuilder,
@@ -130,26 +132,26 @@ export class AddQuotationComponent implements OnInit {
     });
 
     this.quotationForm.get('customer')?.valueChanges.subscribe((value) => {
-      this.apiSvc.getCustomerDetail(value).subscribe((res) => {
-        this.getProvinceCity(res.data.province, res.data.city).subscribe((customerLocation) => {
-          this.quotationForm.get('customer_location')?.setValue(customerLocation)
-        })
-
-        this.contactPersons.clear();
-
-        res.data.contactPerson.forEach((cp) => {
-          const existContactPerson = this.fb.group({
-            id: [{value: cp.id, disabled: true}],
-            name: [{value: cp.name, disabled: true}],
-            role: [{value: cp.customer_category.name, disabled: true}],
-            attention: [false]
+      if(this.modal_type === 'add'){
+        this.apiSvc.getCustomerDetail(value).subscribe((res) => {
+          this.getProvinceCity(res.data.province, res.data.city).subscribe((customerLocation) => {
+            this.quotationForm.get('customer_location')?.setValue(customerLocation)
           })
-
-          this.contactPersons.push(existContactPerson);
+  
+          this.contactPersons.clear();
+  
+          res.data.contactPerson.forEach((cp) => {
+            const existContactPerson = this.fb.group({
+              id: [{value: cp.id, disabled: true}],
+              name: [{value: cp.name, disabled: true}],
+              role: [{value: cp.customer_category.name, disabled: true}],
+              attention: [false]
+            })
+  
+            this.contactPersons.push(existContactPerson);
+          })
         })
-      })
-
-
+      }
     })
 
     this.quotationForm.get('date')?.valueChanges.subscribe((value) => {
@@ -185,22 +187,24 @@ export class AddQuotationComponent implements OnInit {
 
     if(this.modal_type === 'edit' || this.modal_type === 'revision'){
 
+      this.isCreateQuotationTotal = this.dataQuotation.quotation.is_create_quotation_total === 1 ? true : false;
+
       const projectData: IDataProject = this.projectsData.filter((project) => project.id === this.dataQuotation.id)[0];
 
       this.selectedCustomer = [...projectData.project_customer]
 
-      const newUpdateFileList: NzUploadFile[] = [{
-        uid: this.dataQuotation.quotation?.project_document.id,
-        name: this.dataQuotation.quotation?.project_document.file_name,
-        status: 'done',
-        url: this.dataQuotation.quotation?.project_document.file_url,
-        response: {
-          id: this.dataQuotation.quotation?.project_document.id,
-          attachment_path: this.dataQuotation.quotation?.project_document.attachment_path
-        } 
-      }]
+      // const newUpdateFileList: NzUploadFile[] = [{
+      //   uid: this.dataQuotation.quotation?.project_document.id,
+      //   name: this.dataQuotation.quotation?.project_document.file_name,
+      //   status: 'done',
+      //   url: this.dataQuotation.quotation?.project_document.file_url,
+      //   response: {
+      //     id: this.dataQuotation.quotation?.project_document.id,
+      //     attachment_path: this.dataQuotation.quotation?.project_document.attachment_path
+      //   } 
+      // }]
 
-      this.fileList = newUpdateFileList; 
+      // this.fileList = newUpdateFileList; 
 
       this.quotationForm.get('project_id')?.setValue(this.dataQuotation.id, { emitEvent: false })
       this.quotationForm.get('project_name')?.setValue(this.dataQuotation.id, { emitEvent: false })
@@ -229,14 +233,16 @@ export class AddQuotationComponent implements OnInit {
       })
 
       //edit contact person
-      // this.dataQuotation.quotation.customer.contactPerson.forEach((cp) => {
-      //   const existCp = this.fb.group({
-      //     name: [{value: cp.name, disabled: true}],
-      //     role: [{value: cp.customer_category.name, disabled: true}]
-      //   })
+      this.dataQuotation.quotation.customer.contactPerson.forEach((cp) => {
+        const existCp = this.fb.group({
+            id: [{value: cp.id, disabled: true}],
+            name: [{value: cp.name, disabled: true}],
+            role: [{value: cp.customer_category.name, disabled: true}],
+            attention: [cp.is_attention]
+        })
 
-      //   this.contactPersons.push(existCp);
-      // })
+        this.contactPersons.push(existCp);
+      })
 
       //edit pic
 
@@ -253,64 +259,131 @@ export class AddQuotationComponent implements OnInit {
 
 
       //edit stack
-      this.dataQuotation.quotation.quotation_stack.forEach((stack) => {
+      this.dataQuotation.quotation.quotation_stack.forEach((stack, index) => {
 
-        const updateStackFile: NzUploadFile[] = [{
-          uid: stack.stack_file.id,
-          name: stack.stack_file.file_name,
-          status: 'done',
-          url: stack.stack_file.file_url,
-          response: {
-            id: stack.stack_file.id,
-            attachment_path: stack.stack_file.attachment_path
-          },
-          isImageUrl: true
-        }]
+        let updateStackFile: NzUploadFile[] = [];
+
+        if(stack.latest_quotation_bom.bom_quotation_file){
+          updateStackFile = [{
+            uid: 'aselole',
+            name: stack.latest_quotation_bom.bom_quotation_file.file_name,
+            status: 'done',
+            url: stack.latest_quotation_bom.bom_quotation_file.file_url,
+            response: {
+              id: stack.latest_quotation_bom.bom_quotation_file.id,
+              attachment_path: stack.latest_quotation_bom.bom_quotation_file.attachment_path
+            },
+            isImageUrl: true
+          }]
+        }
+
+        let updateStackFileContract: NzUploadFile[] = []
+
+        if(stack.latest_quotation_bom.bom_contract_rev_file){
+          updateStackFileContract = [{
+            uid: 'aselole',
+            name: stack.latest_quotation_bom.bom_contract_rev_file.file_name,
+            status: 'done',
+            url: stack.latest_quotation_bom.bom_contract_rev_file.file_url,
+            response: {
+              id: stack.latest_quotation_bom.bom_contract_rev_file.id,
+              attachment_path: stack.latest_quotation_bom.bom_contract_rev_file.attachment_path
+            },
+            isImageUrl: true
+          }]
+        }
 
         const updateStack = this.fb.group({
           id: [stack.id],
           name: [stack.name, Validators.required],
-          stack_file: [updateStackFile, Validators.required],
+          stack_file: [updateStackFile],
           stack_new: [false],
           stack_updated: [false],
           stack_attachmentDeleteIds: [[]],
+          stack_file_contract: [updateStackFileContract],
+          stack_updated_contract:[false],
+          stack_attachmentDeleteIds_contract: [[]],
+          revision_stack: [{value: stack.latest_quotation_bom.stack_revision_quotation, disabled: true}],
+          revision_bom_contract: [{value: stack.latest_quotation_bom.stack_bom_contract, disabled: true}],
+          revision_contract: [{value: stack.latest_quotation_bom.revision_contract, disabled: true}],
+          is_total_quotation: [false],
+          active: [stack.is_active === 1 ? true : false],
+          stack_type: ['manual'],
+          items: this.fb.array([])
         })
 
         this.stacks.push(updateStack);
-      })
 
-      //edit item
-      this.dataQuotation.quotation?.quotation_items.forEach((item) => {
-        const totalPrice = parseFloat(item.inventory.default_selling_price) * parseFloat(item.qty)
 
-        const editItems = this.fb.group({
-          part_number: [item.inventory.id, Validators.required],
-          description: [item.inventory.id, Validators.required],
-          alias: [{value: item.inventory.alias, disabled: true}, Validators.required],
-          dn1: [item.dn_1],
-          dn2: [item.dn_2],
-          qty: [item.qty],
-          unit:[{value: item.inventory.unit.name, disabled: true}],
-          exist: [true],
-          unit_price: [item.inventory.default_selling_price],
-          gross_margin: [item.inventory.default_gross_margin],
-          total_price: [totalPrice],
-          category: [item.inventory.supplier_product.name]
+        const stackGroup = this.stacks.at(index) as FormGroup;
+
+        const itemsArray = stackGroup.get('items') as UntypedFormArray;
+
+
+        stack.latest_quotation_bom.quotation_stack_items.forEach((item) => {
+          const newItem = this.fb.group({
+            inventory_id: [item.inventory.id],
+            part_number: [item.inventory.id, [Validators.required]],
+            description: [item.inventory.id, [Validators.required]],
+            alias: [{value: item.inventory.alias, disabled: true}],
+            dn1: [parseFloat(item.dn_1)],
+            dn2: [item.dn_2 === null ? '': parseFloat(item.dn_2)],
+            qty: [parseFloat(item.qty)],
+            unit: [{value: item.inventory.unit.name, disabled: true}],
+            exist: [true],
+            unit_price: [parseFloat(item.inventory.default_selling_price)],
+            total_price: [parseFloat(item.total_price_per_product)],
+            gross_margin: [parseFloat(item.inventory.default_gross_margin)],
+            category: [item.inventory.supplier_product.name],
+      
+            i_part_number: [item.inventory.code],
+            i_description: [item.inventory.description],
+            installation_unit_inch_qty: [{value: parseFloat(item.inventory.installation.unit_inch_qty), disabled: true}],
+            installation_unit_price: [{value: parseFloat(item.inventory.installation.price), disabled: true}],
+            installation_unit_price_type: [{value: parseFloat(item.inventory.installation.price_type), disabled: true}],
+            installation_price_per_unit: [{value: parseFloat(item.inventory.installation.price_per_unit), disabled: true}],
+            installation_price_factor: [{value: parseFloat(item.inventory.installation.price_factor), disabled: true}],
+            installation_selling_price: [{value: parseFloat(item.inventory.installation.selling_price), disabled: true}],
+            installation_gross_margin: [{value: parseFloat(item.inventory.installation.gross_margin), disabled: true}],
+          })
+          itemsArray.push(newItem);
+          this.updateGroupedItems();
+          this.itemValueChangeSubscription(newItem);
         })
-
-        this.items.push(editItems);
-        this.itemValueChangeSubscription(editItems);
       })
 
-      this.updateGroupedItems();
+      // //edit item
+      // this.dataQuotation.quotation?.quotation_items.forEach((item) => {
+      //   const totalPrice = parseFloat(item.inventory.default_selling_price) * parseFloat(item.qty)
+
+      //   const editItems = this.fb.group({
+      //     part_number: [item.inventory.id, Validators.required],
+      //     description: [item.inventory.id, Validators.required],
+      //     alias: [{value: item.inventory.alias, disabled: true}, Validators.required],
+      //     dn1: [item.dn_1],
+      //     dn2: [item.dn_2],
+      //     qty: [item.qty],
+      //     unit:[{value: item.inventory.unit.name, disabled: true}],
+      //     exist: [true],
+      //     unit_price: [item.inventory.default_selling_price],
+      //     gross_margin: [item.inventory.default_gross_margin],
+      //     total_price: [totalPrice],
+      //     category: [item.inventory.supplier_product.name]
+      //   })
+
+      //   this.items.push(editItems);
+      //   this.itemValueChangeSubscription(editItems);
+      // })
+
+      // this.updateGroupedItems();
 
 
-      // Explicitly mark the form array as dirty or updated
-      this.items.markAsDirty();
-      this.items.updateValueAndValidity();
+      // // Explicitly mark the form array as dirty or updated
+      // this.items.markAsDirty();
+      // this.items.updateValueAndValidity();
 
-      // Trigger change detection
-      this.cd.detectChanges();
+      // // Trigger change detection
+      // this.cd.detectChanges();
     }
 
   

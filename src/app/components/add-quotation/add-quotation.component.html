@@ -334,7 +334,7 @@
                         </table>
                     </div>
                 </nz-tab>
-                <nz-tab *ngIf="modal_type !== 'add'" nzTitle="Quotation">
+                <nz-tab *ngIf="this.isCreateQuotationTotal" nzTitle="Quotation">
                     <div class="row">
                         <div [ngClass]="quotationForm.get('project_type')?.value === 'automatic' ? 'col-6' : 'col-12'">
                             <nz-form-item>

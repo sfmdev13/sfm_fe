@@ -16,20 +16,21 @@
                             </nz-form-item>
                         </div>
                         <ng-container *ngIf="stackForm.get('stack_type')?.value === 'automatic'">
-                            <div  class="col-md-4">
+                            <div  class="col-md-6">
                                 <nz-form-item class="flex-column">
                                     <nz-form-label  class="fw-semibold">Upload BOM Excel File</nz-form-label>
                                     <input type="file" (change)="onFileExcelChange($event)" accept=".xls,.xlsx" />
                                 </nz-form-item>
                             </div>
-                            <div class="col-md-4">  
-                                <nz-form-item>
-                                    <button nz-button nzType="primary" nzDanger (click)="clearAllItem()">Clear All</button>
-                                </nz-form-item>
-                            </div>
                         </ng-container>
                     </div>
-        
+                    <div class="row">
+                        <div class="col-md-4">  
+                            <nz-form-item>
+                                <button nz-button nzType="primary" nzDanger (click)="clearAllItem()">Clear All</button>
+                            </nz-form-item>
+                        </div>
+                    </div>
                     <div class="table-responsive">
                         <table class="table table-striped table-order table-purchase">
                             <thead style="position: unset;">
