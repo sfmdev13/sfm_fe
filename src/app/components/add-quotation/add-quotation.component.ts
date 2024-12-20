@@ -21,6 +21,8 @@ import { NzDividerModule } from 'ng-zorro-antd/divider';
 import { SpinnerService } from 'src/app/spinner.service';
 import { NzModalModule, NzModalService } from 'ng-zorro-antd/modal';
 import { NzCheckboxModule } from 'ng-zorro-antd/checkbox';
+import { DetailStackComponent } from './detail-stack/detail-stack.component';
+import { NzDropDownModule } from 'ng-zorro-antd/dropdown';
 
 @Component({
   selector: 'app-add-quotation',
@@ -41,7 +43,8 @@ import { NzCheckboxModule } from 'ng-zorro-antd/checkbox';
     NzAlertModule,
     NzDividerModule,
     NzModalModule,
-    NzCheckboxModule
+    NzCheckboxModule,
+    NzDropDownModule
   ],
   providers: [DatePipe],
   templateUrl: './add-quotation.component.html',
@@ -64,7 +67,7 @@ export class AddQuotationComponent implements OnInit {
     quotation_no: [{value: '', disabled: true}],
     prepared_by: [{value: this.pic_id, disabled: true }],
     project_type: ['manual', [Validators.required]],
-    project_file: [''],
+    // project_file: [''],
     project_id: ['', [Validators.required]],
     project_name: ['',[Validators.required]],
     location: [{value: '', disabled: true}],
@@ -111,6 +114,8 @@ export class AddQuotationComponent implements OnInit {
 
   selectedCustomer: IProjectCustomer[] = []
 
+  isCreateQuotationTotal = false;
+
   constructor(
     private drawerRef: NzDrawerRef,
     private fb: UntypedFormBuilder,
@@ -129,25 +134,26 @@ export class AddQuotationComponent implements OnInit {
     });
 
     this.quotationForm.get('customer')?.valueChanges.subscribe((value) => {
-      this.apiSvc.getCustomerDetail(value).subscribe((res) => {
-        this.getProvinceCity(res.data.province, res.data.city).subscribe((customerLocation) => {
-          this.quotationForm.get('customer_location')?.setValue(customerLocation)
-        })
-
-        this.contactPersons.clear();
-
-        res.data.contactPerson.forEach((cp) => {
-          const existContactPerson = this.fb.group({
-            name: [{value: cp.name, disabled: true}],
-            role: [{value: cp.customer_category.name, disabled: true}],
-            attention: [false]
+      if(this.modal_type === 'add'){
+        this.apiSvc.getCustomerDetail(value).subscribe((res) => {
+          this.getProvinceCity(res.data.province, res.data.city).subscribe((customerLocation) => {
+            this.quotationForm.get('customer_location')?.setValue(customerLocation)
           })
-
-          this.contactPersons.push(existContactPerson);
+  
+          this.contactPersons.clear();
+  
+          res.data.contactPerson.forEach((cp) => {
+            const existContactPerson = this.fb.group({
+              id: [{value: cp.id, disabled: true}],
+              name: [{value: cp.name, disabled: true}],
+              role: [{value: cp.customer_category.name, disabled: true}],
+              attention: [false]
+            })
+  
+            this.contactPersons.push(existContactPerson);
+          })
         })
-      })
-
-
+      }
     })
 
     this.quotationForm.get('date')?.valueChanges.subscribe((value) => {
@@ -183,22 +189,24 @@ export class AddQuotationComponent implements OnInit {
 
     if(this.modal_type === 'edit' || this.modal_type === 'revision'){
 
+      this.isCreateQuotationTotal = this.dataQuotation.quotation.is_create_quotation_total === 1 ? true : false;
+
       const projectData: IDataProject = this.projectsData.filter((project) => project.id === this.dataQuotation.id)[0];
 
       this.selectedCustomer = [...projectData.project_customer]
 
-      const newUpdateFileList: NzUploadFile[] = [{
-        uid: this.dataQuotation.quotation?.project_document.id,
-        name: this.dataQuotation.quotation?.project_document.file_name,
-        status: 'done',
-        url: this.dataQuotation.quotation?.project_document.file_url,
-        response: {
-          id: this.dataQuotation.quotation?.project_document.id,
-          attachment_path: this.dataQuotation.quotation?.project_document.attachment_path
-        } 
-      }]
+      // const newUpdateFileList: NzUploadFile[] = [{
+      //   uid: this.dataQuotation.quotation?.project_document.id,
+      //   name: this.dataQuotation.quotation?.project_document.file_name,
+      //   status: 'done',
+      //   url: this.dataQuotation.quotation?.project_document.file_url,
+      //   response: {
+      //     id: this.dataQuotation.quotation?.project_document.id,
+      //     attachment_path: this.dataQuotation.quotation?.project_document.attachment_path
+      //   } 
+      // }]
 
-      this.fileList = newUpdateFileList; 
+      // this.fileList = newUpdateFileList; 
 
       this.quotationForm.get('project_id')?.setValue(this.dataQuotation.id, { emitEvent: false })
       this.quotationForm.get('project_name')?.setValue(this.dataQuotation.id, { emitEvent: false })
@@ -227,14 +235,16 @@ export class AddQuotationComponent implements OnInit {
       })
 
       //edit contact person
-      // this.dataQuotation.quotation.customer.contactPerson.forEach((cp) => {
-      //   const existCp = this.fb.group({
-      //     name: [{value: cp.name, disabled: true}],
-      //     role: [{value: cp.customer_category.name, disabled: true}]
-      //   })
+      this.dataQuotation.quotation.customer.contactPerson.forEach((cp) => {
+        const existCp = this.fb.group({
+            id: [{value: cp.id, disabled: true}],
+            name: [{value: cp.name, disabled: true}],
+            role: [{value: cp.customer_category.name, disabled: true}],
+            attention: [cp.is_attention]
+        })
 
-      //   this.contactPersons.push(existCp);
-      // })
+        this.contactPersons.push(existCp);
+      })
 
       //edit pic
 
@@ -251,64 +261,133 @@ export class AddQuotationComponent implements OnInit {
 
 
       //edit stack
-      this.dataQuotation.quotation.quotation_stack.forEach((stack) => {
+      this.dataQuotation.quotation.quotation_stack.forEach((stack, index) => {
 
-        const updateStackFile: NzUploadFile[] = [{
-          uid: stack.stack_file.id,
-          name: stack.stack_file.file_name,
-          status: 'done',
-          url: stack.stack_file.file_url,
-          response: {
-            id: stack.stack_file.id,
-            attachment_path: stack.stack_file.attachment_path
-          },
-          isImageUrl: true
-        }]
+        let updateStackFile: NzUploadFile[] = [];
+
+        if(stack.latest_quotation_bom.bom_quotation_file){
+          updateStackFile = [{
+            uid: 'aselole',
+            name: stack.latest_quotation_bom.bom_quotation_file.file_name,
+            status: 'done',
+            url: stack.latest_quotation_bom.bom_quotation_file.file_url,
+            response: {
+              id: stack.latest_quotation_bom.bom_quotation_file.id,
+              attachment_path: stack.latest_quotation_bom.bom_quotation_file.attachment_path
+            },
+            isImageUrl: true
+          }]
+        }
+
+        let updateStackFileContract: NzUploadFile[] = []
+
+        if(stack.latest_quotation_bom.bom_contract_rev_file){
+          updateStackFileContract = [{
+            uid: 'aselole',
+            name: stack.latest_quotation_bom.bom_contract_rev_file.file_name,
+            status: 'done',
+            url: stack.latest_quotation_bom.bom_contract_rev_file.file_url,
+            response: {
+              id: stack.latest_quotation_bom.bom_contract_rev_file.id,
+              attachment_path: stack.latest_quotation_bom.bom_contract_rev_file.attachment_path
+            },
+            isImageUrl: true
+          }]
+        }
 
         const updateStack = this.fb.group({
           id: [stack.id],
+          stack_revision_bom_id: [stack.latest_quotation_bom.id],
           name: [stack.name, Validators.required],
-          stack_file: [updateStackFile, Validators.required],
+          stack_file: [updateStackFile],
           stack_new: [false],
           stack_updated: [false],
-          stack_attachmentDeleteIds: [[]]
+          stack_attachmentDeleteIds: [[]],
+          stack_file_contract: [updateStackFileContract],
+          stack_new_contract: [false],
+          stack_updated_contract:[false],
+          stack_attachmentDeleteIds_contract: [[]],
+          revision_stack: [{value: stack.latest_quotation_bom.stack_revision_quotation, disabled: true}],
+          revision_bom_contract: [{value: stack.latest_quotation_bom.stack_bom_contract, disabled: true}],
+          revision_contract: [{value: stack.latest_quotation_bom.revision_contract, disabled: true}],
+          is_total_quotation: [false],
+          active: [stack.is_active === 1 ? true : false],
+          stack_type: ['manual'],
+          items: this.fb.array([])
         })
 
         this.stacks.push(updateStack);
-      })
 
-      //edit item
-      this.dataQuotation.quotation?.quotation_items.forEach((item) => {
-        const totalPrice = parseFloat(item.inventory.default_selling_price) * parseFloat(item.qty)
 
-        const editItems = this.fb.group({
-          part_number: [item.inventory.id, Validators.required],
-          description: [item.inventory.id, Validators.required],
-          alias: [{value: item.inventory.alias, disabled: true}, Validators.required],
-          dn1: [item.dn_1],
-          dn2: [item.dn_2],
-          qty: [item.qty],
-          unit:[{value: item.inventory.unit.name, disabled: true}],
-          exist: [true],
-          unit_price: [item.inventory.default_selling_price],
-          gross_margin: [item.inventory.default_gross_margin],
-          total_price: [totalPrice],
-          category: [item.inventory.supplier_product.name]
+        const stackGroup = this.stacks.at(index) as FormGroup;
+
+        const itemsArray = stackGroup.get('items') as UntypedFormArray;
+
+
+        stack.latest_quotation_bom.quotation_stack_items.forEach((item) => {
+          const newItem = this.fb.group({
+            inventory_id: [item.inventory.id],
+            part_number: [item.inventory.id, [Validators.required]],
+            description: [item.inventory.id, [Validators.required]],
+            alias: [{value: item.inventory.alias, disabled: true}],
+            dn1: [item.dn_1 === null || item.dn_1 === '' ? '': parseFloat(item.dn_1)],
+            dn2: [item.dn_2 === null || item.dn_2 === '' ? '': parseFloat(item.dn_2)],
+            qty: [parseFloat(item.qty)],
+            unit: [{value: item.inventory.unit.name, disabled: true}],
+            exist: [true],
+            unit_price: [parseFloat(item.inventory.default_selling_price)],
+            total_price: [parseFloat(item.total_price_per_product)],
+            gross_margin: [parseFloat(item.inventory.default_gross_margin)],
+            category: [item.inventory.supplier_product.name],
+      
+            i_part_number: [item.inventory.code],
+            i_description: [item.inventory.description],
+            installation_unit_inch_qty: [{value: parseFloat(item.inventory.installation.unit_inch_qty), disabled: true}],
+            installation_unit_price: [{value: parseFloat(item.inventory.installation.price), disabled: true}],
+            installation_unit_price_type: [{value: parseFloat(item.inventory.installation.price_type), disabled: true}],
+            installation_price_per_unit: [{value: parseFloat(item.inventory.installation.price_per_unit), disabled: true}],
+            installation_price_factor: [{value: parseFloat(item.inventory.installation.price_factor), disabled: true}],
+            installation_selling_price: [{value: parseFloat(item.inventory.installation.selling_price), disabled: true}],
+            installation_gross_margin: [{value: parseFloat(item.inventory.installation.gross_margin), disabled: true}],
+          })
+          itemsArray.push(newItem);
+          this.updateGroupedItems();
+          this.itemValueChangeSubscription(newItem);
         })
-
-        this.items.push(editItems);
-        this.itemValueChangeSubscription(editItems);
       })
 
-      this.updateGroupedItems();
+      // //edit item
+      // this.dataQuotation.quotation?.quotation_items.forEach((item) => {
+      //   const totalPrice = parseFloat(item.inventory.default_selling_price) * parseFloat(item.qty)
+
+      //   const editItems = this.fb.group({
+      //     part_number: [item.inventory.id, Validators.required],
+      //     description: [item.inventory.id, Validators.required],
+      //     alias: [{value: item.inventory.alias, disabled: true}, Validators.required],
+      //     dn1: [item.dn_1],
+      //     dn2: [item.dn_2],
+      //     qty: [item.qty],
+      //     unit:[{value: item.inventory.unit.name, disabled: true}],
+      //     exist: [true],
+      //     unit_price: [item.inventory.default_selling_price],
+      //     gross_margin: [item.inventory.default_gross_margin],
+      //     total_price: [totalPrice],
+      //     category: [item.inventory.supplier_product.name]
+      //   })
+
+      //   this.items.push(editItems);
+      //   this.itemValueChangeSubscription(editItems);
+      // })
+
+      // this.updateGroupedItems();
 
 
-      // Explicitly mark the form array as dirty or updated
-      this.items.markAsDirty();
-      this.items.updateValueAndValidity();
+      // // Explicitly mark the form array as dirty or updated
+      // this.items.markAsDirty();
+      // this.items.updateValueAndValidity();
 
-      // Trigger change detection
-      this.cd.detectChanges();
+      // // Trigger change detection
+      // this.cd.detectChanges();
     }
 
   
@@ -322,6 +401,21 @@ export class AddQuotationComponent implements OnInit {
     })
 
 
+  }
+
+  openStackDetail(i: number){
+    const stackForm = this.stacks.at(i) as FormGroup;
+    this.modalSvc.create({
+      nzTitle: 'Detail Stacks',
+      nzContent: DetailStackComponent,
+      nzCentered: true,
+      nzData: {
+        stackForm,
+        inventoryList: this.inventoryList,
+        modal_type: this.modal_type
+      },
+      nzWidth: '100vw'
+    })
   }
 
   calculateGrandTotalPrice() {
@@ -627,13 +721,30 @@ export class AddQuotationComponent implements OnInit {
   };
 
   addStacks(){
+
     const newStacks = this.fb.group({
       id: [''],
-      name: ['', Validators.required],
-      stack_file: [[], Validators.required],
+      stack_revision_bom_id: [''],
+      name: [''],
+      stack_file: [[]],
       stack_new: [true],
       stack_updated: [false],
-      stack_attachmentDeleteIds: [[]]
+      stack_attachmentDeleteIds: [[]],
+
+      revision_stack: [{value: '', disabled: true}],
+      stack_file_contract: [''],
+      stack_new_contract: [true],
+      stack_updated_contract: [false],
+      stack_attachmentDeleteIds_contract: [[]],
+
+      revision_bom_contract: [{value: '', disabled: true}],
+      revision_contract: [{value: '', disabled: true}],
+
+      is_total_quotation: [false],
+      active: [true],
+      
+      stack_type: ['manual'],
+      items: this.fb.array([])
     })
 
     this.stacks.push(newStacks);
@@ -682,25 +793,111 @@ export class AddQuotationComponent implements OnInit {
     this.drawerRef.close();
   }
 
+  editStack(type: 'edit' | 'revision', i: number){
+
+    this.spinnerSvc.show();
+
+    const stackUpdate = this.stacks.at(i).getRawValue();
+
+    const inventoryComplete = stackUpdate.items.map((item: any) => ({
+      inventory_id: item.part_number,
+      qty: item.qty,
+      dn_1: item.dn1,
+      dn_2: item.dn2
+    }))
+
+    const body = {
+      name: stackUpdate.name,
+      is_active: stackUpdate ? 1 : 0,
+      stack_id: stackUpdate.id,
+      stack_revision_bom_id: stackUpdate.stack_revision_bom_id,
+      quotation_id: this.dataQuotation.quotation.id,
+      edit_type: type,
+      quotation_stack_items: inventoryComplete
+    }
+
+    const formData = new FormData();
+
+    Object.keys(body).forEach(key => {
+      if(typeof (body as any)[key] === 'object'){
+        formData.append(key, JSON.stringify((body as any)[key]))
+      } else {
+        formData.append(key, ( body as any )[key]);
+      }
+    })
+
+    if (stackUpdate.stack_file.length > 0) {
+      stackUpdate.stack_file.forEach((file: any, fileIndex: number) => {
+        if(stackUpdate.stack_updated || stackUpdate.stack_new){
+          formData.append(`bom_quotation_file`, file);
+        } else {
+          formData.append(`bom_quotation_file`, '');
+        }
+      });
+    }
+
+    if (stackUpdate.stack_file_contract.length > 0) {
+      stackUpdate.stack_file_contract.forEach((file: any, fileIndex: number) => {
+        if(stackUpdate.stack_updated_contract || stackUpdate.stack_new_contract){
+          formData.append(`bom_contract_rev_file`, file);
+        } else {
+          formData.append(`bom_contract_rev_file`, '');
+        }
+      });
+    }
+
+    this.apiSvc.updateStackItem(formData).subscribe({
+      next: (response) => {
+        this.spinnerSvc.hide();
+
+        this.modalSvc.success({
+          nzTitle: 'Success',
+          nzContent: `Successfully ${type === 'edit' ? 'Edit' : 'Revise'} Stack`,
+          nzOkText: 'Ok',
+          nzCentered: true
+        });
+
+        this.apiSvc.triggerRefreshQuotation();
+      },
+      error: (error) => {
+        this.spinnerSvc.hide();
+
+        this.modalSvc.error({
+          nzTitle: `Unale ${type === 'edit' ? 'Edit' : 'Revise'} Stack`,
+          nzContent: error.error.meta.message,
+          nzOkText: 'Ok',
+          nzCentered: true
+        });
+      },
+      complete: () => {
+        this.drawerRef.close();
+      }
+    });
+  }
+
   submit(){
 
     this.spinnerSvc.show();
 
     if(this.quotationForm.valid){
 
-      const hasFalseExist = this.items.value.some((item: any) => item.exist === false);
-      if(hasFalseExist){
-        this.modalSvc.error({
-          nzTitle: 'Error',
-          nzContent: `Project Item need to be registered`,
-          nzOkText: 'Ok',
-          nzCentered: true
-        });
+      this.stacks.value.forEach((s: any) => {
+        const hasFalseExist = s.items.some((item: any) => item.exist === false);
+        if(hasFalseExist){
+          this.modalSvc.error({
+            nzTitle: 'Error',
+            nzContent: `Project Item need to be registered`,
+            nzOkText: 'Ok',
+            nzCentered: true
+          });
+  
+          this.spinnerSvc.hide();
+  
+          return;
+        }
+      })
 
-        this.spinnerSvc.hide();
-
-        return;
-      }
+      const customer_cp_ids = this.contactPersons.getRawValue().map((cp: any) => cp.id);
       
       const inventoryComplete = this.items.value.map((item: any) => ({
         inventory_id: item.part_number,
@@ -709,31 +906,42 @@ export class AddQuotationComponent implements OnInit {
         dn_2: item.dn2
       }))
 
-      if(inventoryComplete.length === 0) {
-        this.modalSvc.error({
-          nzTitle: 'Error',
-          nzContent: `Project Item need to be fill`,
-          nzOkText: 'Ok',
-          nzCentered: true
-        });
+      // if(inventoryComplete.length === 0) {
+      //   this.modalSvc.error({
+      //     nzTitle: 'Error',
+      //     nzContent: `Project Item need to be fill`,
+      //     nzOkText: 'Ok',
+      //     nzCentered: true
+      //   });
       
-        this.spinnerSvc.hide();
+      //   this.spinnerSvc.hide();
 
-        return;
-      }
+      //   return;
+      // }
 
       if(this.modal_type === 'add'){
         const stackComplete = this.stacks.value.map((stack: any) => ({
-          name: stack.name,
-          stack_document: stack.stack_file
+          quotation_stack_name: stack.name,
+          quotation_stack_is_active: stack.active ? 1 : 0,
+          quotation_stack_bom_quotation_file: stack.stack_file,
+          quotation_stack_bom_contract_rev_file: stack.stack_file_contract,
+          quotation_stack_items: stack.items.map((item: any) => ({
+            inventory_id: item.part_number,
+            qty: item.qty,
+            dn_1: item.dn1,
+            dn_2: item.dn2
+          }))
         }))
+
 
         const body = {
           project_id: this.quotationForm.get('project_id')?.value,
+          customer_id: this.quotationForm.get('customer')?.value,
+          customer_cp_ids,
           quotation_type: this.quotationForm.get('project_type')?.value,
           issued_date: this.quotationForm.get('date')?.value,
-          customer_id: this.quotationForm.get('customer')?.value,
-          inventories: inventoryComplete
+
+          // inventories: inventoryComplete
         }
   
         const formData = new FormData();
@@ -757,18 +965,40 @@ export class AddQuotationComponent implements OnInit {
         //append stack
         stackComplete.forEach((stack: any, index: number) => {
           Object.keys(stack).forEach(key => {
-            if (key !== 'stack_document') {
+            if(![
+              'quotation_stack_bom_quotation_file', 
+              'quotation_stack_bom_contract_rev_file',
+              'quotation_stack_items'
+              ].includes(key)
+            ){
               formData.append(`quotation_stack[${index}][${key}]`, stack[key]);
             }
           })
-  
+
           //append stack file
-          if (stack.stack_document.length > 0) {
-            stack.stack_document.forEach((file: any, fileIndex: number) => {
-              formData.append(`quotation_stack[${index}][stack_document]`, file);
+          if (stack.quotation_stack_bom_quotation_file.length > 0) {
+            stack.quotation_stack_bom_quotation_file.forEach((file: any, fileIndex: number) => {
+              formData.append(`quotation_stack[${index}][quotation_stack_bom_quotation_file]`, file);
+            });
+          }
+
+          if (stack.quotation_stack_bom_contract_rev_file.length > 0) {
+            stack.quotation_stack_bom_contract_rev_file.forEach((file: any, fileIndex: number) => {
+              formData.append(`quotation_stack[${index}][quotation_stack_bom_contract_rev_file]`, file);
+            });
+          }
+
+          //append stack item
+          if(stack.quotation_stack_items.length > 0){
+            stack.quotation_stack_items.forEach((item: any,iItems: number) => {
+              formData.append(`quotation_stack[${index}][quotation_stack_items][${iItems}][inventory_id]`, item.inventory_id);
+              formData.append(`quotation_stack[${index}][quotation_stack_items][${iItems}][qty]`, item.qty);
+              formData.append(`quotation_stack[${index}][quotation_stack_items][${iItems}][dn_1]`, item.dn_1);
+              formData.append(`quotation_stack[${index}][quotation_stack_items][${iItems}][dn_2]`, item.dn_2);
             });
           }
         })
+        
   
         this.apiSvc.createQuotation(formData).subscribe({
           next: (response) => {
@@ -800,92 +1030,97 @@ export class AddQuotationComponent implements OnInit {
       }
 
 
-      if(this.modal_type === 'edit' || this.modal_type === 'revision'){
-        const stackComplete = this.stacks.value.map((stack: any) => ({
-          id: stack.id,
-          name: stack.name,
-          stack_document: stack.stack_file,
-          stack_new: stack.stack_new,
-          stack_updated: stack.stack_updated
-        }))
+      // if(this.modal_type === 'edit' || this.modal_type === 'revision'){
+      //   const stackComplete = this.stacks.value.map((stack: any) => ({
+      //     quotation_stack_name: stack.name,
+      //     quotation_stack_is_active: stack.active ? 1 : 0,
+      //     quotation_stack_bom_quotation_file: stack.stack_file,
+      //     quotation_stack_bom_contract_rev_file: stack.stack_file_contract,
+      //     quotation_stack_items: stack.items.map((item: any) => ({
+      //       inventory_id: item.part_number,
+      //       qty: item.qty,
+      //       dn_1: item.dn1,
+      //       dn_2: item.dn2
+      //     }))
+      //   }))
       
 
-        const body = {
-          id: this.quotationForm.get('id')?.value,
-          edit_type: this.modal_type,
-          project_id: this.quotationForm.get('project_id')?.value,
-          quotation_type: this.quotationForm.get('project_type')?.value,
-          issued_date: this.quotationForm.get('date')?.value,
-          quotation_stack_deleted_ids: this.deletedStackIds,
-          customer_id: this.quotationForm.get('customer')?.value,
-          inventories: inventoryComplete,
-        }
+      //   const body = {
+      //     id: this.quotationForm.get('id')?.value,
+      //     edit_type: this.modal_type,
+      //     project_id: this.quotationForm.get('project_id')?.value,
+      //     quotation_type: this.quotationForm.get('project_type')?.value,
+      //     issued_date: this.quotationForm.get('date')?.value,
+      //     quotation_stack_deleted_ids: this.deletedStackIds,
+      //     customer_id: this.quotationForm.get('customer')?.value,
+      //     inventories: inventoryComplete,
+      //   }
   
-        const formData = new FormData();
+      //   const formData = new FormData();
   
-        //append basic body
-        Object.keys(body).forEach(key => {
-          if(typeof (body as any)[key] === 'object'){
-            formData.append(key, JSON.stringify((body as any)[key]))
-          } else {
-            formData.append(key, ( body as any )[key]);
-          }
-        })
+      //   //append basic body
+      //   Object.keys(body).forEach(key => {
+      //     if(typeof (body as any)[key] === 'object'){
+      //       formData.append(key, JSON.stringify((body as any)[key]))
+      //     } else {
+      //       formData.append(key, ( body as any )[key]);
+      //     }
+      //   })
         
-        if(this.isUpdateFile){
-          //append project document
-          if (this.fileList.length > 0) {
-            this.fileList.forEach((file: any) => {
-              formData.append('project_document', file);
-            });
-          }
-        }
+      //   if(this.isUpdateFile){
+      //     //append project document
+      //     if (this.fileList.length > 0) {
+      //       this.fileList.forEach((file: any) => {
+      //         formData.append('project_document', file);
+      //       });
+      //     }
+      //   }
 
-        //append stack
-        stackComplete.forEach((stack: any, index: number) => {
-          formData.append(`quotation_stack[${index}][id]`, stack.id);
-          formData.append(`quotation_stack[${index}][name]`, stack.name);
+      //   //append stack
+      //   stackComplete.forEach((stack: any, index: number) => {
+      //     formData.append(`quotation_stack[${index}][id]`, stack.id);
+      //     formData.append(`quotation_stack[${index}][name]`, stack.name);
   
-          //append stack file
-          if (stack.stack_document.length > 0) {
-            stack.stack_document.forEach((file: any, fileIndex: number) => {
-              if(stack.stack_updated || stack.stack_new){
-                formData.append(`quotation_stack[${index}][stack_document]`, file);
-              } else {
-                formData.append(`quotation_stack[${index}][stack_document]`, '');
-              }
-            });
-          }
-        })
+      //     //append stack file
+      //     if (stack.stack_document.length > 0) {
+      //       stack.stack_document.forEach((file: any, fileIndex: number) => {
+      //         if(stack.stack_updated || stack.stack_new){
+      //           formData.append(`quotation_stack[${index}][stack_document]`, file);
+      //         } else {
+      //           formData.append(`quotation_stack[${index}][stack_document]`, '');
+      //         }
+      //       });
+      //     }
+      //   })
   
-        this.apiSvc.editQuotation(formData).subscribe({
-          next: (response) => {
-            this.spinnerSvc.hide();
+      //   this.apiSvc.editQuotation(formData).subscribe({
+      //     next: (response) => {
+      //       this.spinnerSvc.hide();
   
-            this.modalSvc.success({
-              nzTitle: 'Success',
-              nzContent: `Successfully ${this.modal_type === 'edit' ? 'Edit' : 'Revised'} Quotation`,
-              nzOkText: 'Ok',
-              nzCentered: true
-            });
+      //       this.modalSvc.success({
+      //         nzTitle: 'Success',
+      //         nzContent: `Successfully ${this.modal_type === 'edit' ? 'Edit' : 'Revised'} Quotation`,
+      //         nzOkText: 'Ok',
+      //         nzCentered: true
+      //       });
 
-            this.apiSvc.triggerRefreshQuotation();
-          },
-          error: (error) => {
-            this.spinnerSvc.hide();
+      //       this.apiSvc.triggerRefreshQuotation();
+      //     },
+      //     error: (error) => {
+      //       this.spinnerSvc.hide();
   
-            this.modalSvc.error({
-              nzTitle: `Unable to ${this.modal_type === 'edit' ? 'Edit' : 'Revised'} Quotation`,
-              nzContent: error.error.meta.message,
-              nzOkText: 'Ok',
-              nzCentered: true
-            });
-          },
-          complete: () => {
-            this.drawerRef.close();
-          }
-        });
-      }
+      //       this.modalSvc.error({
+      //         nzTitle: `Unable to ${this.modal_type === 'edit' ? 'Edit' : 'Revised'} Quotation`,
+      //         nzContent: error.error.meta.message,
+      //         nzOkText: 'Ok',
+      //         nzCentered: true
+      //       });
+      //     },
+      //     complete: () => {
+      //       this.drawerRef.close();
+      //     }
+      //   });
+      // }
 
 
 
@@ -930,6 +1165,25 @@ export class AddQuotationComponent implements OnInit {
     };
   }
 
+  beforeUploadStacksContract(index: number) {
+    return (file: NzUploadFile): boolean => {
+
+      const isLt5M = file.size! / 1024 / 1024 < 1
+      if (!isLt5M) {
+        this.nzMsgSvc.error('Image must be smaller than 1MB!');
+        return false;
+      }
+      
+      const stacksForm = this.stacks.at(index);
+
+      const fileList = stacksForm.get('stack_file_contract')?.value || [];
+      stacksForm.get('stack_file_contract')?.setValue([file]);
+      stacksForm.get('stack_updated_contract')?.setValue(true);  
+
+      return false;
+    }
+  }
+
   handleRemoveAttachmentStacks(index: number) {
     return (file: NzUploadFile): boolean => {
       const stacksForm = this.stacks.at(index);
@@ -958,7 +1212,41 @@ export class AddQuotationComponent implements OnInit {
 
   }
 
+  handleRemoveAttachmentStacksContract(index: number) {
+    return (file: NzUploadFile): boolean => {
+      const stacksForm = this.stacks.at(index);
+
+      // Get the current file list
+      const fileList = stacksForm.get('stack_file_contract')?.value || [];
+
+      // For updating deleted attachment
+      const matchingFile = fileList
+        .filter((item: NzUploadFile) => item.uid === file.uid)
+        .map((item: any) => item.uid);
+
+      // Get or initialize 'cp_attachmentDeleteIds'
+      const currentDeleteIds = stacksForm.get('stack_attachmentDeleteIds_contract')?.value || [];
+      const updatedDeleteIds = [...currentDeleteIds, ...matchingFile];
+      stacksForm.get('stack_attachmentDeleteIds_contract')?.setValue(updatedDeleteIds);
+
+      // Filter out the file to be removed
+      const updatedFileList = fileList.filter((item: NzUploadFile) => item.uid !== file.uid);
+      
+      // Update the form control value
+      stacksForm.get('stack_file_contract')?.setValue(updatedFileList);
+  
+      return true; // Return true to allow removal
+    }
+  }
+
   get objectKeys() {
     return Object.keys;
   }
+
+  get generateUniqueId(): string {
+    const timestamp = Date.now();
+    const randomNumber = Math.random().toString(36).substring(2, 10);
+    return `${timestamp}-${randomNumber}`;
+  }
+  
 }

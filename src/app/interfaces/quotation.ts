@@ -1,9 +1,3 @@
-export interface IRootQuotation {
-    data: IDataQuotation[]
-    pagination: Pagination
-    meta: Meta
-  }
-
   export interface IRootDetailQuotation{
     data: IDetailDataQuotation
     pagination: Pagination
@@ -38,7 +32,13 @@ export interface IRootQuotation {
     quotation: IQuotation[]
   }
 
-  export interface IDataQuotation {
+  export interface IRootQuotation {
+    data: IDataQuotation[]
+    pagination: Pagination
+    meta: Meta
+  }
+
+  export interface IDataQuotation{
     id: string
     project_pid: string
     name: string
@@ -105,6 +105,7 @@ export interface IRootQuotation {
     is_pic_company: number
     loyal_customer_program_id: number
     customer_category: CustomerCategory
+    is_attention: number
   }
   
   export interface CustomerCategory {
@@ -164,20 +165,22 @@ export interface IRootQuotation {
   export interface IQuotation {
     id: string
     quotation_no: string
-    customer: Customer
     project_id: string
+    customer: Customer
     prepared_by: PreparedBy
     quotation_type: string
     revision: string
     issued_date: string
-    project_document: {
-        id: string;
-        attachment_path: string
-        type: string
-        file_name: string
-        file_url: string
-    }
+    // project_document: {
+    //     id: string;
+    //     attachment_path: string
+    //     type: string
+    //     file_name: string
+    //     file_url: string
+    // }
     total_price: string
+    is_published: number
+    is_create_quotation_total: number
     quotation_items: QuotationItem[]
     quotation_stack: QuotationStack[]
   }
@@ -217,6 +220,19 @@ export interface IRootQuotation {
     default_selling_price: string
     default_product_cost_2: string
     default_gross_margin: string
+    installation: Installation
+  }
+
+  interface Installation{
+    id: string
+    inventory_id: string
+    unit_inch_qty: string
+    price: string
+    price_type: string
+    price_per_unit: string
+    price_factor: string
+    selling_price: string
+    gross_margin: string
   }
   
   export interface Unit {
@@ -252,14 +268,37 @@ export interface IRootQuotation {
   export interface QuotationStack {
     id: string
     quotation_id: string
+    stack_slug: string
     name: string
-    stack_file: {
-        id: string
-        attachment_path: string
-        type: string
-        file_name: string
-        file_url: string
-    }
+    is_active: number
+    latest_quotation_bom: LatestQuotationBom
+    // stack_file: {
+    //     id: string
+    //     attachment_path: string
+    //     type: string
+    //     file_name: string
+    //     file_url: string
+    // }
+  }
+
+  export interface LatestQuotationBom {
+    id: string
+    quotation_stack_id: string
+    revision_contract: string
+    stack_bom_contract: string
+    stack_revision_quotation: any
+    bom_quotation_file: file
+    bom_contract_rev_file: any
+    total_price: string
+    quotation_stack_items: QuotationItem[]
+  }
+
+  interface file{
+    id: any
+    attachment_path: string
+    type: any
+    file_name: string
+    file_url: string
   }
   
   export interface Pagination {

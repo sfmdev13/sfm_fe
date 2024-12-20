@@ -27,12 +27,12 @@
                 <p class="m-0 p-0 fw-semibold">Project Location</p>
                 <p class="fw-light">{{ projectLocation }}</p>   
             </div>
-            <div>
+            <!-- <div>
                 <p class="m-0 p-0 fw-semibold">Project File</p>
                 <a [href]="dataDetail.project_document.file_url" target="_blank" rel="noopener noreferrer">
                     <p class="fw-light">{{dataDetail.project_document.file_name}}</p>
                 </a>
-            </div>
+            </div> -->
             <div>
                 <p class="m-0 p-0 fw-semibold">Date</p>
                 <p class="fw-light">{{ data.issue_date | date: 'fullDate' }}</p>
@@ -165,12 +165,12 @@
                         <p class="m-0 p-0 fw-semibold">Stack Name</p>
                         <p class="fw-light">{{ s.name }}</p>                         
                     </div>
-                    <div class="col-6">
+                    <!-- <div class="col-6">
                         <p class="m-0 p-0 fw-semibold">Stack File</p>
                         <a [href]="s.stack_file.file_url" target="_blank" rel="noopener noreferrer">
                             <p class="fw-light">{{s.stack_file.file_name}}</p>
                         </a>                       
-                    </div>
+                    </div> -->
                 </ng-container>
             </div>
         </nz-tab>
