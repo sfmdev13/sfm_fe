@@ -254,19 +254,5 @@
     </div>
 </div>
 <div *nzModalFooter>
-    <button nz-button nzType="default" (click)="destroyModal()">{{modalType !== 'add' ? 'Cancel': 'Ok'}}</button>
-    <ng-container *ngIf="modalType !== 'add'">
-        <button nz-button nzType="primary" (click)="destroyModal()">
-            <div class="d-flex align-items-center gap-2">
-                <span nz-icon nzType="edit"></span>
-                Edit Stack
-            </div>
-        </button>
-        <button nz-button nzType="primary" (click)="destroyModal()">
-            <div class="d-flex align-items-center gap-2">
-                <span nz-icon nzType="diff"></span>
-                Revise Stack
-            </div>
-        </button>
-    </ng-container>
+    <button nz-button nzType="default" (click)="destroyModal()">Ok</button>
 </div>

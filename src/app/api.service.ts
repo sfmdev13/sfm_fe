@@ -1616,4 +1616,15 @@ export class ApiService {
       map(res => res.data.quotation)
     )
   }
+
+  updateStackItem(body: any): Observable<any>{
+    const token = localStorage.getItem('authToken');
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+    })
+
+    const url = `${this.apiUrl}/update/stack-item`;
+
+    return this.http.post<any>(url, body, { headers });
+  }
 }

@@ -242,7 +242,7 @@
                                     <th scope="col">Detail</th>
                                     <th scope="col">Used for Total Quotation</th>
                                     <th scope="col">Active</th>
-                                    <th scope="col">#</th>
+                                    <th scope="col">Action</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -318,7 +318,36 @@
                                             </nz-form-control>
                                         </td>
                                         <td>
-                                            <span (click)="removeStacks(i)" nz-icon nzType="delete" nzTheme="twotone" [nzTwotoneColor]="'#ED0000'"></span>
+                                            <div class="d-flex gap-3">
+                                                <a nz-dropdown nzTrigger="click" [nzDropdownMenu]="menu" style="text-decoration: none;" >
+                                                    <div class="d-flex align-items-center">
+                                                      <i nz-icon nzType="more" nzTheme="outline"></i>
+                                                      <p class="m-0 p-0">More</p>                       
+                                                    </div>
+                                                </a>
+                                                <nz-dropdown-menu  #menu="nzDropdownMenu">
+                                                    <ul nz-menu class="dropdown-wrapper" style="width: 120px;">
+                                                        <li nz-menu-item class="gap-2 list-dropdown"  (click)="editStack('edit', i)">
+                                                            <div class="d-flex gap-2">
+                                                              <span nz-icon nzType="edit" nzTheme="twotone"></span>
+                                                              <p class="m-0 p-0">Edit</p>
+                                                            </div>
+                                                          </li>
+                                                          <li nz-menu-item class="gap-2 list-dropdown"  (click)="editStack('revision', i)">
+                                                            <div class="d-flex gap-2">
+                                                              <span nz-icon nzType="diff" nzTheme="twotone"></span>
+                                                              <p class="m-0 p-0">Revision</p>
+                                                            </div>
+                                                          </li>
+                                                        <li nz-menu-item class="gap-2 list-dropdown" (click)="removeStacks(i)">
+                                                            <div class="d-flex gap-2">
+                                                                <span nz-icon nzType="delete" nzTheme="twotone" [nzTwotoneColor]="'#f50'"></span>
+                                                                <p class="m-0 p-0" style="color: #f50;">Delete</p>  
+                                                            </div>
+                                                        </li>
+                                                    </ul>
+                                                </nz-dropdown-menu>
+                                            </div>
                                         </td>
                                     </tr>
                                     <tr>

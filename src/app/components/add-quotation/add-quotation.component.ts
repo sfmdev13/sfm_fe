@@ -22,6 +22,7 @@ import { SpinnerService } from 'src/app/spinner.service';
 import { NzModalModule, NzModalService } from 'ng-zorro-antd/modal';
 import { NzCheckboxModule } from 'ng-zorro-antd/checkbox';
 import { DetailStackComponent } from './detail-stack/detail-stack.component';
+import { NzDropDownModule } from 'ng-zorro-antd/dropdown';
 
 @Component({
   selector: 'app-add-quotation',
@@ -42,7 +43,8 @@ import { DetailStackComponent } from './detail-stack/detail-stack.component';
     NzAlertModule,
     NzDividerModule,
     NzModalModule,
-    NzCheckboxModule
+    NzCheckboxModule,
+    NzDropDownModule
   ],
   providers: [DatePipe],
   templateUrl: './add-quotation.component.html',
@@ -295,12 +297,14 @@ export class AddQuotationComponent implements OnInit {
 
         const updateStack = this.fb.group({
           id: [stack.id],
+          stack_revision_bom_id: [stack.latest_quotation_bom.id],
           name: [stack.name, Validators.required],
           stack_file: [updateStackFile],
           stack_new: [false],
           stack_updated: [false],
           stack_attachmentDeleteIds: [[]],
           stack_file_contract: [updateStackFileContract],
+          stack_new_contract: [false],
           stack_updated_contract:[false],
           stack_attachmentDeleteIds_contract: [[]],
           revision_stack: [{value: stack.latest_quotation_bom.stack_revision_quotation, disabled: true}],
@@ -326,8 +330,8 @@ export class AddQuotationComponent implements OnInit {
             part_number: [item.inventory.id, [Validators.required]],
             description: [item.inventory.id, [Validators.required]],
             alias: [{value: item.inventory.alias, disabled: true}],
-            dn1: [parseFloat(item.dn_1)],
-            dn2: [item.dn_2 === null ? '': parseFloat(item.dn_2)],
+            dn1: [item.dn_1 === null || item.dn_1 === '' ? '': parseFloat(item.dn_1)],
+            dn2: [item.dn_2 === null || item.dn_2 === '' ? '': parseFloat(item.dn_2)],
             qty: [parseFloat(item.qty)],
             unit: [{value: item.inventory.unit.name, disabled: true}],
             exist: [true],
@@ -720,6 +724,7 @@ export class AddQuotationComponent implements OnInit {
 
     const newStacks = this.fb.group({
       id: [''],
+      stack_revision_bom_id: [''],
       name: [''],
       stack_file: [[]],
       stack_new: [true],
@@ -728,6 +733,7 @@ export class AddQuotationComponent implements OnInit {
 
       revision_stack: [{value: '', disabled: true}],
       stack_file_contract: [''],
+      stack_new_contract: [true],
       stack_updated_contract: [false],
       stack_attachmentDeleteIds_contract: [[]],
 
@@ -785,6 +791,88 @@ export class AddQuotationComponent implements OnInit {
   
   closeDrawer(){
     this.drawerRef.close();
+  }
+
+  editStack(type: 'edit' | 'revision', i: number){
+
+    this.spinnerSvc.show();
+
+    const stackUpdate = this.stacks.at(i).getRawValue();
+
+    const inventoryComplete = stackUpdate.items.map((item: any) => ({
+      inventory_id: item.part_number,
+      qty: item.qty,
+      dn_1: item.dn1,
+      dn_2: item.dn2
+    }))
+
+    const body = {
+      name: stackUpdate.name,
+      is_active: stackUpdate ? 1 : 0,
+      stack_id: stackUpdate.id,
+      stack_revision_bom_id: stackUpdate.stack_revision_bom_id,
+      quotation_id: this.dataQuotation.quotation.id,
+      edit_type: type,
+      quotation_stack_items: inventoryComplete
+    }
+
+    const formData = new FormData();
+
+    Object.keys(body).forEach(key => {
+      if(typeof (body as any)[key] === 'object'){
+        formData.append(key, JSON.stringify((body as any)[key]))
+      } else {
+        formData.append(key, ( body as any )[key]);
+      }
+    })
+
+    if (stackUpdate.stack_file.length > 0) {
+      stackUpdate.stack_file.forEach((file: any, fileIndex: number) => {
+        if(stackUpdate.stack_updated || stackUpdate.stack_new){
+          formData.append(`bom_quotation_file`, file);
+        } else {
+          formData.append(`bom_quotation_file`, '');
+        }
+      });
+    }
+
+    if (stackUpdate.stack_file_contract.length > 0) {
+      stackUpdate.stack_file_contract.forEach((file: any, fileIndex: number) => {
+        if(stackUpdate.stack_updated_contract || stackUpdate.stack_new_contract){
+          formData.append(`bom_contract_rev_file`, file);
+        } else {
+          formData.append(`bom_contract_rev_file`, '');
+        }
+      });
+    }
+
+    this.apiSvc.updateStackItem(formData).subscribe({
+      next: (response) => {
+        this.spinnerSvc.hide();
+
+        this.modalSvc.success({
+          nzTitle: 'Success',
+          nzContent: `Successfully ${type === 'edit' ? 'Edit' : 'Revise'} Stack`,
+          nzOkText: 'Ok',
+          nzCentered: true
+        });
+
+        this.apiSvc.triggerRefreshQuotation();
+      },
+      error: (error) => {
+        this.spinnerSvc.hide();
+
+        this.modalSvc.error({
+          nzTitle: `Unale ${type === 'edit' ? 'Edit' : 'Revise'} Stack`,
+          nzContent: error.error.meta.message,
+          nzOkText: 'Ok',
+          nzCentered: true
+        });
+      },
+      complete: () => {
+        this.drawerRef.close();
+      }
+    });
   }
 
   submit(){
@@ -942,92 +1030,97 @@ export class AddQuotationComponent implements OnInit {
       }
 
 
-      if(this.modal_type === 'edit' || this.modal_type === 'revision'){
-        const stackComplete = this.stacks.value.map((stack: any) => ({
-          id: stack.id,
-          name: stack.name,
-          stack_document: stack.stack_file,
-          stack_new: stack.stack_new,
-          stack_updated: stack.stack_updated
-        }))
+      // if(this.modal_type === 'edit' || this.modal_type === 'revision'){
+      //   const stackComplete = this.stacks.value.map((stack: any) => ({
+      //     quotation_stack_name: stack.name,
+      //     quotation_stack_is_active: stack.active ? 1 : 0,
+      //     quotation_stack_bom_quotation_file: stack.stack_file,
+      //     quotation_stack_bom_contract_rev_file: stack.stack_file_contract,
+      //     quotation_stack_items: stack.items.map((item: any) => ({
+      //       inventory_id: item.part_number,
+      //       qty: item.qty,
+      //       dn_1: item.dn1,
+      //       dn_2: item.dn2
+      //     }))
+      //   }))
       
 
-        const body = {
-          id: this.quotationForm.get('id')?.value,
-          edit_type: this.modal_type,
-          project_id: this.quotationForm.get('project_id')?.value,
-          quotation_type: this.quotationForm.get('project_type')?.value,
-          issued_date: this.quotationForm.get('date')?.value,
-          quotation_stack_deleted_ids: this.deletedStackIds,
-          customer_id: this.quotationForm.get('customer')?.value,
-          inventories: inventoryComplete,
-        }
+      //   const body = {
+      //     id: this.quotationForm.get('id')?.value,
+      //     edit_type: this.modal_type,
+      //     project_id: this.quotationForm.get('project_id')?.value,
+      //     quotation_type: this.quotationForm.get('project_type')?.value,
+      //     issued_date: this.quotationForm.get('date')?.value,
+      //     quotation_stack_deleted_ids: this.deletedStackIds,
+      //     customer_id: this.quotationForm.get('customer')?.value,
+      //     inventories: inventoryComplete,
+      //   }
   
-        const formData = new FormData();
+      //   const formData = new FormData();
   
-        //append basic body
-        Object.keys(body).forEach(key => {
-          if(typeof (body as any)[key] === 'object'){
-            formData.append(key, JSON.stringify((body as any)[key]))
-          } else {
-            formData.append(key, ( body as any )[key]);
-          }
-        })
+      //   //append basic body
+      //   Object.keys(body).forEach(key => {
+      //     if(typeof (body as any)[key] === 'object'){
+      //       formData.append(key, JSON.stringify((body as any)[key]))
+      //     } else {
+      //       formData.append(key, ( body as any )[key]);
+      //     }
+      //   })
         
-        if(this.isUpdateFile){
-          //append project document
-          if (this.fileList.length > 0) {
-            this.fileList.forEach((file: any) => {
-              formData.append('project_document', file);
-            });
-          }
-        }
+      //   if(this.isUpdateFile){
+      //     //append project document
+      //     if (this.fileList.length > 0) {
+      //       this.fileList.forEach((file: any) => {
+      //         formData.append('project_document', file);
+      //       });
+      //     }
+      //   }
 
-        //append stack
-        stackComplete.forEach((stack: any, index: number) => {
-          formData.append(`quotation_stack[${index}][id]`, stack.id);
-          formData.append(`quotation_stack[${index}][name]`, stack.name);
+      //   //append stack
+      //   stackComplete.forEach((stack: any, index: number) => {
+      //     formData.append(`quotation_stack[${index}][id]`, stack.id);
+      //     formData.append(`quotation_stack[${index}][name]`, stack.name);
   
-          //append stack file
-          if (stack.stack_document.length > 0) {
-            stack.stack_document.forEach((file: any, fileIndex: number) => {
-              if(stack.stack_updated || stack.stack_new){
-                formData.append(`quotation_stack[${index}][stack_document]`, file);
-              } else {
-                formData.append(`quotation_stack[${index}][stack_document]`, '');
-              }
-            });
-          }
-        })
+      //     //append stack file
+      //     if (stack.stack_document.length > 0) {
+      //       stack.stack_document.forEach((file: any, fileIndex: number) => {
+      //         if(stack.stack_updated || stack.stack_new){
+      //           formData.append(`quotation_stack[${index}][stack_document]`, file);
+      //         } else {
+      //           formData.append(`quotation_stack[${index}][stack_document]`, '');
+      //         }
+      //       });
+      //     }
+      //   })
   
-        this.apiSvc.editQuotation(formData).subscribe({
-          next: (response) => {
-            this.spinnerSvc.hide();
+      //   this.apiSvc.editQuotation(formData).subscribe({
+      //     next: (response) => {
+      //       this.spinnerSvc.hide();
   
-            this.modalSvc.success({
-              nzTitle: 'Success',
-              nzContent: `Successfully ${this.modal_type === 'edit' ? 'Edit' : 'Revised'} Quotation`,
-              nzOkText: 'Ok',
-              nzCentered: true
-            });
+      //       this.modalSvc.success({
+      //         nzTitle: 'Success',
+      //         nzContent: `Successfully ${this.modal_type === 'edit' ? 'Edit' : 'Revised'} Quotation`,
+      //         nzOkText: 'Ok',
+      //         nzCentered: true
+      //       });
 
-            this.apiSvc.triggerRefreshQuotation();
-          },
-          error: (error) => {
-            this.spinnerSvc.hide();
+      //       this.apiSvc.triggerRefreshQuotation();
+      //     },
+      //     error: (error) => {
+      //       this.spinnerSvc.hide();
   
-            this.modalSvc.error({
-              nzTitle: `Unable to ${this.modal_type === 'edit' ? 'Edit' : 'Revised'} Quotation`,
-              nzContent: error.error.meta.message,
-              nzOkText: 'Ok',
-              nzCentered: true
-            });
-          },
-          complete: () => {
-            this.drawerRef.close();
-          }
-        });
-      }
+      //       this.modalSvc.error({
+      //         nzTitle: `Unable to ${this.modal_type === 'edit' ? 'Edit' : 'Revised'} Quotation`,
+      //         nzContent: error.error.meta.message,
+      //         nzOkText: 'Ok',
+      //         nzCentered: true
+      //       });
+      //     },
+      //     complete: () => {
+      //       this.drawerRef.close();
+      //     }
+      //   });
+      // }
 
 
 
