@@ -1638,4 +1638,15 @@ export class ApiService {
 
     return this.http.post<any>(url, body, { headers });
   }
+
+  publishQuotation(id: string): Observable<any>{
+    const token = localStorage.getItem('authToken');
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+    })
+
+    const url = `${this.apiUrl}/publish-quotation/${id}`;
+
+    return this.http.get<any>(url, { headers });
+  }
 }

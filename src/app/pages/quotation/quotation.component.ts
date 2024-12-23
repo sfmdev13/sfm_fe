@@ -169,6 +169,19 @@ export class QuotationComponent implements OnInit {
       searchValue: ''
     },
     {
+      name: 'Published Quotation',
+      sortOrder: null,
+      sortFn: null,
+      sortDirections: [null],
+      showSort: false,
+      showFilter: false,
+      listOfFilter: [],
+      filterFn: null,
+      showSearch: false,
+      searchVisible: false,
+      searchValue: ''
+    },
+    {
       name: 'Action',
       sortOrder: null,
       sortFn: null,
@@ -204,6 +217,12 @@ export class QuotationComponent implements OnInit {
     })
   }
 
+  publish(id: string){
+    this.apiSvc.publishQuotation(id).subscribe((res) => {
+      this.apiSvc.triggerRefreshQuotation();
+    })
+  }
+
   updateDisplayedData(): void {
     const start = (this.currentPage - 1) * this.pageSize;
     const end = start + this.pageSize;
@@ -231,7 +250,6 @@ export class QuotationComponent implements OnInit {
     const value = col.searchValue;
 
     if(col.name === 'Project Name'){
-      console.log('masuk lagi')
       this.listOfDisplayData = this.listOfData.filter((item) =>
         item.name.toLowerCase().includes(value.toLowerCase())
       );
