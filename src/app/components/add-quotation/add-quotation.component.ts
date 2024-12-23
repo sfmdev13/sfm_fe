@@ -23,6 +23,8 @@ import { NzModalModule, NzModalService } from 'ng-zorro-antd/modal';
 import { NzCheckboxModule } from 'ng-zorro-antd/checkbox';
 import { DetailStackComponent } from './detail-stack/detail-stack.component';
 import { NzDropDownModule } from 'ng-zorro-antd/dropdown';
+import { NzInputNumberModule } from 'ng-zorro-antd/input-number';
+import { NzRadioModule } from 'ng-zorro-antd/radio';
 
 @Component({
   selector: 'app-add-quotation',
@@ -44,7 +46,9 @@ import { NzDropDownModule } from 'ng-zorro-antd/dropdown';
     NzDividerModule,
     NzModalModule,
     NzCheckboxModule,
-    NzDropDownModule
+    NzDropDownModule,
+    NzInputNumberModule,
+    NzRadioModule
   ],
   providers: [DatePipe],
   templateUrl: './add-quotation.component.html',
@@ -115,6 +119,10 @@ export class AddQuotationComponent implements OnInit {
   selectedCustomer: IProjectCustomer[] = []
 
   isCreateQuotationTotal = false;
+
+  selectedTabIndex = 0;
+
+  selectedStack: string[] = [];
 
   constructor(
     private drawerRef: NzDrawerRef,
@@ -397,6 +405,92 @@ export class AddQuotationComponent implements OnInit {
 
       if(!value.includes(this.quotationForm.get('is_pic_internal')?.value)){
         this.quotationForm.patchValue({is_pic_internal: ''})
+      }
+    })
+
+
+  }
+
+  createQuotationTotal(){
+
+    this.spinnerSvc.show();
+
+    const stackTotal = this.stacks.value
+    .filter((s: any) => s.is_total_quotation === true)
+    .map((s: any) => s.id);
+
+    let body = {
+      quotation_id: this.quotationForm.get('id')?.value,
+      selected_stack_ids: stackTotal
+    }
+
+    this.stacks.getRawValue().forEach((s) => {
+      let stack = `${s.name}`;
+
+      if(s.revision_stack){
+        stack = `${s.name} - ${s.revision_stack}`;
+      }
+
+      if(s.revision_bom_contract){
+        stack = `${s.name} - ${s.revision_contract}`;
+      }
+
+      this.selectedStack.push(stack)
+    })
+
+    this.apiSvc.createQuotationTotal(body).subscribe({
+      next: (response) => {
+
+        this.items.clear();
+
+        response.data.forEach((item: any) => {
+          const newItem = this.fb.group({
+            inventory_id: [item.inventory.id],
+            part_number: [item.inventory.id, [Validators.required]],
+            description: [item.inventory.id, [Validators.required]],
+            alias: [{value: item.inventory.alias, disabled: true}],
+            dn1: [item.dn_1 === null || item.dn_1 === '' ? '': parseFloat(item.dn_1)],
+            dn2: [item.dn_2 === null || item.dn_2 === '' ? '': parseFloat(item.dn_2)],
+            qty: [parseFloat(item.qty)],
+            unit: [{value: item.inventory.unit.name, disabled: true}],
+            exist: [true],
+            unit_price: [parseFloat(item.inventory.default_selling_price)],
+            total_price: [parseFloat(item.total_price_per_product)],
+            gross_margin: [parseFloat(item.inventory.default_gross_margin)],
+            category: [item.inventory.supplier_product.name],
+      
+            i_part_number: [item.inventory.code],
+            i_description: [item.inventory.description],
+            installation_unit_inch_qty: [{value: parseFloat(item.inventory.installation.unit_inch_qty), disabled: true}],
+            installation_unit_price: [{value: parseFloat(item.inventory.installation.price), disabled: true}],
+            installation_unit_price_type: [{value: parseFloat(item.inventory.installation.price_type), disabled: true}],
+            installation_price_per_unit: [{value: parseFloat(item.inventory.installation.price_per_unit), disabled: true}],
+            installation_price_factor: [{value: parseFloat(item.inventory.installation.price_factor), disabled: true}],
+            installation_selling_price: [{value: parseFloat(item.inventory.installation.selling_price), disabled: true}],
+            installation_gross_margin: [{value: parseFloat(item.inventory.installation.gross_margin), disabled: true}],
+          })
+
+          this.items.push(newItem);
+          this.itemValueChangeSubscription(newItem);
+        })
+        this.selectedTabIndex = 2;
+        this.updateGroupedItems();
+
+        this.isCreateQuotationTotal = true;
+        this.cd.detectChanges();
+        this.spinnerSvc.hide();
+
+
+      },
+      error: (error) => {
+        this.spinnerSvc.hide();
+
+        this.modalSvc.error({
+          nzTitle: `Unable to create quotation total`,
+          nzContent: error.error.meta.message,
+          nzOkText: 'Ok',
+          nzCentered: true
+        });
       }
     })
 
@@ -1248,5 +1342,8 @@ export class AddQuotationComponent implements OnInit {
     const randomNumber = Math.random().toString(36).substring(2, 10);
     return `${timestamp}-${randomNumber}`;
   }
-  
+
+  formatter = (value: number | null): string => {
+    return value !== null ? `${value.toLocaleString('en-US')}` : '';
+  };
 }

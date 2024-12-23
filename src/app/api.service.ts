@@ -1627,4 +1627,15 @@ export class ApiService {
 
     return this.http.post<any>(url, body, { headers });
   }
+
+  createQuotationTotal(body: any): Observable<any>{
+    const token = localStorage.getItem('authToken');
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+    })
+
+    const url = `${this.apiUrl}/create/quotation-total`;
+
+    return this.http.post<any>(url, body, { headers });
+  }
 }
