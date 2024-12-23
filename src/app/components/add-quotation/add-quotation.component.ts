@@ -11,7 +11,7 @@ import { NzMessageModule, NzMessageService } from 'ng-zorro-antd/message';
 import { NzSelectModule } from 'ng-zorro-antd/select';
 import { NzTabsModule } from 'ng-zorro-antd/tabs';
 import { NzUploadFile, NzUploadModule } from 'ng-zorro-antd/upload';
-import { map, Observable, tap } from 'rxjs';
+import { iif, map, Observable, tap } from 'rxjs';
 import { ApiService } from 'src/app/api.service';
 import { IDataCategories, IDataCustomer, IDataInventory, IDataQuotation, IRootProject } from 'src/app/interfaces';
 import { ICustomerProject, IDataProject, IProjectCustomer } from 'src/app/interfaces/project';
@@ -195,9 +195,49 @@ export class AddQuotationComponent implements OnInit {
     })
 
 
+
+
     if(this.modal_type === 'edit' || this.modal_type === 'revision'){
 
       this.isCreateQuotationTotal = this.dataQuotation.quotation.is_create_quotation_total === 1 ? true : false;
+
+      if(this.isCreateQuotationTotal && this.dataQuotation.quotation.quotation_items.length > 0) {
+        this.items.clear();
+
+        this.dataQuotation.quotation.quotation_items.forEach((item: any) => {
+          const newItem = this.fb.group({
+            inventory_id: [item.inventory.id],
+            part_number: [item.inventory.id, [Validators.required]],
+            description: [item.inventory.id, [Validators.required]],
+            alias: [{value: item.inventory.alias, disabled: true}],
+            dn1: [item.dn_1 === null || item.dn_1 === '' ? '': parseFloat(item.dn_1)],
+            dn2: [item.dn_2 === null || item.dn_2 === '' ? '': parseFloat(item.dn_2)],
+            qty: [parseFloat(item.qty)],
+            unit: [{value: item.inventory.unit.name, disabled: true}],
+            exist: [true],
+            unit_price: [parseFloat(item.inventory.default_selling_price)],
+            total_price: [parseFloat(item.total_price_per_product)],
+            gross_margin: [parseFloat(item.inventory.default_gross_margin)],
+            category: [item.inventory.supplier_product.name],
+      
+            i_part_number: [item.inventory.code],
+            i_description: [item.inventory.description],
+            installation_unit_inch_qty: [{value: parseFloat(item.inventory.installation.unit_inch_qty), disabled: true}],
+            installation_unit_price: [{value: parseFloat(item.inventory.installation.price), disabled: true}],
+            installation_unit_price_type: [{value: parseFloat(item.inventory.installation.price_type), disabled: true}],
+            installation_price_per_unit: [{value: parseFloat(item.inventory.installation.price_per_unit), disabled: true}],
+            installation_price_factor: [{value: parseFloat(item.inventory.installation.price_factor), disabled: true}],
+            installation_selling_price: [{value: parseFloat(item.inventory.installation.selling_price), disabled: true}],
+            installation_gross_margin: [{value: parseFloat(item.inventory.installation.gross_margin), disabled: true}],
+          })
+
+          this.items.push(newItem);
+          this.itemValueChangeSubscription(newItem);
+        })
+
+        this.updateGroupedItems();
+        this.cd.detectChanges();
+      }
 
       const projectData: IDataProject = this.projectsData.filter((project) => project.id === this.dataQuotation.id)[0];
 
@@ -365,38 +405,6 @@ export class AddQuotationComponent implements OnInit {
         })
       })
 
-      // //edit item
-      // this.dataQuotation.quotation?.quotation_items.forEach((item) => {
-      //   const totalPrice = parseFloat(item.inventory.default_selling_price) * parseFloat(item.qty)
-
-      //   const editItems = this.fb.group({
-      //     part_number: [item.inventory.id, Validators.required],
-      //     description: [item.inventory.id, Validators.required],
-      //     alias: [{value: item.inventory.alias, disabled: true}, Validators.required],
-      //     dn1: [item.dn_1],
-      //     dn2: [item.dn_2],
-      //     qty: [item.qty],
-      //     unit:[{value: item.inventory.unit.name, disabled: true}],
-      //     exist: [true],
-      //     unit_price: [item.inventory.default_selling_price],
-      //     gross_margin: [item.inventory.default_gross_margin],
-      //     total_price: [totalPrice],
-      //     category: [item.inventory.supplier_product.name]
-      //   })
-
-      //   this.items.push(editItems);
-      //   this.itemValueChangeSubscription(editItems);
-      // })
-
-      // this.updateGroupedItems();
-
-
-      // // Explicitly mark the form array as dirty or updated
-      // this.items.markAsDirty();
-      // this.items.updateValueAndValidity();
-
-      // // Trigger change detection
-      // this.cd.detectChanges();
     }
 
   
@@ -481,6 +489,7 @@ export class AddQuotationComponent implements OnInit {
         this.cd.detectChanges();
         this.spinnerSvc.hide();
 
+        this.apiSvc.triggerRefreshQuotation();
 
       },
       error: (error) => {
