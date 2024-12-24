@@ -258,11 +258,11 @@ export class AddQuotationComponent implements OnInit {
 
       this.quotationForm.get('project_id')?.setValue(this.dataQuotation.id, { emitEvent: false })
       this.quotationForm.get('project_name')?.setValue(this.dataQuotation.id, { emitEvent: false })
+      this.quotationForm.get('customer')?.setValue(this.dataQuotation.quotation.customer.id, { emitEvent: false});
 
       this.quotationForm.patchValue({
         id: this.dataQuotation.quotation.id,
         prepared_by: this.dataQuotation.pic[0].pic_id,
-        customer: this.dataQuotation.quotation.customer.id,
         date: this.dataQuotation.issue_date,
         revision: this.dataQuotation.quotation?.revision,
         quotation_no: this.dataQuotation.quotation?.quotation_no,
@@ -359,7 +359,7 @@ export class AddQuotationComponent implements OnInit {
           revision_stack: [{value: stack.latest_quotation_bom.stack_revision_quotation, disabled: true}],
           revision_bom_contract: [{value: stack.latest_quotation_bom.stack_bom_contract, disabled: true}],
           revision_contract: [{value: stack.latest_quotation_bom.revision_contract, disabled: true}],
-          is_total_quotation: [false],
+          is_total_quotation: [stack.is_used_for_quotation === 1 ? true : false],
           active: [stack.is_active === 1 ? true : false],
           stack_type: ['manual'],
           items: this.fb.array([])
