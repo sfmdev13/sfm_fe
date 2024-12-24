@@ -1,6 +1,38 @@
 <div class="login-wrapper">
-    <div class="login-card container h-100">
-        <div class="d-flex align-items-center justify-content-center h-100">
+    <div class="login-card container d-flex justify-content-center align-items-center h-100">
+      <div class="glass-square">
+        <div class="logo-wrapper">
+          <img class="img-fluid" width="48" height="48" src="/assets/images/company-logo-login.png"/>
+        </div>
+        <div class="mt-4">
+          <form nz-form [formGroup]="validateForm" class="login-form" (ngSubmit)="submitForm()">
+              <nz-form-item>
+                <nz-form-control nzErrorTip="Please input your email!">
+                  <nz-input-group nzPrefixIcon="user" class="input-glass">
+                    <input type="text" nz-input formControlName="email" placeholder="Email" />
+                  </nz-input-group>
+                </nz-form-control>
+              </nz-form-item>
+              <nz-form-item>
+                <nz-form-control nzErrorTip="Please input your Password!">
+                  <nz-input-group nzPrefixIcon="lock" [nzSuffix]="suffixTemplate" class="input-glass">
+                    <input [type]="passwordVisible ? 'text' : 'password'" nz-input formControlName="password" placeholder="Password" />
+                  </nz-input-group>
+                  <ng-template #suffixTemplate>
+                      <span
+                        nz-icon
+                        [nzType]="passwordVisible ? 'eye-invisible' : 'eye'"
+                        (click)="passwordVisible = !passwordVisible"
+                      ></span>
+                    </ng-template>
+                </nz-form-control>
+              </nz-form-item>
+              <button class="login-btn" type="submit">Log In</button>
+            </form>
+        </div>
+      </div>
+
+        <!-- <div class="d-flex align-items-center justify-content-center h-100">
             <nz-card class="px-4 h-50" [nzBordered]="true">
                 <div class="login-card-header text-center">
                     <img class="img-fluid" width="48" height="48" src="/assets/images/company-logo-login.png"/>
@@ -38,6 +70,6 @@
                       </form>
                 </div>
             </nz-card>
-        </div>
+        </div> -->
     </div>
 </div>

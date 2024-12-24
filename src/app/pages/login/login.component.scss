@@ -8,3 +8,78 @@
     background-attachment: fixed;
     overflow: hidden;
 }
+
+.logo-wrapper{
+    position: absolute;
+    top: -86px;
+    right: 201px;
+    padding: 24px;
+    background: rgba(255, 255, 255, 0.8); /* Semi-transparent background */
+    backdrop-filter: blur(10px); /* Frosted glass blur effect */
+    border: 1px solid rgba(255, 255, 255, 0.3); /* Semi-transparent border */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Soft shadow */
+    border-radius: 15px; /* Optional: rounded corners */
+}
+
+.glass-square {
+    width: 500px;
+    height: auto;
+    padding: 48px 24px;
+    background: rgba(255, 255, 255, 0.2); /* Semi-transparent background */
+    backdrop-filter: blur(10px); /* Frosted glass blur effect */
+    border: 1px solid rgba(255, 255, 255, 0.3); /* Semi-transparent border */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Soft shadow */
+    border-radius: 15px; /* Optional: rounded corners */
+  }
+
+.input-glass{
+    background-color: transparent;
+    color: white;
+    height: 48px;
+    border-radius: 12px;
+    font-size: 16px;
+
+    input{
+        background-color: transparent;
+        color: white;
+
+        :focus{
+            border-color: white;
+        }
+    }
+}
+
+.login-btn {
+    padding: 12px 48px;
+    background-color: white;
+    color: #1A2369;
+    border: 0;
+    border-radius: 32px;
+    font-weight: 600;
+    position: absolute;
+    left: 13em;
+    bottom: -2em;
+    transition: box-shadow 0.3s ease; /* Smooth hover effect */
+}
+
+.login-btn:hover {
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2); /* Add a subtle shadow */
+}
+
+
+
+.ant-input-affix-wrapper-status-error:not(.ant-input-affix-wrapper-disabled):not(.ant-input-affix-wrapper-borderless).ant-input-affix-wrapper, .ant-input-affix-wrapper-status-error:not(.ant-input-affix-wrapper-disabled):not(.ant-input-affix-wrapper-borderless).ant-input-affix-wrapper:hover{
+    background-color: transparent;
+
+    input{
+        background-color: transparent;
+    }
+}
+
+.ant-input-affix-wrapper:not(.ant-input-affix-wrapper-disabled):hover{
+    border-color: white;
+}
+
+.ant-input-affix-wrapper:focus, .ant-input-affix-wrapper-focused{
+    box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.2);
+}

@@ -110,6 +110,11 @@
                 <td>Rp. {{ data.quotation.total_price | number:'1.0-0'}}</td>
                 <td>{{ data.quotation?.revision }}</td>
                 <td>{{ formatProjectCategory(data.project_category) }}</td>
+                <td>
+                  <ng-container *ngIf="data.quotation.is_published">
+                    <span style="color: lightblue">{{ data.quotation?.revision }}</span>
+                  </ng-container>
+                </td>
                 <td nzRight>
                     <div class="d-flex gap-3">
                         <a nz-dropdown nzTrigger="click" [nzDropdownMenu]="menu" style="text-decoration: none;" >
@@ -137,6 +142,12 @@
                               <div class="d-flex gap-2">
                                 <span nz-icon nzType="diff" nzTheme="twotone"></span>
                                 <p class="m-0 p-0">Revision</p>
+                              </div>
+                            </li>
+                            <li nz-menu-item class="gap-2 list-dropdown"  (click)="publish(data.quotation.id)">
+                              <div class="d-flex gap-2">
+                                <span nz-icon nzType="rocket" nzTheme="twotone"></span>
+                                <p class="m-0 p-0">Publish</p>
                               </div>
                             </li>
                             <!-- <li nz-menu-item class="gap-2 list-dropdown">

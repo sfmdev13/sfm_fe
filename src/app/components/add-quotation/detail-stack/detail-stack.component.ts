@@ -205,7 +205,7 @@ export class DetailStackComponent implements OnInit {
           installation_unit_inch_qty: [{value: parseFloat(filteredInventory[0].inventory_installation.unit_inch_qty) ,disabled: true}],
           installation_unit_price: [{value: parseFloat(filteredInventory[0].inventory_installation.price), disabled: true}],
           installation_unit_price_type: [{value: filteredInventory[0].inventory_installation.price_type, disabled: true}],
-          installation_price_per_unit: [{value: parseFloat(filteredInventory[0].inventory_installation.price_per_unit), disbaled: true}],
+          installation_price_per_unit: [{value: parseFloat(filteredInventory[0].inventory_installation.price_per_unit), disabled: true}],
           installation_price_factor: [{value: parseFloat(filteredInventory[0].inventory_installation.price_factor), disabled: true}],
           installation_selling_price: [{value: parseFloat(filteredInventory[0].inventory_installation.selling_price), disabled: true}],
           installation_gross_margin: [{value: parseFloat(filteredInventory[0].inventory_installation.gross_margin), disabled: true}],

@@ -272,6 +272,7 @@
     name: string
     is_active: number
     latest_quotation_bom: LatestQuotationBom
+    is_used_for_quotation: number;
     // stack_file: {
     //     id: string
     //     attachment_path: string
