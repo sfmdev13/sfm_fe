@@ -199,12 +199,12 @@ export class AddQuotationComponent implements OnInit {
 
     if(this.modal_type === 'edit' || this.modal_type === 'revision'){
 
-      this.isCreateQuotationTotal = this.dataQuotation.quotation.is_create_quotation_total === 1 ? true : false;
+      this.isCreateQuotationTotal = this.dataQuotation.is_create_quotation_total === 1 ? true : false;
 
-      if(this.isCreateQuotationTotal && this.dataQuotation.quotation.quotation_items.length > 0) {
+      if(this.isCreateQuotationTotal && this.dataQuotation.latest_quotation_revision.quotation_items.length > 0) {
         this.items.clear();
 
-        this.dataQuotation.quotation.quotation_items.forEach((item: any) => {
+        this.dataQuotation.latest_quotation_revision.quotation_items.forEach((item: any) => {
           const newItem = this.fb.group({
             inventory_id: [item.inventory.id],
             part_number: [item.inventory.id, [Validators.required]],
@@ -239,7 +239,7 @@ export class AddQuotationComponent implements OnInit {
         this.cd.detectChanges();
       }
 
-      const projectData: IDataProject = this.projectsData.filter((project) => project.id === this.dataQuotation.id)[0];
+      const projectData: IDataProject = this.projectsData.filter((project) => project.id === this.dataQuotation.project.id)[0];
 
       this.selectedCustomer = [...projectData.project_customer]
 
@@ -258,14 +258,14 @@ export class AddQuotationComponent implements OnInit {
 
       this.quotationForm.get('project_id')?.setValue(this.dataQuotation.id, { emitEvent: false })
       this.quotationForm.get('project_name')?.setValue(this.dataQuotation.id, { emitEvent: false })
-      this.quotationForm.get('customer')?.setValue(this.dataQuotation.quotation.customer.id, { emitEvent: false});
+      this.quotationForm.get('customer')?.setValue(this.dataQuotation.customer.id, { emitEvent: false});
 
       this.quotationForm.patchValue({
-        id: this.dataQuotation.quotation.id,
-        prepared_by: this.dataQuotation.pic[0].pic_id,
-        date: this.dataQuotation.issue_date,
-        revision: this.dataQuotation.quotation?.revision,
-        quotation_no: this.dataQuotation.quotation?.quotation_no,
+        id: this.dataQuotation.latest_quotation_revision.id,
+        prepared_by: this.dataQuotation.project.pic[0].pic_id,
+        date: this.dataQuotation.issued_date,
+        revision: this.dataQuotation.latest_quotation_revision?.revision,
+        quotation_no: this.dataQuotation?.quotation_no,
       })
 
       if(this.modal_type === 'revision'){
@@ -274,16 +274,16 @@ export class AddQuotationComponent implements OnInit {
       }
 
       //edit location
-      this.getProvinceCity(this.dataQuotation.province, this.dataQuotation.city).subscribe((projectLocation) => {
+      this.getProvinceCity(this.dataQuotation.project.province, this.dataQuotation.project.city).subscribe((projectLocation) => {
         this.quotationForm.get('location')?.setValue(projectLocation);
       });
 
-      this.getProvinceCity(this.dataQuotation.quotation.customer.province, this.dataQuotation.quotation.customer.city).subscribe((customerLocation) => {
+      this.getProvinceCity(this.dataQuotation.customer.province, this.dataQuotation.customer.city).subscribe((customerLocation) => {
         this.quotationForm.get('customer_location')?.setValue(customerLocation)
       })
 
       //edit contact person
-      this.dataQuotation.quotation.customer.contactPerson.forEach((cp) => {
+      this.dataQuotation.customer.contactPerson.forEach((cp) => {
         const existCp = this.fb.group({
             id: [{value: cp.id, disabled: true}],
             name: [{value: cp.name, disabled: true}],
@@ -296,9 +296,9 @@ export class AddQuotationComponent implements OnInit {
 
       //edit pic
 
-      const dcePicIds = this.dataQuotation.dce_pic.map((item) => item.pic_id);
+      const dcePicIds = this.dataQuotation.project.dce_pic.map((item) => item.pic_id);
 
-      const isHeadPicId = this.dataQuotation.dce_pic.filter((item) => item.is_pic_internal === 1);
+      const isHeadPicId = this.dataQuotation.project.dce_pic.filter((item) => item.is_pic_internal === 1);
 
 
       this.quotationForm.patchValue({
@@ -309,7 +309,7 @@ export class AddQuotationComponent implements OnInit {
 
 
       //edit stack
-      this.dataQuotation.quotation.quotation_stack.forEach((stack, index) => {
+      this.dataQuotation.quotation_stack.forEach((stack, index) => {
 
         let updateStackFile: NzUploadFile[] = [];
 
@@ -916,7 +916,7 @@ export class AddQuotationComponent implements OnInit {
       is_active: stackUpdate ? 1 : 0,
       stack_id: stackUpdate.id,
       stack_revision_bom_id: stackUpdate.stack_revision_bom_id,
-      quotation_id: this.dataQuotation.quotation.id,
+      quotation_id: this.dataQuotation.id,
       edit_type: type,
       quotation_stack_items: inventoryComplete
     }

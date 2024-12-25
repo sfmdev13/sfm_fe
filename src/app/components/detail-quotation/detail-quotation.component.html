@@ -9,19 +9,19 @@
         <nz-tab nzTitle="General Information">
             <div>
                 <p class="m-0 p-0 fw-semibold">Quotation No.</p>
-                <p class="fw-light">{{ dataDetail.quotation_no }}</p>       
+                <p class="fw-light">{{ data.quotation_no }}</p>       
             </div>
             <div>
                 <p class="m-0 p-0 fw-semibold">Newest Revision</p>
-                <p class="fw-light">{{data.quotation.revision}}</p>      
+                <p class="fw-light">{{data.latest_quotation_revision.revision}}</p>      
             </div>
             <div>
                 <p class="m-0 p-0 fw-semibold">Project ID</p>
-                <p class="fw-light">{{ data.project_pid }}</p>
+                <p class="fw-light">{{ data.project.project_pid }}</p>
             </div>
             <div>
                 <p class="m-0 p-0 fw-semibold">Project Name</p>
-                <p class="fw-light">{{ data.name }}</p>
+                <p class="fw-light">{{ data.project.name }}</p>
             </div>
             <div>
                 <p class="m-0 p-0 fw-semibold">Project Location</p>
@@ -35,7 +35,7 @@
             </div> -->
             <div>
                 <p class="m-0 p-0 fw-semibold">Date</p>
-                <p class="fw-light">{{ data.issue_date | date: 'fullDate' }}</p>
+                <p class="fw-light">{{ data.issued_date | date: 'fullDate' }}</p>
             </div>
             <nz-divider></nz-divider>
 
@@ -43,7 +43,7 @@
                 <div class="col-4">
                     <p class="m-0 p-0 fw-semibold">Engineer PIC</p>
                     <p class="fw-light">
-                        <ng-container *ngFor="let dce of data.dce_pic; let isLast = last">
+                        <ng-container *ngFor="let dce of data.project.dce_pic; let isLast = last">
                             {{ dce.name }} <span *ngIf="!isLast"> ,</span>
                         </ng-container>
                     </p>   
@@ -52,7 +52,7 @@
                 <div class="col-4">
                     <p class="m-0 p-0 fw-semibold">Head Engineer PIC</p>
                     <p class="fw-light">
-                        <ng-container *ngFor="let dce of data.dce_pic">
+                        <ng-container *ngFor="let dce of data.project.dce_pic">
                             <ng-container *ngIf="dce.is_pic_internal === 1">
                                 {{ dce.name }}
                             </ng-container>
@@ -63,7 +63,7 @@
                 <div class="col-4">
                     <p class="m-0 p-0 fw-semibold">Engineer Phone No.</p>
                     <p class="fw-light">
-                        <ng-container *ngFor="let dce of data.dce_pic">
+                        <ng-container *ngFor="let dce of data.project.dce_pic">
                             <ng-container *ngIf="dce.is_pic_internal === 1">
                                 {{ dce.phone }}
                             </ng-container>
@@ -76,7 +76,7 @@
 
             <div>
                 <p class="m-0 p-0 fw-semibold">Customer</p>
-                <p class="fw-light">{{ data.quotation.customer.name }}</p>
+                <p class="fw-light">{{ data.customer.name }}</p>
             </div>
             <div>
                 <p class="m-0 p-0 fw-semibold">Customer Location</p>
@@ -85,7 +85,7 @@
 
             <h6 class="fw-bold">Contact Person</h6>
             <div class="row">
-                <ng-container *ngFor="let cp of data.quotation.customer.contactPerson">
+                <ng-container *ngFor="let cp of data.customer.contactPerson">
                     <div class="col-6">
                         <p class="m-0 p-0 fw-semibold">Role</p>
                         <p class="fw-light">{{ cp.customer_category.name }}</p>
@@ -159,20 +159,20 @@
             </div>
         </nz-tab>
         <nz-tab nzTitle="Stacks">
-            <div class="row">
+            <!-- <div class="row">
                 <ng-container *ngFor="let s of dataDetail.quotation_stack">
                     <div class="col-6">
                         <p class="m-0 p-0 fw-semibold">Stack Name</p>
                         <p class="fw-light">{{ s.name }}</p>                         
                     </div>
-                    <!-- <div class="col-6">
+                    <div class="col-6">
                         <p class="m-0 p-0 fw-semibold">Stack File</p>
                         <a [href]="s.stack_file.file_url" target="_blank" rel="noopener noreferrer">
                             <p class="fw-light">{{s.stack_file.file_name}}</p>
                         </a>                       
-                    </div> -->
+                    </div>
                 </ng-container>
-            </div>
+            </div> -->
         </nz-tab>
         <nz-tab nzTitle="Revision Log">
             <ng-container *ngFor="let log of logMsg">                

@@ -100,19 +100,19 @@
     <tbody>
         <ng-container *ngFor="let data of basicTable.data">
             <tr>
-                <td>{{ data.project_pid }}</td>
-                <td>{{ data.name }}</td>
-                <td>{{ data.quotation.quotation_no }}</td>
-                <td>{{ data.issue_date | date: 'fullDate' }}</td>
-                <td>{{ data.quotation.customer.name }}</td>
-                <td>{{ data.issue_date | date: 'Y' }}</td>
-                <td>{{ data.issue_date | date: 'MM' }}</td>
-                <td>Rp. {{ data.quotation.total_price | number:'1.0-0'}}</td>
-                <td>{{ data.quotation?.revision }}</td>
-                <td>{{ formatProjectCategory(data.project_category) }}</td>
+                <td>{{ data.project.project_pid }}</td>
+                <td>{{ data.project.name }}</td>
+                <td>{{ data.quotation_no}}</td>
+                <td>{{ data.issued_date | date: 'fullDate' }}</td>
+                <td>{{ data.customer.name }}</td>
+                <td>{{ data.issued_date | date: 'Y' }}</td>
+                <td>{{ data.issued_date | date: 'MM' }}</td>
+                <td>Rp. {{ data.latest_quotation_revision.total_price | number:'1.0-0'}}</td>
+                <td>{{ data.latest_quotation_revision?.revision }}</td>
+                <td>{{ formatProjectCategory(data.project.project_category) }}</td>
                 <td>
-                  <ng-container *ngIf="data.quotation.is_published">
-                    <span style="color: lightblue">{{ data.quotation?.revision }}</span>
+                  <ng-container *ngIf="data.latest_quotation_revision.is_published">
+                    <span style="color: lightblue">{{ data.latest_quotation_revision?.revision }}</span>
                   </ng-container>
                 </td>
                 <td nzRight>
@@ -144,7 +144,7 @@
                                 <p class="m-0 p-0">Revision</p>
                               </div>
                             </li>
-                            <li nz-menu-item class="gap-2 list-dropdown"  (click)="publish(data.quotation.id)">
+                            <li nz-menu-item class="gap-2 list-dropdown"  (click)="publish(data.latest_quotation_revision.id)">
                               <div class="d-flex gap-2">
                                 <span nz-icon nzType="rocket" nzTheme="twotone"></span>
                                 <p class="m-0 p-0">Publish</p>

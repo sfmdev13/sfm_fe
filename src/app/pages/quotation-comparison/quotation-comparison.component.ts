@@ -36,12 +36,12 @@ export class QuotationComparisonComponent implements OnInit {
   }
 
   quotationChange(): void{
-    this.quotationDetail$ = this.apiSvc.getDetailQuotation(this.selectedQuotation).pipe(
-      tap((res) => {
-        this.revisionList = res.map((q) => (q.revision))
-        this.quotationDetailsList = res;
-      })
-    );
+    // this.quotationDetail$ = this.apiSvc.getDetailQuotation(this.selectedQuotation).pipe(
+    //   tap((res) => {
+    //     this.revisionList = res.map((q) => (q.revision))
+    //     this.quotationDetailsList = res;
+    //   })
+    // );
   }
 
   revisionChange(): void{

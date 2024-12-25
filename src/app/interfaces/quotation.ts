@@ -6,30 +6,14 @@
   
   export interface IDetailDataQuotation{
     id: string
-    project_pid: string
-    name: string
-    issue_date: string
-    customer: Customer
-    project_category: string
-    remarks: string
-    address: string
-    city: string
-    province: string
-    country: string
-    postal_code: string
-    maps_url: string
-    competitor: string
-    reason_failed: any
-    year: string
-    month: string
-    status: number
-    pic: Pic[]
-    dce_pic: DcePic[]
-    segmentation: Segmentation
-    cluster: Cluster
-    specification: Specification[]
-    material: Material[]
-    quotation: IQuotation[]
+    quotation_no: string
+    project: IProject;
+    prepared_by: PreparedBy;
+    issued_date: string;
+    is_create_quotation_total: number;
+    customer: Customer;
+    quotation_revision: IQuotation[];
+    quotation_stack: QuotationStack[];
   }
 
   export interface IRootQuotation {
@@ -40,29 +24,41 @@
 
   export interface IDataQuotation{
     id: string
-    project_pid: string
-    name: string
-    issue_date: string
-    project_category: string
-    remarks: string
-    address: string
-    city: string
-    province: string
-    country: string
-    postal_code: string
-    maps_url: string
-    competitor: string
-    reason_failed: any
-    year: string
-    month: string
-    status: number
-    pic: Pic[]
-    dce_pic: DcePic[]
-    segmentation: Segmentation
-    cluster: Cluster
-    specification: Specification[]
-    material: Material[]
-    quotation: IQuotation
+    quotation_no: string
+    project: IProject;
+    prepared_by: PreparedBy;
+    issued_date: string;
+    is_create_quotation_total: number;
+    customer: Customer;
+    latest_quotation_revision: IQuotation;
+    quotation_stack: QuotationStack[];
+
+  }
+
+  interface IProject{
+    id: string;
+    project_pid: string;
+    name: string;
+    issue_date: string;
+    project_category: string;
+    remarks: string;
+    address: string;
+    city: string;
+    province: string;
+    country: string;
+    postal_code: string;
+    maps_url: string;
+    competitor: string;
+    reason_failed: string | null;
+    year: string;
+    month: string;
+    status: number;
+    pic: Pic[];
+    dce_pic: DcePic[];
+    segmentation: Segmentation;
+    cluster: Cluster;
+    specification: Specification[];
+    material: Material[];
   }
   
   export interface Customer {
@@ -164,25 +160,11 @@
   
   export interface IQuotation {
     id: string
-    quotation_no: string
-    project_id: string
-    customer: Customer
-    prepared_by: PreparedBy
-    quotation_type: string
-    revision: string
-    issued_date: string
-    // project_document: {
-    //     id: string;
-    //     attachment_path: string
-    //     type: string
-    //     file_name: string
-    //     file_url: string
-    // }
-    total_price: string
-    is_published: number
-    is_create_quotation_total: number
-    quotation_items: QuotationItem[]
-    quotation_stack: QuotationStack[]
+    quotation_id: string;
+    revision: string;
+    total_price: string;
+    is_published: number;
+    quotation_items: QuotationItem[];
   }
   
   export interface PreparedBy {

@@ -5,7 +5,7 @@ import { Observable, tap } from 'rxjs';
 import { ApiService } from 'src/app/api.service';
 import { AddQuotationComponent } from 'src/app/components/add-quotation/add-quotation.component';
 import { DetailQuotationComponent } from 'src/app/components/detail-quotation/detail-quotation.component';
-import { IDataCategories, IDataInventory, IDataQuotation, IQuotation, IRootQuotation } from 'src/app/interfaces';
+import { IDataCategories, IDataInventory, IDataQuotation, IDetailDataQuotation, IQuotation, IRootQuotation } from 'src/app/interfaces';
 import { IDataProject } from 'src/app/interfaces/project';
 
 @Component({
@@ -27,7 +27,7 @@ export class QuotationComponent implements OnInit {
   revisionList: string[] = [];
   isLoadingRevList = true;
   revision: string = 'RA';
-  detailQuotation: IQuotation[] = [];
+  detailQuotation: IDetailDataQuotation = {} as IDetailDataQuotation;
   selectedDataBasic: IDataQuotation = {} as IDataQuotation;
 
   totalAll: number = 0;
@@ -67,7 +67,7 @@ export class QuotationComponent implements OnInit {
     {
       name: 'No Quotation',
       sortOrder: 'ascend',
-      sortFn: (a: IDataQuotation, b: IDataQuotation) => a.quotation.quotation_no.localeCompare(b.quotation.quotation_no),
+      sortFn: (a: IDataQuotation, b: IDataQuotation) => a.quotation_no.localeCompare(b.quotation_no),
       sortDirections: ['ascend', 'descend', null],
       showSort: true,
       showFilter: false,
@@ -106,7 +106,7 @@ export class QuotationComponent implements OnInit {
     {
       name: 'Year',
       sortOrder: null,
-      sortFn: (a: IDataQuotation, b: IDataQuotation) => a.issue_date.localeCompare(b.issue_date),
+      sortFn: (a: IDataQuotation, b: IDataQuotation) => a.issued_date.localeCompare(b.issued_date),
       sortDirections: ['ascend', 'descend', null],
       showSort: true,
       showFilter: false,
@@ -119,7 +119,7 @@ export class QuotationComponent implements OnInit {
     {
       name: 'Month',
       sortOrder: null,
-      sortFn: (a: IDataQuotation, b: IDataQuotation) => a.issue_date.localeCompare(b.issue_date),
+      sortFn: (a: IDataQuotation, b: IDataQuotation) => a.issued_date.localeCompare(b.issued_date),
       sortDirections: ['ascend', 'descend', null],
       showSort: true,
       showFilter: false,
@@ -251,7 +251,7 @@ export class QuotationComponent implements OnInit {
 
     if(col.name === 'Project Name'){
       this.listOfDisplayData = this.listOfData.filter((item) =>
-        item.name.toLowerCase().includes(value.toLowerCase())
+        item.project.name.toLowerCase().includes(value.toLowerCase())
       );
     }
 
@@ -265,7 +265,7 @@ export class QuotationComponent implements OnInit {
         const formattedDate = `${year}-${month}-${day}`;
   
         this.listOfDisplayData = this.listOfData.filter((item: IDataQuotation) =>
-          item.issue_date.includes(formattedDate)
+          item.issued_date.includes(formattedDate)
         );
       } else {
         this.listOfDisplayData = [...this.listOfData];
@@ -283,7 +283,7 @@ export class QuotationComponent implements OnInit {
         const formattedDate = `${year}-${month}-${day}`;
   
         this.listOfDisplayData = this.listOfData.filter((item: IDataQuotation) =>
-          item.issue_date.includes(formattedDate)
+          item.issued_date.includes(formattedDate)
         );
       } else {
         this.listOfDisplayData = [...this.listOfData];
@@ -342,7 +342,7 @@ export class QuotationComponent implements OnInit {
 
     this.apiSvc.getDetailQuotation(id).subscribe((res) => {
       this.detailQuotation = res
-      this.revisionList = res.map((res) => res.revision);
+      this.revisionList = res.quotation_revision.map((res) => res.revision);
       this.isLoadingRevList = false;
     })
   }
@@ -351,7 +351,7 @@ export class QuotationComponent implements OnInit {
 
     this.isVisibleDetail = false;
 
-    const selectedDetailQuotation = this.detailQuotation.filter(q => q.revision === this.revision);
+    const selectedDetailQuotation = this.detailQuotation.quotation_revision.filter(q => q.revision === this.revision);
 
     this.modalService.create({
       nzTitle: 'Detail Quotation',

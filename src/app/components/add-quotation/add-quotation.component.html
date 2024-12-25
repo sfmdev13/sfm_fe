@@ -351,11 +351,11 @@
                                         </td>
                                     </tr>
                                     <tr>
-                                        <ng-container *ngIf="(modal_type === 'edit' && !(dataQuotation.quotation.revision === 'RA' || dataQuotation.quotation.revision === 'R0')) || modal_type === 'revision'; else hideQuotationTotal">
+                                        <ng-container *ngIf="(modal_type === 'edit' && !(dataQuotation.latest_quotation_revision.revision === 'RA' || dataQuotation.latest_quotation_revision.revision === 'R0')) || modal_type === 'revision'; else hideQuotationTotal">
                                             <td colspan="5" class="text-center">
                                                 <button (click)="addStacks()" nz-button nzType="primary" class="w-75">Add Stack</button>
                                             </td>
-                                            <td colspan="5" class="text-center" *ngIf="(modal_type === 'edit' && !(dataQuotation.quotation.revision === 'RA' || dataQuotation.quotation.revision === 'R0')) || modal_type === 'revision'">
+                                            <td colspan="5" class="text-center" *ngIf="(modal_type === 'edit' && !(dataQuotation.latest_quotation_revision.revision === 'RA' || dataQuotation.latest_quotation_revision.revision === 'R0')) || modal_type === 'revision'">
                                                 <button (click)="createQuotationTotal()" nz-button nzType="default" class="w-75">Create Quotation Total</button>
                                             </td>
                                         </ng-container>
