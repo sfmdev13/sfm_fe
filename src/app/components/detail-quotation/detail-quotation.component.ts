@@ -70,11 +70,11 @@ export class DetailQuotationComponent implements OnInit {
       this.provinceList = res
     })
 
-    this.getProvinceCity(this.data.province, this.data.city).subscribe((location) => {
+    this.getProvinceCity(this.data.project.province, this.data.project.city).subscribe((location) => {
       this.projectLocation = location;
     });
 
-    this.getProvinceCity(this.data.quotation.customer.province, this.data.quotation.customer.city).subscribe((location) => {
+    this.getProvinceCity(this.data.customer.province, this.data.customer.city).subscribe((location) => {
       this.customerLocation = location;
     })
   }

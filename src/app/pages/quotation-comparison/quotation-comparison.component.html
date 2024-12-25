@@ -7,7 +7,7 @@
 
     <ng-container *ngIf="quotationList$ | async as quotationList; else loadingQuotation">
         <nz-select nzShowSearch nzAllowClear nzPlaceHolder="Select quotation" [(ngModel)]="selectedQuotation" (ngModelChange)="quotationChange()" style="width: 320px;">
-            <nz-option *ngFor="let q of quotationList.data" [nzLabel]="q.name" [nzValue]="q.id"></nz-option>
+            <!-- <nz-option *ngFor="let q of quotationList.data" [nzLabel]="q.name" [nzValue]="q.id"></nz-option> -->
         </nz-select>
     </ng-container>
     <ng-template #loadingQuotation>

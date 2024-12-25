@@ -13,7 +13,7 @@ export class ReportsComponent implements OnInit {
       title: 'Quotation Comparison',
       description: 'Compare quotation for each revision',
       cover: '/assets/images/quotation-comparison.png',
-      link: '/reports/quotation-comparison'
+      link: ''
     },
   ];
   
