@@ -256,8 +256,8 @@ export class AddQuotationComponent implements OnInit {
 
       // this.fileList = newUpdateFileList; 
 
-      this.quotationForm.get('project_id')?.setValue(this.dataQuotation.id, { emitEvent: false })
-      this.quotationForm.get('project_name')?.setValue(this.dataQuotation.id, { emitEvent: false })
+      this.quotationForm.get('project_id')?.setValue(this.dataQuotation.project.id, { emitEvent: false })
+      this.quotationForm.get('project_name')?.setValue(this.dataQuotation.project.id, { emitEvent: false })
       this.quotationForm.get('customer')?.setValue(this.dataQuotation.customer.id, { emitEvent: false});
 
       this.quotationForm.patchValue({
