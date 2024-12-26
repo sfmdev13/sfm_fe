@@ -1,0 +1,55 @@
+<div>
+    <div>
+        <div class="row">
+            <div class="d-flex flex-column gap-3">
+                <span class="fw-semibold">Choose Revision</span>
+                <nz-select nzShowSearch nzAllowClear nzPlaceHolder="Select Revision" style="width: 320px;" [(ngModel)]="selectedStack">
+                    <nz-option *ngFor="let rev of stackDetail.quotation_stack_bom" [nzLabel]="rev.stack_revision_quotation" [nzValue]="rev.stack_revision_quotation"></nz-option>
+                  </nz-select>  
+            </div>
+        </div>
+
+        <ng-container *ngIf="selectedStack !== ''">
+            <nz-tabset [nzAnimated]="false">
+                <nz-tab nzTitle="Basic Information">
+                    <ng-container *ngFor="let stack of stackDetail.quotation_stack_bom">
+                        <ng-container *ngIf="stack.stack_revision_quotation === selectedStack">
+                            <div>
+                                <p class="m-0 p-0 fw-semibold">Stack Name</p>
+                                <p class="fw-light">{{ stackDetail.name }}</p>       
+                            </div>
+                            <div>
+                                <p class="m-0 p-0 fw-semibold">BOM Quotation File</p>
+                                <ng-container *ngIf="stack.bom_quotation_file; else fileNull">
+                                    <a [href]="stack.bom_quotation_file.file_url" target="_blank" rel="noopener noreferrer">
+                                        <p class="fw-light">{{stack.bom_quotation_file.file_name}}</p>
+                                    </a>
+                                </ng-container>                        
+                            </div>
+                            <div>
+                                <p class="m-0 p-0 fw-semibold">BOM Contract File</p>
+                                <ng-container *ngIf="stack.bom_contract_rev_file; else fileNull">
+                                    <a [href]="stack.bom_contract_rev_file.file_url" target="_blank" rel="noopener noreferrer">
+                                        <p class="fw-light">{{stack.bom_contract_rev_file.file_name}}</p>
+                                    </a>
+                                </ng-container>                        
+                            </div>
+                        </ng-container>
+                    </ng-container>
+                </nz-tab>
+                <nz-tab nzTitle="Total Material & Installation">
+                    <span>kocak gaming</span>
+                </nz-tab>
+            </nz-tabset>   
+        </ng-container>
+
+    </div>
+</div>
+
+<div *nzModalFooter>
+    <button nz-button nz-type="primary" (click)="destroyModal()">Ok</button>
+</div>
+
+<ng-template #fileNull>
+    <span>-</span>
+</ng-template>

@@ -13,7 +13,7 @@
     is_create_quotation_total: number;
     customer: Customer;
     quotation_revision: IQuotation[];
-    quotation_stack: QuotationStack[];
+    quotation_stack: DetailQuotationStack[];
   }
 
   export interface IRootQuotation {
@@ -255,13 +255,16 @@
     is_active: number
     latest_quotation_bom: LatestQuotationBom
     is_used_for_quotation: number;
-    // stack_file: {
-    //     id: string
-    //     attachment_path: string
-    //     type: string
-    //     file_name: string
-    //     file_url: string
-    // }
+  }
+
+  export interface DetailQuotationStack{
+    id: string
+    quotation_id: string
+    stack_slug: string
+    name: string
+    is_active: number
+    quotation_stack_bom: LatestQuotationBom[]
+    is_used_for_quotation: number;
   }
 
   export interface LatestQuotationBom {

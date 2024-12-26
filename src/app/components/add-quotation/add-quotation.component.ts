@@ -429,7 +429,7 @@ export class AddQuotationComponent implements OnInit {
     .map((s: any) => s.id);
 
     let body = {
-      quotation_id: this.quotationForm.get('id')?.value,
+      quotation_id:  this.dataQuotation.latest_quotation_revision.quotation_id,
       selected_stack_ids: stackTotal
     }
 
@@ -916,7 +916,7 @@ export class AddQuotationComponent implements OnInit {
       is_active: stackUpdate ? 1 : 0,
       stack_id: stackUpdate.id,
       stack_revision_bom_id: stackUpdate.stack_revision_bom_id,
-      quotation_id: this.dataQuotation.id,
+      quotation_id: this.dataQuotation.latest_quotation_revision.quotation_id,
       edit_type: type,
       quotation_stack_items: inventoryComplete
     }

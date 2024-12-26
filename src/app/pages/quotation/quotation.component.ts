@@ -351,14 +351,13 @@ export class QuotationComponent implements OnInit {
 
     this.isVisibleDetail = false;
 
-    const selectedDetailQuotation = this.detailQuotation.quotation_revision.filter(q => q.revision === this.revision);
-
     this.modalService.create({
       nzTitle: 'Detail Quotation',
       nzContent: DetailQuotationComponent,
       nzCentered: true,
       nzData: {
-        dataDetail: selectedDetailQuotation[0],
+        revisionSelected: this.revision,
+        dataDetail: this.detailQuotation,
         dataBasic: this.selectedDataBasic
       },
       nzWidth: '100vw',
