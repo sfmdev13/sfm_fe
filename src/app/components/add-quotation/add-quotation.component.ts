@@ -256,12 +256,12 @@ export class AddQuotationComponent implements OnInit {
 
       // this.fileList = newUpdateFileList; 
 
-      this.quotationForm.get('project_id')?.setValue(this.dataQuotation.id, { emitEvent: false })
-      this.quotationForm.get('project_name')?.setValue(this.dataQuotation.id, { emitEvent: false })
+      this.quotationForm.get('project_id')?.setValue(this.dataQuotation.project.id, { emitEvent: false })
+      this.quotationForm.get('project_name')?.setValue(this.dataQuotation.project.id, { emitEvent: false })
       this.quotationForm.get('customer')?.setValue(this.dataQuotation.customer.id, { emitEvent: false});
 
       this.quotationForm.patchValue({
-        id: this.dataQuotation.latest_quotation_revision.id,
+        id: this.dataQuotation.id,
         prepared_by: this.dataQuotation.project.pic[0].pic_id,
         date: this.dataQuotation.issued_date,
         revision: this.dataQuotation.latest_quotation_revision?.revision,
@@ -429,7 +429,7 @@ export class AddQuotationComponent implements OnInit {
     .map((s: any) => s.id);
 
     let body = {
-      quotation_id: this.quotationForm.get('id')?.value,
+      quotation_revision_id: this.dataQuotation.latest_quotation_revision.id,
       selected_stack_ids: stackTotal
     }
 
@@ -916,7 +916,7 @@ export class AddQuotationComponent implements OnInit {
       is_active: stackUpdate ? 1 : 0,
       stack_id: stackUpdate.id,
       stack_revision_bom_id: stackUpdate.stack_revision_bom_id,
-      quotation_id: this.dataQuotation.id,
+      quotation_revision_id: this.dataQuotation.latest_quotation_revision.id,
       edit_type: type,
       quotation_stack_items: inventoryComplete
     }
@@ -968,7 +968,7 @@ export class AddQuotationComponent implements OnInit {
         this.spinnerSvc.hide();
 
         this.modalSvc.error({
-          nzTitle: `Unale ${type === 'edit' ? 'Edit' : 'Revise'} Stack`,
+          nzTitle: `Unable ${type === 'edit' ? 'Edit' : 'Revise'} Stack`,
           nzContent: error.error.meta.message,
           nzOkText: 'Ok',
           nzCentered: true

@@ -14,4 +14,4 @@ export { IRootProject, ICustomerProject, IProjectCustomer } from "./project"
 export { IRootAssembly, IDataAssembly } from "./assembly"
 export { IRootUnitReport, IDataUnitReport } from "./unit-report"
 export { IRootAllInventories, IDataAllInventories } from "./all-inventories";
-export { IRootQuotation, IDataQuotation, IQuotation, IRootDetailQuotation, IDetailDataQuotation } from "./quotation";
+export { IRootQuotation, IDataQuotation, IQuotation, IRootDetailQuotation, IDetailDataQuotation, LatestQuotationBom, DetailQuotationStack } from "./quotation";

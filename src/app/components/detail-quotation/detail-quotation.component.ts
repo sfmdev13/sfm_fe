@@ -1,12 +1,17 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject, OnInit } from '@angular/core';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { NzButtonModule } from 'ng-zorro-antd/button';
+import { NzCheckboxModule } from 'ng-zorro-antd/checkbox';
 import { NzDividerModule } from 'ng-zorro-antd/divider';
-import { NZ_MODAL_DATA } from 'ng-zorro-antd/modal';
+import { NZ_MODAL_DATA, NzModalService } from 'ng-zorro-antd/modal';
+import { NzSelectModule } from 'ng-zorro-antd/select';
 import { NzTableModule } from 'ng-zorro-antd/table';
 import { NzTabsModule } from 'ng-zorro-antd/tabs';
 import { Observable, map } from 'rxjs';
 import { ApiService } from 'src/app/api.service';
-import { IDataQuotation, IQuotation } from 'src/app/interfaces';
+import { DetailQuotationStack, IDataQuotation, IDetailDataQuotation, IQuotation, LatestQuotationBom } from 'src/app/interfaces';
+import { DetailStackQuotationComponent } from './detail-stack-quotation/detail-stack-quotation.component';
 
 @Component({
   selector: 'app-detail-quotation',
@@ -15,7 +20,11 @@ import { IDataQuotation, IQuotation } from 'src/app/interfaces';
     CommonModule, 
     NzTabsModule, 
     NzTableModule,
-    NzDividerModule
+    NzDividerModule,
+    NzSelectModule,
+    FormsModule,
+    NzButtonModule,
+    NzCheckboxModule
   ],
   templateUrl: './detail-quotation.component.html',
   styleUrl: './detail-quotation.component.scss'
@@ -24,7 +33,8 @@ export class DetailQuotationComponent implements OnInit {
 
   private nzData = inject(NZ_MODAL_DATA)
   data: IDataQuotation = this.nzData.dataBasic
-  dataDetail: IQuotation = this.nzData.dataDetail
+  dataDetail: IDetailDataQuotation = this.nzData.dataDetail
+  revisionSelected: string = this.nzData.revisionSelected
 
   date = new Date();
 
@@ -61,8 +71,11 @@ export class DetailQuotationComponent implements OnInit {
   projectLocation: string = '';
   customerLocation: string = '';
 
+  selectedStack: string = '';
+
   constructor(
-    private apiSvc: ApiService
+    private apiSvc: ApiService,
+    private modalSvc: NzModalService
   ){}
 
   ngOnInit(): void {
@@ -76,6 +89,18 @@ export class DetailQuotationComponent implements OnInit {
 
     this.getProvinceCity(this.data.customer.province, this.data.customer.city).subscribe((location) => {
       this.customerLocation = location;
+    })
+  }
+
+  openStackDetail(stackLatest: DetailQuotationStack){
+    this.modalSvc.create({
+      nzTitle: 'Detail Stacks',
+      nzContent: DetailStackQuotationComponent,
+      nzCentered: true,
+      nzData: {
+        stackLatest
+      },
+      nzWidth: '100vw'
     })
   }
 
