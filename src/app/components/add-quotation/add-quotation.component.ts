@@ -732,10 +732,10 @@ export class AddQuotationComponent implements OnInit {
       this.calculateTotalPrice(control);
     })
   }
-
+  
   updateGroupedItems(): void {
     const itemsArray = this.items.controls as UntypedFormGroup[];
-
+  
     const categoryOrder = [
       'SRO',
       'Pipe',
@@ -744,8 +744,8 @@ export class AddQuotationComponent implements OnInit {
       'Solvent Cement',
       'Accessories',
     ];
-
-
+  
+    // Group items by category
     const grouped = itemsArray.reduce((acc, control) => {
       const category = control.get('category')?.value || 'Uncategorized';
       if (!acc[category]) {
@@ -754,29 +754,36 @@ export class AddQuotationComponent implements OnInit {
       acc[category].push(control);
       return acc;
     }, {} as { [category: string]: UntypedFormGroup[] });
-
-    this.groupedItems = Object.keys(grouped)
-    .sort((a, b) => {
-      const indexA = categoryOrder.indexOf(a);
-      const indexB = categoryOrder.indexOf(b);
-
-      // Categories not in the predefined order will appear at the end
-      if (indexA === -1) return 1;
-      if (indexB === -1) return -1;
-      return indexA - indexB;
-    })
-    .reduce((acc, key) => {
-      acc[key] = grouped[key];
-      return acc;
-    }, {} as { [category: string]: UntypedFormGroup[] });
-
-    // Remove empty categories
-    Object.keys(this.groupedItems).forEach((key) => {
-      if (this.groupedItems[key].length === 0) {
-        delete this.groupedItems[key];
+  
+    // Add predefined categories to grouped items if they are missing
+    categoryOrder.forEach((category) => {
+      if (!grouped[category]) {
+        grouped[category] = []; // Ensure category exists even if empty
       }
     });
+  
+    // Sort categories based on predefined order
+    this.groupedItems = Object.keys(grouped)
+      .sort((a, b) => {
+        const indexA = categoryOrder.indexOf(a);
+        const indexB = categoryOrder.indexOf(b);
+  
+        // Categories not in the predefined order will appear at the end
+        if (indexA === -1) return 1;
+        if (indexB === -1) return -1;
+        return indexA - indexB;
+      })
+      .reduce((acc, key) => {
+        acc[key] = grouped[key];
+        return acc;
+      }, {} as { [category: string]: UntypedFormGroup[] });
+  
+    // Optional: Add a check for 'Uncategorized' at the end if needed
+    if (grouped['Uncategorized'] && grouped['Uncategorized'].length === 0) {
+      delete this.groupedItems['Uncategorized']; // Or keep it if desired
+    }
   }
+  
 
   changeValueOrder(control: UntypedFormGroup, product: any){
     control.get('inventory_id')?.setValue(product?.id);
