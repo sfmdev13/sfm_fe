@@ -25,13 +25,15 @@ export class SupplierProductComponent implements OnInit {
   categoryForm = this.fb.group({
     id: [''],
     name: ['', Validators.required],
-    description: ['', Validators.required]
+    description: ['', Validators.required],
+    level: ['', Validators.required],
   })
 
   categoryFormEdit = this.fb.group({
     id: [''],
     name: ['', Validators.required],
-    description: ['', Validators.required]
+    description: ['', Validators.required],
+    level: ['', Validators.required],
   })
 
   selectedIdDelete: number = 0;
@@ -86,7 +88,7 @@ export class SupplierProductComponent implements OnInit {
     this.spinnerSvc.show();
 
     if(this.categoryFormEdit.valid){
-      this.apiSvc.editSupplierProduct(this.categoryFormEdit.value.id,this.categoryFormEdit.value.name, this.categoryFormEdit.value.description).subscribe({
+      this.apiSvc.editSupplierProduct(this.categoryFormEdit.value.id,this.categoryFormEdit.value.name, this.categoryFormEdit.value.description, this.categoryFormEdit.value.level).subscribe({
         next: () => {
           this.spinnerSvc.hide();
           this.modalSvc.success({
@@ -119,7 +121,7 @@ export class SupplierProductComponent implements OnInit {
     this.spinnerSvc.show();
 
     if(this.categoryForm.valid){
-      this.apiSvc.createSupplierProduct(this.categoryForm.value.name, this.categoryForm.value.description).subscribe({
+      this.apiSvc.createSupplierProduct(this.categoryForm.value.name, this.categoryForm.value.description, this.categoryForm.value.level).subscribe({
         next: () => {
           this.spinnerSvc.hide();
           this.modalSvc.success({

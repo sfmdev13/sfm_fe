@@ -501,26 +501,26 @@ export class ApiService {
     return this.http.get<ICategories>(url, { headers })
   }
 
-  createSupplierProduct(name: string, description: string): Observable<any>{
+  createSupplierProduct(name: string, description: string, level: string): Observable<any>{
     const token = localStorage.getItem('authToken');
     const headers = new HttpHeaders({
       Authorization: `Bearer ${token}`,
     })
 
-    let body = { name, description }
+    let body = { name, description, level }
 
     const url = `${this.apiUrl}/create/supplier-product`
 
     return this.http.post<any>(url, body , { headers })
   }
 
-  editSupplierProduct(id: string, name: string, description: string): Observable<any>{
+  editSupplierProduct(id: string, name: string, description: string, level: string): Observable<any>{
     const token = localStorage.getItem('authToken');
     const headers = new HttpHeaders({
       Authorization: `Bearer ${token}`,
     })
 
-    let body = { id, name, description }
+    let body = { id, name, description, level }
 
     const url = `${this.apiUrl}/edit/supplier-product`
 

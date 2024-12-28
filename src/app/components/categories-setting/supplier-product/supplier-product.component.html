@@ -1,4 +1,4 @@
-<h4 class="fw-bold mb-4">Supplier Product</h4>
+<h4 class="fw-bold mb-4">Product Category</h4>
 <div class="d-flex align-items-center justify-content-between mb-3">
     <span class="fw-light">Result of {{ total_category}} category</span>
     <div class="row">
@@ -18,6 +18,7 @@
           <tr>
             <th>Name</th>
             <th>Description</th>
+            <th>Level</th>
             <th>Action</th>
           </tr>
         </thead>
@@ -25,6 +26,7 @@
             <tr *ngFor="let data of basicTable.data">
               <td>{{ data.name }}</td>
               <td>{{ data.description }}</td>
+              <td>{{ data.level }}</td>
             <td>
                 <div class="d-flex gap-3">
                     <span (click)="showModalEdit(data)" nz-icon nzType="edit" nzTheme="twotone"></span>
@@ -40,7 +42,8 @@
         <thead>
           <tr>
             <th>Name</th>
-            <th>description</th>
+            <th>Description</th>
+            <th>Level</th>
             <th>Action</th>
           </tr>
         </thead>
@@ -51,7 +54,7 @@
 
 <nz-modal nzCentered [(nzVisible)]="isVisibleEdit" [nzTitle]="modal_type + ' Category'" (nzOnCancel)="handleCancelEdit()">
     <ng-container *nzModalContent>
-        <app-edit-categories-modal [type]="'loyal_customer'" [form]="categoryFormEdit"></app-edit-categories-modal>
+        <app-edit-categories-modal [type]="'supplier_product'" [form]="categoryFormEdit"></app-edit-categories-modal>
     </ng-container>
     <ng-container *nzModalFooter>
         <button nz-button nzType="default" (click)="handleCancelEdit()">Cancel</button>
@@ -61,7 +64,7 @@
 
 <nz-modal nzCentered [(nzVisible)]="isVisibleAdd" [nzTitle]="modal_type + ' Category'" (nzOnCancel)="handleCancelAdd()">
     <ng-container *nzModalContent>
-        <app-edit-categories-modal [type]="'loyal_customer'" [form]="categoryForm"></app-edit-categories-modal>
+        <app-edit-categories-modal [type]="'supplier_product'" [form]="categoryForm"></app-edit-categories-modal>
     </ng-container>
     <ng-container *nzModalFooter>
         <button nz-button nzType="default" (click)="handleCancelAdd()">Cancel</button>
