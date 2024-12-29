@@ -1,6 +1,6 @@
 import { CommonModule, DatePipe } from '@angular/common';
 import { ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
-import { AbstractControl, FormGroup, FormsModule, ReactiveFormsModule, UntypedFormArray, UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
+import { AbstractControl, FormGroup, FormsModule, ReactiveFormsModule, UntypedFormArray, UntypedFormBuilder, UntypedFormControl, UntypedFormGroup, Validators } from '@angular/forms';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzDatePickerModule } from 'ng-zorro-antd/date-picker';
 import { NZ_DRAWER_DATA, NzDrawerRef } from 'ng-zorro-antd/drawer';
@@ -105,7 +105,7 @@ export class AddQuotationComponent implements OnInit {
 
   provinceList: any[] = [];
 
-  groupedItems: { [category: string]: any[] } = {};
+  groupedItems: { [category: string]: { items: UntypedFormGroup[]; discount: UntypedFormControl; totalPrice: UntypedFormControl, id: string } } = {};
   uncategorizedItems: any[] = [];
 
   isLoadingPic = true;
@@ -218,13 +218,13 @@ export class AddQuotationComponent implements OnInit {
             unit_price: [parseFloat(item.inventory.default_selling_price)],
             total_price: [parseFloat(item.total_price_per_product)],
             gross_margin: [parseFloat(item.inventory.default_gross_margin)],
-            category: [item.inventory.supplier_product.name],
+            category: [item.inventory.supplier_product.id],
       
             i_part_number: [item.inventory.code],
             i_description: [item.inventory.description],
             installation_unit_inch_qty: [{value: parseFloat(item.inventory.installation.unit_inch_qty), disabled: true}],
             installation_unit_price: [{value: parseFloat(item.inventory.installation.price), disabled: true}],
-            installation_unit_price_type: [{value: parseFloat(item.inventory.installation.price_type), disabled: true}],
+            installation_unit_price_type: [{value: item.inventory.installation.price_type, disabled: true}],
             installation_price_per_unit: [{value: parseFloat(item.inventory.installation.price_per_unit), disabled: true}],
             installation_price_factor: [{value: parseFloat(item.inventory.installation.price_factor), disabled: true}],
             installation_selling_price: [{value: parseFloat(item.inventory.installation.selling_price), disabled: true}],
@@ -313,6 +313,20 @@ export class AddQuotationComponent implements OnInit {
 
         let updateStackFile: NzUploadFile[] = [];
 
+        if(stack.is_used_for_quotation === 1){
+          let selectStack: string = '';
+
+          if(stack.latest_quotation_bom.revision_contract){
+            selectStack = `${stack.name} - ${stack.latest_quotation_bom.revision_contract}`;
+          }
+    
+          if(stack.latest_quotation_bom.stack_revision_quotation){
+            selectStack = `${stack.name} - ${stack.latest_quotation_bom.stack_revision_quotation}`;
+          }
+    
+          this.selectedStack.push(selectStack)
+        }
+
         if(stack.latest_quotation_bom.bom_quotation_file){
           updateStackFile = [{
             uid: 'aselole',
@@ -387,13 +401,13 @@ export class AddQuotationComponent implements OnInit {
             unit_price: [parseFloat(item.inventory.default_selling_price)],
             total_price: [parseFloat(item.total_price_per_product)],
             gross_margin: [parseFloat(item.inventory.default_gross_margin)],
-            category: [item.inventory.supplier_product.name],
+            category: [item.inventory.supplier_product.id],
       
             i_part_number: [item.inventory.code],
             i_description: [item.inventory.description],
             installation_unit_inch_qty: [{value: parseFloat(item.inventory.installation.unit_inch_qty), disabled: true}],
             installation_unit_price: [{value: parseFloat(item.inventory.installation.price), disabled: true}],
-            installation_unit_price_type: [{value: parseFloat(item.inventory.installation.price_type), disabled: true}],
+            installation_unit_price_type: [{value: item.inventory.installation.price_type, disabled: true}],
             installation_price_per_unit: [{value: parseFloat(item.inventory.installation.price_per_unit), disabled: true}],
             installation_price_factor: [{value: parseFloat(item.inventory.installation.price_factor), disabled: true}],
             installation_selling_price: [{value: parseFloat(item.inventory.installation.selling_price), disabled: true}],
@@ -466,13 +480,13 @@ export class AddQuotationComponent implements OnInit {
             unit_price: [parseFloat(item.inventory.default_selling_price)],
             total_price: [parseFloat(item.total_price_per_product)],
             gross_margin: [parseFloat(item.inventory.default_gross_margin)],
-            category: [item.inventory.supplier_product.name],
+            category: [item.inventory.supplier_product.id],
       
             i_part_number: [item.inventory.code],
             i_description: [item.inventory.description],
             installation_unit_inch_qty: [{value: parseFloat(item.inventory.installation.unit_inch_qty), disabled: true}],
             installation_unit_price: [{value: parseFloat(item.inventory.installation.price), disabled: true}],
-            installation_unit_price_type: [{value: parseFloat(item.inventory.installation.price_type), disabled: true}],
+            installation_unit_price_type: [{value: item.inventory.installation.price_type, disabled: true}],
             installation_price_per_unit: [{value: parseFloat(item.inventory.installation.price_per_unit), disabled: true}],
             installation_price_factor: [{value: parseFloat(item.inventory.installation.price_factor), disabled: true}],
             installation_selling_price: [{value: parseFloat(item.inventory.installation.selling_price), disabled: true}],
@@ -516,7 +530,8 @@ export class AddQuotationComponent implements OnInit {
       nzData: {
         stackForm,
         inventoryList: this.inventoryList,
-        modal_type: this.modal_type
+        modal_type: this.modal_type,
+        productCategory: this.productCategory
       },
       nzWidth: '100vw'
     })
@@ -625,7 +640,7 @@ export class AddQuotationComponent implements OnInit {
           unit_price: [filteredInventory[0].default_selling_price],
           gross_margin: [filteredInventory[0].default_gross_margin],
           total_price: [totalPrice],
-          category: [filteredInventory[0].product_category.name],
+          category: [filteredInventory[0].product_category.id],
         });
       } else {
         updatedItemAdd = this.fb.group({
@@ -736,53 +751,104 @@ export class AddQuotationComponent implements OnInit {
   updateGroupedItems(): void {
     const itemsArray = this.items.controls as UntypedFormGroup[];
   
-    const categoryOrder = [
-      'SRO',
-      'Pipe',
-      'Fitting',
-      'Bracketing',
-      'Solvent Cement',
-      'Accessories',
-    ];
+    const categoryMap = this.productCategory.reduce((map, category) => {
+      map[category.id] = { ...category, discount: 0 }; // Initialize discount as 0
+      return map;
+    }, {} as { [id: number]: IDataCategories & { discount: number } });
   
-    // Group items by category
     const grouped = itemsArray.reduce((acc, control) => {
-      const category = control.get('category')?.value || 'Uncategorized';
-      if (!acc[category]) {
-        acc[category] = [];
-      }
-      acc[category].push(control);
-      return acc;
-    }, {} as { [category: string]: UntypedFormGroup[] });
+      const categoryId = control.get('category')?.value || null;
   
-    // Add predefined categories to grouped items if they are missing
-    categoryOrder.forEach((category) => {
-      if (!grouped[category]) {
-        grouped[category] = []; // Ensure category exists even if empty
+      const groupKey = categoryId
+        ? categoryMap[categoryId]?.name || 'Uncategorized'
+        : 'Uncategorized';
+  
+      if (!acc[groupKey]) {
+        acc[groupKey] = {
+          items: [],
+          discount: new UntypedFormControl(0), // Form control for discount
+          totalPrice: new UntypedFormControl(0), // Form control for total price
+          id: categoryId.toString()
+        };
+      }
+      acc[groupKey].items.push(control);
+      return acc;
+    }, {} as { [categoryName: string]: { items: UntypedFormGroup[]; discount: UntypedFormControl; totalPrice: UntypedFormControl; id: string } });
+  
+    this.productCategory.forEach((category) => {
+      if (!grouped[category.name]) {
+        grouped[category.name] = {
+          items: [],
+          discount: new UntypedFormControl(0),
+          totalPrice: new UntypedFormControl(0),
+          id: category.id.toString()
+        };
       }
     });
   
-    // Sort categories based on predefined order
+    if (!grouped['Uncategorized']) {
+      grouped['Uncategorized'] = {
+        items: [],
+        discount: new UntypedFormControl(0),
+        totalPrice: new UntypedFormControl(0),
+        id: ''
+      };
+    }
+  
+    // Sort categories by level
     this.groupedItems = Object.keys(grouped)
       .sort((a, b) => {
-        const indexA = categoryOrder.indexOf(a);
-        const indexB = categoryOrder.indexOf(b);
-  
-        // Categories not in the predefined order will appear at the end
-        if (indexA === -1) return 1;
-        if (indexB === -1) return -1;
-        return indexA - indexB;
+        const levelA = this.productCategory.find((category) => category.name === a)?.level || '9999';
+        const levelB = this.productCategory.find((category) => category.name === b)?.level || '9999';
+        return parseInt(levelA, 10) - parseInt(levelB, 10);
       })
       .reduce((acc, key) => {
         acc[key] = grouped[key];
         return acc;
-      }, {} as { [category: string]: UntypedFormGroup[] });
+      }, {} as { [categoryName: string]: { items: UntypedFormGroup[]; discount: UntypedFormControl; totalPrice: UntypedFormControl; id: string } });
   
-    // Optional: Add a check for 'Uncategorized' at the end if needed
-    if (grouped['Uncategorized'] && grouped['Uncategorized'].length === 0) {
-      delete this.groupedItems['Uncategorized']; // Or keep it if desired
-    }
+    // Update unit prices and total price based on discount
+    Object.keys(this.groupedItems).forEach((categoryName) => {
+      const group = this.groupedItems[categoryName];
+  
+      const updateTotalPrice = () => {
+        const total = group.items.reduce((sum, item) => {
+          const quantity = item.get('qty')?.value || 0;
+          const unitPrice = item.get('unit_price')?.value || 0;
+          return sum + parseFloat(quantity) * parseFloat(unitPrice);
+        }, 0);
+
+        group.totalPrice.setValue(total, { emitEvent: false });
+      };
+  
+      // Subscribe to discount changes
+      group.discount.valueChanges.subscribe((discount) => {
+        group.items.forEach((item) => {
+          const unitPriceControl = item.get('unit_price');
+          const originalPrice = item.get('original_unit_price')?.value;
+  
+          if (!originalPrice) {
+            item.addControl('original_unit_price', new UntypedFormControl(unitPriceControl?.value));
+          }
+  
+          const discountedPrice = originalPrice * (1 - discount / 100);
+          unitPriceControl?.setValue(discountedPrice, { emitEvent: false });
+        });
+  
+        // Recalculate total price
+        updateTotalPrice();
+      });
+  
+      // Subscribe to item changes to recalculate total price
+      group.items.forEach((item) => {
+        item.valueChanges.subscribe(() => updateTotalPrice());
+      });
+  
+      // Initial total price calculation
+      updateTotalPrice();
+    });
   }
+  
   
 
   changeValueOrder(control: UntypedFormGroup, product: any){
@@ -1052,7 +1118,7 @@ export class AddQuotationComponent implements OnInit {
           customer_cp_ids,
           quotation_type: this.quotationForm.get('project_type')?.value,
           issued_date: this.quotationForm.get('date')?.value,
-
+          quotation_items_discount: null
           // inventories: inventoryComplete
         }
   
@@ -1143,6 +1209,17 @@ export class AddQuotationComponent implements OnInit {
 
 
       if(this.modal_type === 'edit' || this.modal_type === 'revision'){
+
+        const quotationItemsDiscount: {supplier_product_id: string; discount: string}[] = [];
+
+        Object.keys(this.groupedItems).forEach((categoryName) => {
+          const group = this.groupedItems[categoryName];
+          const discount =  group.discount.value;
+          const supplier_product_id = group.id;
+
+          quotationItemsDiscount.push({supplier_product_id, discount})
+        })
+
         const stackComplete = this.stacks.value.map((stack: any) => ({
           quotation_stack_name: stack.name,
           quotation_stack_is_active: stack.active ? 1 : 0,
@@ -1170,6 +1247,7 @@ export class AddQuotationComponent implements OnInit {
           customer_cp_ids_new: customer_cp_ids,
           issued_date: this.quotationForm.get('date')?.value,
           quotation_stack_deleted_ids: this.deletedStackIds,
+          quotation_items_discount: quotationItemsDiscount
           // inventories: inventoryComplete,
         }
   
@@ -1399,4 +1477,14 @@ export class AddQuotationComponent implements OnInit {
   formatter = (value: number | null): string => {
     return value !== null ? `${value.toLocaleString('en-US')}` : '';
   };
+
+  getCodeById(partId: string): string {
+    const part = this.inventoryList.find(p => p.id === partId);
+    return part ? part.code : 'Unknown Part';
+  }
+
+  getDescById(partId: string): string {
+    const part = this.inventoryList.find(p => p.id === partId);
+    return part ? part.description : 'Unknown Part';
+  }
 }

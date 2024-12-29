@@ -215,6 +215,10 @@ export class QuotationComponent implements OnInit {
     this.apiSvc.getInventoryList().subscribe((res) => {
       this.inventoryList = res.data;
     })
+
+    this.apiSvc.getSupplierProduct().subscribe((res) => {
+      this.productCategory = res.data
+    })
   }
 
   publish(id: string){

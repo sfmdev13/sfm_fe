@@ -67,7 +67,8 @@ export class SupplierProductComponent implements OnInit {
     this.categoryFormEdit.patchValue({
       id: data.id,
       name: data.name,
-      description: data.description
+      description: data.description,
+      level: data.level
     })
 
     this.isVisibleEdit = true;
