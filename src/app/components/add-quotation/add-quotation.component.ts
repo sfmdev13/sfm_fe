@@ -1214,7 +1214,7 @@ export class AddQuotationComponent implements OnInit {
 
         Object.keys(this.groupedItems).forEach((categoryName) => {
           const group = this.groupedItems[categoryName];
-          const discount =  group.discount.value;
+          const discount =  group.discount.value.toString();
           const supplier_product_id = group.id;
 
           quotationItemsDiscount.push({supplier_product_id, discount})
