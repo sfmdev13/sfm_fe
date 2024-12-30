@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, inject, OnInit, Renderer2 } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, UntypedFormArray, UntypedFormControl, UntypedFormGroup, Validators } from '@angular/forms';
 import { NzAlertModule } from 'ng-zorro-antd/alert';
 import { NzButtonModule } from 'ng-zorro-antd/button';
@@ -50,7 +50,8 @@ export class DetailStackComponent implements OnInit {
   constructor(
     private modal: NzModalRef,
     private fb: FormBuilder,
-    private cd: ChangeDetectorRef
+    private cd: ChangeDetectorRef,
+    private renderer: Renderer2
   ) {
 
   }
@@ -246,6 +247,18 @@ export class DetailStackComponent implements OnInit {
         control.get('part_number')?.setValue(product?.id, { emitEvent: false }); // Disable event trigger
         this.changeValueOrder(control, product);
         this.updateGroupedItems();
+
+        // Delay to allow DOM changes to render
+        setTimeout(() => {
+          // Find the item's new DOM element using its part number
+          const itemElement = document.querySelector(`[data-id="${value}"]`);
+          if (itemElement) {
+            itemElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            this.renderer.setStyle(itemElement, 'background-color', 'yellow'); // Highlight the item for visibility
+            setTimeout(() => this.renderer.removeStyle(itemElement, 'background-color'), 2000); // Remove highlight after 2 seconds
+          }
+        }, 0);
+        
         isUpdating = false;
       }
     });
@@ -253,10 +266,24 @@ export class DetailStackComponent implements OnInit {
     control.get('part_number')?.valueChanges.subscribe(value => {
       if (!isUpdating) {
         isUpdating = true;
+    
+        // Find the product and update the category
         const product = this.inventoryList.find((p: any) => p.id === value);
         control.get('description')?.setValue(product?.id, { emitEvent: false }); // Disable event trigger
         this.changeValueOrder(control, product);
         this.updateGroupedItems();
+    
+        // Delay to allow DOM changes to render
+        setTimeout(() => {
+          // Find the item's new DOM element using its part number
+          const itemElement = document.querySelector(`[data-id="${value}"]`);
+          if (itemElement) {
+            itemElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            this.renderer.setStyle(itemElement, 'background-color', 'yellow'); // Highlight the item for visibility
+            setTimeout(() => this.renderer.removeStyle(itemElement, 'background-color'), 2000); // Remove highlight after 2 seconds
+          }
+        }, 0);
+    
         isUpdating = false;
       }
     });

@@ -362,7 +362,8 @@ export class QuotationComponent implements OnInit {
       nzData: {
         revisionSelected: this.revision,
         dataDetail: this.detailQuotation,
-        dataBasic: this.selectedDataBasic
+        dataBasic: this.selectedDataBasic,
+        productCategory: this.productCategory,
       },
       nzWidth: '100vw',
     });

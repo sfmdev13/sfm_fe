@@ -327,7 +327,8 @@
                                                 </a>
                                                 <nz-dropdown-menu  #menu="nzDropdownMenu">
                                                     <ul nz-menu class="dropdown-wrapper" style="width: 120px;">
-                                                        <li nz-menu-item class="gap-2 list-dropdown"  (click)="editStack('edit', i)">
+                                                        <ng-container *ngIf="!stack.get('new')?.value">
+                                                            <li nz-menu-item class="gap-2 list-dropdown"  (click)="editStack('edit', i)">
                                                             <div class="d-flex gap-2">
                                                               <span nz-icon nzType="edit" nzTheme="twotone"></span>
                                                               <p class="m-0 p-0">Edit</p>
@@ -339,6 +340,7 @@
                                                               <p class="m-0 p-0">Revision</p>
                                                             </div>
                                                           </li>
+                                                        </ng-container>
                                                         <li nz-menu-item class="gap-2 list-dropdown" (click)="removeStacks(i)">
                                                             <div class="d-flex gap-2">
                                                                 <span nz-icon nzType="delete" nzTheme="twotone" [nzTwotoneColor]="'#f50'"></span>

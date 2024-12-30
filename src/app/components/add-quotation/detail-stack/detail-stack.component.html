@@ -45,13 +45,14 @@
                                     <th scope="col">Unit Price</th>
                                     <th scope="col">Total Cost</th>
                                     <th scope="col">Gross Margin</th>
+                                    <th scope="col">#</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <ng-container formArrayName="items">
                                     <ng-container *ngFor="let category of objectKeys(groupedItems)">
                                         <tr>
-                                            <td class="" colspan="10">
+                                            <td class="" colspan="11">
                                                 <span class="fw-bold">{{category}}</span>
                                             </td>
                                         </tr>
@@ -69,7 +70,7 @@
 
                                         <ng-container>
                                             <tr *ngFor="let item of groupedItems[category].items; let i = index" [formGroup]="item">
-                                                <td>
+                                                <td [attr.data-id]="item.get('part_number')?.value" #categoryItem>
                                                     <nz-form-control>
                                                         <nz-select 
                                                             *ngIf="item.get('exist')?.value"
@@ -96,7 +97,7 @@
                                                     nzMessage="Item not registered yet in inventory"
                                                   ></nz-alert>
                                                 </td>
-                                                <td>
+                                                <td [attr.data-id]="item.get('description')?.value" #categoryItem>
                                                     <nz-form-control>
                                                         <nz-select 
                                                             *ngIf="item.get('exist')?.value"
@@ -150,6 +151,9 @@
                                                 </td>
                                                 <td>
                                                     {{ item.get('gross_margin')?.value }} %
+                                                </td>
+                                                <td>
+                                                    <span (click)="removeItem(item)" nz-icon nzType="delete" nzTheme="twotone" [nzTwotoneColor]="'#ED0000'"></span>
                                                 </td>
                                             </tr>
                                         </ng-container>
