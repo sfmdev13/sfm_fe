@@ -5,7 +5,7 @@ import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NZ_MODAL_DATA, NzModalModule, NzModalRef } from 'ng-zorro-antd/modal';
 import { NzSelectModule } from 'ng-zorro-antd/select';
 import { NzTabsModule } from 'ng-zorro-antd/tabs';
-import { DetailQuotationStack, LatestQuotationBom } from 'src/app/interfaces';
+import { DetailQuotationStack, IDataCategories, LatestQuotationBom } from 'src/app/interfaces';
 
 @Component({
   selector: 'app-detail-stack-quotation',
@@ -26,6 +26,7 @@ export class DetailStackQuotationComponent {
   private nzData = inject(NZ_MODAL_DATA)
 
   stackDetail: DetailQuotationStack = this.nzData.stackLatest
+  productCategory: IDataCategories[] = this.nzData.productCategory;
 
   selectedStack: string = '';
 

@@ -37,8 +37,289 @@
                         </ng-container>
                     </ng-container>
                 </nz-tab>
-                <nz-tab nzTitle="Total Material & Installation">
-                    <!-- <span>kocak gaming</span> -->
+                <nz-tab nzTitle="Material & Installation">
+                    <ng-container *ngFor="let stack of stackDetail.quotation_stack_bom">
+                        <ng-container *ngIf="stack.stack_revision_quotation === selectedStack">
+                            <nz-tabset [nzAnimated]="false">
+                                <nz-tab nzTitle="Material">
+                                    <div class="table-responsive">
+                                        <table class="table table-order table-purchase">
+                                            <thead style="position: unset;">
+                                                <tr>
+                                                    <th scope="col">Part Number</th>
+                                                    <th scope="col">Product Description</th>
+                                                    <th scope="col">Alias</th>
+                                                    <th scope="col">DN</th>
+                                                    <th scope="col">DN</th>
+                                                    <th scope="col">Qty</th>
+                                                    <th scope="col">Unit</th>
+                                                    <th scope="col">Unit Price</th>
+                                                    <th scope="col">Total Cost</th>
+                                                    <th scope="col">Gross Margin</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <ng-container *ngFor="let category of productCategory">
+                                                    <tr>
+                                                        <td class="table-secondary fw-bold" colspan="10">
+                                                            {{ category.name }}
+                                                        </td>
+                                                    </tr>
+                                                    <ng-container *ngFor="let item of stack.quotation_stack_items">
+                                                        <tr *ngIf="item.inventory.supplier_product.id === category.id">
+                                                            <td>
+                                                                <p class="m-0 p-0 fw-light">{{ item.inventory.code }}</p>
+                                                            </td>
+                                                            <td>
+                                                                <p class="m-0 p-0 fw-light">{{ item.inventory.description }}</p>
+                                                            </td>
+                                                            <td>
+                                                                <p class="m-0 p-0 fw-light">{{ item.inventory.alias }}</p>
+                                                            </td>
+                                                            <td>
+                                                                <p class="m-0 p-0 fw-light">{{ item.dn_1 }}</p>
+                                                            </td>
+                                                            <td>
+                                                                <p class="m-0 p-0 fw-light">{{ item.dn_2 }}</p>
+                                                            </td>
+                                                            <td>
+                                                                <p class="m-0 p-0 fw-light">{{ item.qty }}</p>
+                                                            </td>
+                                                            <td>
+                                                                <p class="m-0 p-0 fw-light">{{ item.inventory.unit.name }}</p>
+                                                            </td>
+                                                            <td>
+                                                                <p class="m-0 p-0 fw-light">Rp. {{ item.inventory.default_selling_price | number: '1.0-0'}}</p>
+                                                            </td>
+                                                            <td>
+                                                                <p class="m-0 p-0 fw-light">Rp. {{ item.total_price_per_product | number: '1.0-0' }}</p>
+                                                            </td>
+                                                            <td>
+                                                                <p class="m-0 p-0 fw-light">% {{ item.inventory.default_gross_margin }}</p>
+                                                            </td>
+                                                        </tr>
+                                                    </ng-container>
+        
+                                                </ng-container>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </nz-tab>
+                                <nz-tab nzTitle="Installation">
+                                    <ng-container *ngFor="let category of productCategory">
+                                        <div class="table-responsive">
+                                            <table class="table table-order table-installation">
+                                                <thead style="position: unset;">
+                                                    <tr class="table-active">
+                                                        <th scope="col" colSpan="8">{{ category.name }}</th>
+                                                    </tr>
+                                                    <tr class="table-active">
+                                                        <th scope="col">Part Number</th>
+                                                        <th scope="col">Product Description</th>
+                                                        <th scope="col">Inch</th>
+                                                        <th scope="col">
+                                                            {{ category.name.toLowerCase() === 'pipe' ? 'Cost/M\'' : 'Cost/Unit'  }}
+                                                        </th>
+                                                        <th scope="col">
+                                                            {{ category.name.toLowerCase() === 'pipe' ? 'Cost M\'/inch' : 'Cost Unit/Inch'  }}
+                                                        </th>
+                                                        <th scope="col">Price Factor</th>
+                                                        <th scope="col">Selling Price</th>
+                                                        <th scope="col">Gross Margin</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <ng-container *ngFor="let item of stack.quotation_stack_items">
+                                                        <tr *ngIf="item.inventory.supplier_product.id === category.id">
+                                                            <td>
+                                                                <p class="m-0 p-0 fw-light">{{ item.inventory.code }}</p>
+                                                            </td>
+                                                            <td>
+                                                                <p class="m-0 p-0 fw-light">{{ item.inventory.description }}</p>
+                                                            </td>
+                                                            <td>
+                                                                <p class="m-0 p-0 fw-light">
+                                                                    {{ item.inventory.installation.price_type === 'percent'
+                                                                        ? '-'
+                                                                        : item.inventory.installation.unit_inch_qty 
+                                                                    }}
+                                                                </p>
+                                                            </td>
+                                                            <td>
+                                                                <p class="m-0 p-0 fw-light">
+                                                                    {{ item.inventory.installation.price_type === 'percent' 
+                                                                        ? item.inventory.installation.price + ' %'
+                                                                        : ('Rp. ' + (item.inventory.installation.price | number:'1.0-0'))
+                                                                    }}
+                                                                </p>
+                                                            </td>
+                                                            <td>
+                                                                <p class="m-0 p-0 fw-light">Rp. {{ item.inventory.installation.price_per_unit  | number:'1.0-0' }}</p>
+                                                            </td>
+                                                            <td>
+                                                                <p class="m-0 p-0 fw-light">{{ item.inventory.installation.price_factor }}</p>
+                                                            </td>
+                                                            <td>
+                                                                <p class="m-0 p-0 fw-light">Rp. {{ item.inventory.installation.selling_price  | number:'1.0-0' }}</p>
+                                                            </td>
+                                                            <td>
+                                                                <p class="m-0 p-0 fw-light">{{ item.inventory.installation.gross_margin }} %</p>
+                                                            </td>
+                                                        </tr>
+                                                    </ng-container>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </ng-container>
+        
+                                </nz-tab>
+                                <!-- <nz-tab nzTitle="Total">
+                                    <div class="table-responsive">
+                                        <table class="table table-order table-purchase">
+                                            <thead style="position: unset;">
+                                                <tr>
+                                                    <th scope="col">Part Number</th>
+                                                    <th scope="col">Product Description</th>
+                                                    <th scope="col">Alias</th>
+                                                    <th scope="col">Qty</th>
+                                                    <th scope="col">Unit</th>
+                                                    <th scope="col">Unit Price</th>
+                                                    <th scope="col">Discount</th>
+                                                    <th scope="col">Total Cost</th>
+                                                    <th scope="col">Gross Margin</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr class="table-secondary">
+                                                    <td colspan="9">
+                                                        <span class="fw-bold" style="font-size: 16px;">
+                                                            Material
+                                                        </span>
+                                                    </td>
+                                                </tr>
+                                                <ng-container *ngFor="let category of productCategory">
+                                                    <tr>
+                                                        <td>
+                                                            <span class="fw-bold">{{category.name}}</span>
+                                                        </td>
+                                                        <td colspan="8">
+                                                            <span class="fw-bold">
+                                                                Rp. {{ calculateTotalPerCat(category.id) | number:'1.0-0' }}
+                                                            </span>
+                                                        </td>
+                                                    </tr>
+                                                    <ng-container *ngFor="let item of detail.quotation_items">
+                                                        <ng-container *ngIf="item.inventory.supplier_product.id === category.id">
+                                                            <tr>
+                                                                <td>
+                                                                    <span class="fw-bold">
+                                                                        {{ item.inventory.code }}
+                                                                    </span>
+                                                                </td>
+                                                                <td>
+                                                                    <p class="m-0 p-0 fw-light">
+                                                                        {{ item.inventory.description }}
+                                                                    </p>
+                                                                </td>
+                                                                <td>
+                                                                    <p class="m-0 p-0 fw-light">
+                                                                        {{ item.inventory.alias }}
+                                                                    </p>
+                                                                </td>
+                                                                <td>
+                                                                    <p class="m-0 p-0 fw-light">
+                                                                        {{ item.qty }}
+                                                                    </p>
+                                                                </td>
+                                                                <td>
+                                                                    <p class="m-0 p-0 fw-light">
+                                                                        {{ item.inventory.unit.name }}
+                                                                    </p>
+                                                                </td>
+                                                                <td>
+                                                                    <p class="m-0 p-0 fw-light">
+                                                                        Rp. {{ item.inventory.default_selling_price | number:'1.0-0'}}
+                                                                    </p>
+                                                                </td>
+                                                                <td>
+                                                                    <p class="m-0 p-0 fw-light">% {{ item.discount }}</p>
+                                                                </td>
+                                                                <td>
+                                                                    <p class="m-0 p-0 fw-light">Rp. {{ item.total_price_per_product_after_discount | number: '1.0-0' }}</p>
+                                                                </td>
+                                                                <td>
+                                                                    <p class="m-0 p-0 fw-light">
+                                                                        {{ item.inventory.default_gross_margin }} %
+                                                                    </p>
+                                                                </td>
+                                                            </tr>
+                                                        </ng-container>
+                                                    </ng-container>
+        
+                                                </ng-container>
+        
+                                                <tr class="table-secondary">
+                                                    <td colspan="9">
+                                                        <span class="fw-bold" style="font-size: 16px;">
+                                                            Material Installation
+                                                        </span>
+                                                    </td>
+                                                </tr>
+                                                <ng-container *ngFor="let category of productCategory">
+                                                    <tr>
+                                                        <td colspan="9">
+                                                            <span class="fw-bold">{{category.name}}</span>
+                                                        </td>
+                                                    </tr>
+                                                    <ng-container *ngFor="let item of detail.quotation_items">
+                                                        <ng-container *ngIf="item.inventory.supplier_product.id === category.id">
+                                                            <tr>
+                                                                <td>
+                                                                    <span class="fw-bold">
+                                                                        {{ item.inventory.code }}
+                                                                    </span>
+                                                                </td>
+                                                                <td>
+                                                                    <p class="m-0 p-0 fw-light">
+                                                                        {{ item.inventory.description }}
+                                                                    </p>
+                                                                </td>
+                                                                <td>
+                                                                    <p class="m-0 p-0 fw-light">
+                                                                        {{ item.inventory.alias }}
+                                                                    </p>
+                                                                </td>
+                                                                <td>
+                                                                    -
+                                                                </td>
+                                                                <td>
+                                                                    -
+                                                                </td>
+                                                                <td>
+                                                                    -
+                                                                </td>
+                                                                <td>
+                                                                    -
+                                                                </td>
+                                                                <td>
+                                                                    -
+                                                                </td>
+                                                                <td>
+                                                                    -
+                                                                </td>
+                                                            </tr>
+                                                        </ng-container>
+                                                    </ng-container>
+        
+                                                </ng-container>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </nz-tab> -->
+                            </nz-tabset>
+                        </ng-container>
+                    </ng-container>
+
                 </nz-tab>
             </nz-tabset>   
         </ng-container>
