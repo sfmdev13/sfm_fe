@@ -83,6 +83,8 @@ export class AuthService {
     localStorage.removeItem('loginTime');
     this.clearToken();
 
+    location.reload();
+
     return this.http.post(url, {}, { headers });
   }
 
