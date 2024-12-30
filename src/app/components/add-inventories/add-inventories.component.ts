@@ -49,7 +49,8 @@ export class AddInventoriesComponent implements OnInit {
   categoryFormBasic = this.fb.group({
     id: [''],
     name: ['', Validators.required],
-    description: ['', Validators.required]
+    description: ['', Validators.required],
+    level: ['', Validators.required]
   })
 
   categoryForm = this.fb.group({
@@ -453,7 +454,7 @@ export class AddInventoriesComponent implements OnInit {
         nzContent: EditCategoriesModalComponent,
         nzData: {
           form: this.categoryFormBasic,
-          type: titleCat
+          type: 'supplier_product'
         },
         nzWidth: '500px',
         nzFooter: [
@@ -623,7 +624,7 @@ export class AddInventoriesComponent implements OnInit {
 
     if(type === 'product_category'){
       if(this.categoryFormBasic.valid){
-        this.apiSvc.createSupplierProduct(this.categoryFormBasic.value.name, this.categoryFormBasic.value.description).subscribe({
+        this.apiSvc.createSupplierProduct(this.categoryFormBasic.value.name, this.categoryFormBasic.value.description, this.categoryFormBasic.value.level).subscribe({
           next: () => {
   
             this.spinnerSvc.hide();

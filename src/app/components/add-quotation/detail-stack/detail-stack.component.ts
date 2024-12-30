@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule, UntypedFormArray, UntypedFormGroup, Validators } from '@angular/forms';
+import { ChangeDetectorRef, Component, inject, OnInit, Renderer2 } from '@angular/core';
+import { FormBuilder, FormGroup, ReactiveFormsModule, UntypedFormArray, UntypedFormControl, UntypedFormGroup, Validators } from '@angular/forms';
 import { NzAlertModule } from 'ng-zorro-antd/alert';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzFormModule } from 'ng-zorro-antd/form';
@@ -11,7 +11,7 @@ import { NZ_MODAL_DATA, NzModalModule, NzModalRef } from 'ng-zorro-antd/modal';
 import { NzRadioModule } from 'ng-zorro-antd/radio';
 import { NzSelectModule } from 'ng-zorro-antd/select';
 import { NzTabsModule } from 'ng-zorro-antd/tabs';
-import { IDataInventory } from 'src/app/interfaces';
+import { IDataCategories, IDataInventory } from 'src/app/interfaces';
 import * as XLSX from 'xlsx';
 
 @Component({
@@ -40,84 +40,24 @@ export class DetailStackComponent implements OnInit {
   inventoryList: IDataInventory[] = this.nzData.inventoryList;
   modalType: string = this.nzData.modal_type;
   stackForm: FormGroup = this.nzData.stackForm;
+  productCategory: IDataCategories[] = this.nzData.productCategory;
   
-  groupedItems: { [category: string]: any[] } = {};
+  groupedItems: { [category: string]: { items: UntypedFormGroup[]; discount: UntypedFormControl } } = {};
   uncategorizedItems: any[] = [];
-
-  // stackForm = this.fb.group({
-  //   stack_type: ['manual'],
-  //   items: this.fb.array([])
-  // })
 
   uploadedData: any[] = [];
 
   constructor(
     private modal: NzModalRef,
     private fb: FormBuilder,
-    private cd: ChangeDetectorRef
+    private cd: ChangeDetectorRef,
+    private renderer: Renderer2
   ) {
 
   }
 
   ngOnInit(): void {
-
-    // console.log(this.stackForm.value);
-    // this.items.push(this.stackForm.value.items);
-
     this.updateGroupedItems();
-    
-    // if(this.modalType === 'add'){
-    //   if(!sessionStorage.getItem(this.stackDetail.id_detail)){
-    //     return
-    //   }
-
-    //   const existingStack =  JSON.parse(sessionStorage.getItem(this.stackDetail.id_detail)!);
-
-    //   //edit item
-    //   existingStack.items.forEach((item: any) => {
-
-    //     const selectedInventory = this.inventoryList.filter((invent) => invent.id === item.description)[0];
-
-    //     const totalPrice = parseFloat(selectedInventory.default_selling_price) * parseFloat(item.qty)
-        
-    //     const editItems = this.fb.group({
-    //       part_number: [selectedInventory.id, Validators.required],
-    //       description: [selectedInventory.id, Validators.required],
-    //       alias: [{value: selectedInventory.alias, disabled: true}, Validators.required],
-    //       dn1: [item.dn1],
-    //       dn2: [item.dn2],
-    //       qty: [item.qty],
-    //       unit:[{value: selectedInventory.unit.name, disabled: true}],
-    //       exist: [item.exist],
-    //       unit_price: [selectedInventory.alias],
-    //       gross_margin: [selectedInventory.default_gross_margin],
-    //       total_price: [totalPrice],
-    //       category: [selectedInventory.product_category.name],
-    //       i_part_number: [selectedInventory.code],
-    //       i_description: [selectedInventory.description],
-    //       installation_unit_inch_qty: [{value: parseFloat(selectedInventory.inventory_installation.unit_inch_qty) ,disabled: true}],
-    //       installation_unit_price: [{value: parseFloat(selectedInventory.inventory_installation.price), disabled: true}],
-    //       installation_unit_price_type: [{value: selectedInventory.inventory_installation.price_type, disabled: true}],
-    //       installation_price_per_unit: [{value: parseFloat(selectedInventory.inventory_installation.price_per_unit), disabled: true}],
-    //       installation_price_factor: [{value: parseFloat(selectedInventory.inventory_installation.price_factor), disabled: true}],
-    //       installation_selling_price: [{value: parseFloat(selectedInventory.inventory_installation.selling_price), disabled: true}],
-    //       installation_gross_margin: [{value: parseFloat(selectedInventory.inventory_installation.gross_margin), disabled: true}],
-    //     })
-
-    //     this.items.push(editItems);
-    //     this.itemValueChangeSubscription(editItems);
-    //   })
-
-    //   this.updateGroupedItems();
-
-
-    //   // Explicitly mark the form array as dirty or updated
-    //   this.items.markAsDirty();
-    //   this.items.updateValueAndValidity();
-
-    //   // Trigger change detection
-    //   this.cd.detectChanges();
-    // }
   }
 
 
@@ -199,7 +139,7 @@ export class DetailStackComponent implements OnInit {
           unit_price: [filteredInventory[0].default_selling_price],
           gross_margin: [filteredInventory[0].default_gross_margin],
           total_price: [totalPrice],
-          category: [filteredInventory[0].product_category.name],
+          category: [filteredInventory[0].product_category.id],
           i_part_number: [filteredInventory[0].code],
           i_description: [filteredInventory[0].description],
           installation_unit_inch_qty: [{value: parseFloat(filteredInventory[0].inventory_installation.unit_inch_qty) ,disabled: true}],
@@ -307,6 +247,18 @@ export class DetailStackComponent implements OnInit {
         control.get('part_number')?.setValue(product?.id, { emitEvent: false }); // Disable event trigger
         this.changeValueOrder(control, product);
         this.updateGroupedItems();
+
+        // Delay to allow DOM changes to render
+        setTimeout(() => {
+          // Find the item's new DOM element using its part number
+          const itemElement = document.querySelector(`[data-id="${value}"]`);
+          if (itemElement) {
+            itemElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            this.renderer.setStyle(itemElement, 'background-color', 'yellow'); // Highlight the item for visibility
+            setTimeout(() => this.renderer.removeStyle(itemElement, 'background-color'), 2000); // Remove highlight after 2 seconds
+          }
+        }, 0);
+        
         isUpdating = false;
       }
     });
@@ -314,10 +266,24 @@ export class DetailStackComponent implements OnInit {
     control.get('part_number')?.valueChanges.subscribe(value => {
       if (!isUpdating) {
         isUpdating = true;
+    
+        // Find the product and update the category
         const product = this.inventoryList.find((p: any) => p.id === value);
         control.get('description')?.setValue(product?.id, { emitEvent: false }); // Disable event trigger
         this.changeValueOrder(control, product);
         this.updateGroupedItems();
+    
+        // Delay to allow DOM changes to render
+        setTimeout(() => {
+          // Find the item's new DOM element using its part number
+          const itemElement = document.querySelector(`[data-id="${value}"]`);
+          if (itemElement) {
+            itemElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            this.renderer.setStyle(itemElement, 'background-color', 'yellow'); // Highlight the item for visibility
+            setTimeout(() => this.renderer.removeStyle(itemElement, 'background-color'), 2000); // Remove highlight after 2 seconds
+          }
+        }, 0);
+    
         isUpdating = false;
       }
     });
@@ -331,7 +297,7 @@ export class DetailStackComponent implements OnInit {
     control.get('inventory_id')?.setValue(product?.id);
     control.get('alias')?.setValue(product?.alias);
     control.get('unit')?.setValue(product?.unit.name);
-    control.get('category')?.setValue(product?.product_category.name);
+    control.get('category')?.setValue(product?.product_category.id);
     control.get('gross_margin')?.setValue(product?.default_gross_margin);
     control.get('unit_price')?.setValue(product?.default_selling_price);
 
@@ -359,46 +325,83 @@ export class DetailStackComponent implements OnInit {
 
   updateGroupedItems(): void {
     const itemsArray = this.items.controls as UntypedFormGroup[];
-
-    const categoryOrder = [
-      'SRO',
-      'Pipe',
-      'Fitting',
-      'Bracketing',
-      'Solvent Cement',
-      'Accessories',
-    ];
-
-
+  
+    const categoryMap = this.productCategory.reduce((map, category) => {
+      map[category.id] = { ...category, discount: 0 }; // Initialize discount as 0
+      return map;
+    }, {} as { [id: number]: IDataCategories & { discount: number } });
+  
     const grouped = itemsArray.reduce((acc, control) => {
-      const category = control.get('category')?.value || 'Uncategorized';
-      if (!acc[category]) {
-        acc[category] = [];
+      const categoryId = control.get('category')?.value || null;
+  
+      const groupKey = categoryId
+        ? categoryMap[categoryId]?.name || 'Uncategorized'
+        : 'Uncategorized';
+  
+      if (!acc[groupKey]) {
+        acc[groupKey] = {
+          items: [],
+          discount: new UntypedFormControl(0), // Form control for discount
+        };
       }
-      acc[category].push(control);
+      acc[groupKey].items.push(control);
       return acc;
-    }, {} as { [category: string]: UntypedFormGroup[] });
-
+    }, {} as { [categoryName: string]: { items: UntypedFormGroup[]; discount: UntypedFormControl } });
+  
+    this.productCategory.forEach((category) => {
+      if (!grouped[category.name]) {
+        grouped[category.name] = {
+          items: [],
+          discount: new UntypedFormControl(0),
+        };
+      }
+    });
+  
+    if (!grouped['Uncategorized']) {
+      grouped['Uncategorized'] = {
+        items: [],
+        discount: new UntypedFormControl(0),
+      };
+    }
+  
+    // Sort categories by level
     this.groupedItems = Object.keys(grouped)
-    .sort((a, b) => {
-      const indexA = categoryOrder.indexOf(a);
-      const indexB = categoryOrder.indexOf(b);
+      .sort((a, b) => {
+        const levelA = this.productCategory.find((category) => category.name === a)?.level || '9999';
+        const levelB = this.productCategory.find((category) => category.name === b)?.level || '9999';
+        return parseInt(levelA, 10) - parseInt(levelB, 10);
+      })
+      .reduce((acc, key) => {
+        acc[key] = grouped[key];
+        return acc;
+      }, {} as { [categoryName: string]: { items: UntypedFormGroup[]; discount: UntypedFormControl } });
+  
+    // Update unit prices based on discount
+    Object.keys(this.groupedItems).forEach((categoryName) => {
+      const group = this.groupedItems[categoryName];
+  
+      group.discount.valueChanges.subscribe((discount) => {
+        group.items.forEach((item) => {
+          const unitPriceControl = item.get('unit_price');
+          const originalPrice = item.get('original_unit_price')?.value;
 
-      // Categories not in the predefined order will appear at the end
-      if (indexA === -1) return 1;
-      if (indexB === -1) return -1;
-      return indexA - indexB;
-    })
-    .reduce((acc, key) => {
-      acc[key] = grouped[key];
-      return acc;
-    }, {} as { [category: string]: UntypedFormGroup[] });
+          const totalPriceControl = item.get('total_price');
+          const originalTotalPrice = item.get('original_total_price')?.value;
+  
+          if (!originalPrice) {
+            item.addControl('original_unit_price', new UntypedFormControl(unitPriceControl?.value));
+          }
 
-    // Remove empty categories
-    Object.keys(this.groupedItems).forEach((key) => {
-      if (this.groupedItems[key].length === 0) {
-        delete this.groupedItems[key];
-      }
+          if(!originalTotalPrice){
+            item.addControl('original_total_price', new UntypedFormControl(totalPriceControl?.value));
+          }
+  
+          const discountedPrice = originalPrice * (1 - discount / 100);
+          unitPriceControl?.setValue(discountedPrice, { emitEvent: false });
+
+          totalPriceControl?.setValue(unitPriceControl?.value *  item.get('qty')?.value, { emitEvet: false})
+        });
+      });
     });
   }
 

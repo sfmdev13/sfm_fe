@@ -95,7 +95,8 @@ export class AddSupplierModalComponent implements OnInit {
   categoryForm = this.fb.group({
     id: [''],
     name: ['', Validators.required],
-    description: ['', Validators.required]
+    description: ['', Validators.required],
+    level: ['', Validators.required]
   })
 
   titleCat: string = '';
@@ -371,7 +372,8 @@ export class AddSupplierModalComponent implements OnInit {
       nzTitle: ' Add ' + titleCat,
       nzContent: EditCategoriesModalComponent,
       nzData: {
-        form: this.categoryForm
+        form: this.categoryForm,
+        type: titleCat === 'Supplier Product' ? 'supplier_product' : ''
       },
       nzWidth: '500px',
       nzFooter: [
@@ -395,7 +397,7 @@ export class AddSupplierModalComponent implements OnInit {
 
     if(this.categoryForm.valid){
       if(this.titleCat.toLowerCase() === 'supplier product'){
-        this.apiSvc.createSupplierProduct(this.categoryForm.value.name, this.categoryForm.value.description).subscribe({
+        this.apiSvc.createSupplierProduct(this.categoryForm.value.name, this.categoryForm.value.description, this.categoryForm.value.level).subscribe({
           next: () => {
             this.spinnerSvc.hide();
             this.modalSvc.success({

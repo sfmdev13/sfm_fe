@@ -234,10 +234,10 @@
                             <thead style="position: unset">
                                 <tr>
                                     <th scope="col" style="width: 8%;">Stack Name</th>
-                                    <th scope="col">BOM Quotation</th>
+                                    <th scope="col">BOM Quotation PDF</th>
                                     <th scope="col" style="width: 8%;">Revision Quotation</th>
                                     <th scope="col" style="width: 8%;">BOM Contract(RO)</th>
-                                    <th scope="col">BOM Contract Revision</th>
+                                    <th scope="col">BOM Contract Revision PDF</th>
                                     <th scope="col" style="width: 8%;">Revision Contract</th>
                                     <th scope="col">Detail</th>
                                     <th scope="col">Used for Total Quotation</th>
@@ -327,7 +327,8 @@
                                                 </a>
                                                 <nz-dropdown-menu  #menu="nzDropdownMenu">
                                                     <ul nz-menu class="dropdown-wrapper" style="width: 120px;">
-                                                        <li nz-menu-item class="gap-2 list-dropdown"  (click)="editStack('edit', i)">
+                                                        <ng-container *ngIf="!stack.get('new')?.value">
+                                                            <li nz-menu-item class="gap-2 list-dropdown"  (click)="editStack('edit', i)">
                                                             <div class="d-flex gap-2">
                                                               <span nz-icon nzType="edit" nzTheme="twotone"></span>
                                                               <p class="m-0 p-0">Edit</p>
@@ -339,6 +340,7 @@
                                                               <p class="m-0 p-0">Revision</p>
                                                             </div>
                                                           </li>
+                                                        </ng-container>
                                                         <li nz-menu-item class="gap-2 list-dropdown" (click)="removeStacks(i)">
                                                             <div class="d-flex gap-2">
                                                                 <span nz-icon nzType="delete" nzTheme="twotone" [nzTwotoneColor]="'#f50'"></span>
@@ -356,7 +358,9 @@
                                                 <button (click)="addStacks()" nz-button nzType="primary" class="w-75">Add Stack</button>
                                             </td>
                                             <td colspan="5" class="text-center" *ngIf="(modal_type === 'edit' && !(dataQuotation.latest_quotation_revision.revision === 'RA' || dataQuotation.latest_quotation_revision.revision === 'R0')) || modal_type === 'revision'">
-                                                <button (click)="createQuotationTotal()" nz-button nzType="default" class="w-75">Create Quotation Total</button>
+                                                <button (click)="createQuotationTotal()" nz-button nzType="default" class="w-75">
+                                                    {{ dataQuotation.project.project_category === 'cat_awared' ? 'Create Contract Revision' : 'Create Quotation Total' }}
+                                                </button>
                                             </td>
                                         </ng-container>
                                         <ng-template #hideQuotationTotal>
@@ -384,7 +388,7 @@
                     <nz-tabset [nzAnimated]="false">
                         <nz-tab nzTitle="Material">
                             <div class="table-responsive">
-                                <table class="table table-striped table-order table-purchase">
+                                <table class="table table-order table-purchase">
                                     <thead style="position: unset;">
                                         <tr>
                                             <th scope="col">Part Number</th>
@@ -403,85 +407,77 @@
                                         <ng-container formArrayName="items">
                                             <ng-container *ngFor="let category of objectKeys(groupedItems)">
                                                 <tr>
-                                                    <td colspan="10">
+                                                    <td class="" colspan="10">
                                                         <span class="fw-bold">{{category}}</span>
+                                                    </td>
+                                                </tr>
+
+                                                <tr *ngIf="groupedItems[category].items.length > 0">
+                                                    <td class="" colspan="10">
+                                                        <div class="d-flex flex-column gap-2">
+                                                            <span class="fw-bold">Discount</span>
+                                                            <nz-input-number-group class="w-25" nzAddOnAfter="%">
+                                                                <nz-input-number [nzMin]="0" [formControl]="groupedItems[category].discount"></nz-input-number>
+                                                            </nz-input-number-group>
+                                                        </div>
                                                     </td>
                                                 </tr>
         
                                                 <ng-container>
-                                                    <tr *ngFor="let item of groupedItems[category]; let i = index" [formGroup]="item">
-                                                        <td>
-                                                            <nz-form-control>
-                                                                <nz-select 
-                                                                    *ngIf="item.get('exist')?.value"
-                                                                    nzShowSearch  
-                                                                    nzPlaceHolder="Select Part Number" 
-                                                                    formControlName="part_number"
-                                                                >
-                                                                    <nz-option
-                                                                    *ngFor="let p of inventoryList"
-                                                                        [nzLabel]="p.code" 
-                                                                        [nzValue]="p.id"
-                                                                    ></nz-option>
-                                                                </nz-select>                                                                                   
-                                                                <input 
-                                                                    *ngIf="!item.get('exist')?.value" 
-                                                                    nz-input 
-                                                                    formControlName="part_number" 
-                                                                    id="part_number" />
-                                                            </nz-form-control>
+                                                    <tr *ngFor="let item of groupedItems[category].items; let i = index" [formGroup]="item">
+                                                        <td>                                                            
+                                                            {{ item.get('exist')?.value 
+                                                                ? getCodeById(item.get('part_number')?.value)
+                                                                : item.get('part_number')?.value
+                                                            }}
                                                             <br />
                                                             <nz-alert
-                                                            *ngIf="!item.get('exist')?.value"
-                                                            nzType="error"
-                                                            nzMessage="Item not registered yet in inventory"
-                                                          ></nz-alert>
+                                                                *ngIf="!item.get('exist')?.value"
+                                                                nzType="error"
+                                                                nzMessage="Item not registered yet in inventory"
+                                                            ></nz-alert>
                                                         </td>
                                                         <td>
-                                                            <nz-form-control>
-                                                                <nz-select 
-                                                                    *ngIf="item.get('exist')?.value"
-                                                                    nzShowSearch  
-                                                                    nzPlaceHolder="Select Inventory" 
-                                                                    formControlName="description"
-                                                                >
-                                                                    <nz-option
-                                                                    *ngFor="let p of inventoryList"
-                                                                        [nzLabel]="p.description" 
-                                                                        [nzValue]="p.id"
-                                                                    ></nz-option>
-                                                                </nz-select>
-                                                                <input 
-                                                                *ngIf="!item.get('exist')?.value" 
-                                                                nz-input 
-                                                                formControlName="description" 
-                                                                id="description" />
-                                                            </nz-form-control>
+                                                            {{ item.get('exist')?.value 
+                                                                ? getDescById(item.get('part_number')?.value)
+                                                                : item.get('part_number')?.value
+                                                            }}
+                                                            <br />
+                                                            <nz-alert
+                                                                *ngIf="!item.get('exist')?.value"
+                                                                nzType="error"
+                                                                nzMessage="Item not registered yet in inventory"
+                                                            ></nz-alert>
                                                         </td>
                                                         <td>
-                                                            <nz-form-control>
+                                                            {{ item.get('alias')?.value }}
+                                                            <!-- <nz-form-control>
                                                                 <input nz-input formControlName="alias" />
-                                                            </nz-form-control>
+                                                            </nz-form-control> -->
                                                         </td>
                                                         <td>
-                                                            <nz-form-control>
+                                                            {{ item.get('dn1')?.value }}
+                                                            <!-- <nz-form-control>
                                                                 <input nz-input formControlName="dn1" id="dn1" />
-                                                            </nz-form-control>
+                                                            </nz-form-control> -->
                                                         </td>
                                                         <td>
-                                                            <nz-form-control>
+                                                            {{ item.get('dn2')?.value }}
+                                                            <!-- <nz-form-control>
                                                                 <input nz-input formControlName="dn2" id="dn2" />
-                                                            </nz-form-control>
+                                                            </nz-form-control> -->
                                                         </td>
                                                         <td>
-                                                            <nz-form-control>
+                                                            {{ item.get('qty')?.value }}
+                                                            <!-- <nz-form-control>
                                                                 <input nz-input formControlName="qty" id="qty" />
-                                                            </nz-form-control>
+                                                            </nz-form-control> -->
                                                         </td>
                                                         <td>
-                                                            <nz-form-control>
+                                                            {{ item.get('unit')?.value }}
+                                                            <!-- <nz-form-control>
                                                                 <input nz-input formControlName="unit" id="unit" />
-                                                            </nz-form-control>
+                                                            </nz-form-control> -->
                                                         </td>
                                                         <td>
                                                             Rp {{ item.get('unit_price')?.value | number:'1.0-0' }}
@@ -496,43 +492,62 @@
                                                 </ng-container>
                                             </ng-container>
                                         </ng-container>
+
+
+                                        <tr>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td>
+                                                <span class="fw-bold">Total Grand Cost:</span>
+                                            </td>
+                                            <td>
+                                                <span class="fw-bold"> Rp.  {{ totalGrandCost | number:'1.0-0' }}</span>
+                                            </td>
+                                            <td></td>
+                                        </tr>
                                     </tbody>
                                 </table>
                                 
-                                <nz-divider></nz-divider>
+                                <!-- <nz-divider></nz-divider>
                                 <div class="my-4 d-flex gap-2 w-100 justify-content-end">
                                     <span class="fw-bold">Total Grand Cost:</span>
                                     <span class="fw-bold"> Rp.  {{ totalGrandCost | number:'1.0-0' }}</span>
-                                </div>
-                            
+                                </div> -->
                             </div>
                         </nz-tab>
                         <nz-tab nzTitle="Installation">
-                            <div class="table-responsive">
-                                <table class="table table-striped table-order table-purchase">
-                                    <thead style="position: unset;">
-                                        <tr>
-                                            <th scope="col">Part Number</th>
-                                            <th scope="col">Product Description</th>
-                                            <th scope="col">Inch</th>
-                                            <th scope="col">Cost m'</th>
-                                            <th scope="col">Cost m'/inch</th>
-                                            <th scope="col">Price Factor</th>
-                                            <th scope="col">Selling Price</th>
-                                            <th scope="col">Gross Margin</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <ng-container formArrayName="items">
-                                            <ng-container *ngFor="let category of objectKeys(groupedItems)">
-                                                <tr>
-                                                    <td colspan="8">
-                                                        <span *ngIf="groupedItems[category]?.length" class="fw-bold">{{category}}</span>
-                                                    </td>
+
+                            <ng-container foormArrayName="items">
+                                <ng-container *ngFor="let category of objectKeys(groupedItems)">
+                                    <div class="table-responsive">
+                                        <table class="table table-order table-installation">
+                                            <thead style="position: unset;">
+                                                <tr class="table-active">
+                                                    <th scope="col" colSpan="8">{{ category }}</th>
                                                 </tr>
-        
-                                                <ng-container *ngIf="groupedItems[category]?.length">
-                                                    <tr  *ngFor="let item of groupedItems[category]; let i = index" [formGroup]="item">
+                                                <tr class="table-active">
+                                                    <th scope="col">Part Number</th>
+                                                    <th scope="col">Product Description</th>
+                                                    <th scope="col">Inch</th>
+                                                    <th scope="col">
+                                                        {{ category.toLowerCase() === 'pipe' ? 'Cost/M\'' : 'Cost/Unit'  }}
+                                                    </th>
+                                                    <th scope="col">
+                                                        {{ category.toLowerCase() === 'pipe' ? 'Cost M\'/inch' : 'Cost Unit/Inch'  }}
+                                                    </th>
+                                                    <th scope="col">Price Factor</th>
+                                                    <th scope="col">Selling Price</th>
+                                                    <th scope="col">Gross Margin</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <ng-container>
+                                                    <tr  *ngFor="let item of groupedItems[category].items; let i = index" [formGroup]="item">
                                                         <td>
                                                             {{ item.get('i_part_number')?.value }}
                                                         </td>
@@ -586,13 +601,131 @@
                                                         </td>
                                                     </tr>
                                                 </ng-container>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </ng-container>
+                            </ng-container>
+                        </nz-tab>
+                        <nz-tab nzTitle="Total">
+                            <div class="table-responsive">
+                                <table class="table table-order table-purchase">
+                                    <thead style="position: unset">
+                                        <tr>
+                                            <th scope="col">Part Number</th>
+                                            <th scope="col">Product Description</th>
+                                            <th scope="col">Alias</th>
+                                            <th scope="col">Qty</th>
+                                            <th scope="col">Unit</th>
+                                            <th scope="col">Unit Price</th>
+                                            <th scope="col">Total Cost</th>
+                                            <th scope="col">Gross Margin</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr class="table-secondary">
+                                            <td colspan="8">
+                                                <span class="fw-bold" style="font-size: 16px;">
+                                                    Material
+                                                </span>
+                                            </td>
+                                        </tr>
+                                        <ng-container formArrayName="items">
+                                            <ng-container *ngFor="let category of objectKeys(groupedItems)">
+                                                <tr>
+                                                    <td class="" [colSpan]="groupedItems[category].items.length > 0 ? '6' : '8'">
+                                                        <span class="fw-bold">{{category}}</span>
+                                                    </td>
+                                                    <td *ngIf="groupedItems[category].items.length > 0" colspan="2">
+                                                        <span class="fw-bold">
+                                                            Rp. {{ groupedItems[category].totalPrice.value | number:'1.0-0' }}
+                                                        </span>
+                                                    </td>
+                                                </tr>
+                                                
+
+                                                <tr *ngFor="let item of groupedItems[category].items; let i = index" [formGroup]="item">
+                                                    <td>                                                            
+                                                        {{ item.get('exist')?.value 
+                                                            ? getCodeById(item.get('part_number')?.value)
+                                                            : item.get('part_number')?.value
+                                                        }}
+                                                        <br />
+                                                        <nz-alert
+                                                            *ngIf="!item.get('exist')?.value"
+                                                            nzType="error"
+                                                            nzMessage="Item not registered yet in inventory"
+                                                        ></nz-alert>
+                                                    </td>
+                                                    <td>
+                                                        {{ item.get('exist')?.value 
+                                                            ? getDescById(item.get('part_number')?.value)
+                                                            : item.get('part_number')?.value
+                                                        }}
+                                                        <br />
+                                                        <nz-alert
+                                                            *ngIf="!item.get('exist')?.value"
+                                                            nzType="error"
+                                                            nzMessage="Item not registered yet in inventory"
+                                                        ></nz-alert>
+                                                    </td>
+                                                    <td>
+                                                        {{ item.get('alias')?.value }}
+                                                    </td>
+                                                    <td>
+                                                        {{ item.get('unit')?.value }}
+                                                    </td>
+                                                    <td>
+                                                        {{ item.get('qty')?.value }}
+                                                    </td>
+                                                    <td>
+                                                        Rp {{ item.get('unit_price')?.value | number:'1.0-0' }}
+                                                    </td>
+                                                    <td>
+                                                        Rp. {{ item.get('total_price')?.value | number:'1.0-0' }}
+                                                    </td>
+                                                    <td>
+                                                        {{ item.get('gross_margin')?.value }} %
+                                                    </td>
+                                                </tr>
+                                            </ng-container>
+                                        </ng-container>
+
+                                        <tr class="table-secondary">
+                                            <td colSpan="8">
+                                                <span class="fw-bold" style="font-size: 16px;">
+                                                    Material Installation
+                                                </span>
+                                            </td>
+                                        </tr>
+
+                                        <ng-container formArrayName="items">
+                                            <ng-container *ngFor="let category of objectKeys(groupedItems)">
+                                                <tr>
+                                                    <td colspan="8" class="fw-bold">{{ category }}</td>
+                                                </tr>
+                                                <tr *ngFor="let item of groupedItems[category].items; let i = index" [formGroup]="item">
+                                                    <td>
+                                                        {{ item.get('i_part_number')?.value }}
+                                                    </td>
+                                                    <td>
+                                                        {{ item.get('i_description')?.value }}
+                                                    </td>
+                                                    <td>
+                                                        {{ item.get('alias')?.value }}
+                                                    </td>
+                                                    <td>-</td>
+                                                    <td>-</td>
+                                                    <td>-</td>
+                                                    <td>-</td>
+                                                    <td>-</td>
+                                                </tr>
                                             </ng-container>
                                         </ng-container>
                                     </tbody>
                                 </table>
                             </div>
                         </nz-tab>
-
                     </nz-tabset>
 
                 </nz-tab>

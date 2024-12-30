@@ -215,6 +215,10 @@ export class QuotationComponent implements OnInit {
     this.apiSvc.getInventoryList().subscribe((res) => {
       this.inventoryList = res.data;
     })
+
+    this.apiSvc.getSupplierProduct().subscribe((res) => {
+      this.productCategory = res.data
+    })
   }
 
   publish(id: string){
@@ -358,7 +362,8 @@ export class QuotationComponent implements OnInit {
       nzData: {
         revisionSelected: this.revision,
         dataDetail: this.detailQuotation,
-        dataBasic: this.selectedDataBasic
+        dataBasic: this.selectedDataBasic,
+        productCategory: this.productCategory,
       },
       nzWidth: '100vw',
     });

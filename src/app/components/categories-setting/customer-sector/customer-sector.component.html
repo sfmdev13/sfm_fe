@@ -53,7 +53,7 @@
 
 <nz-modal nzCentered [(nzVisible)]="isVisibleEdit" [nzTitle]="modal_type + ' Category'" (nzOnCancel)="handleCancelEdit()">
     <ng-container *nzModalContent>
-        <app-edit-categories-modal [type]="'loyal_customer'" [form]="categoryFormEdit"></app-edit-categories-modal>
+        <app-edit-categories-modal [type]="'customer_sector'" [form]="categoryFormEdit"></app-edit-categories-modal>
     </ng-container>
     <ng-container *nzModalFooter>
         <button nz-button nzType="default" (click)="handleCancelEdit()">Cancel</button>
@@ -63,7 +63,7 @@
 
 <nz-modal nzCentered [(nzVisible)]="isVisibleAdd" [nzTitle]="modal_type + ' Category'" (nzOnCancel)="handleCancelAdd()">
     <ng-container *nzModalContent>
-        <app-edit-categories-modal [type]="'loyal_customer'" [form]="categoryForm"></app-edit-categories-modal>
+        <app-edit-categories-modal [type]="'customer_sector'" [form]="categoryForm"></app-edit-categories-modal>
     </ng-container>
     <ng-container *nzModalFooter>
         <button nz-button nzType="default" (click)="handleCancelAdd()">Cancel</button>

@@ -10,8 +10,9 @@ import { NzTableModule } from 'ng-zorro-antd/table';
 import { NzTabsModule } from 'ng-zorro-antd/tabs';
 import { Observable, map } from 'rxjs';
 import { ApiService } from 'src/app/api.service';
-import { DetailQuotationStack, IDataQuotation, IDetailDataQuotation, IQuotation, LatestQuotationBom } from 'src/app/interfaces';
+import { DetailQuotationStack, IDataCategories, IDataQuotation, IDetailDataQuotation, IQuotation, LatestQuotationBom } from 'src/app/interfaces';
 import { DetailStackQuotationComponent } from './detail-stack-quotation/detail-stack-quotation.component';
+import { QuotationItem } from 'src/app/interfaces/quotation';
 
 @Component({
   selector: 'app-detail-quotation',
@@ -35,6 +36,7 @@ export class DetailQuotationComponent implements OnInit {
   data: IDataQuotation = this.nzData.dataBasic
   dataDetail: IDetailDataQuotation = this.nzData.dataDetail
   revisionSelected: string = this.nzData.revisionSelected
+  productCategory: IDataCategories[] = this.nzData.productCategory;
 
   date = new Date();
 
@@ -73,6 +75,15 @@ export class DetailQuotationComponent implements OnInit {
 
   selectedStack: string = '';
 
+  groupedItems: {
+    category: string;
+    detail: {
+      items: QuotationItem[];
+      discount: string;
+      totalPrice: string;
+    }
+  }[] = []
+
   constructor(
     private apiSvc: ApiService,
     private modalSvc: NzModalService
@@ -92,13 +103,28 @@ export class DetailQuotationComponent implements OnInit {
     })
   }
 
+  calculateTotalPerCat(id:number): number{
+    const selectedQuotRev = this.dataDetail.quotation_revision.filter((q) => q.revision === this.revisionSelected)[0];
+
+    const selectedQuotItem = selectedQuotRev.quotation_items
+      .filter((q) => q.inventory.supplier_product.id === id);
+
+    const totalPerCat = selectedQuotItem.reduce(
+      (acc, currVal) => acc + parseFloat(currVal.total_price_per_product_after_discount),
+      0
+    );
+
+    return totalPerCat
+  }
+
   openStackDetail(stackLatest: DetailQuotationStack){
     this.modalSvc.create({
       nzTitle: 'Detail Stacks',
       nzContent: DetailStackQuotationComponent,
       nzCentered: true,
       nzData: {
-        stackLatest
+        stackLatest,
+        productCategory: this.productCategory
       },
       nzWidth: '100vw'
     })
