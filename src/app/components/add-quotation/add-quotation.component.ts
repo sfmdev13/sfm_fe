@@ -219,7 +219,8 @@ export class AddQuotationComponent implements OnInit {
             total_price: [parseFloat(item.total_price_per_product)],
             gross_margin: [parseFloat(item.inventory.default_gross_margin)],
             category: [item.inventory.supplier_product.id],
-      
+            discount: [item.discount],
+
             i_part_number: [item.inventory.code],
             i_description: [item.inventory.description],
             installation_unit_inch_qty: [{value: parseFloat(item.inventory.installation.unit_inch_qty), disabled: true}],
@@ -241,7 +242,16 @@ export class AddQuotationComponent implements OnInit {
 
       const projectData: IDataProject = this.projectsData.filter((project) => project.id === this.dataQuotation.project.id)[0];
 
-      this.selectedCustomer = [...projectData.project_customer]
+      //remove duplicate customer
+      const seen = new Set();
+      const filteredArray = projectData.project_customer.filter(item => {
+        if (seen.has(item.customer.id)) {
+          return false;
+        }
+        seen.add(item.customer.id);
+        return true;
+      });
+      this.selectedCustomer = [...filteredArray]
 
       // const newUpdateFileList: NzUploadFile[] = [{
       //   uid: this.dataQuotation.quotation?.project_document.id,
@@ -481,6 +491,7 @@ export class AddQuotationComponent implements OnInit {
             total_price: [parseFloat(item.total_price_per_product)],
             gross_margin: [parseFloat(item.inventory.default_gross_margin)],
             category: [item.inventory.supplier_product.id],
+            discount: [item.discount],
       
             i_part_number: [item.inventory.code],
             i_description: [item.inventory.description],
@@ -548,7 +559,16 @@ export class AddQuotationComponent implements OnInit {
   private handleProjectChange(res: any): void {
     const projectData: IDataProject = this.projectsData.filter((project) => project.id === res)[0];
     
-    this.selectedCustomer = [...projectData.project_customer]
+    //remove duplicate customer
+    const seen = new Set();
+    const filteredArray = projectData.project_customer.filter(item => {
+      if (seen.has(item.customer.id)) {
+        return false;
+      }
+      seen.add(item.customer.id);
+      return true;
+    });
+    this.selectedCustomer = [...filteredArray]
 
     // Update location and consultant location
     this.getProvinceCity(projectData.province, projectData.city).subscribe((projectLocation) => {
@@ -641,6 +661,7 @@ export class AddQuotationComponent implements OnInit {
           gross_margin: [filteredInventory[0].default_gross_margin],
           total_price: [totalPrice],
           category: [filteredInventory[0].product_category.id],
+          discount: [0]
         });
       } else {
         updatedItemAdd = this.fb.group({
@@ -656,6 +677,7 @@ export class AddQuotationComponent implements OnInit {
           gross_margin: [0],
           total_price: [value.total_price],
           category: [''],
+          discount: [0]
         });
       }
   
@@ -774,6 +796,7 @@ export class AddQuotationComponent implements OnInit {
       acc[groupKey].items.push(control);
       return acc;
     }, {} as { [categoryName: string]: { items: UntypedFormGroup[]; discount: UntypedFormControl; totalPrice: UntypedFormControl; id: string } });
+
   
     this.productCategory.forEach((category) => {
       if (!grouped[category.name]) {
@@ -810,7 +833,7 @@ export class AddQuotationComponent implements OnInit {
     // Update unit prices and total price based on discount
     Object.keys(this.groupedItems).forEach((categoryName) => {
       const group = this.groupedItems[categoryName];
-  
+        
       const updateTotalPrice = () => {
         const total = group.items.reduce((sum, item) => {
           const quantity = item.get('qty')?.value || 0;
@@ -832,7 +855,8 @@ export class AddQuotationComponent implements OnInit {
           }
   
           const discountedPrice = originalPrice * (1 - discount / 100);
-          unitPriceControl?.setValue(discountedPrice, { emitEvent: false });
+          unitPriceControl?.setValue(discountedPrice);
+          this.calculateTotalPrice(item)
         });
   
         // Recalculate total price
@@ -843,6 +867,13 @@ export class AddQuotationComponent implements OnInit {
       group.items.forEach((item) => {
         item.valueChanges.subscribe(() => updateTotalPrice());
       });
+
+      //set discount from existing data
+      group.items.forEach((item) => {
+        if(item.get('category')?.value.toString() === group.id ){
+          group.discount.setValue(parseFloat(item.get('discount')?.value));
+        }
+      })
   
       // Initial total price calculation
       updateTotalPrice();
@@ -1214,7 +1245,7 @@ export class AddQuotationComponent implements OnInit {
 
         Object.keys(this.groupedItems).forEach((categoryName) => {
           const group = this.groupedItems[categoryName];
-          const discount =  group.discount.value.toString();
+          const discount =  group.discount.value.toString() === '' ? 0 : group.discount.value.toString();
           const supplier_product_id = group.id;
 
           quotationItemsDiscount.push({supplier_product_id, discount})

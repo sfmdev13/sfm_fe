@@ -180,6 +180,8 @@
     dn_2: string
     qty: string
     total_price_per_product: string
+    discount: string
+    total_price_per_product_after_discount: string
   }
   
   export interface Inventory {

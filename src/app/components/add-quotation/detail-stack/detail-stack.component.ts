@@ -138,7 +138,7 @@ export class DetailStackComponent implements OnInit {
           unit_price: [filteredInventory[0].default_selling_price],
           gross_margin: [filteredInventory[0].default_gross_margin],
           total_price: [totalPrice],
-          category: [filteredInventory[0].product_category.name],
+          category: [filteredInventory[0].product_category.id],
           i_part_number: [filteredInventory[0].code],
           i_description: [filteredInventory[0].description],
           installation_unit_inch_qty: [{value: parseFloat(filteredInventory[0].inventory_installation.unit_inch_qty) ,disabled: true}],
@@ -270,7 +270,7 @@ export class DetailStackComponent implements OnInit {
     control.get('inventory_id')?.setValue(product?.id);
     control.get('alias')?.setValue(product?.alias);
     control.get('unit')?.setValue(product?.unit.name);
-    control.get('category')?.setValue(product?.product_category.name);
+    control.get('category')?.setValue(product?.product_category.id);
     control.get('gross_margin')?.setValue(product?.default_gross_margin);
     control.get('unit_price')?.setValue(product?.default_selling_price);
 
