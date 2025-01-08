@@ -124,6 +124,8 @@ export class AddQuotationComponent implements OnInit {
 
   selectedStack: string[] = [];
 
+  previousValue: any;
+
   constructor(
     private drawerRef: NzDrawerRef,
     private fb: UntypedFormBuilder,
@@ -398,6 +400,7 @@ export class AddQuotationComponent implements OnInit {
 
 
         stack.latest_quotation_bom.quotation_stack_items.forEach((item) => {
+          console.log(item)
           const newItem = this.fb.group({
             inventory_id: [item.inventory.id],
             part_number: [item.inventory.id, [Validators.required]],
@@ -424,7 +427,7 @@ export class AddQuotationComponent implements OnInit {
             installation_gross_margin: [{value: parseFloat(item.inventory.installation.gross_margin), disabled: true}],
           })
           itemsArray.push(newItem);
-          this.updateGroupedItems();
+          // this.updateGroupedItems();
           this.itemValueChangeSubscription(newItem);
         })
       })
@@ -533,6 +536,7 @@ export class AddQuotationComponent implements OnInit {
   }
 
   openStackDetail(i: number){
+
     const stackForm = this.stacks.at(i) as FormGroup;
     this.modalSvc.create({
       nzTitle: 'Detail Stacks',
