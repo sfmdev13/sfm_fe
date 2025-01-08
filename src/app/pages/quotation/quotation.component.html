@@ -12,7 +12,7 @@
     <div class="d-flex">
         <div class="me-2">
             Rows per page: 
-            <nz-select [(ngModel)]="pageSize" (ngModelChange)="pageSizeChange($event)">
+            <nz-select [(ngModel)]="pageSize">
                 <nz-option nzLabel="5" [nzValue]="5"></nz-option>
                 <nz-option nzLabel="10" [nzValue]="10"></nz-option>
             </nz-select>
@@ -30,10 +30,7 @@
     nzShowPagination
     [nzTableLayout]="'fixed'"
     [nzScroll]="{ x: '100vw' }"
-    [nzTotal]="totalAll"
     [nzPageSize]="pageSize"
-    [nzPageIndex]="currentPage"
-    (nzPageIndexChange)="pageIndexChange($event)"
   >
     <thead>
       <tr>
