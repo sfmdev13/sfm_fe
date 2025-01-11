@@ -240,7 +240,7 @@
                                     <th scope="col">BOM Contract Revision PDF</th>
                                     <th scope="col" style="width: 8%;">Revision Contract</th>
                                     <th scope="col">Detail</th>
-                                    <th scope="col">Used for Total Quotation</th>
+                                    <th scope="col" *ngIf="modal_type !== 'add'">Used for Total Quotation</th>
                                     <th scope="col">Active</th>
                                     <th scope="col">Action</th>
                                 </tr>
@@ -307,10 +307,12 @@
                                         <td>
                                             <button (click)="openStackDetail(i)" nz-button nzType="default">Open Detail</button>
                                         </td>
-                                        <td>
-                                            <nz-form-control>
-                                                <label nz-checkbox formControlName="is_total_quotation"></label>
-                                            </nz-form-control>
+                                        <td *ngIf="modal_type !== 'add'">
+                                            <ng-container *ngIf="!stack.get('new')?.value">
+                                                <nz-form-control>
+                                                    <label nz-checkbox formControlName="is_total_quotation"></label>
+                                                </nz-form-control>
+                                            </ng-container>
                                         </td>
                                         <td>
                                             <nz-form-control>
