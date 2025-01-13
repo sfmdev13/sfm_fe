@@ -416,4 +416,18 @@ export class DetailStackComponent implements OnInit {
   formatter = (value: number | null): string => {
     return value !== null ? `${value.toLocaleString('en-US')}` : '';
   };
+
+  calculateGlobalIndex(categoryIndex: number, itemIndex: number): number {
+    let count = 0;
+    const keys = Object.keys(this.groupedItems);
+    
+    // Count all items in previous categories
+    for (let i = 0; i < categoryIndex; i++) {
+      count += this.groupedItems[keys[i]].items.length;
+    }
+    
+    // Add the current item index
+    return count + itemIndex + 1; // 1-based index
+  }
+  
 }

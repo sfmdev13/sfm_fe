@@ -35,6 +35,7 @@
                         <table class="table table-order table-purchase">
                             <thead style="position: unset;">
                                 <tr>
+                                    <th scope="col">No</th>
                                     <th scope="col">Part Number</th>
                                     <th scope="col">Product Description</th>
                                     <th scope="col">Alias</th>
@@ -50,26 +51,16 @@
                             </thead>
                             <tbody>
                                 <ng-container formArrayName="items">
-                                    <ng-container *ngFor="let category of objectKeys(groupedItems)">
+                                    <ng-container *ngFor="let category of objectKeys(groupedItems); let catIndex = index">
                                         <tr>
-                                            <td class="" colspan="11">
+                                            <td class="" colspan="12">
                                                 <span class="fw-bold">{{category}}</span>
                                             </td>
                                         </tr>
 
-                                        <!-- <tr *ngIf="groupedItems[category].items.length > 0">
-                                            <td colspan="10">
-                                                <div class="d-flex flex-column gap-2">
-                                                    <span class="fw-bold">Discount</span>
-                                                    <nz-input-number-group class="w-25" nzAddOnAfter="%">
-                                                        <nz-input-number [nzMin]="0" [formControl]="groupedItems[category].discount"></nz-input-number>
-                                                    </nz-input-number-group>
-                                                </div>
-                                            </td>
-                                        </tr> -->
-
                                         <ng-container>
                                             <tr *ngFor="let item of groupedItems[category].items; let i = index" [formGroup]="item">
+                                                <td>{{ calculateGlobalIndex(catIndex, i) }}</td>
                                                 <td [attr.data-id]="item.get('part_number')?.value" #categoryItem>
                                                     <nz-form-control>
                                                         <nz-select 
@@ -160,7 +151,7 @@
                                     </ng-container>
                                 </ng-container>
                                 <tr>
-                                    <td colspan="11" class="text-center">
+                                    <td colspan="12" class="text-center">
                                         <button (click)="addItems()" nz-button nzType="primary" class="w-75">Add Item</button>
                                     </td>
                                 </tr>
@@ -172,14 +163,15 @@
                 <nz-tab nzTitle="Installation">
 
                     <ng-container foormArrayName="items">
-                        <ng-container *ngFor="let category of objectKeys(groupedItems)">
+                        <ng-container *ngFor="let category of objectKeys(groupedItems); let catIndex = index">
                             <div class="table-responsive">
                                 <table class="table table-order table-installation">
                                     <thead style="position: unset;">
                                         <tr class="table-active">
-                                            <th scope="col" colSpan="8">{{ category }}</th>
+                                            <th scope="col" colSpan="10">{{ category }}</th>
                                         </tr>
                                         <tr class="table-active">
+                                            <th scope="col">No.</th>
                                             <th scope="col">Part Number</th>
                                             <th scope="col">Product Description</th>
                                             <th scope="col">Inch</th>
@@ -197,6 +189,7 @@
                                     <tbody>
                                         <ng-container>
                                             <tr  *ngFor="let item of groupedItems[category].items; let i = index" [formGroup]="item">
+                                                <td>{{ calculateGlobalIndex(catIndex, i) }}</td>
                                                 <td>
                                                     {{ item.get('i_part_number')?.value }}
                                                 </td>

@@ -13,7 +13,7 @@ import { NzTabsModule } from 'ng-zorro-antd/tabs';
 import { NzUploadFile, NzUploadModule } from 'ng-zorro-antd/upload';
 import { iif, map, Observable, tap } from 'rxjs';
 import { ApiService } from 'src/app/api.service';
-import { IDataCategories, IDataCustomer, IDataInventory, IDataQuotation, IRootProject } from 'src/app/interfaces';
+import { IDataCategories, IDataCustomer, IDataInventory, IDataQuotation, IRootProject, IRootQuotation } from 'src/app/interfaces';
 import { ICustomerProject, IDataProject, IProjectCustomer } from 'src/app/interfaces/project';
 import * as XLSX from 'xlsx';
 import { NzAlertModule } from 'ng-zorro-antd/alert';
@@ -25,6 +25,7 @@ import { DetailStackComponent } from './detail-stack/detail-stack.component';
 import { NzDropDownModule } from 'ng-zorro-antd/dropdown';
 import { NzInputNumberModule } from 'ng-zorro-antd/input-number';
 import { NzRadioModule } from 'ng-zorro-antd/radio';
+import { NzSpinModule } from 'ng-zorro-antd/spin';
 
 @Component({
   selector: 'app-add-quotation',
@@ -48,7 +49,8 @@ import { NzRadioModule } from 'ng-zorro-antd/radio';
     NzCheckboxModule,
     NzDropDownModule,
     NzInputNumberModule,
-    NzRadioModule
+    NzRadioModule,
+    NzSpinModule
   ],
   providers: [DatePipe],
   templateUrl: './add-quotation.component.html',
@@ -126,6 +128,8 @@ export class AddQuotationComponent implements OnInit {
 
   previousValue: any;
 
+  isStackLoading: boolean = true;
+
   constructor(
     private drawerRef: NzDrawerRef,
     private fb: UntypedFormBuilder,
@@ -138,6 +142,137 @@ export class AddQuotationComponent implements OnInit {
   ){}
 
   ngOnInit(): void {
+
+    this.apiSvc.refreshGetQuotation$.subscribe(() => {
+
+      this.apiSvc.getQuotation().pipe(
+        map(response => {
+          const filteredData = response.data.filter(item => item.id === this.dataQuotation.id);
+          
+          return {
+            ...response,
+            data: filteredData
+          };
+        }),
+        tap( result => {
+          this.dataQuotation = result.data[0]
+          this.stacks.clear();
+          this.cd.detectChanges();
+          this.dataQuotation.quotation_stack.forEach((stack, index) => {
+
+            let updateStackFile: NzUploadFile[] = [];
+    
+            if(stack.is_used_for_quotation === 1){
+              let selectStack: string = '';
+    
+              if(stack.latest_quotation_bom.revision_contract){
+                selectStack = `${stack.name} - ${stack.latest_quotation_bom.revision_contract}`;
+              }
+        
+              if(stack.latest_quotation_bom.stack_revision_quotation){
+                selectStack = `${stack.name} - ${stack.latest_quotation_bom.stack_revision_quotation}`;
+              }
+        
+              this.selectedStack.push(selectStack)
+            }
+    
+            if(stack.latest_quotation_bom.bom_quotation_file){
+              updateStackFile = [{
+                uid: 'aselole',
+                name: stack.latest_quotation_bom.bom_quotation_file.file_name,
+                status: 'done',
+                url: stack.latest_quotation_bom.bom_quotation_file.file_url,
+                response: {
+                  id: stack.latest_quotation_bom.bom_quotation_file.id,
+                  attachment_path: stack.latest_quotation_bom.bom_quotation_file.attachment_path
+                },
+                isImageUrl: true
+              }]
+            }
+    
+            let updateStackFileContract: NzUploadFile[] = []
+    
+            if(stack.latest_quotation_bom.bom_contract_rev_file){
+              updateStackFileContract = [{
+                uid: 'aselole',
+                name: stack.latest_quotation_bom.bom_contract_rev_file.file_name,
+                status: 'done',
+                url: stack.latest_quotation_bom.bom_contract_rev_file.file_url,
+                response: {
+                  id: stack.latest_quotation_bom.bom_contract_rev_file.id,
+                  attachment_path: stack.latest_quotation_bom.bom_contract_rev_file.attachment_path
+                },
+                isImageUrl: true
+              }]
+            }
+    
+            const updateStack = this.fb.group({
+              id: [stack.id],
+              stack_revision_bom_id: [stack.latest_quotation_bom.id],
+              name: [stack.name, Validators.required],
+              new: [false],
+              stack_file: [updateStackFile],
+              stack_new: [false],
+              stack_updated: [false],
+              stack_attachmentDeleteIds: [[]],
+              stack_file_contract: [updateStackFileContract],
+              stack_new_contract: [false],
+              stack_updated_contract:[false],
+              stack_attachmentDeleteIds_contract: [[]],
+              revision_stack: [{value: stack.latest_quotation_bom.stack_revision_quotation, disabled: true}],
+              revision_bom_contract: [{value: stack.latest_quotation_bom.stack_bom_contract, disabled: true}],
+              revision_contract: [{value: stack.latest_quotation_bom.revision_contract, disabled: true}],
+              is_total_quotation: [stack.is_used_for_quotation === 1 ? true : false],
+              active: [stack.is_active === 1 ? true : false],
+              stack_type: ['manual'],
+              items: this.fb.array([])
+            })
+    
+            this.stacks.push(updateStack);
+    
+    
+            const stackGroup = this.stacks.at(index) as FormGroup;
+    
+            const itemsArray = stackGroup.get('items') as UntypedFormArray;
+    
+    
+            stack.latest_quotation_bom.quotation_stack_items.forEach((item) => {
+              const newItem = this.fb.group({
+                inventory_id: [item.inventory.id],
+                part_number: [item.inventory.id, [Validators.required]],
+                description: [item.inventory.id, [Validators.required]],
+                alias: [{value: item.inventory.alias, disabled: true}],
+                dn1: [item.dn_1 === null || item.dn_1 === '' ? '': parseFloat(item.dn_1)],
+                dn2: [item.dn_2 === null || item.dn_2 === '' ? '': parseFloat(item.dn_2)],
+                qty: [parseFloat(item.qty)],
+                unit: [{value: item.inventory.unit.name, disabled: true}],
+                exist: [true],
+                unit_price: [parseFloat(item.inventory.default_selling_price)],
+                total_price: [parseFloat(item.total_price_per_product)],
+                gross_margin: [parseFloat(item.inventory.default_gross_margin)],
+                category: [item.inventory.supplier_product.id],
+          
+                i_part_number: [item.inventory.code],
+                i_description: [item.inventory.description],
+                installation_unit_inch_qty: [{value: parseFloat(item.inventory.installation.unit_inch_qty), disabled: true}],
+                installation_unit_price: [{value: parseFloat(item.inventory.installation.price), disabled: true}],
+                installation_unit_price_type: [{value: item.inventory.installation.price_type, disabled: true}],
+                installation_price_per_unit: [{value: parseFloat(item.inventory.installation.price_per_unit), disabled: true}],
+                installation_price_factor: [{value: parseFloat(item.inventory.installation.price_factor), disabled: true}],
+                installation_selling_price: [{value: parseFloat(item.inventory.installation.selling_price), disabled: true}],
+                installation_gross_margin: [{value: parseFloat(item.inventory.installation.gross_margin), disabled: true}],
+              })
+              itemsArray.push(newItem);
+              this.itemValueChangeSubscription(newItem);
+            })
+
+            this.cd.detectChanges();
+          })
+
+        })
+      ).subscribe();
+
+    })
 
     this.items.valueChanges.subscribe(() => {
       this.calculateGrandTotalPrice();
@@ -206,7 +341,7 @@ export class AddQuotationComponent implements OnInit {
       if(this.isCreateQuotationTotal && this.dataQuotation.latest_quotation_revision.quotation_items.length > 0) {
         this.items.clear();
 
-        this.dataQuotation.latest_quotation_revision.quotation_items.forEach((item: any) => {
+        this.dataQuotation.latest_quotation_revision.quotation_items.forEach((item) => {
           const newItem = this.fb.group({
             inventory_id: [item.inventory.id],
             part_number: [item.inventory.id, [Validators.required]],
@@ -217,11 +352,12 @@ export class AddQuotationComponent implements OnInit {
             qty: [parseFloat(item.qty)],
             unit: [{value: item.inventory.unit.name, disabled: true}],
             exist: [true],
+            price_list: [parseFloat(item.inventory.price_list)],
             unit_price: [parseFloat(item.inventory.default_selling_price)],
             total_price: [parseFloat(item.total_price_per_product)],
             gross_margin: [parseFloat(item.inventory.default_gross_margin)],
             category: [item.inventory.supplier_product.id],
-            discount: [item.discount],
+            discount: [parseFloat(item.discount)],
 
             i_part_number: [item.inventory.code],
             i_description: [item.inventory.description],
@@ -400,7 +536,6 @@ export class AddQuotationComponent implements OnInit {
 
 
         stack.latest_quotation_bom.quotation_stack_items.forEach((item) => {
-          console.log(item)
           const newItem = this.fb.group({
             inventory_id: [item.inventory.id],
             part_number: [item.inventory.id, [Validators.required]],
@@ -490,11 +625,12 @@ export class AddQuotationComponent implements OnInit {
             qty: [parseFloat(item.qty)],
             unit: [{value: item.inventory.unit.name, disabled: true}],
             exist: [true],
+            price_list: [parseFloat(item.inventory.price_list)],
             unit_price: [parseFloat(item.inventory.default_selling_price)],
             total_price: [parseFloat(item.total_price_per_product)],
             gross_margin: [parseFloat(item.inventory.default_gross_margin)],
             category: [item.inventory.supplier_product.id],
-            discount: [item.discount],
+            discount: [parseFloat(item.discount)],
       
             i_part_number: [item.inventory.code],
             i_description: [item.inventory.description],
@@ -851,16 +987,40 @@ export class AddQuotationComponent implements OnInit {
       // Subscribe to discount changes
       group.discount.valueChanges.subscribe((discount) => {
         group.items.forEach((item) => {
+
+          const priceList = item.get('price_list')?.value;
+
           const unitPriceControl = item.get('unit_price');
           const originalPrice = item.get('original_unit_price')?.value;
-  
-          if (!originalPrice) {
-            item.addControl('original_unit_price', new UntypedFormControl(unitPriceControl?.value));
+          
+          const grossMarginControl = item.get('gross_margin');
+          const originalMargin = item.get('original_gross_margin')?.value;
+
+          let validOriginalPrice = originalPrice;
+          let validOriginalMargin = originalMargin;
+        
+          // Ensure originalPrice is a valid number, defaulting to the current unit price if invalid.
+          if (isNaN(originalPrice) || originalPrice === null || originalPrice === undefined) {
+            validOriginalPrice = unitPriceControl?.value || 0;
+            item.addControl('original_unit_price', new UntypedFormControl(validOriginalPrice));
           }
-  
-          const discountedPrice = originalPrice * (1 - discount / 100);
+          
+          if(isNaN(originalMargin) || originalMargin === null || originalMargin === undefined) {
+            validOriginalMargin = grossMarginControl?.value || 0;
+            item.addControl('original_gross_margin', new UntypedFormControl(validOriginalMargin));
+          }
+
+          const discountedPrice = validOriginalPrice * (1 - (discount === '' ? 0 : discount) / 100);
           unitPriceControl?.setValue(discountedPrice);
-          this.calculateTotalPrice(item)
+
+          if(discount > 0){
+            const newGrossMargin = ((discountedPrice - priceList)/discountedPrice) * 100;
+            grossMarginControl?.setValue(newGrossMargin.toFixed(2))
+          } else {
+            grossMarginControl?.setValue(validOriginalMargin);
+          }
+
+          this.calculateTotalPrice(item);
         });
   
         // Recalculate total price
@@ -873,7 +1033,7 @@ export class AddQuotationComponent implements OnInit {
       });
 
       //set discount from existing data
-      group.items.forEach((item) => {
+      group.items.forEach((item) => {        
         if(item.get('category')?.value.toString() === group.id ){
           group.discount.setValue(parseFloat(item.get('discount')?.value));
         }
@@ -1061,6 +1221,7 @@ export class AddQuotationComponent implements OnInit {
 
     this.apiSvc.updateStackItem(formData).subscribe({
       next: (response) => {
+        this.isStackLoading = true
         this.spinnerSvc.hide();
 
         this.modalSvc.success({
@@ -1083,7 +1244,7 @@ export class AddQuotationComponent implements OnInit {
         });
       },
       complete: () => {
-        this.drawerRef.close();
+        // this.drawerRef.close();
       }
     });
   }
@@ -1521,5 +1682,18 @@ export class AddQuotationComponent implements OnInit {
   getDescById(partId: string): string {
     const part = this.inventoryList.find(p => p.id === partId);
     return part ? part.description : 'Unknown Part';
+  }
+
+  calculateGlobalIndex(categoryIndex: number, itemIndex: number): number {
+    let count = 0;
+    const keys = Object.keys(this.groupedItems);
+    
+    // Count all items in previous categories
+    for (let i = 0; i < categoryIndex; i++) {
+      count += this.groupedItems[keys[i]].items.length;
+    }
+    
+    // Add the current item index
+    return count + itemIndex + 1; // 1-based index
   }
 }

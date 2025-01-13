@@ -345,7 +345,7 @@ export class AddInventoriesComponent implements OnInit {
         // const sellingPrice = baseSellingPrice + (baseSellingPrice * tax / 100);
         const sellingPrice = baseSellingPrice
 
-        const grossMargin = ((baseSellingPrice - total2) / baseSellingPrice) * 100 || 0;
+        const grossMargin = (((baseSellingPrice - total2) / baseSellingPrice) * 100).toFixed(2) || 0;
 
         control.patchValue({ selling_price: sellingPrice }, { emitEvent: false });
         control.patchValue({ gross_margin: grossMargin }, { emitEvent: false });
