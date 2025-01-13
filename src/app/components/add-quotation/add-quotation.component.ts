@@ -356,7 +356,7 @@ export class AddQuotationComponent implements OnInit {
             total_price: [parseFloat(item.total_price_per_product)],
             gross_margin: [parseFloat(item.inventory.default_gross_margin)],
             category: [item.inventory.supplier_product.id],
-            discount: [item.discount],
+            discount: [parseFloat(item.discount)],
 
             i_part_number: [item.inventory.code],
             i_description: [item.inventory.description],
@@ -628,7 +628,7 @@ export class AddQuotationComponent implements OnInit {
             total_price: [parseFloat(item.total_price_per_product)],
             gross_margin: [parseFloat(item.inventory.default_gross_margin)],
             category: [item.inventory.supplier_product.id],
-            discount: [item.discount],
+            discount: [parseFloat(item.discount)],
       
             i_part_number: [item.inventory.code],
             i_description: [item.inventory.description],
@@ -987,14 +987,19 @@ export class AddQuotationComponent implements OnInit {
         group.items.forEach((item) => {
           const unitPriceControl = item.get('unit_price');
           const originalPrice = item.get('original_unit_price')?.value;
-  
-          if (!originalPrice) {
-            item.addControl('original_unit_price', new UntypedFormControl(unitPriceControl?.value));
+        
+          let validOriginalPrice = originalPrice;
+        
+          // Ensure originalPrice is a valid number, defaulting to the current unit price if invalid.
+          if (isNaN(originalPrice) || originalPrice === null || originalPrice === undefined) {
+            validOriginalPrice = unitPriceControl?.value || 0;
+            item.addControl('original_unit_price', new UntypedFormControl(validOriginalPrice));
           }
-  
-          const discountedPrice = originalPrice * (1 - discount / 100);
+          
+
+          const discountedPrice = validOriginalPrice * (1 - (discount === '' ? 0 : discount) / 100);
           unitPriceControl?.setValue(discountedPrice);
-          this.calculateTotalPrice(item)
+          this.calculateTotalPrice(item);
         });
   
         // Recalculate total price
@@ -1007,7 +1012,7 @@ export class AddQuotationComponent implements OnInit {
       });
 
       //set discount from existing data
-      group.items.forEach((item) => {
+      group.items.forEach((item) => {        
         if(item.get('category')?.value.toString() === group.id ){
           group.discount.setValue(parseFloat(item.get('discount')?.value));
         }
