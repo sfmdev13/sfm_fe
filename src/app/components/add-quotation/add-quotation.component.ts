@@ -1657,4 +1657,17 @@ export class AddQuotationComponent implements OnInit {
     const part = this.inventoryList.find(p => p.id === partId);
     return part ? part.description : 'Unknown Part';
   }
+
+  calculateGlobalIndex(categoryIndex: number, itemIndex: number): number {
+    let count = 0;
+    const keys = Object.keys(this.groupedItems);
+    
+    // Count all items in previous categories
+    for (let i = 0; i < categoryIndex; i++) {
+      count += this.groupedItems[keys[i]].items.length;
+    }
+    
+    // Add the current item index
+    return count + itemIndex + 1; // 1-based index
+  }
 }
