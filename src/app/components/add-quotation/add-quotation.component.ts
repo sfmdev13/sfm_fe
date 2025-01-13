@@ -341,7 +341,7 @@ export class AddQuotationComponent implements OnInit {
       if(this.isCreateQuotationTotal && this.dataQuotation.latest_quotation_revision.quotation_items.length > 0) {
         this.items.clear();
 
-        this.dataQuotation.latest_quotation_revision.quotation_items.forEach((item: any) => {
+        this.dataQuotation.latest_quotation_revision.quotation_items.forEach((item) => {
           const newItem = this.fb.group({
             inventory_id: [item.inventory.id],
             part_number: [item.inventory.id, [Validators.required]],
@@ -352,6 +352,7 @@ export class AddQuotationComponent implements OnInit {
             qty: [parseFloat(item.qty)],
             unit: [{value: item.inventory.unit.name, disabled: true}],
             exist: [true],
+            price_list: [parseFloat(item.inventory.price_list)],
             unit_price: [parseFloat(item.inventory.default_selling_price)],
             total_price: [parseFloat(item.total_price_per_product)],
             gross_margin: [parseFloat(item.inventory.default_gross_margin)],
@@ -624,6 +625,7 @@ export class AddQuotationComponent implements OnInit {
             qty: [parseFloat(item.qty)],
             unit: [{value: item.inventory.unit.name, disabled: true}],
             exist: [true],
+            price_list: [parseFloat(item.inventory.price_list)],
             unit_price: [parseFloat(item.inventory.default_selling_price)],
             total_price: [parseFloat(item.total_price_per_product)],
             gross_margin: [parseFloat(item.inventory.default_gross_margin)],
@@ -985,10 +987,17 @@ export class AddQuotationComponent implements OnInit {
       // Subscribe to discount changes
       group.discount.valueChanges.subscribe((discount) => {
         group.items.forEach((item) => {
+
+          const priceList = item.get('price_list')?.value;
+
           const unitPriceControl = item.get('unit_price');
           const originalPrice = item.get('original_unit_price')?.value;
-        
+          
+          const grossMarginControl = item.get('gross_margin');
+          const originalMargin = item.get('original_gross_margin')?.value;
+
           let validOriginalPrice = originalPrice;
+          let validOriginalMargin = originalMargin;
         
           // Ensure originalPrice is a valid number, defaulting to the current unit price if invalid.
           if (isNaN(originalPrice) || originalPrice === null || originalPrice === undefined) {
@@ -996,9 +1005,21 @@ export class AddQuotationComponent implements OnInit {
             item.addControl('original_unit_price', new UntypedFormControl(validOriginalPrice));
           }
           
+          if(isNaN(originalMargin) || originalMargin === null || originalMargin === undefined) {
+            validOriginalMargin = grossMarginControl?.value || 0;
+            item.addControl('original_gross_margin', new UntypedFormControl(validOriginalMargin));
+          }
 
           const discountedPrice = validOriginalPrice * (1 - (discount === '' ? 0 : discount) / 100);
           unitPriceControl?.setValue(discountedPrice);
+
+          if(discount > 0){
+            const newGrossMargin = ((discountedPrice - priceList)/discountedPrice) * 100;
+            grossMarginControl?.setValue(newGrossMargin.toFixed(2))
+          } else {
+            grossMarginControl?.setValue(validOriginalMargin);
+          }
+
           this.calculateTotalPrice(item);
         });
   
