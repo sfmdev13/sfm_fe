@@ -402,7 +402,7 @@
                                             <th scope="col">Qty</th>
                                             <th scope="col">Unit</th>
                                             <th scope="col">Unit Price</th>
-                                            <th scope="col">Total Cost</th>
+                                            <th scope="col">Total Selling Price</th>
                                             <th scope="col">Gross Margin</th>
                                         </tr>
                                     </thead>
@@ -506,14 +506,18 @@
                                             <td></td>
                                             <td></td>
                                             <td></td>
-                                            <td></td>
                                             <td>
-                                                <span class="fw-bold">Total Grand Cost:</span>
+                                                <span class="fw-bold">Total Grand Selling Price:</span>
                                             </td>
                                             <td>
                                                 <span class="fw-bold"> Rp.  {{ totalGrandCost | number:'1.0-0' }}</span>
                                             </td>
-                                            <td></td>
+                                            <td>
+                                                <span class="fw-bold">Total Grand Gross Margin:</span>
+                                            </td>
+                                            <td>
+                                                <span class="fw-bold"> {{ totalGrandGrossMargin }} %</span>
+                                            </td>
                                         </tr>
                                     </tbody>
                                 </table>
@@ -620,7 +624,7 @@
                                             <th scope="col">Qty</th>
                                             <th scope="col">Unit</th>
                                             <th scope="col">Unit Price</th>
-                                            <th scope="col">Total Cost</th>
+                                            <th scope="col">Total Selling Price</th>
                                             <th scope="col">Gross Margin</th>
                                         </tr>
                                     </thead>
@@ -635,12 +639,17 @@
                                         <ng-container formArrayName="items">
                                             <ng-container *ngFor="let category of objectKeys(groupedItems); let catIndex = index">
                                                 <tr>
-                                                    <td class="" [colSpan]="groupedItems[category].items.length > 0 ? '6' : '9'">
+                                                    <td class="" [colSpan]="groupedItems[category].items.length > 0 ? '7' : '9'">
                                                         <span class="fw-bold">{{category}}</span>
                                                     </td>
-                                                    <td *ngIf="groupedItems[category].items.length > 0" colspan="2">
+                                                    <td *ngIf="groupedItems[category].items.length > 0">
                                                         <span class="fw-bold">
                                                             Rp. {{ groupedItems[category].totalPrice.value | number:'1.0-0' }}
+                                                        </span>
+                                                    </td>
+                                                    <td *ngIf="groupedItems[category].items.length > 0">
+                                                        <span class="fw-bold">
+                                                           {{ groupedItems[category].grossMargin }} %
                                                         </span>
                                                     </td>
                                                 </tr>
@@ -676,10 +685,10 @@
                                                         {{ item.get('alias')?.value }}
                                                     </td>
                                                     <td>
-                                                        {{ item.get('unit')?.value }}
+                                                        {{ item.get('qty')?.value }}
                                                     </td>
                                                     <td>
-                                                        {{ item.get('qty')?.value }}
+                                                        {{ item.get('unit')?.value }}
                                                     </td>
                                                     <td>
                                                         Rp {{ item.get('unit_price')?.value | number:'1.0-0' }}
@@ -719,13 +728,34 @@
                                                         {{ item.get('alias')?.value }}
                                                     </td>
                                                     <td>-</td>
-                                                    <td>-</td>
+                                                    <td>
+                                                        {{ category.toLowerCase() === 'pipe' ? 'M\'' : 'Pcs'  }}
+                                                    </td>
                                                     <td>-</td>
                                                     <td>-</td>
                                                     <td>-</td>
                                                 </tr>
                                             </ng-container>
                                         </ng-container>
+                                        <tr>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td>
+                                                <span class="fw-bold">Total Grand Selling Price:</span>
+                                            </td>
+                                            <td>
+                                                <span class="fw-bold"> Rp.  {{ totalGrandCost | number:'1.0-0' }}</span>
+                                            </td>
+                                            <td>
+                                                <span class="fw-bold">Total Grand Gross Margin:</span>
+                                            </td>
+                                            <td>
+                                                <span class="fw-bold"> {{ totalGrandGrossMargin }} %</span>
+                                            </td>
+                                        </tr>
                                     </tbody>
                                 </table>
                             </div>

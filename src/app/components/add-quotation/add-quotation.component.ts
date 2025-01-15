@@ -107,12 +107,14 @@ export class AddQuotationComponent implements OnInit {
 
   provinceList: any[] = [];
 
-  groupedItems: { [category: string]: { items: UntypedFormGroup[]; discount: UntypedFormControl; totalPrice: UntypedFormControl, id: string } } = {};
+  groupedItems: { [category: string]: { items: UntypedFormGroup[]; discount: UntypedFormControl; totalPrice: UntypedFormControl, id: string, grossMargin: number} } = {};
   uncategorizedItems: any[] = [];
 
   isLoadingPic = true;
 
   totalGrandCost: number = 0;
+
+  totalGrandGrossMargin: number = 0;
 
   isUpdateFile: boolean = false;
 
@@ -247,6 +249,7 @@ export class AddQuotationComponent implements OnInit {
                 qty: [parseFloat(item.qty)],
                 unit: [{value: item.inventory.unit.name, disabled: true}],
                 exist: [true],
+                price_list: [parseFloat(item.inventory.price_list)],
                 unit_price: [parseFloat(item.inventory.default_selling_price)],
                 total_price: [parseFloat(item.total_price_per_product)],
                 gross_margin: [parseFloat(item.inventory.default_gross_margin)],
@@ -276,6 +279,7 @@ export class AddQuotationComponent implements OnInit {
 
     this.items.valueChanges.subscribe(() => {
       this.calculateGrandTotalPrice();
+      this.calculateGrandGrossMargin();
     });
 
     this.quotationForm.get('customer')?.valueChanges.subscribe((value) => {
@@ -546,6 +550,7 @@ export class AddQuotationComponent implements OnInit {
             qty: [parseFloat(item.qty)],
             unit: [{value: item.inventory.unit.name, disabled: true}],
             exist: [true],
+            price_list: [parseFloat(item.inventory.price_list)],
             unit_price: [parseFloat(item.inventory.default_selling_price)],
             total_price: [parseFloat(item.total_price_per_product)],
             gross_margin: [parseFloat(item.inventory.default_gross_margin)],
@@ -693,6 +698,22 @@ export class AddQuotationComponent implements OnInit {
       const totalPrice = group.get('total_price')?.value || 0;
       return sum + Number(totalPrice);
     }, 0);
+  }
+
+  calculateGrandGrossMargin() {
+    const priceList = this.items.controls.reduce((sum, group) => {
+      const totalPrice = group.get('price_list')?.value || 0;
+      return sum + Number(totalPrice);
+    }, 0);
+
+    const unitPrice = this.items.controls.reduce((sum, group) => {
+      const totalPrice = group.get('unit_price')?.value || 0;
+      return sum + Number(totalPrice);
+    }, 0);
+
+    const grossMargin = ((unitPrice - priceList)/unitPrice) * 100;
+
+    this.totalGrandGrossMargin = parseFloat(grossMargin.toFixed(2));
   }
   
 
@@ -930,12 +951,13 @@ export class AddQuotationComponent implements OnInit {
           items: [],
           discount: new UntypedFormControl(0), // Form control for discount
           totalPrice: new UntypedFormControl(0), // Form control for total price
+          grossMargin: 0,
           id: categoryId.toString()
         };
       }
       acc[groupKey].items.push(control);
       return acc;
-    }, {} as { [categoryName: string]: { items: UntypedFormGroup[]; discount: UntypedFormControl; totalPrice: UntypedFormControl; id: string } });
+    }, {} as { [categoryName: string]: { items: UntypedFormGroup[]; discount: UntypedFormControl; totalPrice: UntypedFormControl; id: string; grossMargin: number } });
 
   
     this.productCategory.forEach((category) => {
@@ -944,6 +966,7 @@ export class AddQuotationComponent implements OnInit {
           items: [],
           discount: new UntypedFormControl(0),
           totalPrice: new UntypedFormControl(0),
+          grossMargin: 0,
           id: category.id.toString()
         };
       }
@@ -954,6 +977,7 @@ export class AddQuotationComponent implements OnInit {
         items: [],
         discount: new UntypedFormControl(0),
         totalPrice: new UntypedFormControl(0),
+        grossMargin: 0,
         id: ''
       };
     }
@@ -968,7 +992,7 @@ export class AddQuotationComponent implements OnInit {
       .reduce((acc, key) => {
         acc[key] = grouped[key];
         return acc;
-      }, {} as { [categoryName: string]: { items: UntypedFormGroup[]; discount: UntypedFormControl; totalPrice: UntypedFormControl; id: string } });
+      }, {} as { [categoryName: string]: { items: UntypedFormGroup[]; discount: UntypedFormControl; totalPrice: UntypedFormControl; id: string, grossMargin: number } });
   
     // Update unit prices and total price based on discount
     Object.keys(this.groupedItems).forEach((categoryName) => {
@@ -981,7 +1005,21 @@ export class AddQuotationComponent implements OnInit {
           return sum + parseFloat(quantity) * parseFloat(unitPrice);
         }, 0);
 
+        const totalUnitPrice = group.items.reduce((sum, item) => {
+          const unitPrice = item.get('unit_price')?.value || 0;
+          return sum +  parseFloat(unitPrice);
+        }, 0)
+
+        const totalPriceList = group.items.reduce((sum, item) => {
+          const priceList = item.get('price_list')?.value || 0;
+          return sum + parseFloat(priceList);
+        },0)
+
+        const grossMargin = ((totalUnitPrice-totalPriceList)/totalUnitPrice) * 100
+        
         group.totalPrice.setValue(total, { emitEvent: false });
+
+        group.grossMargin = parseFloat(grossMargin.toFixed(2));
       };
   
       // Subscribe to discount changes
@@ -1141,6 +1179,7 @@ export class AddQuotationComponent implements OnInit {
       qty: [0],
       unit: [{value: '', disabled: true}],
       exist: [true],
+      price_list: [''],
       unit_price: [''],
       total_price: [''],
       gross_margin: [''],
