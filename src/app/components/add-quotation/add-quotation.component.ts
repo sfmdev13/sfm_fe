@@ -107,12 +107,30 @@ export class AddQuotationComponent implements OnInit {
 
   provinceList: any[] = [];
 
-  groupedItems: { [category: string]: { items: UntypedFormGroup[]; discount: UntypedFormControl; totalPrice: UntypedFormControl, id: string } } = {};
+  groupedItems: { 
+    [category: string]: 
+    { 
+      items: UntypedFormGroup[]; 
+      discount: UntypedFormControl; 
+      totalPrice: UntypedFormControl;
+      id: string;
+      grossMargin: number;
+      discount_installation: UntypedFormControl;
+      iGrossMargin: number;
+      iTotalPrice: UntypedFormControl;
+    } 
+  } = {};
   uncategorizedItems: any[] = [];
 
   isLoadingPic = true;
 
   totalGrandCost: number = 0;
+
+  totalGrandGrossMargin: number = 0;
+
+  iTotalGrandCost: number = 0;
+
+  iTotalGrandGrossMargin: number = 0;
 
   isUpdateFile: boolean = false;
 
@@ -247,6 +265,7 @@ export class AddQuotationComponent implements OnInit {
                 qty: [parseFloat(item.qty)],
                 unit: [{value: item.inventory.unit.name, disabled: true}],
                 exist: [true],
+                price_list: [parseFloat(item.inventory.price_list)],
                 unit_price: [parseFloat(item.inventory.default_selling_price)],
                 total_price: [parseFloat(item.total_price_per_product)],
                 gross_margin: [parseFloat(item.inventory.default_gross_margin)],
@@ -276,6 +295,7 @@ export class AddQuotationComponent implements OnInit {
 
     this.items.valueChanges.subscribe(() => {
       this.calculateGrandTotalPrice();
+      this.calculateGrandGrossMargin();
     });
 
     this.quotationForm.get('customer')?.valueChanges.subscribe((value) => {
@@ -357,7 +377,9 @@ export class AddQuotationComponent implements OnInit {
             total_price: [parseFloat(item.total_price_per_product)],
             gross_margin: [parseFloat(item.inventory.default_gross_margin)],
             category: [item.inventory.supplier_product.id],
+            sub_category:[item.inventory.sub_category.name],
             discount: [parseFloat(item.discount)],
+            discount_installation: [parseFloat(item.discount_installation)],
 
             i_part_number: [item.inventory.code],
             i_description: [item.inventory.description],
@@ -546,6 +568,7 @@ export class AddQuotationComponent implements OnInit {
             qty: [parseFloat(item.qty)],
             unit: [{value: item.inventory.unit.name, disabled: true}],
             exist: [true],
+            price_list: [parseFloat(item.inventory.price_list)],
             unit_price: [parseFloat(item.inventory.default_selling_price)],
             total_price: [parseFloat(item.total_price_per_product)],
             gross_margin: [parseFloat(item.inventory.default_gross_margin)],
@@ -630,8 +653,10 @@ export class AddQuotationComponent implements OnInit {
             total_price: [parseFloat(item.total_price_per_product)],
             gross_margin: [parseFloat(item.inventory.default_gross_margin)],
             category: [item.inventory.supplier_product.id],
+            sub_category:[item.inventory.sub_category.name],
             discount: [parseFloat(item.discount)],
-      
+            discount_installation: [parseFloat(item.discount_installation)],
+            
             i_part_number: [item.inventory.code],
             i_description: [item.inventory.description],
             installation_unit_inch_qty: [{value: parseFloat(item.inventory.installation.unit_inch_qty), disabled: true}],
@@ -693,6 +718,39 @@ export class AddQuotationComponent implements OnInit {
       const totalPrice = group.get('total_price')?.value || 0;
       return sum + Number(totalPrice);
     }, 0);
+
+    this.iTotalGrandCost = this.items.controls.reduce((sum, group) => {
+      const totalPrice  =  group.get('installation_selling_price')?.value || 0;
+      return sum + Number(totalPrice);
+    }, 0)
+  }
+
+  calculateGrandGrossMargin() {
+    const priceList = this.items.controls.reduce((sum, group) => {
+      const totalPrice = group.get('price_list')?.value || 0;
+      return sum + Number(totalPrice);
+    }, 0);
+
+    const unitPrice = this.items.controls.reduce((sum, group) => {
+      const totalPrice = group.get('unit_price')?.value || 0;
+      return sum + Number(totalPrice);
+    }, 0);
+
+    const grossMargin = ((unitPrice - priceList)/unitPrice) * 100;
+
+    const iUnitPrice = this.items.controls.reduce((sum, group) => {
+      const totalPrice = group.get('installation_price_per_unit')?.value || 0;
+      return sum + Number(totalPrice);
+    }, 0);
+
+    const iSellingPrice = this.items.controls.reduce((sum, group) => {
+      const totalPrice = group.get('installation_selling_price')?.value || 0;
+      return sum + Number(totalPrice);
+    }, 0);
+
+    const iGrossMargin = ((iSellingPrice - iUnitPrice)/iSellingPrice) * 100;
+
+    this.iTotalGrandGrossMargin = parseFloat(grossMargin.toFixed(2));
   }
   
 
@@ -930,12 +988,28 @@ export class AddQuotationComponent implements OnInit {
           items: [],
           discount: new UntypedFormControl(0), // Form control for discount
           totalPrice: new UntypedFormControl(0), // Form control for total price
-          id: categoryId.toString()
+          grossMargin: 0,
+          id: categoryId.toString(),
+          discount_installation: new UntypedFormControl(0),
+          iTotalPrice: new UntypedFormControl(0),
+          iGrossMargin: 0,
         };
       }
       acc[groupKey].items.push(control);
       return acc;
-    }, {} as { [categoryName: string]: { items: UntypedFormGroup[]; discount: UntypedFormControl; totalPrice: UntypedFormControl; id: string } });
+    }, {} as { 
+      [categoryName: string]: 
+        { 
+          items: UntypedFormGroup[];
+          discount: UntypedFormControl; 
+          totalPrice: UntypedFormControl; 
+          id: string;
+          grossMargin: number;
+          discount_installation: UntypedFormControl;
+          iTotalPrice: UntypedFormControl;
+          iGrossMargin: number;
+        }
+     });
 
   
     this.productCategory.forEach((category) => {
@@ -944,7 +1018,11 @@ export class AddQuotationComponent implements OnInit {
           items: [],
           discount: new UntypedFormControl(0),
           totalPrice: new UntypedFormControl(0),
-          id: category.id.toString()
+          grossMargin: 0,
+          id: category.id.toString(),
+          discount_installation: new UntypedFormControl(0),
+          iTotalPrice: new UntypedFormControl(0),
+          iGrossMargin: 0
         };
       }
     });
@@ -954,7 +1032,11 @@ export class AddQuotationComponent implements OnInit {
         items: [],
         discount: new UntypedFormControl(0),
         totalPrice: new UntypedFormControl(0),
-        id: ''
+        grossMargin: 0,
+        id: '',
+        discount_installation: new UntypedFormControl(0),
+        iTotalPrice: new UntypedFormControl(0),
+        iGrossMargin: 0
       };
     }
   
@@ -968,7 +1050,27 @@ export class AddQuotationComponent implements OnInit {
       .reduce((acc, key) => {
         acc[key] = grouped[key];
         return acc;
-      }, {} as { [categoryName: string]: { items: UntypedFormGroup[]; discount: UntypedFormControl; totalPrice: UntypedFormControl; id: string } });
+      }, {} as { 
+        [categoryName: string]: 
+        { 
+          items: UntypedFormGroup[];
+          discount: UntypedFormControl; 
+          totalPrice: UntypedFormControl; 
+          id: string;
+          grossMargin: number;
+          discount_installation: UntypedFormControl;
+          iTotalPrice: UntypedFormControl;
+          iGrossMargin: number;
+        } });
+    
+
+    if(this.groupedItems['Fitting'].items.length > 0){
+      const sortOrder = ['Elbow', 'Reducer', 'Branch'];
+
+      this.groupedItems['Fitting'].items.sort((a, b) => {
+        return sortOrder.indexOf(a.value.sub_category) - sortOrder.indexOf(b.value.sub_category);
+      });
+    }
   
     // Update unit prices and total price based on discount
     Object.keys(this.groupedItems).forEach((categoryName) => {
@@ -981,8 +1083,40 @@ export class AddQuotationComponent implements OnInit {
           return sum + parseFloat(quantity) * parseFloat(unitPrice);
         }, 0);
 
+        const totalUnitPrice = group.items.reduce((sum, item) => {
+          const unitPrice = item.get('unit_price')?.value || 0;
+          return sum +  parseFloat(unitPrice);
+        }, 0)
+
+        const totalPriceList = group.items.reduce((sum, item) => {
+          const priceList = item.get('price_list')?.value || 0;
+          return sum + parseFloat(priceList);
+        },0)
+
+        const grossMargin = ((totalUnitPrice-totalPriceList)/totalUnitPrice) * 100
+        
         group.totalPrice.setValue(total, { emitEvent: false });
+
+        group.grossMargin = parseFloat(grossMargin.toFixed(2));
       };
+
+      const updateITotalPrice  = () => {
+        const total = group.items.reduce((sum, item) => {
+          const sellingPrice = item.get('installation_selling_price')?.value || 0;
+          return sum + parseFloat(sellingPrice);
+        }, 0);
+
+        const totalUnitPrice = group.items.reduce((sum, item) => {
+          const unitPrice = item.get('installation_price_per_unit')?.value || 0;
+          return sum +  parseFloat(unitPrice);
+        }, 0)
+
+        const grossMargin = ((total-totalUnitPrice)/total) * 100
+
+        group.iTotalPrice.setValue(total, { emitEvent: false });
+
+        group.iGrossMargin = parseFloat(grossMargin.toFixed(2));
+      }
   
       // Subscribe to discount changes
       group.discount.valueChanges.subscribe((discount) => {
@@ -1026,21 +1160,64 @@ export class AddQuotationComponent implements OnInit {
         // Recalculate total price
         updateTotalPrice();
       });
+
+      group.discount_installation.valueChanges.subscribe((discount) => {
+        group.items.forEach((item) => {
+
+          const unitPrice = item.get('installation_price_per_unit')?.value;
+
+          const sellingPriceControl = item.get('installation_selling_price');
+          const originalSellingPricie = item.get('original_i_selling_price')?.value;
+
+          const grossMarginControl = item.get('installation_gross_margin');
+          const originalMargin = item.get('original_i_gross_margin')?.value;
+
+          let validOriginalSellingPrice = originalSellingPricie;
+          let validOriginalMargin = originalMargin;
+
+          if (isNaN(originalSellingPricie) || originalSellingPricie === null || originalSellingPricie === undefined) {
+            validOriginalSellingPrice = sellingPriceControl?.value || 0;
+            item.addControl('original_i_selling_price', new UntypedFormControl(validOriginalSellingPrice));
+          }
+
+          if(isNaN(originalMargin) || originalMargin === null || originalMargin === undefined) {
+            validOriginalMargin = grossMarginControl?.value || 0;
+            item.addControl('original_i_gross_margin', new UntypedFormControl(validOriginalMargin));
+          }
+
+          const discountedPrice = validOriginalSellingPrice * (1 - (discount === '' ? 0 : discount) / 100);
+          sellingPriceControl?.setValue(discountedPrice);
+
+          if(discount > 0){
+            const newGrossMargin = ((discountedPrice - unitPrice)/discountedPrice) * 100;
+            grossMarginControl?.setValue(newGrossMargin.toFixed(2))
+          } else {
+            grossMarginControl?.setValue(validOriginalMargin);
+          }
+
+
+          // this.calculateITotalPrice(item);
+        })
+        updateITotalPrice();
+      })
   
       // Subscribe to item changes to recalculate total price
       group.items.forEach((item) => {
         item.valueChanges.subscribe(() => updateTotalPrice());
+        item.valueChanges.subscribe(() => updateITotalPrice());
       });
 
       //set discount from existing data
       group.items.forEach((item) => {        
         if(item.get('category')?.value.toString() === group.id ){
           group.discount.setValue(parseFloat(item.get('discount')?.value));
+          group.discount_installation.setValue(parseFloat(item.get('discount_installation')?.value));
         }
       })
   
       // Initial total price calculation
       updateTotalPrice();
+      updateITotalPrice();
     });
   }
   
@@ -1062,6 +1239,12 @@ export class AddQuotationComponent implements OnInit {
     const unitPrice = parseFloat(control.get('unit_price')?.value);
     const qty = parseFloat(control.get('qty')?.value);
     control.get('total_price')?.setValue(qty * unitPrice);
+  }
+
+  calculateITotalPrice(control: UntypedFormGroup){
+    const unitPrice = parseFloat(control.get('installation_price_per_unit')?.value);
+    const priceFactor = parseFloat(control.get('installation_price_factor')?.value);
+    control.get('installation_selling_price')?.setValue(priceFactor * unitPrice);
   }
 
   // Prevent the default automatic upload behavior
@@ -1141,6 +1324,7 @@ export class AddQuotationComponent implements OnInit {
       qty: [0],
       unit: [{value: '', disabled: true}],
       exist: [true],
+      price_list: [''],
       unit_price: [''],
       total_price: [''],
       gross_margin: [''],
@@ -1406,14 +1590,18 @@ export class AddQuotationComponent implements OnInit {
 
       if(this.modal_type === 'edit' || this.modal_type === 'revision'){
 
-        const quotationItemsDiscount: {supplier_product_id: string; discount: string}[] = [];
+        const quotationItemsDiscount: {supplier_product_id: string; discount: string, discount_installation: string}[] = [];
 
         Object.keys(this.groupedItems).forEach((categoryName) => {
           const group = this.groupedItems[categoryName];
           const discount =  group.discount.value.toString() === '' ? 0 : group.discount.value.toString();
           const supplier_product_id = group.id;
+          const discount_installation = 
+            group.discount_installation.value.toString() === '' 
+            ? 0 
+            : group.discount_installation.value.toString();
 
-          quotationItemsDiscount.push({supplier_product_id, discount})
+          quotationItemsDiscount.push({supplier_product_id, discount, discount_installation })
         })
 
         const stackComplete = this.stacks.value.map((stack: any) => ({

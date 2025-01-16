@@ -61,6 +61,9 @@ export class InventoriesListComponent implements OnInit {
   filterForm: UntypedFormGroup;
 
   filtered: boolean = false;
+  searched: boolean = false;
+
+  searchValue: string = '';
 
   nestedModalRef?: NzModalRef;
 
@@ -126,13 +129,10 @@ export class InventoriesListComponent implements OnInit {
       debounceTime(300),
       distinctUntilChanged()
     ).subscribe(search => {
-      this.inventory$ = this.apiSvc.searchInventory(search, this.currentPage, this.pageSize).pipe(
-        tap(res => {
-          this.totalInventories = res.data.length;
-          this.currentPage = res.pagination.current_page;
-          this.totalAll = res.pagination.total;
-        })
-      );
+      
+      this.searchValue = search;
+      this.searched = true;
+      this.getSearchedInventory();
     });
 
   }
@@ -162,6 +162,16 @@ export class InventoriesListComponent implements OnInit {
     )
   }
 
+  getSearchedInventory(){
+    this.inventory$ = this.apiSvc.searchInventory(this.searchValue, this.currentPage, this.pageSize).pipe(
+      tap(res => {
+        this.totalInventories = res.data.length;
+        this.currentPage = res.pagination.current_page;
+        this.totalAll = res.pagination.total;
+      })
+    );
+  }
+
   showFilter(): void{
     this.isVisibleFilter = true;
   }
@@ -189,6 +199,9 @@ export class InventoriesListComponent implements OnInit {
 
     if(this.filtered){
       this.getFilteredInventory();
+
+    } else if(this.searched){
+      this.getSearchedInventory();
     } else {
       this.getInventory();
     }

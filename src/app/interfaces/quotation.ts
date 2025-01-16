@@ -182,6 +182,7 @@
     total_price_per_product: string
     discount: string
     total_price_per_product_after_discount: string
+    discount_installation: string;
   }
   
   export interface Inventory {
