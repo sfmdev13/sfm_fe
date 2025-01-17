@@ -176,6 +176,52 @@ export class AddQuotationComponent implements OnInit {
           this.dataQuotation = result.data[0]
           this.stacks.clear();
           this.cd.detectChanges();
+
+          this.isCreateQuotationTotal = this.dataQuotation.is_create_quotation_total === 1 ? true : false;
+
+          if(this.isCreateQuotationTotal && this.dataQuotation.latest_quotation_revision.quotation_items.length > 0) {
+            this.items.clear();
+    
+            this.dataQuotation.latest_quotation_revision.quotation_items.forEach((item) => {
+              const newItem = this.fb.group({
+                inventory_id: [item.inventory.id],
+                part_number: [item.inventory.id, [Validators.required]],
+                description: [item.inventory.id, [Validators.required]],
+                alias: [{value: item.inventory.alias, disabled: true}],
+                dn1: [item.dn_1 === null || item.dn_1 === '' ? '': parseFloat(item.dn_1)],
+                dn2: [item.dn_2 === null || item.dn_2 === '' ? '': parseFloat(item.dn_2)],
+                qty: [parseFloat(item.qty)],
+                unit: [{value: item.inventory.unit.name, disabled: true}],
+                exist: [true],
+                price_list: [parseFloat(item.inventory.price_list)],
+                unit_price: [parseFloat(item.inventory.default_selling_price)],
+                total_price: [parseFloat(item.total_price_per_product)],
+                gross_margin: [parseFloat(item.inventory.default_gross_margin)],
+                category: [item.inventory.supplier_product.id],
+                sub_category:[item.inventory.sub_category.name],
+                discount: [parseFloat(item.discount)],
+                discount_installation: [parseFloat(item.discount_installation)],
+    
+                i_part_number: [item.inventory.code],
+                i_description: [item.inventory.description],
+                installation_unit_inch_qty: [{value: parseFloat(item.inventory.installation.unit_inch_qty), disabled: true}],
+                installation_unit_price: [{value: parseFloat(item.inventory.installation.price), disabled: true}],
+                installation_unit_price_type: [{value: item.inventory.installation.price_type, disabled: true}],
+                installation_price_per_unit: [{value: parseFloat(item.inventory.installation.price_per_unit), disabled: true}],
+                installation_price_factor: [{value: parseFloat(item.inventory.installation.price_factor), disabled: true}],
+                installation_selling_price: [{value: parseFloat(item.inventory.installation.selling_price), disabled: true}],
+                installation_gross_margin: [{value: parseFloat(item.inventory.installation.gross_margin), disabled: true}],
+              })
+    
+              this.items.push(newItem);
+              this.itemValueChangeSubscription(newItem);
+            })
+    
+            this.updateGroupedItems();
+            this.cd.detectChanges();
+          }
+
+          
           this.dataQuotation.quotation_stack.forEach((stack, index) => {
 
             let updateStackFile: NzUploadFile[] = [];
