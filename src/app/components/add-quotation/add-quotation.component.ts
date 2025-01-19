@@ -118,6 +118,7 @@ export class AddQuotationComponent implements OnInit {
       discount_installation: UntypedFormControl;
       iGrossMargin: number;
       iTotalPrice: UntypedFormControl;
+      totalPriceList: UntypedFormControl;
     } 
   } = {};
   uncategorizedItems: any[] = [];
@@ -796,7 +797,9 @@ export class AddQuotationComponent implements OnInit {
 
     const iGrossMargin = ((iSellingPrice - iUnitPrice)/iSellingPrice) * 100;
 
-    this.iTotalGrandGrossMargin = parseFloat(grossMargin.toFixed(2));
+    this.iTotalGrandGrossMargin = parseFloat(iGrossMargin.toFixed(2));
+
+    this.totalGrandGrossMargin = parseFloat(grossMargin.toFixed(2));
   }
   
 
@@ -1039,6 +1042,7 @@ export class AddQuotationComponent implements OnInit {
           discount_installation: new UntypedFormControl(0),
           iTotalPrice: new UntypedFormControl(0),
           iGrossMargin: 0,
+          totalPriceList: new UntypedFormControl(0)
         };
       }
       acc[groupKey].items.push(control);
@@ -1048,7 +1052,8 @@ export class AddQuotationComponent implements OnInit {
         { 
           items: UntypedFormGroup[];
           discount: UntypedFormControl; 
-          totalPrice: UntypedFormControl; 
+          totalPrice: UntypedFormControl;
+          totalPriceList: UntypedFormControl;
           id: string;
           grossMargin: number;
           discount_installation: UntypedFormControl;
@@ -1068,7 +1073,8 @@ export class AddQuotationComponent implements OnInit {
           id: category.id.toString(),
           discount_installation: new UntypedFormControl(0),
           iTotalPrice: new UntypedFormControl(0),
-          iGrossMargin: 0
+          iGrossMargin: 0,
+          totalPriceList: new UntypedFormControl(0)
         };
       }
     });
@@ -1082,7 +1088,8 @@ export class AddQuotationComponent implements OnInit {
         id: '',
         discount_installation: new UntypedFormControl(0),
         iTotalPrice: new UntypedFormControl(0),
-        iGrossMargin: 0
+        iGrossMargin: 0,
+        totalPriceList: new UntypedFormControl(0)
       };
     }
   
@@ -1107,6 +1114,7 @@ export class AddQuotationComponent implements OnInit {
           discount_installation: UntypedFormControl;
           iTotalPrice: UntypedFormControl;
           iGrossMargin: number;
+          totalPriceList: UntypedFormControl;
         } });
     
 
@@ -1121,7 +1129,16 @@ export class AddQuotationComponent implements OnInit {
     // Update unit prices and total price based on discount
     Object.keys(this.groupedItems).forEach((categoryName) => {
       const group = this.groupedItems[categoryName];
-        
+      
+      const updateTotalPriceList = () => {
+        const total = group.items.reduce((sum, item) => {
+          const priceList = item.get('price_list')?.value || 0;
+          return sum + priceList
+        }, 0);
+
+        group.totalPriceList.setValue(total, { emitEvent: false });
+      }
+
       const updateTotalPrice = () => {
         const total = group.items.reduce((sum, item) => {
           const quantity = item.get('qty')?.value || 0;
@@ -1264,6 +1281,7 @@ export class AddQuotationComponent implements OnInit {
       // Initial total price calculation
       updateTotalPrice();
       updateITotalPrice();
+      updateTotalPriceList();
     });
   }
   
