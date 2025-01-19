@@ -134,6 +134,10 @@ export class AddInventoriesComponent implements OnInit {
       this.changeInstallationValue();
     })
 
+    this.inventoryForm.get('installation_unit_inch_qty')?.valueChanges.subscribe((res) => {
+      this.changeInstallationValue();
+    })
+    
     this.inventoryForm.get('installation_unit_price_type')?.valueChanges.subscribe((res) => {
       this.inventoryForm.get('installation_unit_price')?.setValue(0, { emitEvent: false })
       this.changeInstallationValue();
