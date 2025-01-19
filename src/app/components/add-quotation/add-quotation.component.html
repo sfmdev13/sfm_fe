@@ -399,8 +399,10 @@
                                             <th scope="col">Alias</th>
                                             <th scope="col">DN</th>
                                             <th scope="col">DN</th>
-                                            <th scope="col">Qty</th>
                                             <th scope="col">Unit</th>
+                                            <th scope="col">Qty</th>
+                                            <th scope="col">Price List</th>
+                                            <th scope="col">Total Price List</th>
                                             <th scope="col">Unit Price</th>
                                             <th scope="col">Total Selling Price</th>
                                             <th scope="col">Gross Margin</th>
@@ -410,13 +412,13 @@
                                         <ng-container formArrayName="items">
                                             <ng-container *ngFor="let category of objectKeys(groupedItems);let catIndex = index">
                                                 <tr>
-                                                    <td class="" colspan="11">
+                                                    <td class="" colspan="13">
                                                         <span class="fw-bold">{{category}}</span>
                                                     </td>
                                                 </tr>
 
                                                 <tr *ngIf="groupedItems[category].items.length > 0">
-                                                    <td class="" colspan="11">
+                                                    <td class="" colspan="13">
                                                         <div class="d-flex flex-column gap-2">
                                                             <span class="fw-bold">Discount</span>
                                                             <nz-input-number-group class="w-25" nzAddOnAfter="%">
@@ -455,33 +457,24 @@
                                                         </td>
                                                         <td>
                                                             {{ item.get('alias')?.value }}
-                                                            <!-- <nz-form-control>
-                                                                <input nz-input formControlName="alias" />
-                                                            </nz-form-control> -->
                                                         </td>
                                                         <td>
                                                             {{ item.get('dn1')?.value }}
-                                                            <!-- <nz-form-control>
-                                                                <input nz-input formControlName="dn1" id="dn1" />
-                                                            </nz-form-control> -->
                                                         </td>
                                                         <td>
                                                             {{ item.get('dn2')?.value }}
-                                                            <!-- <nz-form-control>
-                                                                <input nz-input formControlName="dn2" id="dn2" />
-                                                            </nz-form-control> -->
-                                                        </td>
-                                                        <td>
-                                                            {{ item.get('qty')?.value }}
-                                                            <!-- <nz-form-control>
-                                                                <input nz-input formControlName="qty" id="qty" />
-                                                            </nz-form-control> -->
                                                         </td>
                                                         <td>
                                                             {{ item.get('unit')?.value }}
-                                                            <!-- <nz-form-control>
-                                                                <input nz-input formControlName="unit" id="unit" />
-                                                            </nz-form-control> -->
+                                                        </td>
+                                                        <td>
+                                                            {{ item.get('qty')?.value }}
+                                                        </td>
+                                                        <td>
+                                                            {{ item.get('price_list')?.value | number:'1.0-0' }}
+                                                        </td>
+                                                        <td>
+                                                            Rp {{ (item.get('qty')?.value * item.get('price_list')?.value) | number:'1.0-0' }}
                                                         </td>
                                                         <td>
                                                             Rp {{ item.get('unit_price')?.value | number:'1.0-0' }}
@@ -499,6 +492,8 @@
 
 
                                         <tr>
+                                            <td></td>
+                                            <td></td>
                                             <td></td>
                                             <td></td>
                                             <td></td>
@@ -532,7 +527,7 @@
                                             <thead style="position: unset;">
 
                                                 <tr class="table-active">
-                                                    <th scope="col" colSpan="9">{{ category }}</th>
+                                                    <th scope="col" colSpan="11">{{ category }}</th>
                                                 </tr>
 
                                                 <tr *ngIf="groupedItems[category].items.length > 0">
@@ -550,6 +545,8 @@
                                                     <th scope="col">No.</th>
                                                     <th scope="col">Part Number</th>
                                                     <th scope="col">Product Description</th>
+                                                    <th scope="col">Alias</th>
+                                                    <th scope="col">Price List</th>
                                                     <th scope="col">Inch</th>
                                                     <th scope="col">
                                                         {{ category.toLowerCase() === 'pipe' ? 'Cost/M\'' : 'Cost/Unit'  }}
@@ -571,6 +568,12 @@
                                                         </td>
                                                         <td>
                                                             {{ item.get('i_description')?.value }}
+                                                        </td>
+                                                        <td>
+                                                            {{ item.get('alias')?.value }}
+                                                        </td>
+                                                        <td>
+                                                            Rp. {{ item.get('price_list')?.value | number:'1.0-0'  }}
                                                         </td>
                                                         <td>
                                                             <ng-container *ngIf="item.get('installation_unit_price_type')?.value === 'price'; else emptyUnitPrice">
@@ -664,6 +667,9 @@
                                             <th scope="col">Alias</th>
                                             <th scope="col">Qty</th>
                                             <th scope="col">Unit</th>
+                                            <th scope="col">Price List</th>
+                                            <th scope="col">Total Price List</th>
+                                            <th scope="col">Discount</th>
                                             <th scope="col">Unit Price</th>
                                             <th scope="col">Total Selling Price</th>
                                             <th scope="col">Gross Margin</th>
@@ -671,7 +677,7 @@
                                     </thead>
                                     <tbody>
                                         <tr class="table-secondary">
-                                            <td colspan="9">
+                                            <td colspan="12">
                                                 <span class="fw-bold" style="font-size: 16px;">
                                                     Material
                                                 </span>
@@ -680,19 +686,27 @@
                                         <ng-container formArrayName="items">
                                             <ng-container *ngFor="let category of objectKeys(groupedItems); let catIndex = index">
                                                 <tr>
-                                                    <td class="" [colSpan]="groupedItems[category].items.length > 0 ? '7' : '9'">
+                                                    <td class="" [colSpan]="groupedItems[category].items.length > 0 ? '7' : '12'">
                                                         <span class="fw-bold">{{category}}</span>
                                                     </td>
-                                                    <td *ngIf="groupedItems[category].items.length > 0">
-                                                        <span class="fw-bold">
-                                                            Rp. {{ groupedItems[category].totalPrice.value | number:'1.0-0' }}
-                                                        </span>
-                                                    </td>
-                                                    <td *ngIf="groupedItems[category].items.length > 0">
-                                                        <span class="fw-bold">
-                                                           {{ groupedItems[category].grossMargin }} %
-                                                        </span>
-                                                    </td>
+                                                    <ng-container *ngIf="groupedItems[category].items.length > 0">
+                                                        <td colspan="3">
+                                                            <span class="fw-bold">
+                                                                Rp. {{ groupedItems[category].totalPriceList.value | number:'1.0-0' }}
+                                                            </span>
+                                                        </td>
+                                                        <td>
+                                                            <span class="fw-bold">
+                                                                Rp. {{ groupedItems[category].totalPrice.value | number:'1.0-0' }}
+                                                            </span>
+                                                        </td>
+                                                        <td>
+                                                            <span class="fw-bold">
+                                                               {{ groupedItems[category].grossMargin }} %
+                                                            </span>
+                                                        </td>
+                                                    </ng-container>
+
                                                 </tr>
                                                 
 
@@ -732,6 +746,15 @@
                                                         {{ item.get('unit')?.value }}
                                                     </td>
                                                     <td>
+                                                        Rp {{ item.get('price_list')?.value | number:'1.0-0' }}
+                                                    </td>
+                                                    <td>
+                                                        Rp {{ ( item.get('qty')?.value * item.get('price_list')?.value ) | number:'1.0-0' }}
+                                                    </td>
+                                                    <td>
+                                                        {{ groupedItems[category].discount.value}} %
+                                                    </td>
+                                                    <td>
                                                         Rp {{ item.get('unit_price')?.value | number:'1.0-0' }}
                                                     </td>
                                                     <td>
@@ -745,7 +768,7 @@
                                         </ng-container>
 
                                         <tr class="table-secondary">
-                                            <td colSpan="9">
+                                            <td colSpan="12">
                                                 <span class="fw-bold" style="font-size: 16px;">
                                                     Material Installation
                                                 </span>
@@ -755,17 +778,26 @@
                                         <ng-container formArrayName="items">
                                             <ng-container *ngFor="let category of objectKeys(groupedItems); let catIndex = index">
                                                 <tr>
-                                                    <td colspan="7" class="fw-bold" [colSpan]="groupedItems[category].items.length > 0 ? '7' : '9'"> {{ category }}</td>
-                                                    <td *ngIf="groupedItems[category].items.length > 0">
-                                                        <span class="fw-bold">
-                                                            Rp. {{ groupedItems[category].iTotalPrice.value | number:'1.0-0' }}
-                                                        </span>
+                                                    <td class="" [colSpan]="groupedItems[category].items.length > 0 ? '7' : '12'">
+                                                        <span class="fw-bold">{{category}}</span>
                                                     </td>
-                                                    <td *ngIf="groupedItems[category].items.length > 0">
-                                                        <span class="fw-bold">
-                                                           {{ groupedItems[category].iGrossMargin }} %
-                                                        </span>
-                                                    </td>
+                                                    <ng-container *ngIf="groupedItems[category].items.length > 0">
+                                                        <td colspan="3">
+                                                            <span class="fw-bold">
+                                                                Rp. {{ groupedItems[category].totalPriceList.value | number:'1.0-0' }}
+                                                            </span>
+                                                        </td>
+                                                        <td>
+                                                            <span class="fw-bold">
+                                                                Rp. {{ groupedItems[category].iTotalPrice.value | number:'1.0-0' }}
+                                                            </span>
+                                                        </td>
+                                                        <td>
+                                                            <span class="fw-bold">
+                                                               {{ groupedItems[category].iGrossMargin }} %
+                                                            </span>
+                                                        </td>
+                                                    </ng-container>
                                                 </tr>
                                                 <tr *ngFor="let item of groupedItems[category].items; let i = index" [formGroup]="item">
                                                      <td>{{ calculateGlobalIndex(catIndex, i) }}</td>
@@ -781,6 +813,15 @@
                                                     <td>-</td>
                                                     <td>
                                                         {{ category.toLowerCase() === 'pipe' ? 'M\'' : 'Pcs'  }}
+                                                    </td>
+                                                    <td>
+                                                        Rp {{ item.get('price_list')?.value | number:'1.0-0' }}
+                                                    </td>
+                                                    <td>
+                                                        Rp {{ ( item.get('qty')?.value * item.get('price_list')?.value ) | number:'1.0-0' }}
+                                                    </td>
+                                                    <td>
+                                                        {{ groupedItems[category].discount_installation.value}} %
                                                     </td>
                                                     <td>
                                                         Rp. {{ item.get('installation_price_per_unit')?.value | number:'1.0-0' }}
