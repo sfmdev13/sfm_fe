@@ -147,6 +147,13 @@
                                 <p class="m-0 p-0">Publish</p>
                               </div>
                             </li>
+                            <li nz-menu-item class="gap-2 list-dropdown"  (click)="exportModalDetail(data, data.id)">
+                              <div class="d-flex gap-2">
+                                <span nz-icon nzType="export" nzTheme="outline"></span>
+                                <p class="m-0 p-0">Export</p>
+                              </div>
+                            </li>
+
                             <!-- <li nz-menu-item class="gap-2 list-dropdown">
                               <div class="d-flex gap-2">
                                 <span nz-icon nzType="copy" nzTheme="twotone" ></span>
@@ -209,5 +216,49 @@
   <div *nzModalFooter>
     <button nz-button nzType="default" (click)="isVisibleDetail = false">Cancel</button>
     <button nz-button nzType="primary" (click)="showDetailModal()">Open Detail Revision</button>
+  </div>
+</nz-modal>
+
+<!-- onboard detail modal -->
+<nz-modal [(nzVisible)]="isVisibleDetail" nzTitle="Detail Quotation" (nzOnCancel)="isVisibleDetail = false">
+  <div *nzModalContent>
+    <div class="d-flex flex-column gap-3">
+      <span class="fw-semibold">Choose Revision</span>
+      <ng-container *ngIf="!isLoadingRevList; else loadRevList">
+        <nz-select nzShowSearch nzAllowClear nzPlaceHolder="Select Revision" style="width: 320px;" [(ngModel)]="revision">
+          <nz-option *ngFor="let rev of revisionList" [nzLabel]="rev" [nzValue]="rev"></nz-option>
+        </nz-select>  
+      </ng-container>
+      <ng-template #loadRevList>
+        <nz-select nzShowSearch nzAllowClear nzPlaceHolder="loading..." style="width: 320px;" [(ngModel)]="revision" nzDisabled>
+        </nz-select>  
+      </ng-template>
+    </div>
+  </div>
+  <div *nzModalFooter>
+    <button nz-button nzType="default" (click)="isVisibleDetail = false">Cancel</button>
+    <button nz-button nzType="primary" (click)="showDetailModal()">Open Detail Revision</button>
+  </div>
+</nz-modal>
+
+<!-- onboard export modal -->
+<nz-modal [(nzVisible)]="isVisibleExport" nzTitle="Export Quotation" (nzOnCancel)="isVisibleDetail = false">
+  <div *nzModalContent>
+    <div class="d-flex flex-column gap-3">
+      <span class="fw-semibold">Choose Revision</span>
+      <ng-container *ngIf="!isLoadingExportList; else loadRevList">
+        <nz-select nzShowSearch nzAllowClear nzPlaceHolder="Select Revision" style="width: 320px;" [(ngModel)]="revision">
+          <nz-option *ngFor="let rev of revisionList" [nzLabel]="rev" [nzValue]="rev"></nz-option>
+        </nz-select>  
+      </ng-container>
+      <ng-template #loadRevList>
+        <nz-select nzShowSearch nzAllowClear nzPlaceHolder="loading..." style="width: 320px;" [(ngModel)]="revision" nzDisabled>
+        </nz-select>  
+      </ng-template>
+    </div>
+  </div>
+  <div *nzModalFooter>
+    <button nz-button nzType="default" (click)="isVisibleExport = false">Cancel</button>
+    <button nz-button nzType="primary" (click)="export(selectedDataBasic, detailQuotation, revision)">Export Quotation</button>
   </div>
 </nz-modal>

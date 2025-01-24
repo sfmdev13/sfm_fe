@@ -32,7 +32,14 @@
     customer: Customer;
     latest_quotation_revision: IQuotation;
     quotation_stack: QuotationStack[];
-
+    total_supplier_product: {
+      id: number;
+      name: string;
+      total_price: number;
+      total_price_list: number;
+      gross_margin: string | number;
+      total_installation_price: number;
+    }[]
   }
 
   interface IProject{
@@ -165,6 +172,9 @@
     total_price: string;
     is_published: number;
     quotation_items: QuotationItem[];
+    total_installation_price: string
+    total_installation_price_after_discount: string
+    total_price_after_discount: string
   }
   
   export interface PreparedBy {
@@ -183,6 +193,8 @@
     discount: string
     total_price_per_product_after_discount: string
     discount_installation: string;
+    total_installation_price_after_discount: string;
+    total_price_after_discount: string;
   }
   
   export interface Inventory {

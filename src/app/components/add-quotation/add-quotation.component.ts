@@ -119,6 +119,7 @@ export class AddQuotationComponent implements OnInit {
       iGrossMargin: number;
       iTotalPrice: UntypedFormControl;
       totalPriceList: UntypedFormControl;
+      iTotalCost: UntypedFormControl;
     } 
   } = {};
   uncategorizedItems: any[] = [];
@@ -132,6 +133,10 @@ export class AddQuotationComponent implements OnInit {
   iTotalGrandCost: number = 0;
 
   iTotalGrandGrossMargin: number = 0;
+
+  totalGrandPriceList: number = 0;
+
+  totalGrandICost: number = 0;
 
   isUpdateFile: boolean = false;
 
@@ -770,6 +775,18 @@ export class AddQuotationComponent implements OnInit {
       const totalPrice  =  group.get('installation_selling_price')?.value || 0;
       return sum + Number(totalPrice);
     }, 0)
+
+    this.totalGrandPriceList = this.items.controls.reduce((sum, group) => {
+      const totalPrice  =  group.get('price_list')?.value || 0;
+      const qty =  group.get('qty')?.value || 0;
+      return sum + Number(totalPrice) * Number(qty);
+    }, 0)
+
+    this.totalGrandICost = this.items.controls.reduce((sum, group) => {
+      const totalPrice = group.get('installation_price_per_unit')?.value || 0;
+      const qty =  group.get('qty')?.value || 0;
+      return sum + Number(totalPrice) * Number(qty);
+    }, 0)
   }
 
   calculateGrandGrossMargin() {
@@ -1042,7 +1059,8 @@ export class AddQuotationComponent implements OnInit {
           discount_installation: new UntypedFormControl(0),
           iTotalPrice: new UntypedFormControl(0),
           iGrossMargin: 0,
-          totalPriceList: new UntypedFormControl(0)
+          totalPriceList: new UntypedFormControl(0),
+          iTotalCost: new UntypedFormControl(0)
         };
       }
       acc[groupKey].items.push(control);
@@ -1059,6 +1077,7 @@ export class AddQuotationComponent implements OnInit {
           discount_installation: UntypedFormControl;
           iTotalPrice: UntypedFormControl;
           iGrossMargin: number;
+          iTotalCost: UntypedFormControl;
         }
      });
 
@@ -1074,7 +1093,8 @@ export class AddQuotationComponent implements OnInit {
           discount_installation: new UntypedFormControl(0),
           iTotalPrice: new UntypedFormControl(0),
           iGrossMargin: 0,
-          totalPriceList: new UntypedFormControl(0)
+          totalPriceList: new UntypedFormControl(0),
+          iTotalCost: new UntypedFormControl(0)
         };
       }
     });
@@ -1089,7 +1109,8 @@ export class AddQuotationComponent implements OnInit {
         discount_installation: new UntypedFormControl(0),
         iTotalPrice: new UntypedFormControl(0),
         iGrossMargin: 0,
-        totalPriceList: new UntypedFormControl(0)
+        totalPriceList: new UntypedFormControl(0),
+        iTotalCost: new UntypedFormControl(0)
       };
     }
   
@@ -1115,6 +1136,7 @@ export class AddQuotationComponent implements OnInit {
           iTotalPrice: UntypedFormControl;
           iGrossMargin: number;
           totalPriceList: UntypedFormControl;
+          iTotalCost: UntypedFormControl;
         } });
     
 
@@ -1133,10 +1155,19 @@ export class AddQuotationComponent implements OnInit {
       const updateTotalPriceList = () => {
         const total = group.items.reduce((sum, item) => {
           const priceList = item.get('price_list')?.value || 0;
-          return sum + priceList
+          const qty = item.get('qty')?.value || 0;
+          return sum + ( priceList * qty )
         }, 0);
 
         group.totalPriceList.setValue(total, { emitEvent: false });
+
+        const iTotal = group.items.reduce((sum, item) => {
+          const cost = item.get('installation_price_per_unit')?.value || 0;
+          const qty = item.get('qty')?.value || 0;
+          return sum + ( cost * qty )
+        }, 0)
+
+        group.iTotalCost.setValue(iTotal, { emitEvent: false });
       }
 
       const updateTotalPrice = () => {
@@ -1166,12 +1197,14 @@ export class AddQuotationComponent implements OnInit {
       const updateITotalPrice  = () => {
         const total = group.items.reduce((sum, item) => {
           const sellingPrice = item.get('installation_selling_price')?.value || 0;
-          return sum + parseFloat(sellingPrice);
+          const qty = item.get('qty')?.value || 0;
+          return sum + parseFloat(sellingPrice) * qty;
         }, 0);
 
         const totalUnitPrice = group.items.reduce((sum, item) => {
           const unitPrice = item.get('installation_price_per_unit')?.value || 0;
-          return sum +  parseFloat(unitPrice);
+          const qty = item.get('qty')?.value || 0;
+          return sum +  parseFloat(unitPrice) * qty;
         }, 0)
 
         const grossMargin = ((total-totalUnitPrice)/total) * 100

@@ -16,6 +16,7 @@ import { NzModalModule } from 'ng-zorro-antd/modal';
 import { UnauthorizedComponent } from './components/unauthorized/unauthorized.component';
 import { SpinnerComponent } from './components/spinner/spinner.component';
 import { NzSpinModule } from 'ng-zorro-antd/spin';
+import { ExcelService } from './excel.service';
 
 registerLocaleData(en);
 
@@ -31,6 +32,7 @@ registerLocaleData(en);
         LayoutModule,
         NzModalModule,
         NzSpinModule], providers: [
+            ExcelService,
         { provide: NZ_I18N, useValue: en_US },
         { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
         provideHttpClient(withInterceptorsFromDi())
