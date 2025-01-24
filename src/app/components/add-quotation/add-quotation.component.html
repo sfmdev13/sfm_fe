@@ -402,7 +402,8 @@
                                             <th scope="col">Unit</th>
                                             <th scope="col">Qty</th>
                                             <th scope="col">Price List</th>
-                                            <th scope="col">Total Price List</th>
+                                            <th scope="col">Total Cost</th>
+                                            <th scope="col">Discount</th>
                                             <th scope="col">Unit Price</th>
                                             <th scope="col">Total Selling Price</th>
                                             <th scope="col">Gross Margin</th>
@@ -412,13 +413,13 @@
                                         <ng-container formArrayName="items">
                                             <ng-container *ngFor="let category of objectKeys(groupedItems);let catIndex = index">
                                                 <tr>
-                                                    <td class="" colspan="13">
+                                                    <td class="" colspan="14">
                                                         <span class="fw-bold">{{category}}</span>
                                                     </td>
                                                 </tr>
 
                                                 <tr *ngIf="groupedItems[category].items.length > 0">
-                                                    <td class="" colspan="13">
+                                                    <td class="" colspan="14">
                                                         <div class="d-flex flex-column gap-2">
                                                             <span class="fw-bold">Discount</span>
                                                             <nz-input-number-group class="w-25" nzAddOnAfter="%">
@@ -476,6 +477,7 @@
                                                         <td>
                                                             Rp {{ (item.get('qty')?.value * item.get('price_list')?.value) | number:'1.0-0' }}
                                                         </td>
+                                                        <td> {{ groupedItems[category].discount.value}} % </td>
                                                         <td>
                                                             Rp {{ item.get('unit_price')?.value | number:'1.0-0' }}
                                                         </td>
@@ -500,7 +502,12 @@
                                             <td></td>
                                             <td></td>
                                             <td></td>
-                                            <td></td>
+                                            <td>
+                                                <span class="fw-bold">Total Grand Cost:</span>
+                                            </td>
+                                            <td>
+                                                <span class="fw-bold"> Rp.  {{ totalGrandPriceList | number:'1.0-0' }}</span>
+                                            </td>
                                             <td>
                                                 <span class="fw-bold">Total Grand Selling Price:</span>
                                             </td>
@@ -526,12 +533,12 @@
                                         <table class="table table-order table-installation">
                                             <thead style="position: unset;">
 
-                                                <tr class="table-active">
-                                                    <th scope="col" colSpan="11">{{ category }}</th>
+                                                <tr class="table-active" style="width: 100%">
+                                                    <th scope="col" colSpan="16" style="width: 100%;">{{ category }}</th>
                                                 </tr>
 
                                                 <tr *ngIf="groupedItems[category].items.length > 0">
-                                                    <td class="" colspan="9">
+                                                    <td class="" colspan="14">
                                                         <div class="d-flex flex-column gap-2">
                                                             <span class="fw-bold">Discount</span>
                                                             <nz-input-number-group class="w-25" nzAddOnAfter="%">
@@ -546,6 +553,8 @@
                                                     <th scope="col">Part Number</th>
                                                     <th scope="col">Product Description</th>
                                                     <th scope="col">Alias</th>
+                                                    <th scope="col">Unit</th>
+                                                    <th scope="col">Qty</th>
                                                     <th scope="col">Price List</th>
                                                     <th scope="col">Inch</th>
                                                     <th scope="col">
@@ -554,8 +563,11 @@
                                                     <th scope="col">
                                                         {{ category.toLowerCase() === 'pipe' ? 'Cost M\'/inch' : 'Cost Unit/Inch'  }}
                                                     </th>
-                                                    <th scope="col">Price Factor</th>
                                                     <th scope="col">Total Cost</th>
+                                                    <th scope="col">Discount</th>
+                                                    <th scope="col">Price Factor</th>
+                                                    <th scope="col">Selling Price</th>
+                                                    <th scope="col">Total Selling Price</th>
                                                     <th scope="col">Gross Margin</th>
                                                 </tr>
                                             </thead>
@@ -571,6 +583,12 @@
                                                         </td>
                                                         <td>
                                                             {{ item.get('alias')?.value }}
+                                                        </td>
+                                                        <td>
+                                                            {{ item.get('unit')?.value }}
+                                                        </td>
+                                                        <td>
+                                                            {{ item.get('qty')?.value }}
                                                         </td>
                                                         <td>
                                                             Rp. {{ item.get('price_list')?.value | number:'1.0-0'  }}
@@ -610,12 +628,19 @@
                                                             Rp. {{ item.get('installation_price_per_unit')?.value | number:'1.0-0' }}
                                                         </td>
                                                         <td>
+                                                            Rp. {{ item.get('installation_price_per_unit')?.value * item.get('qty')?.value  | number:'1.0-0' }}
+                                                        </td>
+                                                        <td> {{ groupedItems[category].discount.value}} % </td>
+                                                        <td>
                                                             <nz-input-number-group class="w-100">
                                                                 <nz-input-number class="w-100" [nzMin]="0" formControlName="installation_price_factor"></nz-input-number>
                                                             </nz-input-number-group>
                                                         </td>
                                                         <td>
                                                             Rp. {{ item.get('installation_selling_price')?.value | number:'1.0-0' }}
+                                                        </td>
+                                                        <td>
+                                                            Rp. {{ item.get('installation_selling_price')?.value * item.get('qty')?.value  | number:'1.0-0' }}
                                                         </td>
                                                         <td>
                                                             {{ item.get('installation_gross_margin')?.value }} %
@@ -638,7 +663,13 @@
                                                 <td></td>
                                                 <td></td>
                                                 <td>
-                                                    <span class="fw-bold">Total Grand Price:</span>
+                                                    <span class="fw-bold">Total Grand Cost:</span>
+                                                </td>
+                                                <td>
+                                                    <span class="fw-bold"> Rp.  {{ totalGrandICost | number:'1.0-0' }}</span>
+                                                </td>
+                                                <td>
+                                                    <span class="fw-bold">Total Grand Selling Price:</span>
                                                 </td>
                                                 <td>
                                                     <span class="fw-bold"> Rp.  {{ iTotalGrandCost | number:'1.0-0' }}</span>
@@ -784,7 +815,7 @@
                                                     <ng-container *ngIf="groupedItems[category].items.length > 0">
                                                         <td colspan="3">
                                                             <span class="fw-bold">
-                                                                Rp. {{ groupedItems[category].totalPriceList.value | number:'1.0-0' }}
+                                                                Rp. {{ groupedItems[category].iTotalCost.value | number:'1.0-0' }}
                                                             </span>
                                                         </td>
                                                         <td>
@@ -810,24 +841,24 @@
                                                     <td>
                                                         {{ item.get('alias')?.value }}
                                                     </td>
-                                                    <td>-</td>
+                                                    <td> {{ item.get('qty')?.value }}</td>
                                                     <td>
                                                         {{ category.toLowerCase() === 'pipe' ? 'M\'' : 'Pcs'  }}
                                                     </td>
                                                     <td>
-                                                        Rp {{ item.get('price_list')?.value | number:'1.0-0' }}
+                                                        Rp {{ item.get('installation_price_per_unit')?.value | number:'1.0-0' }}
                                                     </td>
                                                     <td>
-                                                        Rp {{ ( item.get('qty')?.value * item.get('price_list')?.value ) | number:'1.0-0' }}
+                                                        Rp {{ ( item.get('qty')?.value * item.get('installation_price_per_unit')?.value ) | number:'1.0-0' }}
                                                     </td>
                                                     <td>
                                                         {{ groupedItems[category].discount_installation.value}} %
                                                     </td>
                                                     <td>
-                                                        Rp. {{ item.get('installation_price_per_unit')?.value | number:'1.0-0' }}
+                                                        Rp. {{ item.get('installation_selling_price')?.value | number:'1.0-0' }}
                                                     </td>
                                                     <td>
-                                                        Rp. {{ item.get('installation_selling_price')?.value | number:'1.0-0' }}
+                                                        Rp. {{ item.get('qty')?.value * item.get('installation_selling_price')?.value | number:'1.0-0' }}
                                                     </td>
                                                     <td>
                                                         {{ item.get('installation_gross_margin')?.value }} %
@@ -835,6 +866,26 @@
                                                 </tr>
                                             </ng-container>
                                         </ng-container>
+                                        <tr>
+                                            <td class="" [colSpan]='7'>
+                                                -
+                                            </td>
+                                            <td colspan="3">
+                                                <span class="fw-bold">
+                                                    Rp. {{ totalGrandPriceList + totalGrandICost | number:'1.0-0' }}
+                                                </span>
+                                            </td>
+                                            <td>
+                                                <span class="fw-bold">
+                                                    Rp. {{ totalGrandCost + iTotalGrandCost | number:'1.0-0' }}
+                                                </span>
+                                            </td>
+                                            <td>
+                                                <span class="fw-bold">
+                                                   {{ (( ( (totalGrandCost + iTotalGrandCost ) - (totalGrandPriceList + totalGrandICost) ) / (totalGrandCost + iTotalGrandCost )) * 100).toFixed(2) }} %
+                                                </span>
+                                            </td>
+                                        </tr>
                                         <!-- <tr>
                                             <td></td>
                                             <td></td>
