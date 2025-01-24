@@ -5,6 +5,7 @@ import { Observable, tap } from 'rxjs';
 import { ApiService } from 'src/app/api.service';
 import { AddQuotationComponent } from 'src/app/components/add-quotation/add-quotation.component';
 import { DetailQuotationComponent } from 'src/app/components/detail-quotation/detail-quotation.component';
+import { ExcelService } from 'src/app/excel.service';
 import { IDataCategories, IDataInventory, IDataQuotation, IDetailDataQuotation, IQuotation, IRootQuotation } from 'src/app/interfaces';
 import { IDataProject } from 'src/app/interfaces/project';
 
@@ -23,9 +24,11 @@ export class QuotationComponent implements OnInit {
   quotation$!: Observable<IRootQuotation>
 
   isVisibleDetail: boolean = false;
+  isVisibleExport: boolean = false;
 
   revisionList: string[] = [];
   isLoadingRevList = true;
+  isLoadingExportList = true;
   revision: string = 'RA';
   detailQuotation: IDetailDataQuotation = {} as IDetailDataQuotation;
   selectedDataBasic: IDataQuotation = {} as IDataQuotation;
@@ -201,7 +204,8 @@ export class QuotationComponent implements OnInit {
   constructor(
     private drawerService: NzDrawerService,
     private modalService: NzModalService,
-    private apiSvc: ApiService
+    private apiSvc: ApiService,
+    private excelService: ExcelService
   ){}
 
   ngOnInit(): void {
@@ -219,6 +223,10 @@ export class QuotationComponent implements OnInit {
     this.apiSvc.getSupplierProduct().subscribe((res) => {
       this.productCategory = res.data
     })
+  }
+
+  export(dataBasic: IDataQuotation, dataDetail: IDetailDataQuotation, revision: string){
+    this.excelService.generateExcel(dataBasic, dataDetail, revision, this.productCategory);
   }
 
   publish(id: string){
@@ -348,6 +356,19 @@ export class QuotationComponent implements OnInit {
       this.detailQuotation = res
       this.revisionList = res.quotation_revision.map((res) => res.revision);
       this.isLoadingRevList = false;
+    })
+  }
+
+  exportModalDetail(data: IDataQuotation, id: string){
+    this.isVisibleExport = true;
+    this.isLoadingExportList = true;
+    this.selectedDataBasic = data;
+
+    this.apiSvc.getDetailQuotation(id).subscribe((res) => {
+      this.detailQuotation = res
+      this.revisionList = res.quotation_revision.map((res) => res.revision);
+      this.isLoadingExportList = false;
+
     })
   }
 
