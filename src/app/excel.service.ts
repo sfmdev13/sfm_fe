@@ -265,10 +265,6 @@ export class ExcelService {
       fgColor: { argb: 'ffd9d9d9' },
     };
 
-
-    console.log(dataBasic);
-    console.log(dataDetail);
-
     const sortedProductCategory = [...productCategory].sort((a, b) => parseInt(a.level ?? '0') - parseInt(b.level ?? '0'));
     let currentRow = 10; // Start from row 9
 

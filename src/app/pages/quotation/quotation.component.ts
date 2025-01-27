@@ -8,6 +8,7 @@ import { DetailQuotationComponent } from 'src/app/components/detail-quotation/de
 import { ExcelService } from 'src/app/excel.service';
 import { IDataCategories, IDataInventory, IDataQuotation, IDetailDataQuotation, IQuotation, IRootQuotation } from 'src/app/interfaces';
 import { IDataProject } from 'src/app/interfaces/project';
+import { PdfRabService } from 'src/app/pdf-rab.service';
 
 @Component({
   selector: 'app-quotation',
@@ -205,7 +206,8 @@ export class QuotationComponent implements OnInit {
     private drawerService: NzDrawerService,
     private modalService: NzModalService,
     private apiSvc: ApiService,
-    private excelService: ExcelService
+    private excelService: ExcelService,
+    private pdfRABService: PdfRabService
   ){}
 
   ngOnInit(): void {
@@ -225,8 +227,13 @@ export class QuotationComponent implements OnInit {
     })
   }
 
-  export(dataBasic: IDataQuotation, dataDetail: IDetailDataQuotation, revision: string){
-    this.excelService.generateExcel(dataBasic, dataDetail, revision, this.productCategory);
+  export(dataBasic: IDataQuotation, dataDetail: IDetailDataQuotation, revision: string, type: 'excel' | 'pdf'){
+    if(type === 'excel'){
+      this.excelService.generateExcel(dataBasic, dataDetail, revision, this.productCategory);
+    }
+    if(type === 'pdf'){
+      this.pdfRABService.generatePdf(dataBasic, dataDetail, revision, this.productCategory);
+    }
   }
 
   publish(id: string){

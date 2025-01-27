@@ -5,7 +5,7 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { NZ_I18N } from 'ng-zorro-antd/i18n';
 import { en_US } from 'ng-zorro-antd/i18n';
-import { registerLocaleData } from '@angular/common';
+import { CurrencyPipe, registerLocaleData } from '@angular/common';
 import en from '@angular/common/locales/en';
 import { FormsModule } from '@angular/forms';
 import { HTTP_INTERCEPTORS, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
@@ -32,6 +32,7 @@ registerLocaleData(en);
         LayoutModule,
         NzModalModule,
         NzSpinModule], providers: [
+            CurrencyPipe,
             ExcelService,
         { provide: NZ_I18N, useValue: en_US },
         { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },

@@ -242,7 +242,7 @@
 </nz-modal>
 
 <!-- onboard export modal -->
-<nz-modal [(nzVisible)]="isVisibleExport" nzTitle="Export Quotation" (nzOnCancel)="isVisibleDetail = false">
+<nz-modal [(nzVisible)]="isVisibleExport" nzTitle="Export Quotation" (nzOnCancel)="isVisibleExport = false">
   <div *nzModalContent>
     <div class="d-flex flex-column gap-3">
       <span class="fw-semibold">Choose Revision</span>
@@ -259,6 +259,7 @@
   </div>
   <div *nzModalFooter>
     <button nz-button nzType="default" (click)="isVisibleExport = false">Cancel</button>
-    <button nz-button nzType="primary" (click)="export(selectedDataBasic, detailQuotation, revision)">Export Quotation</button>
+    <button nz-button nzType="primary" (click)="export(selectedDataBasic, detailQuotation, revision, 'excel')" [disabled]="isLoadingExportList">Export as Excel</button>
+    <button nz-button nzType="primary" (click)="export(selectedDataBasic, detailQuotation, revision, 'pdf')" [disabled]="isLoadingExportList">Export as PDF</button>
   </div>
 </nz-modal>
