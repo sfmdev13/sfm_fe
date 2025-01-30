@@ -5,6 +5,7 @@ import { Observable, tap } from 'rxjs';
 import { ApiService } from 'src/app/api.service';
 import { AddQuotationComponent } from 'src/app/components/add-quotation/add-quotation.component';
 import { DetailQuotationComponent } from 'src/app/components/detail-quotation/detail-quotation.component';
+import { ExcelQuotationService } from 'src/app/excel-quotation.service';
 import { ExcelService } from 'src/app/excel.service';
 import { IDataCategories, IDataInventory, IDataQuotation, IDetailDataQuotation, IQuotation, IRootQuotation } from 'src/app/interfaces';
 import { IDataProject } from 'src/app/interfaces/project';
@@ -31,6 +32,7 @@ export class QuotationComponent implements OnInit {
   isLoadingRevList = true;
   isLoadingExportList = true;
   revision: string = 'RA';
+  document_type: 'RAB' | 'quotation' = 'RAB';
   detailQuotation: IDetailDataQuotation = {} as IDetailDataQuotation;
   selectedDataBasic: IDataQuotation = {} as IDataQuotation;
 
@@ -207,7 +209,8 @@ export class QuotationComponent implements OnInit {
     private modalService: NzModalService,
     private apiSvc: ApiService,
     private excelService: ExcelService,
-    private pdfRABService: PdfRabService
+    private pdfRABService: PdfRabService,
+    private excelQuotSvc: ExcelQuotationService
   ){}
 
   ngOnInit(): void {
@@ -228,12 +231,24 @@ export class QuotationComponent implements OnInit {
   }
 
   export(dataBasic: IDataQuotation, dataDetail: IDetailDataQuotation, revision: string, type: 'excel' | 'pdf'){
-    if(type === 'excel'){
-      this.excelService.generateExcel(dataBasic, dataDetail, revision, this.productCategory);
+    if(this.document_type === 'RAB'){
+      if(type === 'excel'){
+        this.excelService.generateExcel(dataBasic, dataDetail, revision, this.productCategory);
+      }
+      if(type === 'pdf'){
+        this.pdfRABService.generatePdf(dataBasic, dataDetail, revision, this.productCategory);
+      }
     }
-    if(type === 'pdf'){
-      this.pdfRABService.generatePdf(dataBasic, dataDetail, revision, this.productCategory);
+
+    if(this.document_type === 'quotation'){
+      if(type === 'excel'){
+        this.excelQuotSvc.generateExcel(dataBasic, dataDetail, revision, this.productCategory);
+      }
+      if(type === 'pdf'){
+        this.pdfRABService.generatePdf(dataBasic, dataDetail, revision, this.productCategory);
+      }
     }
+
   }
 
   publish(id: string){
