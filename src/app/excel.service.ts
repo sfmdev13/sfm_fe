@@ -1209,7 +1209,7 @@ export class ExcelService {
     // Save the workbook to a blob
     workbook.xlsx.writeBuffer().then((buffer) => {
       const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
-      saveAs(blob, `RAB-test.xlsx`);
+      saveAs(blob, `${dataBasic.quotation_no}R.xlsx`);
     });
   }
 }

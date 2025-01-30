@@ -39,7 +39,16 @@
       total_price_list: number;
       gross_margin: string | number;
       total_installation_price: number;
-    }[]
+    }[],
+    quotation_log: IQuotationLog[];
+  }
+
+  interface IQuotationLog{
+    quotation_id: string;
+    name: string;
+    revision: string;
+    message: string;
+    date: string
   }
 
   interface IProject{
