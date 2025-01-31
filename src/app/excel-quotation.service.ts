@@ -171,6 +171,14 @@ export class ExcelQuotationService {
       left: {style: 'thin'}
     }
 
+    worksheet.getCell('A2').border = {left: {style: 'thin'}}
+    worksheet.getCell('A3').border = {left: {style: 'thin'}}
+    worksheet.getCell('A4').border = {left: {style: 'thin'}}
+    worksheet.getCell('A5').border = {left: {style: 'thin'}}
+    worksheet.getCell('A6').border = {left: {style: 'thin'}}
+    worksheet.getCell('A7').border = {left: {style: 'thin'}}
+    worksheet.getCell('A8').border = {left: {style: 'thin'}}
+
     worksheet.getCell('G2').value = 'No Quotation';
     worksheet.getCell('G2').border = {
       top: {style: 'thin'},
@@ -1355,9 +1363,10 @@ export class ExcelQuotationService {
         right: { style: 'thin' }
       };
     
-      worksheet.getCell(`D${currentRow}`).border = {
+      worksheet.getCell(`H${currentRow}`).border = {
         right: { style: 'thin' }
       };
+      
     }
   
     currentRow++;
@@ -1374,7 +1383,7 @@ export class ExcelQuotationService {
       fgColor: { argb: 'ffffffff' },
     };
     worksheet.getCell(`A${currentRow}`).alignment = {horizontal: 'left'};
-    worksheet.getCell(`A${currentRow}`).border = { top: {style: 'thin'} };
+    worksheet.getCell(`A${currentRow}`).border = { top: {style: 'thin'}, left: {style: 'thin'} };
 
     worksheet.getCell(`B${currentRow}`).border = { top: {style: 'thin'} };
     worksheet.getCell(`B${currentRow}`).fill = {
@@ -1436,6 +1445,8 @@ export class ExcelQuotationService {
       pattern: 'solid',
       fgColor: { argb: 'ffffffff' },
     };
+
+    worksheet.getCell(`A${currentRow}`).border = { left: {style: 'thin'} };
 
     worksheet.getCell(`B${currentRow}`).fill = {
       type: 'pattern',
@@ -1501,6 +1512,8 @@ export class ExcelQuotationService {
       fgColor: { argb: 'ffffffff' },
     };
     worksheet.getCell(`A${currentRow}`).alignment = {horizontal: 'right'};
+
+    worksheet.getCell(`A${currentRow}`).border = { left: {style: 'thin'} };
 
 
     worksheet.getCell(`B${currentRow}`).value = 'Waktu Pengiriman: 45 Hari';
@@ -1572,6 +1585,7 @@ export class ExcelQuotationService {
       fgColor: { argb: 'ffffffff' },
     };
     worksheet.getCell(`A${currentRow}`).alignment = {horizontal: 'right'};
+    worksheet.getCell(`A${currentRow}`).border = {left: {style: 'thin'} };
 
 
     worksheet.getCell(`B${currentRow}`).value = 'Penawaran Berlaku: 2 Minggu';
@@ -1632,7 +1646,7 @@ export class ExcelQuotationService {
 
     currentRow++;
 
-    worksheet.getCell(`A${currentRow}`).value = '4';
+    worksheet.getCell(`A${currentRow}`).value = '3';
     worksheet.getCell(`A${currentRow}`).font = {
       name: 'Arial',
       size: 12
@@ -1643,6 +1657,7 @@ export class ExcelQuotationService {
       fgColor: { argb: 'ffffffff' },
     };
     worksheet.getCell(`A${currentRow}`).alignment = {horizontal: 'right'};
+    worksheet.getCell(`A${currentRow}`).border = { left: {style: 'thin'} };
 
 
     worksheet.getCell(`B${currentRow}`).value = 'Sifat Pekerjaan: Unit Price, Sesuai dengan lingkup Pekerjaan';
@@ -1722,6 +1737,7 @@ export class ExcelQuotationService {
       fgColor: { argb: 'ffffffff' },
     };
     worksheet.getCell(`A${currentRow}`).alignment = {horizontal: 'right'};
+    worksheet.getCell(`A${currentRow}`).border = { left: {style: 'thin'} };
 
 
     worksheet.getCell(`B${currentRow}`).value = 'Termin Pembayaran : DP 40%, MOS 60%';
@@ -1789,6 +1805,7 @@ export class ExcelQuotationService {
       fgColor: { argb: 'ffffffff' },
     };
     worksheet.getCell(`A${currentRow}`).alignment = {horizontal: 'right'};
+    worksheet.getCell(`A${currentRow}`).border = { left: {style: 'thin'} };
 
 
     worksheet.getCell(`B${currentRow}`).value = {
@@ -1867,6 +1884,8 @@ export class ExcelQuotationService {
       pattern: 'solid',
       fgColor: { argb: 'ffffffff' },
     };
+
+    worksheet.getCell(`A${currentRow}`).border = { left: {style: 'thin'} };
 
     worksheet.getCell(`B${currentRow}`).fill = {
       type: 'pattern',
@@ -2256,6 +2275,34 @@ export class ExcelQuotationService {
     )
     .subscribe((buffer) => {
       const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+      const file = new File(
+        [buffer], 
+        `${dataBasic.quotation_no}R.xlsx`, 
+        { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' }
+      );
+
+      const formData = new FormData();
+      formData.append('file', file);
+
+      this.apiSvc.convertToPdf(formData).subscribe({
+        next: (response) => {
+          const base64String = response.pdfBlob; // The Base64 string from your backend
+          const byteCharacters = atob(base64String.split(',')[1]); // Decode Base64
+          const byteNumbers = new Array(byteCharacters.length);
+
+          for (let i = 0; i < byteCharacters.length; i++) {
+            byteNumbers[i] = byteCharacters.charCodeAt(i);
+          }
+
+          const byteArray = new Uint8Array(byteNumbers);
+          const blob = new Blob([byteArray], { type: 'application/pdf' });
+
+          // Trigger file download
+          saveAs(blob, `${dataBasic.quotation_no}.pdf`);
+        },
+        error: (err) => {console.log(err)}
+      })
+
       saveAs(blob, `${dataBasic.quotation_no}.xlsx`);
     });
   }
