@@ -1649,4 +1649,27 @@ export class ApiService {
 
     return this.http.get<any>(url, { headers });
   }
+
+  createQuotationLog(body: any): Observable<any>{
+    const token = localStorage.getItem('authToken');
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+    })
+
+    const url = `${this.apiUrl}/create/quotation-log`;
+
+    return this.http.post<any>(url, body);
+  }
+
+  convertToPdf(body: any): Observable<any>{
+    const token = localStorage.getItem('authToken');
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+    })
+
+    const url = `${this.apiUrl}/convert/quotation-pdf`;
+
+    return this.http.post<any>(url, body, { headers });
+  }
+
 }

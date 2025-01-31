@@ -242,23 +242,33 @@
 </nz-modal>
 
 <!-- onboard export modal -->
-<nz-modal [(nzVisible)]="isVisibleExport" nzTitle="Export Quotation" (nzOnCancel)="isVisibleDetail = false">
+<nz-modal [(nzVisible)]="isVisibleExport" nzTitle="Export Quotation" (nzOnCancel)="isVisibleExport = false">
   <div *nzModalContent>
     <div class="d-flex flex-column gap-3">
-      <span class="fw-semibold">Choose Revision</span>
       <ng-container *ngIf="!isLoadingExportList; else loadRevList">
-        <nz-select nzShowSearch nzAllowClear nzPlaceHolder="Select Revision" style="width: 320px;" [(ngModel)]="revision">
-          <nz-option *ngFor="let rev of revisionList" [nzLabel]="rev" [nzValue]="rev"></nz-option>
-        </nz-select>  
+        <span class="fw-semibold">Choose Revision</span>
+          <nz-select nzShowSearch nzAllowClear nzPlaceHolder="Select Revision" style="width: 320px;" [(ngModel)]="revision">
+            <nz-option *ngFor="let rev of revisionList" [nzLabel]="rev" [nzValue]="rev"></nz-option>
+          </nz-select>
+
+        <span class="fw-semibold mt-2">Choose Document</span>
+          <nz-select nzShowSearch nzAllowClear nzPlaceHolder="Select Document" style="width: 320px;" [(ngModel)]="document_type">
+            <nz-option [nzLabel]="'RAB'" [nzValue]="'RAB'"></nz-option>
+            <nz-option [nzLabel]="'Quotation'" [nzValue]="'quotation'"></nz-option>
+          </nz-select>  
       </ng-container>
       <ng-template #loadRevList>
+        <span class="fw-semibold">Choose Revision</span>
         <nz-select nzShowSearch nzAllowClear nzPlaceHolder="loading..." style="width: 320px;" [(ngModel)]="revision" nzDisabled>
         </nz-select>  
+        <span class="fw-semibold mt-2">Choose Document</span>
+        <nz-select nzShowSearch nzAllowClear nzPlaceHolder="loading..." style="width: 320px;" [(ngModel)]="document_type" nzDisabled></nz-select>
       </ng-template>
     </div>
   </div>
   <div *nzModalFooter>
     <button nz-button nzType="default" (click)="isVisibleExport = false">Cancel</button>
-    <button nz-button nzType="primary" (click)="export(selectedDataBasic, detailQuotation, revision)">Export Quotation</button>
+    <button nz-button nzType="primary" (click)="export(selectedDataBasic, detailQuotation, revision, 'excel')" [disabled]="isLoadingExportList">Export as Excel</button>
+    <button nz-button nzType="primary" (click)="export(selectedDataBasic, detailQuotation, revision, 'pdf')" [disabled]="isLoadingExportList">Export as PDF</button>
   </div>
 </nz-modal>

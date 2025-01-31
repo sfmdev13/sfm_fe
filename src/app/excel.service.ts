@@ -2,12 +2,13 @@ import { Injectable } from '@angular/core';
 import * as ExcelJS from 'exceljs';
 import { saveAs } from 'file-saver';
 import { IDataCategories, IDataQuotation, IDetailDataQuotation } from './interfaces';
+import { ApiService } from './api.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ExcelService {
-  constructor() {}
+  constructor(private apiSvc: ApiService) {}
   generateExcel(
     dataBasic: IDataQuotation, 
     dataDetail: IDetailDataQuotation, 
@@ -264,10 +265,6 @@ export class ExcelService {
       pattern: 'solid',
       fgColor: { argb: 'ffd9d9d9' },
     };
-
-
-    console.log(dataBasic);
-    console.log(dataDetail);
 
     const sortedProductCategory = [...productCategory].sort((a, b) => parseInt(a.level ?? '0') - parseInt(b.level ?? '0'));
     let currentRow = 10; // Start from row 9
@@ -1213,7 +1210,38 @@ export class ExcelService {
     // Save the workbook to a blob
     workbook.xlsx.writeBuffer().then((buffer) => {
       const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
-      saveAs(blob, `RAB-test.xlsx`);
+      saveAs(blob, `${dataBasic.quotation_no}R.xlsx`);
     });
+
+    // workbook.xlsx.writeBuffer().then((buffer) => {
+    //   const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+    //   const file = new File(
+    //     [buffer], 
+    //     `${dataBasic.quotation_no}R.xlsx`, 
+    //     { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' }
+    //   );
+
+    //   const formData = new FormData();
+    //   formData.append('file', file);
+
+    //   // Example API call
+    //   this.apiSvc.convertToPdf(formData).subscribe({
+    //     next: (response) => {
+    //       const base64String = response.pdfBlob; // The Base64 string from your backend
+    //       const byteCharacters = atob(base64String.split(',')[1]); // Decode Base64
+    //       const byteNumbers = new Array(byteCharacters.length);
+
+    //       for (let i = 0; i < byteCharacters.length; i++) {
+    //         byteNumbers[i] = byteCharacters.charCodeAt(i);
+    //       }
+
+    //       const byteArray = new Uint8Array(byteNumbers);
+    //       const blob = new Blob([byteArray], { type: 'application/pdf' });
+
+    //       // Trigger file download
+    //       saveAs(blob, `${dataBasic.quotation_no}R.pdf`);
+    //     },
+    //     error: (err) => {console.log(err)}
+    //   })
   }
 }

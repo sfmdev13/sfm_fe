@@ -5,9 +5,11 @@ import { Observable, tap } from 'rxjs';
 import { ApiService } from 'src/app/api.service';
 import { AddQuotationComponent } from 'src/app/components/add-quotation/add-quotation.component';
 import { DetailQuotationComponent } from 'src/app/components/detail-quotation/detail-quotation.component';
+import { ExcelQuotationService } from 'src/app/excel-quotation.service';
 import { ExcelService } from 'src/app/excel.service';
 import { IDataCategories, IDataInventory, IDataQuotation, IDetailDataQuotation, IQuotation, IRootQuotation } from 'src/app/interfaces';
 import { IDataProject } from 'src/app/interfaces/project';
+import { PdfRabService } from 'src/app/pdf-rab.service';
 
 @Component({
   selector: 'app-quotation',
@@ -30,6 +32,7 @@ export class QuotationComponent implements OnInit {
   isLoadingRevList = true;
   isLoadingExportList = true;
   revision: string = 'RA';
+  document_type: 'RAB' | 'quotation' = 'RAB';
   detailQuotation: IDetailDataQuotation = {} as IDetailDataQuotation;
   selectedDataBasic: IDataQuotation = {} as IDataQuotation;
 
@@ -205,7 +208,9 @@ export class QuotationComponent implements OnInit {
     private drawerService: NzDrawerService,
     private modalService: NzModalService,
     private apiSvc: ApiService,
-    private excelService: ExcelService
+    private excelService: ExcelService,
+    private pdfRABService: PdfRabService,
+    private excelQuotSvc: ExcelQuotationService
   ){}
 
   ngOnInit(): void {
@@ -225,8 +230,62 @@ export class QuotationComponent implements OnInit {
     })
   }
 
-  export(dataBasic: IDataQuotation, dataDetail: IDetailDataQuotation, revision: string){
-    this.excelService.generateExcel(dataBasic, dataDetail, revision, this.productCategory);
+  export(dataBasic: IDataQuotation, dataDetail: IDetailDataQuotation, revision: string, type: 'excel' | 'pdf'){
+    if(this.document_type === 'RAB'){
+      if(type === 'excel'){
+        const body = {
+          quotation_id: dataBasic.id,
+          type: 'excel',
+          document_type: 'rab'
+        }
+        this.apiSvc.createQuotationLog(body).subscribe({
+          next: () => {
+            this.excelService.generateExcel(dataBasic, dataDetail, revision, this.productCategory);
+          }
+        })
+      }
+      if(type === 'pdf'){
+        const body = {
+          quotation_id: dataBasic.id,
+          type: 'pdf',
+          document_type: 'rab'
+        }
+        this.apiSvc.createQuotationLog(body).subscribe({
+          next: () => {
+            this.pdfRABService.generatePdf(dataBasic, dataDetail, revision, this.productCategory);
+          }
+        })
+      }
+    }
+
+    if(this.document_type === 'quotation'){
+      if(type === 'excel'){
+        const body = {
+          quotation_id: dataBasic.id,
+          type: 'excel',
+          document_type: 'quotation'
+        }
+        this.apiSvc.createQuotationLog(body).subscribe({
+          next: () => {
+            this.excelQuotSvc.generateExcel(dataBasic, dataDetail, revision, this.productCategory);
+          }
+        })
+
+      }
+      if(type === 'pdf'){
+        const body = {
+          quotation_id: dataBasic.id,
+          type: 'pdf',
+          document_type: 'quotation'
+        }
+        this.apiSvc.createQuotationLog(body).subscribe({
+          next: () => {
+            this.pdfRABService.generatePdf(dataBasic, dataDetail, revision, this.productCategory);
+          }
+        })
+      }
+    }
+
   }
 
   publish(id: string){

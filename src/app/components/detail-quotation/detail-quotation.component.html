@@ -448,26 +448,26 @@
         </ng-container>
 >
         <nz-tab nzTitle="Revision Log">
-            <ng-container *ngFor="let log of logMsg">                
-                <div>
-                    <nz-table #basicTable [nzData]="log.changes" nzBordered>
-                        <thead>
-                          <tr>
-                            <th>Name</th>
-                            <th>Message</th>
-                            <th>Revision</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                            <tr *ngFor="let data of basicTable.data" >
-                              <td>{{ data.name }}</td>
-                              <td>{{ data.message }}</td>
-                              <td>{{ data.revision }}</td>
-                            </tr>
-                        </tbody>
-                      </nz-table>
-                </div>
-            </ng-container>
+            <div>
+                <nz-table #basicTable [nzData]="dataDetail.quotation_log" nzBordered>
+                    <thead>
+                      <tr>
+                        <th>Name</th>
+                        <th>Message</th>
+                        <th>Date</th>
+                        <th>Revision</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let data of basicTable.data" >
+                          <td>{{ data.name }}</td>
+                          <td>{{ data.revision }}</td>
+                          <td>{{ data.date }}</td>
+                          <td>{{ data.message }}</td>
+                        </tr>
+                    </tbody>
+                  </nz-table>
+            </div>
         </nz-tab>
     </nz-tabset>
 
