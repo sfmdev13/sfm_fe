@@ -14,6 +14,7 @@
     customer: Customer;
     quotation_revision: IQuotation[];
     quotation_stack: DetailQuotationStack[];
+    quotation_log: IQuotationLog[];
   }
 
   export interface IRootQuotation {

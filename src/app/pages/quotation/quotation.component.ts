@@ -233,19 +233,56 @@ export class QuotationComponent implements OnInit {
   export(dataBasic: IDataQuotation, dataDetail: IDetailDataQuotation, revision: string, type: 'excel' | 'pdf'){
     if(this.document_type === 'RAB'){
       if(type === 'excel'){
-        this.excelService.generateExcel(dataBasic, dataDetail, revision, this.productCategory);
+        const body = {
+          quotation_id: dataBasic.id,
+          type: 'excel',
+          document_type: 'rab'
+        }
+        this.apiSvc.createQuotationLog(body).subscribe({
+          next: () => {
+            this.excelService.generateExcel(dataBasic, dataDetail, revision, this.productCategory);
+          }
+        })
       }
       if(type === 'pdf'){
-        this.pdfRABService.generatePdf(dataBasic, dataDetail, revision, this.productCategory);
+        const body = {
+          quotation_id: dataBasic.id,
+          type: 'pdf',
+          document_type: 'rab'
+        }
+        this.apiSvc.createQuotationLog(body).subscribe({
+          next: () => {
+            this.pdfRABService.generatePdf(dataBasic, dataDetail, revision, this.productCategory);
+          }
+        })
       }
     }
 
     if(this.document_type === 'quotation'){
       if(type === 'excel'){
-        this.excelQuotSvc.generateExcel(dataBasic, dataDetail, revision, this.productCategory);
+        const body = {
+          quotation_id: dataBasic.id,
+          type: 'excel',
+          document_type: 'quotation'
+        }
+        this.apiSvc.createQuotationLog(body).subscribe({
+          next: () => {
+            this.excelQuotSvc.generateExcel(dataBasic, dataDetail, revision, this.productCategory);
+          }
+        })
+
       }
       if(type === 'pdf'){
-        this.pdfRABService.generatePdf(dataBasic, dataDetail, revision, this.productCategory);
+        const body = {
+          quotation_id: dataBasic.id,
+          type: 'pdf',
+          document_type: 'quotation'
+        }
+        this.apiSvc.createQuotationLog(body).subscribe({
+          next: () => {
+            this.pdfRABService.generatePdf(dataBasic, dataDetail, revision, this.productCategory);
+          }
+        })
       }
     }
 

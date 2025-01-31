@@ -2,12 +2,13 @@ import { Injectable } from '@angular/core';
 import * as ExcelJS from 'exceljs';
 import { saveAs } from 'file-saver';
 import { IDataCategories, IDataQuotation, IDetailDataQuotation } from './interfaces';
+import { ApiService } from './api.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ExcelService {
-  constructor() {}
+  constructor(private apiSvc: ApiService) {}
   generateExcel(
     dataBasic: IDataQuotation, 
     dataDetail: IDetailDataQuotation, 
@@ -1209,6 +1210,20 @@ export class ExcelService {
     // Save the workbook to a blob
     workbook.xlsx.writeBuffer().then((buffer) => {
       const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+      const file = new File(
+        [buffer], 
+        `${dataBasic.quotation_no}R.xlsx`, 
+        { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' }
+      );
+
+      const formData = new FormData();
+      formData.append('file', file);
+
+      // Example API call
+      this.apiSvc.convertToPdf(formData).subscribe({
+        next: () => {},
+        error: (err) => {console.log(err)}
+      })
       saveAs(blob, `${dataBasic.quotation_no}R.xlsx`);
     });
   }
