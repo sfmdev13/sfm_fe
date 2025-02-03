@@ -3,17 +3,19 @@ import * as ExcelJS from 'exceljs';
 import { saveAs } from 'file-saver';
 import { IDataCategories, IDataQuotation, IDetailDataQuotation } from './interfaces';
 import { ApiService } from './api.service';
+import { DatePipe } from '@angular/common';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ExcelService {
-  constructor(private apiSvc: ApiService) {}
+  constructor(private apiSvc: ApiService, private datePipe: DatePipe) {}
   generateExcel(
     dataBasic: IDataQuotation, 
     dataDetail: IDetailDataQuotation, 
     revision: string, 
-    productCategory: IDataCategories[]
+    productCategory: IDataCategories[],
+    fileType: 'excel' | 'pdf'
   ): void {
     const workbook = new ExcelJS.Workbook();
     const worksheet = workbook.addWorksheet('Sheet 1');
@@ -220,7 +222,7 @@ export class ExcelService {
       bold: true
     };
 
-    worksheet.getCell('C9').alignment = { wrapText: true };
+    worksheet.getCell('C9').alignment = { wrapText: true, vertical: 'top' };
 
     worksheet.mergeCells('C9:J9');
 
@@ -326,7 +328,7 @@ export class ExcelService {
         bold: true,
       };
 
-      worksheet.getCell(`N${currentRow}`).alignment = { horizontal: 'center', vertical: 'middle' };
+      worksheet.getCell(`N${currentRow}`).alignment = { vertical: 'middle' };
 
       worksheet.getCell(`N${currentRow}`).border = {
         left: { style: 'thin' },
@@ -359,6 +361,7 @@ export class ExcelService {
             };
   
             // Column title for inventory
+            worksheet.mergeCells(`C${currentRow}:J${currentRow}`);
             worksheet.getCell(`C${currentRow}`).value = `- ${item.inventory.description}`;
             worksheet.getCell(`C${currentRow}`).font = {
               name: 'Arial',
@@ -462,7 +465,7 @@ export class ExcelService {
       bold: true
     };
 
-    worksheet.getCell(`C${currentRowInst}`).alignment = { wrapText: true };
+    worksheet.getCell(`C${currentRowInst}`).alignment = { wrapText: true, vertical: 'top' };
 
     worksheet.mergeCells(`C${currentRowInst}:J${currentRowInst}`);
 
@@ -539,12 +542,16 @@ export class ExcelService {
     
     worksheet.getCell(`K${currentRowInst}`).value = 1;
 
+    worksheet.getCell(`K${currentRowInst}`).alignment = {horizontal: 'center'};
+
     worksheet.getCell(`K${currentRowInst}`).border = {
       left: { style: 'thin' },
       right: { style: 'thin' },
     };
 
     worksheet.getCell(`L${currentRowInst}`).value = 'LS';
+
+    worksheet.getCell(`L${currentRowInst}`).alignment = { horizontal: 'center' };
 
     worksheet.getCell(`L${currentRowInst}`).border = {
       left: { style: 'thin' },
@@ -582,11 +589,18 @@ export class ExcelService {
       };
 
       // Column title for inventory
+
+      worksheet.mergeCells(`C${currentRowInst}:J${currentRowInst}`)
+
+      worksheet.getRow(currentRowInst).height = 36;
+
       worksheet.getCell(`C${currentRowInst}`).value = `- ${install}`;
       worksheet.getCell(`C${currentRowInst}`).font = {
         name: 'Arial',
         size: 11,
       };
+
+      worksheet.getCell(`C${currentRowInst}`).alignment = {wrapText: true}
 
       //Column qty
 
@@ -655,6 +669,8 @@ export class ExcelService {
     
     worksheet.getCell(`K${currentRowInst}`).value = 1;
 
+    worksheet.getCell(`K${currentRowInst}`).alignment = { horizontal: 'center'}
+
     worksheet.getCell(`K${currentRowInst}`).border = {
       left: { style: 'thin' },
       right: { style: 'thin' },
@@ -666,6 +682,8 @@ export class ExcelService {
       left: { style: 'thin' },
       right: { style: 'thin' },
     };
+
+    worksheet.getCell(`L${currentRowInst}`).alignment = { horizontal: 'center'}
 
     worksheet.getCell(`M${currentRowInst}`).border = {
       left: { style: 'thin' },
@@ -695,7 +713,10 @@ export class ExcelService {
         left: { style: 'thin' },
         right: { style: 'thin' },
       };
-    
+
+
+      worksheet.mergeCells(`C${currentRowInst}:J${currentRowInst}`);
+
       worksheet.getCell(`C${currentRowInst}`).value = `Pemasangan ${cat.description}`;
       worksheet.getCell(`C${currentRowInst}`).font = {
         name: 'Arial',
@@ -704,7 +725,6 @@ export class ExcelService {
       };
       worksheet.getCell(`C${currentRowInst}`).alignment = { wrapText: true, vertical: 'top' };
 
-      worksheet.mergeCells(`C${currentRowInst}:J${currentRowInst}`);
     
       worksheet.getCell(`K${currentRowInst}`).border = {
         left: { style: 'thin' },
@@ -721,7 +741,7 @@ export class ExcelService {
 
       dataBasic.total_supplier_product.forEach((data) => {
         if(data.id === cat.id){
-          if(data.total_price !== 0){
+          if(data.total_installation_price !== 0){
             worksheet.getCell(`N${currentRowInst}`).value = parseFloat(data.total_installation_price.toFixed(2));
             worksheet.getCell(`N${currentRowInst}`).numFmt = '_("Rp"* #,##0.00_);_("Rp"* (#,##0.00);_("Rp"* "-"??_);_(@_)'; 
           }
@@ -734,7 +754,7 @@ export class ExcelService {
         bold: true,
       };
 
-      worksheet.getCell(`N${currentRowInst}`).alignment = { horizontal: 'center', vertical: 'middle' };
+      worksheet.getCell(`N${currentRowInst}`).alignment = { vertical: 'middle' };
 
       worksheet.getCell(`N${currentRowInst}`).border = {
         left: { style: 'thin' },
@@ -762,7 +782,9 @@ export class ExcelService {
               left: { style: 'thin' },
               right: { style: 'thin' },
             };
-  
+
+            worksheet.mergeCells(`C${currentRowInst}:J${currentRowInst}`);
+
             // Column title for inventory
             worksheet.getCell(`C${currentRowInst}`).value = `- ${item.inventory.description}`;
             worksheet.getCell(`C${currentRowInst}`).font = {
@@ -955,12 +977,16 @@ export class ExcelService {
     
     worksheet.getCell(`K${currentRowInst}`).value = 1;
 
+    worksheet.getCell(`K${currentRowInst}`).alignment = { horizontal: 'center' }
+
     worksheet.getCell(`K${currentRowInst}`).border = {
       left: { style: 'thin' },
       right: { style: 'thin' },
     };
 
     worksheet.getCell(`L${currentRowInst}`).value = 'lot';
+
+    worksheet.getCell(`L${currentRowInst}`).alignment = { horizontal: 'center' }
 
     worksheet.getCell(`L${currentRowInst}`).border = {
       left: { style: 'thin' },
@@ -1185,7 +1211,7 @@ export class ExcelService {
       right: {style:'thin'},
     };
     worksheet.mergeCells(`M${currentRowInst+1}:N${currentRowInst+1}`);
-    worksheet.getCell(`M${currentRowInst+1}`).value = 'Jakarta 20 Desember 2022';
+    worksheet.getCell(`M${currentRowInst+1}`).value = `Jakarta, ${this.datePipe.transform(new Date(), 'dd MMMM yyyy') || ''}`;
     worksheet.getCell(`M${currentRowInst+1}`).alignment = {horizontal: 'center'};
     worksheet.getCell(`M${currentRowInst+1}`).border = {
       right: {style:'thin'},
@@ -1205,14 +1231,14 @@ export class ExcelService {
       right: {style:'thin'},
     };
 
-    worksheet.getCell(`M${currentRowInst+8}`).value = '(Akwin Indra)';
+    worksheet.getCell(`M${currentRowInst+8}`).value = dataBasic.project.pic.filter((p) => p.is_pic_internal === 1).map((p) => (p.name))[0];
     worksheet.getCell(`M${currentRowInst+8}`).alignment = {horizontal: 'center'};
     worksheet.getCell(`M${currentRowInst+8}`).border = {
       right: {style:'thin'},
     };
     worksheet.mergeCells(`M${currentRowInst+8}:N${currentRowInst+8}`);
 
-    worksheet.getCell(`M${currentRowInst+9}`).value = 'General Manager';
+    worksheet.getCell(`M${currentRowInst+9}`).value = 'Area Sales Manager';
     worksheet.getCell(`M${currentRowInst+9}`).alignment = {horizontal: 'center'};
     worksheet.getCell(`M${currentRowInst+9}`).border = {
       right: {style:'thin'},
@@ -1240,57 +1266,31 @@ export class ExcelService {
       const formData = new FormData();
       formData.append('file', file);
 
-      this.apiSvc.convertToPdf(formData).subscribe({
-        next: (response) => {
-          const base64String = response.pdfBlob; // The Base64 string from your backend
-          const byteCharacters = atob(base64String.split(',')[1]); // Decode Base64
-          const byteNumbers = new Array(byteCharacters.length);
+      if(fileType === 'pdf'){
+        this.apiSvc.convertToPdf(formData).subscribe({
+          next: (response) => {
+            const base64String = response.pdfBlob; // The Base64 string from your backend
+            const byteCharacters = atob(base64String.split(',')[1]); // Decode Base64
+            const byteNumbers = new Array(byteCharacters.length);
+  
+            for (let i = 0; i < byteCharacters.length; i++) {
+              byteNumbers[i] = byteCharacters.charCodeAt(i);
+            }
+  
+            const byteArray = new Uint8Array(byteNumbers);
+            const blob = new Blob([byteArray], { type: 'application/pdf' });
+  
+            // Trigger file download
+            saveAs(blob, `${dataBasic.quotation_no}R.pdf`);
+          },
+          error: (err) => {console.log(err)}
+        })
+      }
 
-          for (let i = 0; i < byteCharacters.length; i++) {
-            byteNumbers[i] = byteCharacters.charCodeAt(i);
-          }
 
-          const byteArray = new Uint8Array(byteNumbers);
-          const blob = new Blob([byteArray], { type: 'application/pdf' });
-
-          // Trigger file download
-          saveAs(blob, `${dataBasic.quotation_no}R.pdf`);
-        },
-        error: (err) => {console.log(err)}
-      })
-
-      saveAs(blob, `${dataBasic.quotation_no}R.xlsx`);
+      if(fileType === 'excel'){
+        saveAs(blob, `${dataBasic.quotation_no}R.xlsx`);
+      }
     });
-
-    // workbook.xlsx.writeBuffer().then((buffer) => {
-    //   const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
-    //   const file = new File(
-    //     [buffer], 
-    //     `${dataBasic.quotation_no}R.xlsx`, 
-    //     { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' }
-    //   );
-
-    //   const formData = new FormData();
-    //   formData.append('file', file);
-
-    //   // Example API call
-    //   this.apiSvc.convertToPdf(formData).subscribe({
-    //     next: (response) => {
-    //       const base64String = response.pdfBlob; // The Base64 string from your backend
-    //       const byteCharacters = atob(base64String.split(',')[1]); // Decode Base64
-    //       const byteNumbers = new Array(byteCharacters.length);
-
-    //       for (let i = 0; i < byteCharacters.length; i++) {
-    //         byteNumbers[i] = byteCharacters.charCodeAt(i);
-    //       }
-
-    //       const byteArray = new Uint8Array(byteNumbers);
-    //       const blob = new Blob([byteArray], { type: 'application/pdf' });
-
-    //       // Trigger file download
-    //       saveAs(blob, `${dataBasic.quotation_no}R.pdf`);
-    //     },
-    //     error: (err) => {console.log(err)}
-    //   })
   }
 }

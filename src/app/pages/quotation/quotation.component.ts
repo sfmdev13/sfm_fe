@@ -240,7 +240,7 @@ export class QuotationComponent implements OnInit {
         }
         this.apiSvc.createQuotationLog(body).subscribe({
           next: () => {
-            this.excelService.generateExcel(dataBasic, dataDetail, revision, this.productCategory);
+            this.excelService.generateExcel(dataBasic, dataDetail, revision, this.productCategory, type);
           }
         })
       }
@@ -252,7 +252,7 @@ export class QuotationComponent implements OnInit {
         }
         this.apiSvc.createQuotationLog(body).subscribe({
           next: () => {
-            this.pdfRABService.generatePdf(dataBasic, dataDetail, revision, this.productCategory);
+            this.excelService.generateExcel(dataBasic, dataDetail, revision, this.productCategory, type);
           }
         })
       }
