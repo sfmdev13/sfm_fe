@@ -1253,6 +1253,42 @@ export class ExcelService {
     };
 
 
+    if(fileType === 'pdf'){
+      const pageBreakRows = [72];
+
+      let nextBreak = 72; 
+      const rowInterval = 72;
+    
+      while (nextBreak + rowInterval < currentRowInst) {
+        nextBreak += rowInterval;
+        pageBreakRows.push(nextBreak);
+      }
+    
+    
+      // Apply borders on each page break
+      pageBreakRows.forEach((breakRow) => {
+        const rowBot = worksheet.getRow(breakRow);  // Bottom row of page
+        const rowTop = worksheet.getRow(breakRow - 1);  // Top row of next page
+    
+        for (let col = 2; col <= 14; col++) {  // Columns B to N
+          // Bottom row (Top Border)
+          rowBot.getCell(col).border = {
+            top: { style: 'thin' },
+            right: { style: 'thin' },
+            left: { style: 'thin' },
+          };
+    
+          // Top row (Bottom Border)
+          rowTop.getCell(col).border = {
+            bottom: { style: 'thin' },
+            right: { style: 'thin' },
+            left: { style: 'thin' },
+          };
+        }
+      });
+    }
+
+
     // Save the workbook to a blob
     workbook.xlsx.writeBuffer().then((buffer) => {
       const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
