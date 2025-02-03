@@ -3,23 +3,27 @@ import * as ExcelJS from 'exceljs';
 import { saveAs } from 'file-saver';
 import { IDataCategories, IDataQuotation, IDetailDataQuotation } from './interfaces';
 import { ApiService } from './api.service';
+import { DatePipe } from '@angular/common';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ExcelService {
-  constructor(private apiSvc: ApiService) {}
+  constructor(private apiSvc: ApiService, private datePipe: DatePipe) {}
   generateExcel(
     dataBasic: IDataQuotation, 
     dataDetail: IDetailDataQuotation, 
     revision: string, 
-    productCategory: IDataCategories[]
+    productCategory: IDataCategories[],
+    fileType: 'excel' | 'pdf'
   ): void {
     const workbook = new ExcelJS.Workbook();
     const worksheet = workbook.addWorksheet('Sheet 1');
 
     let totalGrandInstallation = 0;
     let totalGrandPrice = 0;
+    const sortOrder = ['Elbow', 'Reducer', 'Branch'];
+
     // title
     worksheet.getCell('B2').value = 'RINCIAN RENCANA ANGGARAN BIAYA (RAB)';
     worksheet.getCell('B2').font = {
@@ -218,7 +222,7 @@ export class ExcelService {
       bold: true
     };
 
-    worksheet.getCell('C9').alignment = { wrapText: true };
+    worksheet.getCell('C9').alignment = { wrapText: true, vertical: 'top' };
 
     worksheet.mergeCells('C9:J9');
 
@@ -324,7 +328,7 @@ export class ExcelService {
         bold: true,
       };
 
-      worksheet.getCell(`N${currentRow}`).alignment = { horizontal: 'center', vertical: 'middle' };
+      worksheet.getCell(`N${currentRow}`).alignment = { vertical: 'middle' };
 
       worksheet.getCell(`N${currentRow}`).border = {
         left: { style: 'thin' },
@@ -338,61 +342,71 @@ export class ExcelService {
         if (data.revision === revision) {
           totalGrandInstallation = parseFloat(parseFloat(data.total_installation_price_after_discount).toFixed(2))
           totalGrandPrice = parseFloat(parseFloat(data.total_price_after_discount).toFixed(2))
-          data.quotation_items.forEach((item) => {
-            if (cat.id === item.inventory.supplier_product.id) {
-              // Column number for inventory
-              worksheet.getCell(`B${currentRow}`).border = {
-                left: { style: 'thin' },
-                right: { style: 'thin' },
-              };
-    
-              // Column title for inventory
-              worksheet.getCell(`C${currentRow}`).value = `- ${item.inventory.description}`;
-              worksheet.getCell(`C${currentRow}`).font = {
-                name: 'Arial',
-                size: 11,
-              };
-    
-              //Column qty
-              worksheet.getCell(`K${currentRow}`).value = parseFloat(item.qty);
-              worksheet.getCell(`K${currentRow}`).font = {
-                name: 'Arial',
-                size: 11,
-                color: { argb: 'ffff6347' },
-              };
-              worksheet.getCell(`K${currentRow}`).border = {
-                left: { style: 'thin' },
-                right: { style: 'thin' },
-              };
-
-              worksheet.getCell(`K${currentRow}`).alignment = {horizontal: 'center'}
-
-              //Column Unit
-              worksheet.getCell(`L${currentRow}`).value = item.inventory.unit.name;
-              worksheet.getCell(`L${currentRow}`).alignment = {horizontal: 'center'}
-              worksheet.getCell(`L${currentRow}`).border = {
-                left: { style: 'thin' },
-                right: { style: 'thin' },
-              };
-
-              //Column Unit Price
-              worksheet.getCell(`M${currentRow}`).value = parseFloat(item.inventory.default_selling_price);
-              worksheet.getCell(`M${currentRow}`).numFmt = '_("Rp"* #,##0.00_);_("Rp"* (#,##0.00);_("Rp"* "-"??_);_(@_)'; 
-              worksheet.getCell(`M${currentRow}`).border = {
-                left: { style: 'thin' },
-                right: { style: 'thin' },
-              };
-
-              //Column Total Selling Price
-              worksheet.getCell(`N${currentRow}`).value = parseFloat(item.total_price_per_product_after_discount);
-              worksheet.getCell(`N${currentRow}`).numFmt = '_("Rp"* #,##0.00_);_("Rp"* (#,##0.00);_("Rp"* "-"??_);_(@_)'; 
-              worksheet.getCell(`N${currentRow}`).border = {
-                left: { style: 'thin' },
-                right: { style: 'thin' },
-              };
-    
-              currentRow++; // Move to the next row after each inventory item
+          data.quotation_items
+          .filter((item) => cat.id === item.inventory.supplier_product.id) // Filter first
+          .sort((a, b) => {
+            if (cat.name.toLowerCase() === 'fitting') {
+              const indexA = sortOrder.findIndex((order) => a.inventory.sub_category.name === order);
+              const indexB = sortOrder.findIndex((order) => b.inventory.sub_category.name === order);
+        
+              return (indexA === -1 ? sortOrder.length : indexA) - (indexB === -1 ? sortOrder.length : indexB);
             }
+            return 0; // No sorting if not 'fitting'
+          })
+          .forEach((item) => {
+            // Column number for inventory
+            worksheet.getCell(`B${currentRow}`).border = {
+              left: { style: 'thin' },
+              right: { style: 'thin' },
+            };
+  
+            // Column title for inventory
+            worksheet.mergeCells(`C${currentRow}:J${currentRow}`);
+            worksheet.getCell(`C${currentRow}`).value = `- ${item.inventory.description}`;
+            worksheet.getCell(`C${currentRow}`).font = {
+              name: 'Arial',
+              size: 11,
+            };
+  
+            //Column qty
+            worksheet.getCell(`K${currentRow}`).value = parseFloat(item.qty);
+            worksheet.getCell(`K${currentRow}`).font = {
+              name: 'Arial',
+              size: 11,
+              color: { argb: 'ffff6347' },
+            };
+            worksheet.getCell(`K${currentRow}`).border = {
+              left: { style: 'thin' },
+              right: { style: 'thin' },
+            };
+
+            worksheet.getCell(`K${currentRow}`).alignment = {horizontal: 'center'}
+
+            //Column Unit
+            worksheet.getCell(`L${currentRow}`).value = item.inventory.unit.name;
+            worksheet.getCell(`L${currentRow}`).alignment = {horizontal: 'center'}
+            worksheet.getCell(`L${currentRow}`).border = {
+              left: { style: 'thin' },
+              right: { style: 'thin' },
+            };
+
+            //Column Unit Price
+            worksheet.getCell(`M${currentRow}`).value = parseFloat(item.inventory.default_selling_price);
+            worksheet.getCell(`M${currentRow}`).numFmt = '_("Rp"* #,##0.00_);_("Rp"* (#,##0.00);_("Rp"* "-"??_);_(@_)'; 
+            worksheet.getCell(`M${currentRow}`).border = {
+              left: { style: 'thin' },
+              right: { style: 'thin' },
+            };
+
+            //Column Total Selling Price
+            worksheet.getCell(`N${currentRow}`).value = parseFloat(item.total_price_per_product_after_discount);
+            worksheet.getCell(`N${currentRow}`).numFmt = '_("Rp"* #,##0.00_);_("Rp"* (#,##0.00);_("Rp"* "-"??_);_(@_)'; 
+            worksheet.getCell(`N${currentRow}`).border = {
+              left: { style: 'thin' },
+              right: { style: 'thin' },
+            };
+  
+            currentRow++; // Move to the next row after each inventory item
           });
         }
       });
@@ -451,7 +465,7 @@ export class ExcelService {
       bold: true
     };
 
-    worksheet.getCell(`C${currentRowInst}`).alignment = { wrapText: true };
+    worksheet.getCell(`C${currentRowInst}`).alignment = { wrapText: true, vertical: 'top' };
 
     worksheet.mergeCells(`C${currentRowInst}:J${currentRowInst}`);
 
@@ -528,12 +542,16 @@ export class ExcelService {
     
     worksheet.getCell(`K${currentRowInst}`).value = 1;
 
+    worksheet.getCell(`K${currentRowInst}`).alignment = {horizontal: 'center'};
+
     worksheet.getCell(`K${currentRowInst}`).border = {
       left: { style: 'thin' },
       right: { style: 'thin' },
     };
 
     worksheet.getCell(`L${currentRowInst}`).value = 'LS';
+
+    worksheet.getCell(`L${currentRowInst}`).alignment = { horizontal: 'center' };
 
     worksheet.getCell(`L${currentRowInst}`).border = {
       left: { style: 'thin' },
@@ -571,11 +589,18 @@ export class ExcelService {
       };
 
       // Column title for inventory
+
+      worksheet.mergeCells(`C${currentRowInst}:J${currentRowInst}`)
+
+      worksheet.getRow(currentRowInst).height = 36;
+
       worksheet.getCell(`C${currentRowInst}`).value = `- ${install}`;
       worksheet.getCell(`C${currentRowInst}`).font = {
         name: 'Arial',
         size: 11,
       };
+
+      worksheet.getCell(`C${currentRowInst}`).alignment = {wrapText: true}
 
       //Column qty
 
@@ -644,6 +669,8 @@ export class ExcelService {
     
     worksheet.getCell(`K${currentRowInst}`).value = 1;
 
+    worksheet.getCell(`K${currentRowInst}`).alignment = { horizontal: 'center'}
+
     worksheet.getCell(`K${currentRowInst}`).border = {
       left: { style: 'thin' },
       right: { style: 'thin' },
@@ -655,6 +682,8 @@ export class ExcelService {
       left: { style: 'thin' },
       right: { style: 'thin' },
     };
+
+    worksheet.getCell(`L${currentRowInst}`).alignment = { horizontal: 'center'}
 
     worksheet.getCell(`M${currentRowInst}`).border = {
       left: { style: 'thin' },
@@ -684,7 +713,10 @@ export class ExcelService {
         left: { style: 'thin' },
         right: { style: 'thin' },
       };
-    
+
+
+      worksheet.mergeCells(`C${currentRowInst}:J${currentRowInst}`);
+
       worksheet.getCell(`C${currentRowInst}`).value = `Pemasangan ${cat.description}`;
       worksheet.getCell(`C${currentRowInst}`).font = {
         name: 'Arial',
@@ -693,7 +725,6 @@ export class ExcelService {
       };
       worksheet.getCell(`C${currentRowInst}`).alignment = { wrapText: true, vertical: 'top' };
 
-      worksheet.mergeCells(`C${currentRowInst}:J${currentRowInst}`);
     
       worksheet.getCell(`K${currentRowInst}`).border = {
         left: { style: 'thin' },
@@ -710,7 +741,7 @@ export class ExcelService {
 
       dataBasic.total_supplier_product.forEach((data) => {
         if(data.id === cat.id){
-          if(data.total_price !== 0){
+          if(data.total_installation_price !== 0){
             worksheet.getCell(`N${currentRowInst}`).value = parseFloat(data.total_installation_price.toFixed(2));
             worksheet.getCell(`N${currentRowInst}`).numFmt = '_("Rp"* #,##0.00_);_("Rp"* (#,##0.00);_("Rp"* "-"??_);_(@_)'; 
           }
@@ -723,7 +754,7 @@ export class ExcelService {
         bold: true,
       };
 
-      worksheet.getCell(`N${currentRowInst}`).alignment = { horizontal: 'center', vertical: 'middle' };
+      worksheet.getCell(`N${currentRowInst}`).alignment = { vertical: 'middle' };
 
       worksheet.getCell(`N${currentRowInst}`).border = {
         left: { style: 'thin' },
@@ -734,61 +765,72 @@ export class ExcelService {
     
       dataDetail.quotation_revision.forEach((data) => {
         if (data.revision === revision) {
-          data.quotation_items.forEach((item) => {
-            if (cat.id === item.inventory.supplier_product.id) {
-              // Column number for inventory
-              worksheet.getCell(`B${currentRowInst}`).border = {
-                left: { style: 'thin' },
-                right: { style: 'thin' },
-              };
-    
-              // Column title for inventory
-              worksheet.getCell(`C${currentRowInst}`).value = `- ${item.inventory.description}`;
-              worksheet.getCell(`C${currentRowInst}`).font = {
-                name: 'Arial',
-                size: 11,
-              };
-    
-              //Column qty
-              worksheet.getCell(`K${currentRowInst}`).value = parseFloat(item.qty);
-              worksheet.getCell(`K${currentRowInst}`).font = {
-                name: 'Arial',
-                size: 11,
-                color: { argb: 'ffff6347' },
-              };
-              worksheet.getCell(`K${currentRowInst}`).border = {
-                left: { style: 'thin' },
-                right: { style: 'thin' },
-              };
-
-              worksheet.getCell(`K${currentRowInst}`).alignment = {horizontal: 'center'}
-
-              //Column Unit
-              worksheet.getCell(`L${currentRowInst}`).value = item.inventory.unit.name;
-              worksheet.getCell(`L${currentRowInst}`).alignment = {horizontal: 'center'}
-              worksheet.getCell(`L${currentRowInst}`).border = {
-                left: { style: 'thin' },
-                right: { style: 'thin' },
-              };
-
-              //Column Unit Price
-              worksheet.getCell(`M${currentRowInst}`).value = parseFloat(item.inventory.installation.selling_price);
-              worksheet.getCell(`M${currentRowInst}`).numFmt = '_("Rp"* #,##0.00_);_("Rp"* (#,##0.00);_("Rp"* "-"??_);_(@_)'; 
-              worksheet.getCell(`M${currentRowInst}`).border = {
-                left: { style: 'thin' },
-                right: { style: 'thin' },
-              };
-
-              //Column Total Selling Price
-              worksheet.getCell(`N${currentRowInst}`).value = parseFloat(item.total_installation_price_after_discount);
-              worksheet.getCell(`N${currentRowInst}`).numFmt = '_("Rp"* #,##0.00_);_("Rp"* (#,##0.00);_("Rp"* "-"??_);_(@_)'; 
-              worksheet.getCell(`N${currentRowInst}`).border = {
-                left: { style: 'thin' },
-                right: { style: 'thin' },
-              };
-    
-              currentRowInst++; // Move to the next row after each inventory item
+          data.quotation_items
+          .filter((item) => cat.id === item.inventory.supplier_product.id) // Filter first
+          .sort((a, b) => {
+            if (cat.name.toLowerCase() === 'fitting') {
+              const indexA = sortOrder.findIndex((order) => a.inventory.sub_category.name === order);
+              const indexB = sortOrder.findIndex((order) => b.inventory.sub_category.name === order);
+        
+              return (indexA === -1 ? sortOrder.length : indexA) - (indexB === -1 ? sortOrder.length : indexB);
             }
+            return 0; // No sorting if not 'fitting'
+          })
+          .forEach((item) => {
+            // Column number for inventory
+            worksheet.getCell(`B${currentRowInst}`).border = {
+              left: { style: 'thin' },
+              right: { style: 'thin' },
+            };
+
+            worksheet.mergeCells(`C${currentRowInst}:J${currentRowInst}`);
+
+            // Column title for inventory
+            worksheet.getCell(`C${currentRowInst}`).value = `- ${item.inventory.description}`;
+            worksheet.getCell(`C${currentRowInst}`).font = {
+              name: 'Arial',
+              size: 11,
+            };
+  
+            //Column qty
+            worksheet.getCell(`K${currentRowInst}`).value = parseFloat(item.qty);
+            worksheet.getCell(`K${currentRowInst}`).font = {
+              name: 'Arial',
+              size: 11,
+              color: { argb: 'ffff6347' },
+            };
+            worksheet.getCell(`K${currentRowInst}`).border = {
+              left: { style: 'thin' },
+              right: { style: 'thin' },
+            };
+
+            worksheet.getCell(`K${currentRowInst}`).alignment = {horizontal: 'center'}
+
+            //Column Unit
+            worksheet.getCell(`L${currentRowInst}`).value = item.inventory.unit.name;
+            worksheet.getCell(`L${currentRowInst}`).alignment = {horizontal: 'center'}
+            worksheet.getCell(`L${currentRowInst}`).border = {
+              left: { style: 'thin' },
+              right: { style: 'thin' },
+            };
+
+            //Column Unit Price
+            worksheet.getCell(`M${currentRowInst}`).value = parseFloat(item.inventory.installation.selling_price);
+            worksheet.getCell(`M${currentRowInst}`).numFmt = '_("Rp"* #,##0.00_);_("Rp"* (#,##0.00);_("Rp"* "-"??_);_(@_)'; 
+            worksheet.getCell(`M${currentRowInst}`).border = {
+              left: { style: 'thin' },
+              right: { style: 'thin' },
+            };
+
+            //Column Total Selling Price
+            worksheet.getCell(`N${currentRowInst}`).value = parseFloat(item.total_installation_price_after_discount);
+            worksheet.getCell(`N${currentRowInst}`).numFmt = '_("Rp"* #,##0.00_);_("Rp"* (#,##0.00);_("Rp"* "-"??_);_(@_)'; 
+            worksheet.getCell(`N${currentRowInst}`).border = {
+              left: { style: 'thin' },
+              right: { style: 'thin' },
+            };
+  
+            currentRowInst++; // Move to the next row after each inventory item
           });
         }
       });
@@ -935,12 +977,16 @@ export class ExcelService {
     
     worksheet.getCell(`K${currentRowInst}`).value = 1;
 
+    worksheet.getCell(`K${currentRowInst}`).alignment = { horizontal: 'center' }
+
     worksheet.getCell(`K${currentRowInst}`).border = {
       left: { style: 'thin' },
       right: { style: 'thin' },
     };
 
     worksheet.getCell(`L${currentRowInst}`).value = 'lot';
+
+    worksheet.getCell(`L${currentRowInst}`).alignment = { horizontal: 'center' }
 
     worksheet.getCell(`L${currentRowInst}`).border = {
       left: { style: 'thin' },
@@ -1165,7 +1211,7 @@ export class ExcelService {
       right: {style:'thin'},
     };
     worksheet.mergeCells(`M${currentRowInst+1}:N${currentRowInst+1}`);
-    worksheet.getCell(`M${currentRowInst+1}`).value = 'Jakarta 20 Desember 2022';
+    worksheet.getCell(`M${currentRowInst+1}`).value = `Jakarta, ${this.datePipe.transform(new Date(), 'dd MMMM yyyy') || ''}`;
     worksheet.getCell(`M${currentRowInst+1}`).alignment = {horizontal: 'center'};
     worksheet.getCell(`M${currentRowInst+1}`).border = {
       right: {style:'thin'},
@@ -1185,14 +1231,14 @@ export class ExcelService {
       right: {style:'thin'},
     };
 
-    worksheet.getCell(`M${currentRowInst+8}`).value = '(Akwin Indra)';
+    worksheet.getCell(`M${currentRowInst+8}`).value = dataBasic.project.pic.filter((p) => p.is_pic_internal === 1).map((p) => (p.name))[0];
     worksheet.getCell(`M${currentRowInst+8}`).alignment = {horizontal: 'center'};
     worksheet.getCell(`M${currentRowInst+8}`).border = {
       right: {style:'thin'},
     };
     worksheet.mergeCells(`M${currentRowInst+8}:N${currentRowInst+8}`);
 
-    worksheet.getCell(`M${currentRowInst+9}`).value = 'General Manager';
+    worksheet.getCell(`M${currentRowInst+9}`).value = 'Area Sales Manager';
     worksheet.getCell(`M${currentRowInst+9}`).alignment = {horizontal: 'center'};
     worksheet.getCell(`M${currentRowInst+9}`).border = {
       right: {style:'thin'},
@@ -1205,6 +1251,42 @@ export class ExcelService {
       right: {style:'thin'},
       bottom: {style:'thin'}
     };
+
+
+    if(fileType === 'pdf'){
+      const pageBreakRows = [72];
+
+      let nextBreak = 72; 
+      const rowInterval = 72;
+    
+      while (nextBreak + rowInterval < currentRowInst) {
+        nextBreak += rowInterval;
+        pageBreakRows.push(nextBreak);
+      }
+    
+    
+      // Apply borders on each page break
+      pageBreakRows.forEach((breakRow) => {
+        const rowBot = worksheet.getRow(breakRow);  // Bottom row of page
+        const rowTop = worksheet.getRow(breakRow - 1);  // Top row of next page
+    
+        for (let col = 2; col <= 14; col++) {  // Columns B to N
+          // Bottom row (Top Border)
+          rowBot.getCell(col).border = {
+            top: { style: 'thin' },
+            right: { style: 'thin' },
+            left: { style: 'thin' },
+          };
+    
+          // Top row (Bottom Border)
+          rowTop.getCell(col).border = {
+            bottom: { style: 'thin' },
+            right: { style: 'thin' },
+            left: { style: 'thin' },
+          };
+        }
+      });
+    }
 
 
     // Save the workbook to a blob
@@ -1220,57 +1302,31 @@ export class ExcelService {
       const formData = new FormData();
       formData.append('file', file);
 
-      this.apiSvc.convertToPdf(formData).subscribe({
-        next: (response) => {
-          const base64String = response.pdfBlob; // The Base64 string from your backend
-          const byteCharacters = atob(base64String.split(',')[1]); // Decode Base64
-          const byteNumbers = new Array(byteCharacters.length);
+      if(fileType === 'pdf'){
+        this.apiSvc.convertToPdf(formData).subscribe({
+          next: (response) => {
+            const base64String = response.pdfBlob; // The Base64 string from your backend
+            const byteCharacters = atob(base64String.split(',')[1]); // Decode Base64
+            const byteNumbers = new Array(byteCharacters.length);
+  
+            for (let i = 0; i < byteCharacters.length; i++) {
+              byteNumbers[i] = byteCharacters.charCodeAt(i);
+            }
+  
+            const byteArray = new Uint8Array(byteNumbers);
+            const blob = new Blob([byteArray], { type: 'application/pdf' });
+  
+            // Trigger file download
+            saveAs(blob, `${dataBasic.quotation_no}R.pdf`);
+          },
+          error: (err) => {console.log(err)}
+        })
+      }
 
-          for (let i = 0; i < byteCharacters.length; i++) {
-            byteNumbers[i] = byteCharacters.charCodeAt(i);
-          }
 
-          const byteArray = new Uint8Array(byteNumbers);
-          const blob = new Blob([byteArray], { type: 'application/pdf' });
-
-          // Trigger file download
-          saveAs(blob, `${dataBasic.quotation_no}R.pdf`);
-        },
-        error: (err) => {console.log(err)}
-      })
-
-      saveAs(blob, `${dataBasic.quotation_no}R.xlsx`);
+      if(fileType === 'excel'){
+        saveAs(blob, `${dataBasic.quotation_no}R.xlsx`);
+      }
     });
-
-    // workbook.xlsx.writeBuffer().then((buffer) => {
-    //   const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
-    //   const file = new File(
-    //     [buffer], 
-    //     `${dataBasic.quotation_no}R.xlsx`, 
-    //     { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' }
-    //   );
-
-    //   const formData = new FormData();
-    //   formData.append('file', file);
-
-    //   // Example API call
-    //   this.apiSvc.convertToPdf(formData).subscribe({
-    //     next: (response) => {
-    //       const base64String = response.pdfBlob; // The Base64 string from your backend
-    //       const byteCharacters = atob(base64String.split(',')[1]); // Decode Base64
-    //       const byteNumbers = new Array(byteCharacters.length);
-
-    //       for (let i = 0; i < byteCharacters.length; i++) {
-    //         byteNumbers[i] = byteCharacters.charCodeAt(i);
-    //       }
-
-    //       const byteArray = new Uint8Array(byteNumbers);
-    //       const blob = new Blob([byteArray], { type: 'application/pdf' });
-
-    //       // Trigger file download
-    //       saveAs(blob, `${dataBasic.quotation_no}R.pdf`);
-    //     },
-    //     error: (err) => {console.log(err)}
-    //   })
   }
 }

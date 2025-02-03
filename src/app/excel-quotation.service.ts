@@ -37,7 +37,8 @@ export class ExcelQuotationService {
     dataBasic: IDataQuotation, 
     dataDetail: IDetailDataQuotation, 
     revision: string, 
-    productCategory: IDataCategories[]
+    productCategory: IDataCategories[],
+    fileType: 'excel' | 'pdf'
   ){
 
     //get data
@@ -140,9 +141,8 @@ export class ExcelQuotationService {
     worksheet.getColumn('C').width = 74.67;
     worksheet.getColumn('D').width = 12.67;
     worksheet.getColumn('E').width = 7.78;
-    worksheet.getColumn('F').width = 0;
+    worksheet.getColumn('F').width = 24.22;
     worksheet.getColumn('G').width = 24.22;
-    worksheet.getColumn('H').width = 24.22;
 
     worksheet.getRow(1).height = 37.5;
     worksheet.getCell('A1').value = {
@@ -163,7 +163,7 @@ export class ExcelQuotationService {
       vertical: 'bottom'
     }
 
-    worksheet.mergeCells('A1:H1');
+    worksheet.mergeCells('A1:G1');
     worksheet.getCell('A1').border = {
       top: {style: 'thin'},
       right: {style: 'thin'},
@@ -179,37 +179,45 @@ export class ExcelQuotationService {
     worksheet.getCell('A7').border = {left: {style: 'thin'}}
     worksheet.getCell('A8').border = {left: {style: 'thin'}}
 
-    worksheet.getCell('G2').value = 'No Quotation';
+    worksheet.getCell('F2').value = 'No Quotation';
+    worksheet.getCell('F2').border = {
+      top: {style: 'thin'},
+      right: {style: 'thin'},
+      bottom: {style: 'thin'},
+      left: {style: 'thin'}
+    }
+    worksheet.getCell('G2').value = dataBasic.quotation_no;
     worksheet.getCell('G2').border = {
       top: {style: 'thin'},
       right: {style: 'thin'},
       bottom: {style: 'thin'},
       left: {style: 'thin'}
     }
-    worksheet.getCell('H2').value = dataBasic.quotation_no;
-    worksheet.getCell('H2').border = {
+
+    worksheet.getCell('F3').value = 'Reference';
+    worksheet.getCell('F3').border = {
       top: {style: 'thin'},
       right: {style: 'thin'},
       bottom: {style: 'thin'},
       left: {style: 'thin'}
     }
-
-    worksheet.getCell('G3').value = 'Reference';
+    worksheet.getCell('G3').value = '0';
     worksheet.getCell('G3').border = {
       top: {style: 'thin'},
       right: {style: 'thin'},
       bottom: {style: 'thin'},
       left: {style: 'thin'}
     }
-    worksheet.getCell('H3').value = '0';
-    worksheet.getCell('H3').border = {
+
+    worksheet.getCell('F4').value = 'Issued Date';
+    worksheet.getCell('F4').border = {
       top: {style: 'thin'},
       right: {style: 'thin'},
       bottom: {style: 'thin'},
       left: {style: 'thin'}
     }
 
-    worksheet.getCell('G4').value = 'Issued Date';
+    worksheet.getCell('G4').value =  this.datePipe.transform(dataBasic.issued_date, 'dd-MMM-yyyy');
     worksheet.getCell('G4').border = {
       top: {style: 'thin'},
       right: {style: 'thin'},
@@ -217,15 +225,15 @@ export class ExcelQuotationService {
       left: {style: 'thin'}
     }
 
-    worksheet.getCell('H4').value =  this.datePipe.transform(dataBasic.issued_date, 'dd-MMM-yyyy');
-    worksheet.getCell('H4').border = {
+    worksheet.getCell('F5').value = 'Revision';
+    worksheet.getCell('F5').border = {
       top: {style: 'thin'},
       right: {style: 'thin'},
       bottom: {style: 'thin'},
       left: {style: 'thin'}
     }
 
-    worksheet.getCell('G5').value = 'Revision';
+    worksheet.getCell('G5').value = revision;
     worksheet.getCell('G5').border = {
       top: {style: 'thin'},
       right: {style: 'thin'},
@@ -233,54 +241,46 @@ export class ExcelQuotationService {
       left: {style: 'thin'}
     }
 
-    worksheet.getCell('H5').value = revision;
-    worksheet.getCell('H5').border = {
+
+    worksheet.getCell('F6').value = 'Prepared By';
+    worksheet.getCell('F6').border = {
       top: {style: 'thin'},
       right: {style: 'thin'},
       bottom: {style: 'thin'},
       left: {style: 'thin'}
     }
-
-
-    worksheet.getCell('G6').value = 'Prepared By';
+    worksheet.getCell('G6').value = dataBasic.prepared_by.name;
     worksheet.getCell('G6').border = {
       top: {style: 'thin'},
       right: {style: 'thin'},
       bottom: {style: 'thin'},
       left: {style: 'thin'}
     }
-    worksheet.getCell('H6').value = dataBasic.prepared_by.name;
-    worksheet.getCell('H6').border = {
+    
+    worksheet.getCell('F7').value = 'Sales/Architect Name';
+    worksheet.getCell('F7').border = {
       top: {style: 'thin'},
       right: {style: 'thin'},
       bottom: {style: 'thin'},
       left: {style: 'thin'}
     }
-    
-    worksheet.getCell('G7').value = 'Sales/Architect Name';
+    worksheet.getCell('G7').value = dataBasic.project.pic.filter((p) => p.is_pic_internal === 1).map((p) => (p.name))[0];
     worksheet.getCell('G7').border = {
       top: {style: 'thin'},
       right: {style: 'thin'},
       bottom: {style: 'thin'},
       left: {style: 'thin'}
     }
-    worksheet.getCell('H7').value = dataBasic.project.pic.filter((p) => p.is_pic_internal === 1).map((p) => (p.name))[0];
-    worksheet.getCell('H7').border = {
-      top: {style: 'thin'},
-      right: {style: 'thin'},
-      bottom: {style: 'thin'},
-      left: {style: 'thin'}
-    }
 
-    worksheet.getCell('G8').value = 'Page';
-    worksheet.getCell('G8').border = {
+    worksheet.getCell('F8').value = 'Page';
+    worksheet.getCell('F8').border = {
       top: {style: 'thin'},
       right: {style: 'thin'},
       bottom: {style: 'thin'},
       left: {style: 'thin'}
     }
-    worksheet.getCell('H8').value = '1/1';
-    worksheet.getCell('H8').border = {
+    worksheet.getCell('G8').value = '1/1';
+    worksheet.getCell('G8').border = {
       top: {style: 'thin'},
       right: {style: 'thin'},
       bottom: {style: 'thin'},
@@ -300,7 +300,7 @@ export class ExcelQuotationService {
 
     worksheet.addImage(imageId2, {
       tl: { col: 2.5, row: 2.5 },  // Start at cell A2 (row index is 0-based)
-      ext: { width: 400, height: 100 }, // Set fixed dimensions
+      ext: { width: 300, height: 100 }, // Set fixed dimensions
     });
 
     worksheet.getCell('B9').border = {top: {style: 'thin'}}
@@ -308,7 +308,7 @@ export class ExcelQuotationService {
     worksheet.getCell('D9').border = {top: {style: 'thin'}}
     worksheet.getCell('E9').border = {top: {style: 'thin'}}
     worksheet.getCell('G9').border = {top: {style: 'thin'}}
-    worksheet.getCell('H9').border = {top: {style: 'thin'}}
+    worksheet.getCell('F9').border = {top: {style: 'thin'}}
 
     worksheet.getCell('A10').border = {left: {style: 'thin'}};
     worksheet.getCell('A11').border = {left: {style: 'thin'}};
@@ -319,15 +319,15 @@ export class ExcelQuotationService {
     worksheet.getCell('A16').border = {left: {style: 'thin'}};
     worksheet.getCell('A17').border = {left: {style: 'thin'}};
 
-    worksheet.getCell('H9').border = {right: {style: 'thin'}}
-    worksheet.getCell('H10').border = {right: {style: 'thin'}};
-    worksheet.getCell('H11').border = {right: {style: 'thin'}};
-    worksheet.getCell('H12').border = {right: {style: 'thin'}};
-    worksheet.getCell('H13').border = {right: {style: 'thin'}};
-    worksheet.getCell('H14').border = {right: {style: 'thin'}};
-    worksheet.getCell('H15').border = {right: {style: 'thin'}};
-    worksheet.getCell('H16').border = {right: {style: 'thin'}};
-    worksheet.getCell('H17').border = {right: {style: 'thin'}};
+    worksheet.getCell('G9').border = {right: {style: 'thin'}}
+    worksheet.getCell('G10').border = {right: {style: 'thin'}};
+    worksheet.getCell('G11').border = {right: {style: 'thin'}};
+    worksheet.getCell('G12').border = {right: {style: 'thin'}};
+    worksheet.getCell('G13').border = {right: {style: 'thin'}};
+    worksheet.getCell('G14').border = {right: {style: 'thin'}};
+    worksheet.getCell('G15').border = {right: {style: 'thin'}};
+    worksheet.getCell('G16').border = {right: {style: 'thin'}};
+    worksheet.getCell('G17').border = {right: {style: 'thin'}};
     
 
     worksheet.getCell('A9').value = 'Kepada';
@@ -369,7 +369,6 @@ export class ExcelQuotationService {
 
     worksheet.getCell('B18').border = {
       top: {style: 'thin'},
-      right: {style: 'thin'},
       bottom: {style: 'thin'},
       left: {style: 'thin'}
     }
@@ -384,8 +383,7 @@ export class ExcelQuotationService {
     worksheet.getCell('C18').border = {
       top: {style: 'thin'},
       right: {style: 'thin'},
-      bottom: {style: 'thin'},
-      left: {style: 'thin'}
+      bottom: {style: 'thin'}
     }
 
     worksheet.getCell('D18').value = 'Jumlah';
@@ -416,7 +414,21 @@ export class ExcelQuotationService {
       left: {style: 'thin'}
     }
 
-    worksheet.getCell('G18').value = 'Harga Satuan';
+    worksheet.getCell('F18').value = 'Harga Satuan';
+    worksheet.getCell('F18').alignment = {horizontal: 'center', vertical: 'middle'};
+    worksheet.getCell('F18').font = {
+      bold: true,
+      name: 'Arial',
+      size: 12
+    }
+    worksheet.getCell('F18').border = {
+      top: {style: 'thin'},
+      right: {style: 'thin'},
+      bottom: {style: 'thin'},
+      left: {style: 'thin'}
+    }
+
+    worksheet.getCell('G18').value = 'Total Harga';
     worksheet.getCell('G18').alignment = {horizontal: 'center', vertical: 'middle'};
     worksheet.getCell('G18').font = {
       bold: true,
@@ -430,28 +442,13 @@ export class ExcelQuotationService {
       left: {style: 'thin'}
     }
 
-    worksheet.getCell('H18').value = 'Total Harga';
-    worksheet.getCell('H18').alignment = {horizontal: 'center', vertical: 'middle'};
-    worksheet.getCell('H18').font = {
-      bold: true,
-      name: 'Arial',
-      size: 12
-    }
-    worksheet.getCell('H18').border = {
-      top: {style: 'thin'},
-      right: {style: 'thin'},
-      bottom: {style: 'thin'},
-      left: {style: 'thin'}
-    }
-
     worksheet.getCell('A19').border = {
       right: {style: 'thin'},
       left: {style: 'thin'}
     }
 
     worksheet.getCell('C19').border = {
-      right: {style: 'thin'},
-      left: {style: 'thin'}
+      right: {style: 'thin'}
     }
 
     worksheet.getCell('D19').border = {
@@ -469,7 +466,7 @@ export class ExcelQuotationService {
       left: {style: 'thin'}
     }
 
-    worksheet.getCell('H19').border = {
+    worksheet.getCell('F19').border = {
       right: {style: 'thin'},
       left: {style: 'thin'}
     }
@@ -498,7 +495,7 @@ export class ExcelQuotationService {
       right: {style: 'thin'},
       left: {style: 'thin'}
     };
-    worksheet.getCell('C20').alignment = {horizontal: 'left', wrapText: true}
+    worksheet.getCell('C20').alignment = {horizontal: 'left', wrapText: true, vertical: 'top'}
     worksheet.getCell('C20').fill = {
       type: 'pattern',
       pattern: 'solid',
@@ -536,12 +533,12 @@ export class ExcelQuotationService {
       left: {style: 'thin'}
     };
 
-    worksheet.getCell('H20').fill = {
+    worksheet.getCell('F20').fill = {
       type: 'pattern',
       pattern: 'solid',
       fgColor: { argb: 'ffd9d9d9' },
     };
-    worksheet.getCell('H20').border = {
+    worksheet.getCell('F20').border = {
       right: {style: 'thin'},
       left: {style: 'thin'}
     };
@@ -552,8 +549,7 @@ export class ExcelQuotationService {
     }
 
     worksheet.getCell('C21').border = {
-      right: {style: 'thin'},
-      left: {style: 'thin'}
+      right: {style: 'thin'}
     }
 
     worksheet.getCell('D21').border = {
@@ -571,7 +567,7 @@ export class ExcelQuotationService {
       left: {style: 'thin'}
     }
 
-    worksheet.getCell('H21').border = {
+    worksheet.getCell('F21').border = {
       right: {style: 'thin'},
       left: {style: 'thin'}
     }
@@ -600,11 +596,17 @@ export class ExcelQuotationService {
       ]
     }
 
-    worksheet.getCell('C22').alignment = {wrapText: true}
+    worksheet.getCell('C22').alignment = {wrapText: true, vertical: 'middle'}
 
     worksheet.getCell('C22').border = {
       right: {style: 'thin'},
       left: {style: 'thin'}
+    };
+
+    worksheet.getCell('C22').fill = {
+      type: 'pattern',
+      pattern: 'solid',
+      fgColor: { argb: 'ffd9d9d9' },
     };
 
     worksheet.getCell('D22').border = {
@@ -612,21 +614,44 @@ export class ExcelQuotationService {
       left: {style: 'thin'}
     };
 
+    worksheet.getCell('D22').fill = {
+      type: 'pattern',
+      pattern: 'solid',
+      fgColor: { argb: 'ffd9d9d9' },
+    };
+
     worksheet.getCell('E22').border = {
       right: {style: 'thin'},
       left: {style: 'thin'}
     };
 
+    worksheet.getCell('E22').fill = {
+      type: 'pattern',
+      pattern: 'solid',
+      fgColor: { argb: 'ffd9d9d9' },
+    };
+
+    worksheet.getCell('G22').fill = {
+      type: 'pattern',
+      pattern: 'solid',
+      fgColor: { argb: 'ffd9d9d9' },
+    };
+    
     worksheet.getCell('G22').border = {
       right: {style: 'thin'},
       left: {style: 'thin'}
     };
 
-    worksheet.getCell('H22').border = {
+    worksheet.getCell('F22').fill = {
+      type: 'pattern',
+      pattern: 'solid',
+      fgColor: { argb: 'ffd9d9d9' },
+    };
+
+    worksheet.getCell('F22').border = {
       right: {style: 'thin'},
       left: {style: 'thin'}
     };
-
 
     let currentRow = 22;
 
@@ -712,7 +737,7 @@ export class ExcelQuotationService {
         worksheet.getCell(`C${currentRow}`).border = {
           right: {style: 'thin'}
         };
-        worksheet.getCell(`C${currentRow}`).alignment = {wrapText: true, vertical: 'middle'}
+        worksheet.getCell(`C${currentRow}`).alignment = {wrapText: true, vertical: 'top'}
 
         worksheet.getCell(`D${currentRow}`).value = cat.total.toString();
         worksheet.getCell(`D${currentRow}`).font = {
@@ -737,7 +762,19 @@ export class ExcelQuotationService {
         };
         worksheet.getCell(`E${currentRow}`).alignment = {horizontal: 'center', vertical: 'top'};
   
-        worksheet.getCell(`G${currentRow}`).value = cat.totalUnitPrice
+        worksheet.getCell(`F${currentRow}`).value = cat.totalUnitPrice
+        worksheet.getCell(`F${currentRow}`).numFmt = '_("Rp"* #,##0.00_);_("Rp"* (#,##0.00);_("Rp"* "-"??_);_(@_)'; 
+        worksheet.getCell(`F${currentRow}`).font = {
+          name: 'Arial',
+          size: 12
+        }
+        worksheet.getCell(`F${currentRow}`).border = {
+          right: {style: 'thin'},
+          left: {style: 'thin'}
+        };
+        worksheet.getCell(`F${currentRow}`).alignment = {horizontal: 'center', vertical: 'top'};
+  
+        worksheet.getCell(`G${currentRow}`).value = cat.totalSellingPrice
         worksheet.getCell(`G${currentRow}`).numFmt = '_("Rp"* #,##0.00_);_("Rp"* (#,##0.00);_("Rp"* "-"??_);_(@_)'; 
         worksheet.getCell(`G${currentRow}`).font = {
           name: 'Arial',
@@ -748,18 +785,6 @@ export class ExcelQuotationService {
           left: {style: 'thin'}
         };
         worksheet.getCell(`G${currentRow}`).alignment = {horizontal: 'center', vertical: 'top'};
-  
-        worksheet.getCell(`H${currentRow}`).value = cat.totalSellingPrice
-        worksheet.getCell(`H${currentRow}`).numFmt = '_("Rp"* #,##0.00_);_("Rp"* (#,##0.00);_("Rp"* "-"??_);_(@_)'; 
-        worksheet.getCell(`H${currentRow}`).font = {
-          name: 'Arial',
-          size: 12
-        }
-        worksheet.getCell(`H${currentRow}`).border = {
-          right: {style: 'thin'},
-          left: {style: 'thin'}
-        };
-        worksheet.getCell(`H${currentRow}`).alignment = {horizontal: 'center', vertical: 'top'};
       }
     })
 
@@ -790,14 +815,14 @@ export class ExcelQuotationService {
       bottom: {style: 'thin'}
     }
 
-    worksheet.getCell(`G${currentRow}`).border = {
+    worksheet.getCell(`F${currentRow}`).border = {
       top: {style: 'thin'},
       bottom: {style: 'thin'}
     }
 
-    worksheet.getCell(`H${currentRow}`).value = totalSellingPrice1;
-    worksheet.getCell(`H${currentRow}`).numFmt = '_("Rp"* #,##0.00_);_("Rp"* (#,##0.00);_("Rp"* "-"??_);_(@_)';
-    worksheet.getCell(`H${currentRow}`).border = {
+    worksheet.getCell(`G${currentRow}`).value = totalSellingPrice1;
+    worksheet.getCell(`G${currentRow}`).numFmt = '_("Rp"* #,##0.00_);_("Rp"* (#,##0.00);_("Rp"* "-"??_);_(@_)';
+    worksheet.getCell(`G${currentRow}`).border = {
       top: {style: 'thin'},
       bottom: {style: 'thin'},
       right: {style: 'thin'}
@@ -830,15 +855,15 @@ export class ExcelQuotationService {
       bottom: {style: 'thin'}
     }
 
-    worksheet.getCell(`G${currentRow}`).border = {
+    worksheet.getCell(`F${currentRow}`).border = {
       top: {style: 'thin'},
       bottom: {style: 'thin'}
     }
-    worksheet.getCell(`G${currentRow}`).value = '%0';
+    worksheet.getCell(`F${currentRow}`).value = '%0';
 
-    worksheet.getCell(`H${currentRow}`).value = 0;
-    worksheet.getCell(`H${currentRow}`).numFmt = '_("Rp"* #,##0.00_);_("Rp"* (#,##0.00);_("Rp"* "-"??_);_(@_)';
-    worksheet.getCell(`H${currentRow}`).border = {
+    worksheet.getCell(`G${currentRow}`).value = 0;
+    worksheet.getCell(`G${currentRow}`).numFmt = '_("Rp"* #,##0.00_);_("Rp"* (#,##0.00);_("Rp"* "-"??_);_(@_)';
+    worksheet.getCell(`G${currentRow}`).border = {
       top: {style: 'thin'},
       bottom: {style: 'thin'},
       right: {style: 'thin'}
@@ -887,30 +912,29 @@ export class ExcelQuotationService {
       fgColor: { argb: 'ffd9d9d9' },
     };
 
-    worksheet.getCell(`G${currentRow}`).border = {
+    worksheet.getCell(`F${currentRow}`).border = {
       top: {style: 'thin'},
       bottom: {style: 'thin'}
     }
 
-    worksheet.getCell(`G${currentRow}`).border = {
+    worksheet.getCell(`F${currentRow}`).border = {
       top: {style: 'thin'},
-      left: {style: 'thin'},
       bottom: {style: 'thin'},
     };
-    worksheet.getCell(`G${currentRow}`).fill = {
+    worksheet.getCell(`F${currentRow}`).fill = {
       type: 'pattern',
       pattern: 'solid',
       fgColor: { argb: 'ffd9d9d9' },
     };
 
-    worksheet.getCell(`H${currentRow}`).value = totalSellingPrice1;
-    worksheet.getCell(`H${currentRow}`).numFmt = '_("Rp"* #,##0.00_);_("Rp"* (#,##0.00);_("Rp"* "-"??_);_(@_)';
-    worksheet.getCell(`H${currentRow}`).border = {
+    worksheet.getCell(`G${currentRow}`).value = totalSellingPrice1;
+    worksheet.getCell(`G${currentRow}`).numFmt = '_("Rp"* #,##0.00_);_("Rp"* (#,##0.00);_("Rp"* "-"??_);_(@_)';
+    worksheet.getCell(`G${currentRow}`).border = {
       top: {style: 'thin'},
       right: {style: 'thin'},
       bottom: {style: 'thin'},
     };
-    worksheet.getCell(`H${currentRow}`).fill = {
+    worksheet.getCell(`G${currentRow}`).fill = {
       type: 'pattern',
       pattern: 'solid',
       fgColor: { argb: 'ffd9d9d9' },
@@ -924,7 +948,7 @@ export class ExcelQuotationService {
     worksheet.getCell(`D${currentRow}`).border = {
       left: {style: 'thin'}
     };
-    worksheet.getCell(`H${currentRow}`).border = {
+    worksheet.getCell(`G${currentRow}`).border = {
       right: {style: 'thin'}
     };
     currentRow++;
@@ -956,7 +980,7 @@ export class ExcelQuotationService {
       right: {style: 'thin'},
       left: {style: 'thin'}
     };
-    worksheet.getCell(`B${currentRow}`).alignment = {wrapText: true, horizontal: 'left'}
+    worksheet.getCell(`B${currentRow}`).alignment = {wrapText: true, horizontal: 'left', vertical: 'middle'}
     worksheet.getCell(`B${currentRow}`).fill = {
       type: 'pattern',
       pattern: 'solid',
@@ -996,12 +1020,12 @@ export class ExcelQuotationService {
       fgColor: { argb: 'ffd9d9d9' },
     };
 
-    worksheet.getCell(`H${currentRow}`).border = {
+    worksheet.getCell(`F${currentRow}`).border = {
       top: {style: 'thin'},
       right: {style: 'thin'},
       left: {style: 'thin'}
     };
-    worksheet.getCell(`H${currentRow}`).fill = {
+    worksheet.getCell(`F${currentRow}`).fill = {
       type: 'pattern',
       pattern: 'solid',
       fgColor: { argb: 'ffd9d9d9' },
@@ -1036,7 +1060,7 @@ export class ExcelQuotationService {
       left: {style: 'thin'}
     };
 
-    worksheet.getCell(`H${currentRow}`).border = {
+    worksheet.getCell(`F${currentRow}`).border = {
       right: {style: 'thin'},
       left: {style: 'thin'}
     };
@@ -1086,7 +1110,7 @@ export class ExcelQuotationService {
       left: {style: 'thin'}
     };
 
-    worksheet.getCell(`H${currentRow}`).border = {
+    worksheet.getCell(`F${currentRow}`).border = {
       right: {style: 'thin'},
       left: {style: 'thin'}
     };
@@ -1100,14 +1124,14 @@ export class ExcelQuotationService {
     };
 
     worksheet.getCell(`B${currentRow}`).value = '2.2';
-    worksheet.getCell(`B${currentRow}`).alignment = {vertical: 'top'};
+    worksheet.getCell(`B${currentRow}`).alignment = {vertical: 'middle'};
 
     worksheet.getCell(`C${currentRow}`).value = `Pemasangan Material Komponen SFM Siphonic Systems (${formattedInstallation})`;
     worksheet.getCell(`C${currentRow}`).font = {
       name: 'Arial',
       size: 12
     }
-    worksheet.getCell(`C${currentRow}`).alignment = {wrapText: true}
+    worksheet.getCell(`C${currentRow}`).alignment = {wrapText: true, vertical: 'middle'}
 
     worksheet.getCell(`D${currentRow}`).value = totalQty;
     worksheet.getCell(`D${currentRow}`).alignment = {horizontal: 'center', vertical: 'middle'}
@@ -1136,19 +1160,19 @@ export class ExcelQuotationService {
       name: 'Arial',
       size: 12
     }
-    worksheet.getCell(`G${currentRow}`).alignment = {vertical: 'top'};
+    worksheet.getCell(`G${currentRow}`).alignment = {vertical: 'middle'};
 
-    worksheet.getCell(`H${currentRow}`).value = totalSellingPrice2;
-    worksheet.getCell(`H${currentRow}`).numFmt = '_("Rp"* #,##0.00_);_("Rp"* (#,##0.00);_("Rp"* "-"??_);_(@_)';
-    worksheet.getCell(`H${currentRow}`).border = {
+    worksheet.getCell(`F${currentRow}`).value = totalSellingPrice2;
+    worksheet.getCell(`F${currentRow}`).numFmt = '_("Rp"* #,##0.00_);_("Rp"* (#,##0.00);_("Rp"* "-"??_);_(@_)';
+    worksheet.getCell(`F${currentRow}`).border = {
       right: {style: 'thin'},
       left: {style: 'thin'}
     };
-    worksheet.getCell(`H${currentRow}`).font = {
+    worksheet.getCell(`F${currentRow}`).font = {
       name: 'Arial',
       size: 12
     }
-    worksheet.getCell(`H${currentRow}`).alignment = {vertical: 'top'};
+    worksheet.getCell(`F${currentRow}`).alignment = {vertical: 'middle'};
 
     currentRow++;
     worksheet.getRow(currentRow).height = 32;
@@ -1192,8 +1216,8 @@ export class ExcelQuotationService {
       left: {style: 'thin'}
     };
 
-    worksheet.getCell(`H${currentRow}`).value = '';
-    worksheet.getCell(`H${currentRow}`).border = {
+    worksheet.getCell(`F${currentRow}`).value = '';
+    worksheet.getCell(`F${currentRow}`).border = {
       right: {style: 'thin'},
       left: {style: 'thin'}
     };
@@ -1227,15 +1251,14 @@ export class ExcelQuotationService {
       bottom: {style: 'thin'},
     };
 
-    worksheet.getCell(`G${currentRow}`).border = {
+    worksheet.getCell(`F${currentRow}`).border = {
       top: {style: 'thin'},
-      left: {style: 'thin'},
       bottom: {style: 'thin'},
     };
 
-    worksheet.getCell(`H${currentRow}`).value = totalSellingPrice2;
-    worksheet.getCell(`H${currentRow}`).numFmt = '_("Rp"* #,##0.00_);_("Rp"* (#,##0.00);_("Rp"* "-"??_);_(@_)';
-    worksheet.getCell(`H${currentRow}`).border = {
+    worksheet.getCell(`G${currentRow}`).value = totalSellingPrice2;
+    worksheet.getCell(`G${currentRow}`).numFmt = '_("Rp"* #,##0.00_);_("Rp"* (#,##0.00);_("Rp"* "-"??_);_(@_)';
+    worksheet.getCell(`G${currentRow}`).border = {
       top: {style: 'thin'},
       right: {style: 'thin'},
       bottom: {style: 'thin'},
@@ -1270,16 +1293,15 @@ export class ExcelQuotationService {
       bottom: {style: 'thin'},
     };
 
-    worksheet.getCell(`G${currentRow}`).value = '%0';
-    worksheet.getCell(`G${currentRow}`).border = {
+    worksheet.getCell(`F${currentRow}`).value = '%0';
+    worksheet.getCell(`F${currentRow}`).border = {
       top: {style: 'thin'},
-      left: {style: 'thin'},
       bottom: {style: 'thin'},
     };
 
-    worksheet.getCell(`H${currentRow}`).value = 0;
-    worksheet.getCell(`H${currentRow}`).numFmt = '_("Rp"* #,##0.00_);_("Rp"* (#,##0.00);_("Rp"* "-"??_);_(@_)';
-    worksheet.getCell(`H${currentRow}`).border = {
+    worksheet.getCell(`G${currentRow}`).value = 0;
+    worksheet.getCell(`G${currentRow}`).numFmt = '_("Rp"* #,##0.00_);_("Rp"* (#,##0.00);_("Rp"* "-"??_);_(@_)';
+    worksheet.getCell(`G${currentRow}`).border = {
       top: {style: 'thin'},
       right: {style: 'thin'},
       bottom: {style: 'thin'},
@@ -1326,25 +1348,24 @@ export class ExcelQuotationService {
       fgColor: { argb: 'ffd9d9d9' },
     };
 
-    worksheet.getCell(`G${currentRow}`).border = {
+    worksheet.getCell(`F${currentRow}`).border = {
       top: {style: 'thin'},
-      left: {style: 'thin'},
       bottom: {style: 'thin'},
     };
-    worksheet.getCell(`G${currentRow}`).fill = {
+    worksheet.getCell(`F${currentRow}`).fill = {
       type: 'pattern',
       pattern: 'solid',
       fgColor: { argb: 'ffd9d9d9' },
     };
   
-    worksheet.getCell(`H${currentRow}`).value = totalSellingPrice2;
-    worksheet.getCell(`H${currentRow}`).numFmt = '_("Rp"* #,##0.00_);_("Rp"* (#,##0.00);_("Rp"* "-"??_);_(@_)';
-    worksheet.getCell(`H${currentRow}`).border = {
+    worksheet.getCell(`G${currentRow}`).value = totalSellingPrice2;
+    worksheet.getCell(`G${currentRow}`).numFmt = '_("Rp"* #,##0.00_);_("Rp"* (#,##0.00);_("Rp"* "-"??_);_(@_)';
+    worksheet.getCell(`G${currentRow}`).border = {
       top: {style: 'thin'},
       right: {style: 'thin'},
       bottom: {style: 'thin'},
     };
-    worksheet.getCell(`H${currentRow}`).fill = {
+    worksheet.getCell(`G${currentRow}`).fill = {
       type: 'pattern',
       pattern: 'solid',
       fgColor: { argb: 'ffd9d9d9' },
@@ -1363,7 +1384,7 @@ export class ExcelQuotationService {
         right: { style: 'thin' }
       };
     
-      worksheet.getCell(`H${currentRow}`).border = {
+      worksheet.getCell(`G${currentRow}`).border = {
         right: { style: 'thin' }
       };
       
@@ -1417,20 +1438,20 @@ export class ExcelQuotationService {
       bottom: {style: 'thin'}
     };
 
-    worksheet.getCell(`G${currentRow}`).border = {
+    worksheet.getCell(`F${currentRow}`).border = {
       top: {style: 'thin'}, 
       right: {style: 'thin'},
       bottom: {style: 'thin'}
     };
 
-    worksheet.getCell(`H${currentRow}`).value = totalSellingPrice1 + totalSellingPrice2;
-    worksheet.getCell(`H${currentRow}`).numFmt = '_("Rp"* #,##0.00_);_("Rp"* (#,##0.00);_("Rp"* "-"??_);_(@_)';
-    worksheet.getCell(`H${currentRow}`).font = {
+    worksheet.getCell(`G${currentRow}`).value = totalSellingPrice1 + totalSellingPrice2;
+    worksheet.getCell(`G${currentRow}`).numFmt = '_("Rp"* #,##0.00_);_("Rp"* (#,##0.00);_("Rp"* "-"??_);_(@_)';
+    worksheet.getCell(`G${currentRow}`).font = {
       name: 'Arial',
       size: 12,
       bold: true
     };
-    worksheet.getCell(`H${currentRow}`).border = {
+    worksheet.getCell(`G${currentRow}`).border = {
       top: {style: 'thin'}, 
       left: {style: 'thin'},
       right: {style: 'thin'},
@@ -1479,20 +1500,20 @@ export class ExcelQuotationService {
       bottom: {style: 'thin'}
     };
 
-    worksheet.getCell(`G${currentRow}`).border = {
+    worksheet.getCell(`F${currentRow}`).border = {
       top: {style: 'thin'}, 
       right: {style: 'thin'},
       bottom: {style: 'thin'}
     };
 
-    worksheet.getCell(`H${currentRow}`).value = totalSellingPrice1 + totalSellingPrice2;
-    worksheet.getCell(`H${currentRow}`).numFmt = '_("Rp"* #,##0.00_);_("Rp"* (#,##0.00);_("Rp"* "-"??_);_(@_)';
-    worksheet.getCell(`H${currentRow}`).font = {
+    worksheet.getCell(`G${currentRow}`).value = totalSellingPrice1 + totalSellingPrice2;
+    worksheet.getCell(`G${currentRow}`).numFmt = '_("Rp"* #,##0.00_);_("Rp"* (#,##0.00);_("Rp"* "-"??_);_(@_)';
+    worksheet.getCell(`G${currentRow}`).font = {
       name: 'Arial',
       size: 12,
       bold: true
     };
-    worksheet.getCell(`H${currentRow}`).border = {
+    worksheet.getCell(`G${currentRow}`).border = {
       top: {style: 'thin'}, 
       left: {style: 'thin'},
       right: {style: 'thin'},
@@ -1515,8 +1536,9 @@ export class ExcelQuotationService {
 
     worksheet.getCell(`A${currentRow}`).border = { left: {style: 'thin'} };
 
+    worksheet.mergeCells(`B${currentRow}:C${currentRow}`);
 
-    worksheet.getCell(`B${currentRow}`).value = 'Waktu Pengiriman: 45 Hari';
+    worksheet.getCell(`B${currentRow}`).value = ' Waktu Pengiriman: 45 Hari';
     worksheet.getCell(`B${currentRow}`).font = {
       name: 'Arial',
       size: 12
@@ -1526,6 +1548,7 @@ export class ExcelQuotationService {
       pattern: 'solid',
       fgColor: { argb: 'ffffffff' },
     };
+    worksheet.getCell(`B${currentRow}`).alignment = {horizontal: 'left'}
 
     worksheet.getCell(`C${currentRow}`).border = {right: {style: 'thin'} };
     worksheet.getCell(`C${currentRow}`).fill = {
@@ -1552,20 +1575,20 @@ export class ExcelQuotationService {
       bottom: {style: 'thin'}
     };
 
-    worksheet.getCell(`G${currentRow}`).border = {
+    worksheet.getCell(`F${currentRow}`).border = {
       top: {style: 'thin'}, 
       right: {style: 'thin'},
       bottom: {style: 'thin'}
     };
 
-    worksheet.getCell(`H${currentRow}`).value = (((totalSellingPrice1 + totalSellingPrice2) * 11) / 100);
-    worksheet.getCell(`H${currentRow}`).numFmt = '_("Rp"* #,##0.00_);_("Rp"* (#,##0.00);_("Rp"* "-"??_);_(@_)';
-    worksheet.getCell(`H${currentRow}`).font = {
+    worksheet.getCell(`G${currentRow}`).value = (((totalSellingPrice1 + totalSellingPrice2) * 11) / 100);
+    worksheet.getCell(`G${currentRow}`).numFmt = '_("Rp"* #,##0.00_);_("Rp"* (#,##0.00);_("Rp"* "-"??_);_(@_)';
+    worksheet.getCell(`G${currentRow}`).font = {
       name: 'Arial',
       size: 12,
       bold: true
     };
-    worksheet.getCell(`H${currentRow}`).border = {
+    worksheet.getCell(`G${currentRow}`).border = {
       top: {style: 'thin'}, 
       left: {style: 'thin'},
       right: {style: 'thin'},
@@ -1587,8 +1610,9 @@ export class ExcelQuotationService {
     worksheet.getCell(`A${currentRow}`).alignment = {horizontal: 'right'};
     worksheet.getCell(`A${currentRow}`).border = {left: {style: 'thin'} };
 
+    worksheet.mergeCells(`B${currentRow}:C${currentRow}`);
 
-    worksheet.getCell(`B${currentRow}`).value = 'Penawaran Berlaku: 2 Minggu';
+    worksheet.getCell(`B${currentRow}`).value = ' Penawaran Berlaku: 2 Minggu';
     worksheet.getCell(`B${currentRow}`).font = {
       name: 'Arial',
       size: 12
@@ -1598,6 +1622,7 @@ export class ExcelQuotationService {
       pattern: 'solid',
       fgColor: { argb: 'ffffffff' },
     };
+    worksheet.getCell(`B${currentRow}`).alignment = {horizontal: 'left'};
 
     worksheet.getCell(`C${currentRow}`).border = {right: {style: 'thin'} };
     worksheet.getCell(`C${currentRow}`).fill = {
@@ -1624,20 +1649,20 @@ export class ExcelQuotationService {
       bottom: {style: 'thin'}
     };
 
-    worksheet.getCell(`G${currentRow}`).border = {
+    worksheet.getCell(`F${currentRow}`).border = {
       top: {style: 'thin'}, 
       right: {style: 'thin'},
       bottom: {style: 'thin'}
     };
 
-    worksheet.getCell(`H${currentRow}`).value = ((totalSellingPrice1 + totalSellingPrice2) - (((totalSellingPrice1 + totalSellingPrice2) * 11) / 100));
-    worksheet.getCell(`H${currentRow}`).numFmt = '_("Rp"* #,##0.00_);_("Rp"* (#,##0.00);_("Rp"* "-"??_);_(@_)';
-    worksheet.getCell(`H${currentRow}`).font = {
+    worksheet.getCell(`G${currentRow}`).value = ((totalSellingPrice1 + totalSellingPrice2) - (((totalSellingPrice1 + totalSellingPrice2) * 11) / 100));
+    worksheet.getCell(`G${currentRow}`).numFmt = '_("Rp"* #,##0.00_);_("Rp"* (#,##0.00);_("Rp"* "-"??_);_(@_)';
+    worksheet.getCell(`G${currentRow}`).font = {
       name: 'Arial',
       size: 12,
       bold: true
     };
-    worksheet.getCell(`H${currentRow}`).border = {
+    worksheet.getCell(`G${currentRow}`).border = {
       top: {style: 'thin'}, 
       left: {style: 'thin'},
       right: {style: 'thin'},
@@ -1659,8 +1684,9 @@ export class ExcelQuotationService {
     worksheet.getCell(`A${currentRow}`).alignment = {horizontal: 'right'};
     worksheet.getCell(`A${currentRow}`).border = { left: {style: 'thin'} };
 
+    worksheet.mergeCells(`B${currentRow}:C${currentRow}`);
 
-    worksheet.getCell(`B${currentRow}`).value = 'Sifat Pekerjaan: Unit Price, Sesuai dengan lingkup Pekerjaan';
+    worksheet.getCell(`B${currentRow}`).value = ' Sifat Pekerjaan: Unit Price, Sesuai dengan lingkup Pekerjaan';
     worksheet.getCell(`B${currentRow}`).font = {
       name: 'Arial',
       size: 12
@@ -1670,6 +1696,7 @@ export class ExcelQuotationService {
       pattern: 'solid',
       fgColor: { argb: 'ffffffff' },
     };
+    worksheet.getCell(`B${currentRow}`).alignment = { horizontal: 'left'};
 
     worksheet.getCell(`C${currentRow}`).border = {right: {style: 'thin'} };
     worksheet.getCell(`C${currentRow}`).fill = {
@@ -1703,22 +1730,22 @@ export class ExcelQuotationService {
       fgColor: { argb: 'ffffffff' },
     };
 
-    worksheet.getCell(`G${currentRow}`).border = {
+    worksheet.getCell(`F${currentRow}`).border = {
       top: {style: 'thin'}, 
     };
 
-    worksheet.getCell(`G${currentRow}`).fill = {
+    worksheet.getCell(`F${currentRow}`).fill = {
       type: 'pattern',
       pattern: 'solid',
       fgColor: { argb: 'ffffffff' },
     };
 
-    worksheet.getCell(`H${currentRow}`).border = {
+    worksheet.getCell(`G${currentRow}`).border = {
       top: {style: 'thin'},
       right: {style: 'thin'}, 
     };
 
-    worksheet.getCell(`H${currentRow}`).fill = {
+    worksheet.getCell(`G${currentRow}`).fill = {
       type: 'pattern',
       pattern: 'solid',
       fgColor: { argb: 'ffffffff' },
@@ -1739,8 +1766,9 @@ export class ExcelQuotationService {
     worksheet.getCell(`A${currentRow}`).alignment = {horizontal: 'right'};
     worksheet.getCell(`A${currentRow}`).border = { left: {style: 'thin'} };
 
+    worksheet.mergeCells(`B${currentRow}:C${currentRow}`);
 
-    worksheet.getCell(`B${currentRow}`).value = 'Termin Pembayaran : DP 40%, MOS 60%';
+    worksheet.getCell(`B${currentRow}`).value = ' Termin Pembayaran : DP 40%, MOS 60%';
     worksheet.getCell(`B${currentRow}`).font = {
       name: 'Arial',
       size: 12
@@ -1750,6 +1778,7 @@ export class ExcelQuotationService {
       pattern: 'solid',
       fgColor: { argb: 'ffffffff' },
     };
+    worksheet.getCell(`B${currentRow}`).alignment = {horizontal: 'left'}
 
     worksheet.getCell(`C${currentRow}`).border = {right: {style: 'thin'} };
     worksheet.getCell(`C${currentRow}`).fill = {
@@ -1776,17 +1805,17 @@ export class ExcelQuotationService {
     };
 
 
-    worksheet.getCell(`G${currentRow}`).fill = {
+    worksheet.getCell(`F${currentRow}`).fill = {
       type: 'pattern',
       pattern: 'solid',
       fgColor: { argb: 'ffffffff' },
     };
 
-    worksheet.getCell(`H${currentRow}`).border = {
+    worksheet.getCell(`G${currentRow}`).border = {
       right: {style: 'thin'}, 
     };
 
-    worksheet.getCell(`H${currentRow}`).fill = {
+    worksheet.getCell(`G${currentRow}`).fill = {
       type: 'pattern',
       pattern: 'solid',
       fgColor: { argb: 'ffffffff' },
@@ -1807,11 +1836,12 @@ export class ExcelQuotationService {
     worksheet.getCell(`A${currentRow}`).alignment = {horizontal: 'right'};
     worksheet.getCell(`A${currentRow}`).border = { left: {style: 'thin'} };
 
+    worksheet.mergeCells(`B${currentRow}:C${currentRow}`);
 
     worksheet.getCell(`B${currentRow}`).value = {
       richText: [
         {
-          text: 'Semua material mengacu spesifikasi dari'
+          text: ' Semua material mengacu spesifikasi dari'
         },
         {
           text: ' sfm siphonic systems',
@@ -1832,6 +1862,8 @@ export class ExcelQuotationService {
       pattern: 'solid',
       fgColor: { argb: 'ffffffff' },
     };
+
+    worksheet.getCell(`B${currentRow}`).alignment = { horizontal: 'left' };
 
     worksheet.getCell(`C${currentRow}`).border = {right: {style: 'thin'} };
     worksheet.getCell(`C${currentRow}`).fill = {
@@ -1861,17 +1893,17 @@ export class ExcelQuotationService {
       fgColor: { argb: 'ffffffff' },
     };
 
-    worksheet.getCell(`G${currentRow}`).fill = {
+    worksheet.getCell(`F${currentRow}`).fill = {
       type: 'pattern',
       pattern: 'solid',
       fgColor: { argb: 'ffffffff' },
     };
 
-    worksheet.getCell(`H${currentRow}`).border = {
+    worksheet.getCell(`G${currentRow}`).border = {
       right: {style: 'thin'}, 
     };
 
-    worksheet.getCell(`H${currentRow}`).fill = {
+    worksheet.getCell(`G${currentRow}`).fill = {
       type: 'pattern',
       pattern: 'solid',
       fgColor: { argb: 'ffffffff' },
@@ -1917,17 +1949,17 @@ export class ExcelQuotationService {
       fgColor: { argb: 'ffffffff' },
     };
 
-    worksheet.getCell(`G${currentRow}`).fill = {
+    worksheet.getCell(`F${currentRow}`).fill = {
       type: 'pattern',
       pattern: 'solid',
       fgColor: { argb: 'ffffffff' },
     };
 
-    worksheet.getCell(`H${currentRow}`).border = {
+    worksheet.getCell(`G${currentRow}`).border = {
       right: {style: 'thin'}, 
     };
 
-    worksheet.getCell(`H${currentRow}`).fill = {
+    worksheet.getCell(`G${currentRow}`).fill = {
       type: 'pattern',
       pattern: 'solid',
       fgColor: { argb: 'ffffffff' },
@@ -1977,17 +2009,17 @@ export class ExcelQuotationService {
       fgColor: { argb: 'ffffffff' },
     };
 
-    worksheet.getCell(`G${currentRow}`).fill = {
+    worksheet.getCell(`F${currentRow}`).fill = {
       type: 'pattern',
       pattern: 'solid',
       fgColor: { argb: 'ffffffff' },
     };
 
-    worksheet.getCell(`H${currentRow}`).border = {
+    worksheet.getCell(`G${currentRow}`).border = {
       right: {style: 'thin'}, 
     };
 
-    worksheet.getCell(`H${currentRow}`).fill = {
+    worksheet.getCell(`G${currentRow}`).fill = {
       type: 'pattern',
       pattern: 'solid',
       fgColor: { argb: 'ffffffff' },
@@ -2012,17 +2044,17 @@ export class ExcelQuotationService {
       fgColor: { argb: 'ffffffff' },
     };
 
-    worksheet.getCell(`G${currentRow}`).fill = {
+    worksheet.getCell(`F${currentRow}`).fill = {
       type: 'pattern',
       pattern: 'solid',
       fgColor: { argb: 'ffffffff' },
     };
 
-    worksheet.getCell(`H${currentRow}`).border = {
+    worksheet.getCell(`G${currentRow}`).border = {
       right: {style: 'thin'}, 
     };
 
-    worksheet.getCell(`H${currentRow}`).fill = {
+    worksheet.getCell(`G${currentRow}`).fill = {
       type: 'pattern',
       pattern: 'solid',
       fgColor: { argb: 'ffffffff' },
@@ -2047,17 +2079,17 @@ export class ExcelQuotationService {
       fgColor: { argb: 'ffffffff' },
     };
 
-    worksheet.getCell(`G${currentRow}`).fill = {
+    worksheet.getCell(`F${currentRow}`).fill = {
       type: 'pattern',
       pattern: 'solid',
       fgColor: { argb: 'ffffffff' },
     };
 
-    worksheet.getCell(`H${currentRow}`).border = {
+    worksheet.getCell(`G${currentRow}`).border = {
       right: {style: 'thin'}, 
     };
 
-    worksheet.getCell(`H${currentRow}`).fill = {
+    worksheet.getCell(`G${currentRow}`).fill = {
       type: 'pattern',
       pattern: 'solid',
       fgColor: { argb: 'ffffffff' },
@@ -2083,54 +2115,17 @@ export class ExcelQuotationService {
       fgColor: { argb: 'ffffffff' },
     };
 
-    worksheet.getCell(`G${currentRow}`).fill = {
+    worksheet.getCell(`F${currentRow}`).fill = {
       type: 'pattern',
       pattern: 'solid',
       fgColor: { argb: 'ffffffff' },
     };
 
-    worksheet.getCell(`H${currentRow}`).border = {
+    worksheet.getCell(`G${currentRow}`).border = {
       right: {style: 'thin'}, 
     };
 
-    worksheet.getCell(`H${currentRow}`).fill = {
-      type: 'pattern',
-      pattern: 'solid',
-      fgColor: { argb: 'ffffffff' },
-    };
-
-
-    currentRow++;
-
-
-    worksheet.getCell(`D${currentRow}`).border = {
-      left: {style: 'thin'},
-    };
-
-    worksheet.getCell(`D${currentRow}`).fill = {
-      type: 'pattern',
-      pattern: 'solid',
-      fgColor: { argb: 'ffffffff' },
-    };
-    
-
-    worksheet.getCell(`E${currentRow}`).fill = {
-      type: 'pattern',
-      pattern: 'solid',
-      fgColor: { argb: 'ffffffff' },
-    };
-
     worksheet.getCell(`G${currentRow}`).fill = {
-      type: 'pattern',
-      pattern: 'solid',
-      fgColor: { argb: 'ffffffff' },
-    };
-
-    worksheet.getCell(`H${currentRow}`).border = {
-      right: {style: 'thin'}, 
-    };
-
-    worksheet.getCell(`H${currentRow}`).fill = {
       type: 'pattern',
       pattern: 'solid',
       fgColor: { argb: 'ffffffff' },
@@ -2157,17 +2152,54 @@ export class ExcelQuotationService {
       fgColor: { argb: 'ffffffff' },
     };
 
+    worksheet.getCell(`F${currentRow}`).fill = {
+      type: 'pattern',
+      pattern: 'solid',
+      fgColor: { argb: 'ffffffff' },
+    };
+
+    worksheet.getCell(`G${currentRow}`).border = {
+      right: {style: 'thin'}, 
+    };
+
     worksheet.getCell(`G${currentRow}`).fill = {
       type: 'pattern',
       pattern: 'solid',
       fgColor: { argb: 'ffffffff' },
     };
 
-    worksheet.getCell(`H${currentRow}`).border = {
+
+    currentRow++;
+
+
+    worksheet.getCell(`D${currentRow}`).border = {
+      left: {style: 'thin'},
+    };
+
+    worksheet.getCell(`D${currentRow}`).fill = {
+      type: 'pattern',
+      pattern: 'solid',
+      fgColor: { argb: 'ffffffff' },
+    };
+    
+
+    worksheet.getCell(`E${currentRow}`).fill = {
+      type: 'pattern',
+      pattern: 'solid',
+      fgColor: { argb: 'ffffffff' },
+    };
+
+    worksheet.getCell(`F${currentRow}`).fill = {
+      type: 'pattern',
+      pattern: 'solid',
+      fgColor: { argb: 'ffffffff' },
+    };
+
+    worksheet.getCell(`G${currentRow}`).border = {
       right: {style: 'thin'}, 
     };
 
-    worksheet.getCell(`H${currentRow}`).fill = {
+    worksheet.getCell(`G${currentRow}`).fill = {
       type: 'pattern',
       pattern: 'solid',
       fgColor: { argb: 'ffffffff' },
@@ -2193,17 +2225,17 @@ export class ExcelQuotationService {
       fgColor: { argb: 'ffffffff' },
     };
 
-    worksheet.getCell(`G${currentRow}`).fill = {
+    worksheet.getCell(`F${currentRow}`).fill = {
       type: 'pattern',
       pattern: 'solid',
       fgColor: { argb: 'ffffffff' },
     };
 
-    worksheet.getCell(`H${currentRow}`).border = {
+    worksheet.getCell(`G${currentRow}`).border = {
       right: {style: 'thin'}, 
     };
 
-    worksheet.getCell(`H${currentRow}`).fill = {
+    worksheet.getCell(`G${currentRow}`).fill = {
       type: 'pattern',
       pattern: 'solid',
       fgColor: { argb: 'ffffffff' },
@@ -2212,7 +2244,7 @@ export class ExcelQuotationService {
 
     currentRow++;
 
-    worksheet.mergeCells(`D${currentRow}:H${currentRow}`);
+    worksheet.mergeCells(`D${currentRow}:G${currentRow}`);
 
     worksheet.getCell(`D${currentRow}`).border = {
       left: {style: 'thin'},
@@ -2226,7 +2258,7 @@ export class ExcelQuotationService {
     };
 
     
-    worksheet.getCell(`D${currentRow}`).value = 'Khaadeja Amabel';
+    worksheet.getCell(`D${currentRow}`).value = dataBasic.project.pic.filter((p) => p.is_pic_internal === 1).map((p) => (p.name))[0];
     worksheet.getCell(`D${currentRow}`).font = {
       bold: true,
       underline: true,
@@ -2239,7 +2271,7 @@ export class ExcelQuotationService {
 
     currentRow++;
 
-    worksheet.mergeCells(`D${currentRow}:H${currentRow}`);
+    worksheet.mergeCells(`D${currentRow}:G${currentRow}`);
 
     worksheet.getCell(`D${currentRow}`).border = {
       left: {style: 'thin'},
@@ -2285,26 +2317,30 @@ export class ExcelQuotationService {
       const formData = new FormData();
       formData.append('file', file);
 
-      this.apiSvc.convertToPdf(formData).subscribe({
-        next: (response) => {
-          const base64String = response.pdfBlob; // The Base64 string from your backend
-          const byteCharacters = atob(base64String.split(',')[1]); // Decode Base64
-          const byteNumbers = new Array(byteCharacters.length);
+      if(fileType === 'pdf'){
+        this.apiSvc.convertToPdf(formData).subscribe({
+          next: (response) => {
+            const base64String = response.pdfBlob; // The Base64 string from your backend
+            const byteCharacters = atob(base64String.split(',')[1]); // Decode Base64
+            const byteNumbers = new Array(byteCharacters.length);
+  
+            for (let i = 0; i < byteCharacters.length; i++) {
+              byteNumbers[i] = byteCharacters.charCodeAt(i);
+            }
+  
+            const byteArray = new Uint8Array(byteNumbers);
+            const blob = new Blob([byteArray], { type: 'application/pdf' });
+  
+            // Trigger file download
+            saveAs(blob, `${dataBasic.quotation_no}.pdf`);
+          },
+          error: (err) => {console.log(err)}
+        })
+      }
 
-          for (let i = 0; i < byteCharacters.length; i++) {
-            byteNumbers[i] = byteCharacters.charCodeAt(i);
-          }
-
-          const byteArray = new Uint8Array(byteNumbers);
-          const blob = new Blob([byteArray], { type: 'application/pdf' });
-
-          // Trigger file download
-          saveAs(blob, `${dataBasic.quotation_no}R.pdf`);
-        },
-        error: (err) => {console.log(err)}
-      })
-
-      saveAs(blob, `${dataBasic.quotation_no}.xlsx`);
+      if(fileType === 'excel'){
+        saveAs(blob, `${dataBasic.quotation_no}.xlsx`);
+      }
     });
   }
 
