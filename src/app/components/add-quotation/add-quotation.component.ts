@@ -767,13 +767,15 @@ export class AddQuotationComponent implements OnInit {
 
   calculateGrandTotalPrice() {
     this.totalGrandCost = this.items.controls.reduce((sum, group) => {
-      const totalPrice = group.get('total_price')?.value || 0;
-      return sum + Number(totalPrice);
+      const totalPrice = group.get('unit_price')?.value || 0;
+      const qty =  group.get('qty')?.value || 0;
+      return sum + Number(totalPrice) * Number(qty);
     }, 0);
 
     this.iTotalGrandCost = this.items.controls.reduce((sum, group) => {
       const totalPrice  =  group.get('installation_selling_price')?.value || 0;
-      return sum + Number(totalPrice);
+      const qty =  group.get('qty')?.value || 0;
+      return sum + Number(totalPrice) * Number(qty);
     }, 0)
 
     this.totalGrandPriceList = this.items.controls.reduce((sum, group) => {
