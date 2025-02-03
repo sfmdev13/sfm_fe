@@ -20,6 +20,8 @@ export class ExcelService {
 
     let totalGrandInstallation = 0;
     let totalGrandPrice = 0;
+    const sortOrder = ['Elbow', 'Reducer', 'Branch'];
+
     // title
     worksheet.getCell('B2').value = 'RINCIAN RENCANA ANGGARAN BIAYA (RAB)';
     worksheet.getCell('B2').font = {
@@ -338,61 +340,70 @@ export class ExcelService {
         if (data.revision === revision) {
           totalGrandInstallation = parseFloat(parseFloat(data.total_installation_price_after_discount).toFixed(2))
           totalGrandPrice = parseFloat(parseFloat(data.total_price_after_discount).toFixed(2))
-          data.quotation_items.forEach((item) => {
-            if (cat.id === item.inventory.supplier_product.id) {
-              // Column number for inventory
-              worksheet.getCell(`B${currentRow}`).border = {
-                left: { style: 'thin' },
-                right: { style: 'thin' },
-              };
-    
-              // Column title for inventory
-              worksheet.getCell(`C${currentRow}`).value = `- ${item.inventory.description}`;
-              worksheet.getCell(`C${currentRow}`).font = {
-                name: 'Arial',
-                size: 11,
-              };
-    
-              //Column qty
-              worksheet.getCell(`K${currentRow}`).value = parseFloat(item.qty);
-              worksheet.getCell(`K${currentRow}`).font = {
-                name: 'Arial',
-                size: 11,
-                color: { argb: 'ffff6347' },
-              };
-              worksheet.getCell(`K${currentRow}`).border = {
-                left: { style: 'thin' },
-                right: { style: 'thin' },
-              };
-
-              worksheet.getCell(`K${currentRow}`).alignment = {horizontal: 'center'}
-
-              //Column Unit
-              worksheet.getCell(`L${currentRow}`).value = item.inventory.unit.name;
-              worksheet.getCell(`L${currentRow}`).alignment = {horizontal: 'center'}
-              worksheet.getCell(`L${currentRow}`).border = {
-                left: { style: 'thin' },
-                right: { style: 'thin' },
-              };
-
-              //Column Unit Price
-              worksheet.getCell(`M${currentRow}`).value = parseFloat(item.inventory.default_selling_price);
-              worksheet.getCell(`M${currentRow}`).numFmt = '_("Rp"* #,##0.00_);_("Rp"* (#,##0.00);_("Rp"* "-"??_);_(@_)'; 
-              worksheet.getCell(`M${currentRow}`).border = {
-                left: { style: 'thin' },
-                right: { style: 'thin' },
-              };
-
-              //Column Total Selling Price
-              worksheet.getCell(`N${currentRow}`).value = parseFloat(item.total_price_per_product_after_discount);
-              worksheet.getCell(`N${currentRow}`).numFmt = '_("Rp"* #,##0.00_);_("Rp"* (#,##0.00);_("Rp"* "-"??_);_(@_)'; 
-              worksheet.getCell(`N${currentRow}`).border = {
-                left: { style: 'thin' },
-                right: { style: 'thin' },
-              };
-    
-              currentRow++; // Move to the next row after each inventory item
+          data.quotation_items
+          .filter((item) => cat.id === item.inventory.supplier_product.id) // Filter first
+          .sort((a, b) => {
+            if (cat.name.toLowerCase() === 'fitting') {
+              const indexA = sortOrder.findIndex((order) => a.inventory.sub_category.name === order);
+              const indexB = sortOrder.findIndex((order) => b.inventory.sub_category.name === order);
+        
+              return (indexA === -1 ? sortOrder.length : indexA) - (indexB === -1 ? sortOrder.length : indexB);
             }
+            return 0; // No sorting if not 'fitting'
+          })
+          .forEach((item) => {
+            // Column number for inventory
+            worksheet.getCell(`B${currentRow}`).border = {
+              left: { style: 'thin' },
+              right: { style: 'thin' },
+            };
+  
+            // Column title for inventory
+            worksheet.getCell(`C${currentRow}`).value = `- ${item.inventory.description}`;
+            worksheet.getCell(`C${currentRow}`).font = {
+              name: 'Arial',
+              size: 11,
+            };
+  
+            //Column qty
+            worksheet.getCell(`K${currentRow}`).value = parseFloat(item.qty);
+            worksheet.getCell(`K${currentRow}`).font = {
+              name: 'Arial',
+              size: 11,
+              color: { argb: 'ffff6347' },
+            };
+            worksheet.getCell(`K${currentRow}`).border = {
+              left: { style: 'thin' },
+              right: { style: 'thin' },
+            };
+
+            worksheet.getCell(`K${currentRow}`).alignment = {horizontal: 'center'}
+
+            //Column Unit
+            worksheet.getCell(`L${currentRow}`).value = item.inventory.unit.name;
+            worksheet.getCell(`L${currentRow}`).alignment = {horizontal: 'center'}
+            worksheet.getCell(`L${currentRow}`).border = {
+              left: { style: 'thin' },
+              right: { style: 'thin' },
+            };
+
+            //Column Unit Price
+            worksheet.getCell(`M${currentRow}`).value = parseFloat(item.inventory.default_selling_price);
+            worksheet.getCell(`M${currentRow}`).numFmt = '_("Rp"* #,##0.00_);_("Rp"* (#,##0.00);_("Rp"* "-"??_);_(@_)'; 
+            worksheet.getCell(`M${currentRow}`).border = {
+              left: { style: 'thin' },
+              right: { style: 'thin' },
+            };
+
+            //Column Total Selling Price
+            worksheet.getCell(`N${currentRow}`).value = parseFloat(item.total_price_per_product_after_discount);
+            worksheet.getCell(`N${currentRow}`).numFmt = '_("Rp"* #,##0.00_);_("Rp"* (#,##0.00);_("Rp"* "-"??_);_(@_)'; 
+            worksheet.getCell(`N${currentRow}`).border = {
+              left: { style: 'thin' },
+              right: { style: 'thin' },
+            };
+  
+            currentRow++; // Move to the next row after each inventory item
           });
         }
       });
@@ -734,61 +745,70 @@ export class ExcelService {
     
       dataDetail.quotation_revision.forEach((data) => {
         if (data.revision === revision) {
-          data.quotation_items.forEach((item) => {
-            if (cat.id === item.inventory.supplier_product.id) {
-              // Column number for inventory
-              worksheet.getCell(`B${currentRowInst}`).border = {
-                left: { style: 'thin' },
-                right: { style: 'thin' },
-              };
-    
-              // Column title for inventory
-              worksheet.getCell(`C${currentRowInst}`).value = `- ${item.inventory.description}`;
-              worksheet.getCell(`C${currentRowInst}`).font = {
-                name: 'Arial',
-                size: 11,
-              };
-    
-              //Column qty
-              worksheet.getCell(`K${currentRowInst}`).value = parseFloat(item.qty);
-              worksheet.getCell(`K${currentRowInst}`).font = {
-                name: 'Arial',
-                size: 11,
-                color: { argb: 'ffff6347' },
-              };
-              worksheet.getCell(`K${currentRowInst}`).border = {
-                left: { style: 'thin' },
-                right: { style: 'thin' },
-              };
-
-              worksheet.getCell(`K${currentRowInst}`).alignment = {horizontal: 'center'}
-
-              //Column Unit
-              worksheet.getCell(`L${currentRowInst}`).value = item.inventory.unit.name;
-              worksheet.getCell(`L${currentRowInst}`).alignment = {horizontal: 'center'}
-              worksheet.getCell(`L${currentRowInst}`).border = {
-                left: { style: 'thin' },
-                right: { style: 'thin' },
-              };
-
-              //Column Unit Price
-              worksheet.getCell(`M${currentRowInst}`).value = parseFloat(item.inventory.installation.selling_price);
-              worksheet.getCell(`M${currentRowInst}`).numFmt = '_("Rp"* #,##0.00_);_("Rp"* (#,##0.00);_("Rp"* "-"??_);_(@_)'; 
-              worksheet.getCell(`M${currentRowInst}`).border = {
-                left: { style: 'thin' },
-                right: { style: 'thin' },
-              };
-
-              //Column Total Selling Price
-              worksheet.getCell(`N${currentRowInst}`).value = parseFloat(item.total_installation_price_after_discount);
-              worksheet.getCell(`N${currentRowInst}`).numFmt = '_("Rp"* #,##0.00_);_("Rp"* (#,##0.00);_("Rp"* "-"??_);_(@_)'; 
-              worksheet.getCell(`N${currentRowInst}`).border = {
-                left: { style: 'thin' },
-                right: { style: 'thin' },
-              };
-    
-              currentRowInst++; // Move to the next row after each inventory item
+          data.quotation_items
+          .filter((item) => cat.id === item.inventory.supplier_product.id) // Filter first
+          .sort((a, b) => {
+            if (cat.name.toLowerCase() === 'fitting') {
+              const indexA = sortOrder.findIndex((order) => a.inventory.sub_category.name === order);
+              const indexB = sortOrder.findIndex((order) => b.inventory.sub_category.name === order);
+        
+              return (indexA === -1 ? sortOrder.length : indexA) - (indexB === -1 ? sortOrder.length : indexB);
             }
+            return 0; // No sorting if not 'fitting'
+          })
+          .forEach((item) => {
+            // Column number for inventory
+            worksheet.getCell(`B${currentRowInst}`).border = {
+              left: { style: 'thin' },
+              right: { style: 'thin' },
+            };
+  
+            // Column title for inventory
+            worksheet.getCell(`C${currentRowInst}`).value = `- ${item.inventory.description}`;
+            worksheet.getCell(`C${currentRowInst}`).font = {
+              name: 'Arial',
+              size: 11,
+            };
+  
+            //Column qty
+            worksheet.getCell(`K${currentRowInst}`).value = parseFloat(item.qty);
+            worksheet.getCell(`K${currentRowInst}`).font = {
+              name: 'Arial',
+              size: 11,
+              color: { argb: 'ffff6347' },
+            };
+            worksheet.getCell(`K${currentRowInst}`).border = {
+              left: { style: 'thin' },
+              right: { style: 'thin' },
+            };
+
+            worksheet.getCell(`K${currentRowInst}`).alignment = {horizontal: 'center'}
+
+            //Column Unit
+            worksheet.getCell(`L${currentRowInst}`).value = item.inventory.unit.name;
+            worksheet.getCell(`L${currentRowInst}`).alignment = {horizontal: 'center'}
+            worksheet.getCell(`L${currentRowInst}`).border = {
+              left: { style: 'thin' },
+              right: { style: 'thin' },
+            };
+
+            //Column Unit Price
+            worksheet.getCell(`M${currentRowInst}`).value = parseFloat(item.inventory.installation.selling_price);
+            worksheet.getCell(`M${currentRowInst}`).numFmt = '_("Rp"* #,##0.00_);_("Rp"* (#,##0.00);_("Rp"* "-"??_);_(@_)'; 
+            worksheet.getCell(`M${currentRowInst}`).border = {
+              left: { style: 'thin' },
+              right: { style: 'thin' },
+            };
+
+            //Column Total Selling Price
+            worksheet.getCell(`N${currentRowInst}`).value = parseFloat(item.total_installation_price_after_discount);
+            worksheet.getCell(`N${currentRowInst}`).numFmt = '_("Rp"* #,##0.00_);_("Rp"* (#,##0.00);_("Rp"* "-"??_);_(@_)'; 
+            worksheet.getCell(`N${currentRowInst}`).border = {
+              left: { style: 'thin' },
+              right: { style: 'thin' },
+            };
+  
+            currentRowInst++; // Move to the next row after each inventory item
           });
         }
       });
