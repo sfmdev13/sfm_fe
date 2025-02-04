@@ -269,6 +269,7 @@ export class AddInventoriesComponent implements OnInit {
     const unitPrice = this.inventoryForm.get('installation_unit_price')?.value;
     const unitPriceType = this.inventoryForm.get('installation_unit_price_type')?.value;
     const priceFactor = this.inventoryForm.get('installation_price_factor')?.value;
+    const priceList = this.inventoryForm.get('price_list')?.value;
     let pricePerUnit = 0;
 
 
@@ -281,7 +282,7 @@ export class AddInventoriesComponent implements OnInit {
     }
 
     const installationSellingPrice = parseFloat(priceFactor) * pricePerUnit;
-    const installationGrossMargin = ((pricePerUnit / installationSellingPrice) * 100).toFixed(2);
+    const installationGrossMargin = ((installationSellingPrice - unitPrice)/installationSellingPrice * 100).toFixed(2);
 
     this.inventoryForm.get('installation_selling_price')?.setValue(installationSellingPrice, { emitEvent: false });
     this.inventoryForm.get('installation_gross_margin')?.setValue(installationGrossMargin, { emitEvent: false })
