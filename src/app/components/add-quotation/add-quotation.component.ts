@@ -91,7 +91,12 @@ export class AddQuotationComponent implements OnInit {
     quotation_stack_deleted_ids: [[]],
     items: this.fb.array([]),
     contactPerson: this.fb.array([]),
-    stacks: this.fb.array([])
+    stacks: this.fb.array([]),
+
+    tax: [0],
+    preliminaries: [0],
+    supervision: [0],
+    test_commisioning: [0]
   })
 
   pic$!: Observable<any>;
@@ -412,6 +417,13 @@ export class AddQuotationComponent implements OnInit {
 
       if(this.isCreateQuotationTotal && this.dataQuotation.latest_quotation_revision.quotation_items.length > 0) {
         this.items.clear();
+
+        this.quotationForm.patchValue({
+          tax: parseFloat(this.dataQuotation.latest_quotation_revision.tax),
+          preliminaries: parseFloat(this.dataQuotation.latest_quotation_revision.preliminaries),
+          supervision: parseFloat(this.dataQuotation.latest_quotation_revision.supervision),
+          test_commisioning: parseFloat(this.dataQuotation.latest_quotation_revision.test_commisioning)
+        })
 
         this.dataQuotation.latest_quotation_revision.quotation_items.forEach((item) => {
           const newItem = this.fb.group({
@@ -1579,7 +1591,11 @@ export class AddQuotationComponent implements OnInit {
           customer_cp_ids,
           quotation_type: this.quotationForm.get('project_type')?.value,
           issued_date: this.quotationForm.get('date')?.value,
-          quotation_items_discount: null
+          quotation_items_discount: null,
+          tax: this.quotationForm.get('tax')?.value,
+          preliminaries: this.quotationForm.get('preliminaries')?.value,
+          supervision: this.quotationForm.get('supervision')?.value,
+          test_commisioning: this.quotationForm.get('test_commisioning')?.value
           // inventories: inventoryComplete
         }
   
@@ -1712,7 +1728,11 @@ export class AddQuotationComponent implements OnInit {
           customer_cp_ids_new: customer_cp_ids,
           issued_date: this.quotationForm.get('date')?.value,
           quotation_stack_deleted_ids: this.deletedStackIds,
-          quotation_items_discount: quotationItemsDiscount
+          quotation_items_discount: quotationItemsDiscount,
+          tax: this.quotationForm.get('tax')?.value,
+          preliminaries: this.quotationForm.get('preliminaries')?.value,
+          supervision: this.quotationForm.get('supervision')?.value,
+          test_commisioning: this.quotationForm.get('test_commisioning')?.value
           // inventories: inventoryComplete,
         }
   

@@ -185,6 +185,13 @@
     total_installation_price: string
     total_installation_price_after_discount: string
     total_price_after_discount: string
+    tax: string;
+    tax_price: string;
+    total_price_after_tax: string;
+    preliminaries: string;
+    supervision: string;
+    test_commisioning: string;
+
   }
   
   export interface PreparedBy {

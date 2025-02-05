@@ -378,13 +378,68 @@
                 </nz-tab>
                 <nz-tab *ngIf="this.isCreateQuotationTotal" nzTitle="Quotation">
                     <div class="row p-3">
-                        <p class="m-0 p-0 fw-bold col-12">Stacks</p>
+                        <!-- <p class="m-0 p-0 fw-bold col-12">Stacks</p>
                         <div class="col-12">
                             <p class="m-0 p-0 text-uppercase">
                                 <ng-container *ngFor='let s of selectedStack; let isLast = last'>
                                     {{ s }} {{ isLast ? '' : ', ' }}
                                 </ng-container>
                             </p>
+                        </div> -->
+                        <div class="col-4">
+                            <nz-form-item>
+                                <nz-form-label nzRequired nzFor="tax" class="fw-semibold">Tax</nz-form-label>
+                                <nz-form-control>
+                                    <nz-input-number-group class="w-100" nzAddOnAfter="%">
+                                        <nz-input-number [nzMin]="0" formControlName="tax"></nz-input-number>
+                                    </nz-input-number-group>
+                                </nz-form-control>
+                            </nz-form-item>
+                        </div>
+                        <div class="col-4">
+                            <nz-form-item>
+                                <nz-form-label nzRequired nzFor="preliminaries" class="fw-semibold">Preliminaries</nz-form-label>
+                                <nz-form-control>
+                                    <nz-input-number-group nzAddOnBefore="Rp. " class="w-100">
+                                        <nz-input-number
+                                        id="preliminaries"
+                                        formControlName="preliminaries"
+                                        [nzFormatter]="formatter"
+                                        [nzMin]="0"
+                                        ></nz-input-number>
+                                    </nz-input-number-group>
+                                </nz-form-control>
+                            </nz-form-item>
+                        </div>
+                        <div class="col-4">
+                            <nz-form-item>
+                                <nz-form-label nzRequired nzFor="supervision" class="fw-semibold" class="w-100">Supervision</nz-form-label>
+                                <nz-form-control>
+                                    <nz-input-number-group nzAddOnBefore="Rp. " class="w-100">
+                                        <nz-input-number
+                                        id="supervision"
+                                        formControlName="supervision"
+                                        [nzFormatter]="formatter"
+                                        [nzMin]="0"
+                                        ></nz-input-number>
+                                    </nz-input-number-group>
+                                </nz-form-control>
+                            </nz-form-item>
+                        </div>
+                        <div class="col-4">
+                            <nz-form-item>
+                                <nz-form-label nzRequired nzFor="test_commisioning" class="fw-semibold" class="w-100">Test Commisioning</nz-form-label>
+                                <nz-form-control>
+                                    <nz-input-number-group nzAddOnBefore="Rp. " class="w-100">
+                                        <nz-input-number
+                                        id="test_commisioning"
+                                        formControlName="test_commisioning"
+                                        [nzFormatter]="formatter"
+                                        [nzMin]="0"
+                                        ></nz-input-number>
+                                    </nz-input-number-group>
+                                </nz-form-control>
+                            </nz-form-item>
                         </div>
                     </div>
                     <nz-tabset [nzAnimated]="false">
@@ -538,7 +593,7 @@
                                                 </tr>
 
                                                 <tr class="sticky-head" *ngIf="groupedItems[category].items.length > 0">
-                                                    <th class="" colspan="14">
+                                                    <th class="" colspan="16">
                                                         <div class="d-flex flex-column gap-2">
                                                             <span class="fw-bold">Discount</span>
                                                             <nz-input-number-group class="w-25" nzAddOnAfter="%">
