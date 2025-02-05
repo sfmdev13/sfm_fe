@@ -792,29 +792,11 @@ export class AddQuotationComponent implements OnInit {
   }
 
   calculateGrandGrossMargin() {
-    const priceList = this.items.controls.reduce((sum, group) => {
-      const totalPrice = group.get('price_list')?.value || 0;
-      return sum + Number(totalPrice);
-    }, 0);
 
-    const unitPrice = this.items.controls.reduce((sum, group) => {
-      const totalPrice = group.get('unit_price')?.value || 0;
-      return sum + Number(totalPrice);
-    }, 0);
 
-    const grossMargin = ((unitPrice - priceList)/unitPrice) * 100;
+    const grossMargin = ((this.totalGrandCost - this.totalGrandPriceList)/this.totalGrandCost) * 100;
 
-    const iUnitPrice = this.items.controls.reduce((sum, group) => {
-      const totalPrice = group.get('installation_price_per_unit')?.value || 0;
-      return sum + Number(totalPrice);
-    }, 0);
-
-    const iSellingPrice = this.items.controls.reduce((sum, group) => {
-      const totalPrice = group.get('installation_selling_price')?.value || 0;
-      return sum + Number(totalPrice);
-    }, 0);
-
-    const iGrossMargin = ((iSellingPrice - iUnitPrice)/iSellingPrice) * 100;
+    const iGrossMargin = ((this.iTotalGrandCost - this.totalGrandICost)/this.iTotalGrandCost) * 100;
 
     this.iTotalGrandGrossMargin = parseFloat(iGrossMargin.toFixed(2));
 
