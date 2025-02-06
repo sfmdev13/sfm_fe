@@ -15,19 +15,25 @@
     border-top: 3px solid rgba(0, 0, 0, 0.06);
 }
 
-.table-order{
+
+.table-stack{
     thead {
-        position: sticky;
-        top: 0;
-        z-index: 1;
+        tr{
+            th{
+                min-width: 132px; /* Set this to whatever minimum width works best */
+                white-space: nowrap; /* Prevent text from wrapping */
+            }
+        }
     }
     tbody{
         tr{
             td{
                 padding: 16px;
+                min-width: 132px; /* Set this to whatever minimum width works best */
+                white-space: nowrap; /* Prevent text from wrapping */
             }
         }
-    }    
+    }      
 }
 
 .total-children{
@@ -54,13 +60,88 @@
     height: 64px;
     padding-top: 16px;
     padding-right: 20px;
+    z-index: 9999999;
 }
 
 .table-purchase th, .table-purchase td {
-    min-width: 132px; /* Set this to whatever minimum width works best */
-    white-space: nowrap; /* Prevent text from wrapping */
+    min-width: 132px;
+    white-space: nowrap;
 }
 
 .table-installation th, .table-installation td {
-    max-width: 132px; /* Set this to whatever minimum width works best */
+    min-width: 150px;
+    white-space: nowrap;
+}
+
+.table-responsive {
+    max-height: 63vh;
+    overflow-y: auto;
+}
+
+.table-order thead th,
+.table-installation thead tr.sticky-head th {
+    position: sticky;
+    top: 0;
+    background-color: white;
+    z-index: 10000;
+}
+
+.table-order th:last-child,
+.table-order td:last-child,
+.table-installation thead tr.sticky-head  th:last-child,
+.table-installation td:last-child{
+    position: sticky;
+    right: 0;
+    background-color: white;
+    z-index: 10;
+    box-shadow: -2px 0 5px rgba(0, 0, 0, 0.1);
+}
+
+.table-installation thead tr.sticky-head  th:last-child{
+    z-index: 10000;
+}
+
+.table-order th:last-child::after,
+.table-order td:last-child::after,
+.table-installation thead tr.sticky-head  th:last-child::after,
+.table-installation td:last-child::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -4px; /* Adjust shadow position */
+    width: 4px;
+    height: 100%;
+    background: linear-gradient(to left, rgba(0, 0, 0, 0.1), transparent);
+    z-index: 21; /* Ensure shadow stays above */
+}
+
+.table-order th::after,
+.table-installation thead tr.sticky-head th::after{
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: -4px; /* Position below the cell */
+    width: 100%;
+    height: 4px; /* Shadow thickness */
+    background: linear-gradient(to bottom, rgba(0, 0, 0, 0.1), transparent);
+    z-index: 21; /* Ensure shadow stays above */
+}
+
+.sticky-head:nth-child(1) { 
+    top: 0px !important;
+    position: sticky;
+    top: 0;
+    z-index: 1001; /* Ensures stacked headers stay on top */
+}
+.sticky-head:nth-child(2) { 
+    top: 36px !important;
+    position: sticky;
+    top: 0;
+    z-index: 1001; /* Ensures stacked headers stay on top */
+}
+.sticky-head:nth-child(3) { 
+    top: 116px !important;
+    position: sticky;
+    top: 0;
+    z-index: 1001; /* Ensures stacked headers stay on top */
 }

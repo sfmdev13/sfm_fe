@@ -9,7 +9,7 @@ import { from, map, Observable, switchMap } from 'rxjs';
 @Injectable({
   providedIn: 'root'
 })
-export class ExcelQuotationService {
+export class ExcelQuotationDetailService {
 
   provinceList: any[] = [];
 
@@ -53,6 +53,7 @@ export class ExcelQuotationService {
 
     let categorySummary: 
       { 
+        id: number;
         name: string; 
         total: number;
         totalUnitPrice: number;
@@ -112,6 +113,7 @@ export class ExcelQuotationService {
       })
 
       categorySummary.push({
+        id: cat.id,
         name: cat.name,
         total: count,
         totalUnitPrice,
@@ -846,7 +848,150 @@ export class ExcelQuotationService {
         };
         worksheet.getCell(`G${currentRow}`).alignment = {horizontal: 'center', vertical: 'top'};
       }
+
+      currentRow++;
+      worksheet.getCell(`A${currentRow}`).border = {
+        right: {style: 'thick'},
+        left: {style: 'thick'}
+      }
+  
+      worksheet.getCell(`D${currentRow}`).border = {
+        right: {style: 'thick'},
+        left: {style: 'thick'},
+      }
+  
+      worksheet.getCell(`E${currentRow}`).border = {
+        right: {style: 'thick'},
+        left: {style: 'thick'},
+      }
+  
+      worksheet.getCell(`F${currentRow}`).border = {
+        right: {style: 'thick'},
+        left: {style: 'thick'},
+      }
+  
+      worksheet.getCell(`G${currentRow}`).border = {
+        right: {style: 'thick'},
+        left: {style: 'thick'},
+      }
+
+      const sortOrder = ['Elbow', 'Reducer', 'Branch'];
+      dataDetail.quotation_revision.forEach((data) => {
+        if (data.revision === revision) {
+          data.quotation_items
+          .filter((item) => cat.id === item.inventory.supplier_product.id) // Filter first
+          .sort((a, b) => {
+            if (cat.name.toLowerCase() === 'fitting') {
+              const indexA = sortOrder.findIndex((order) => a.inventory.sub_category.name === order);
+              const indexB = sortOrder.findIndex((order) => b.inventory.sub_category.name === order);
+        
+              return (indexA === -1 ? sortOrder.length : indexA) - (indexB === -1 ? sortOrder.length : indexB);
+            }
+            return 0; // No sorting if not 'fitting'
+          })
+          .forEach((item) => {
+
+            worksheet.getCell(`A${currentRow}`).border = {
+              right: {style: 'thick'},
+              left: {style: 'thick'}
+            };
+
+            // Column title for inventory
+            worksheet.getCell(`C${currentRow}`).value = `- ${item.inventory.description}`;
+            worksheet.getCell(`C${currentRow}`).font = {
+              name: 'Arial',
+              size: 11,
+            };
+  
+            //Column qty
+            worksheet.getCell(`D${currentRow}`).value = parseFloat(item.qty);
+            worksheet.getCell(`D${currentRow}`).font = {
+              name: 'Arial',
+              size: 11,
+              color: { argb: 'ffff6347' },
+            };
+            worksheet.getCell(`D${currentRow}`).border = {
+              left: { style: 'thick' },
+              right: { style: 'thick' },
+            };
+
+            worksheet.getCell(`D${currentRow}`).alignment = {horizontal: 'center'}
+
+            //Column Unit
+            worksheet.getCell(`E${currentRow}`).value = item.inventory.unit.name;
+            worksheet.getCell(`E${currentRow}`).alignment = {horizontal: 'center'}
+            worksheet.getCell(`E${currentRow}`).border = {
+              left: { style: 'thick' },
+              right: { style: 'thick' },
+            };
+
+            //Column Unit Price
+            worksheet.getCell(`F${currentRow}`).border = {
+              left: { style: 'thick' },
+              right: { style: 'thick' },
+            };
+
+            //Column Total Selling Price
+            worksheet.getCell(`G${currentRow}`).border = {
+              left: { style: 'thick' },
+              right: { style: 'thick' },
+            };
+  
+            currentRow++;
+
+            worksheet.getCell(`A${currentRow}`).border = {
+              right: {style: 'thick'},
+              left: {style: 'thick'}
+            }
+        
+            worksheet.getCell(`D${currentRow}`).border = {
+              right: {style: 'thick'},
+              left: {style: 'thick'},
+            }
+        
+            worksheet.getCell(`E${currentRow}`).border = {
+              right: {style: 'thick'},
+              left: {style: 'thick'},
+            }
+        
+            worksheet.getCell(`F${currentRow}`).border = {
+              right: {style: 'thick'},
+              left: {style: 'thick'},
+            }
+        
+            worksheet.getCell(`G${currentRow}`).border = {
+              right: {style: 'thick'},
+              left: {style: 'thick'},
+            }
+          });
+        }
+      });
     })
+
+    worksheet.getCell(`A${currentRow}`).border = {
+      right: {style: 'thick'},
+      left: {style: 'thick'}
+    }
+
+    worksheet.getCell(`D${currentRow}`).border = {
+      right: {style: 'thick'},
+      left: {style: 'thick'},
+    }
+
+    worksheet.getCell(`E${currentRow}`).border = {
+      right: {style: 'thick'},
+      left: {style: 'thick'},
+    }
+
+    worksheet.getCell(`F${currentRow}`).border = {
+      right: {style: 'thick'},
+      left: {style: 'thick'},
+    }
+
+    worksheet.getCell(`G${currentRow}`).border = {
+      right: {style: 'thick'},
+      left: {style: 'thick'},
+    }
 
     currentRow++;
     worksheet.getCell(`A${currentRow}`).border = {

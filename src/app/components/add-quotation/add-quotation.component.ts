@@ -91,7 +91,26 @@ export class AddQuotationComponent implements OnInit {
     quotation_stack_deleted_ids: [[]],
     items: this.fb.array([]),
     contactPerson: this.fb.array([]),
-    stacks: this.fb.array([])
+    stacks: this.fb.array([]),
+
+    tax: [0],
+
+
+    preliminaries_cost: [0],
+    preliminaries_price_factor: [0],
+    preliminaries_selling: [{value: 0, disabled: true}],
+    preliminaries_gross_margin: [{value: 0, disabled: true}],
+
+    supervision_cost: [0],
+    supervision_price_factor: [0],
+    supervision_selling: [{value: 0, disabled: true}],
+    supervision_gross_margin: [{value: 0, disabled: true}],
+
+    test_commisioning_cost: [0],
+    test_commisioning_price_factor: [0],
+    test_commisioning_selling: [{value: 0, disabled: true}],
+    test_commisioning_gross_margin: [{value: 0, disabled: true}],
+    
   })
 
   pic$!: Observable<any>;
@@ -166,6 +185,85 @@ export class AddQuotationComponent implements OnInit {
   ){}
 
   ngOnInit(): void {
+
+    this.quotationForm.get('preliminaries_cost')?.valueChanges.subscribe((res) => {
+      const priceFactor = this.quotationForm.get('preliminaries_price_factor')?.value;
+
+      const sellingPrice = priceFactor * res;
+
+      const grossMargin = ((sellingPrice - res) / sellingPrice) * 100
+
+      this.quotationForm.patchValue({
+        preliminaries_selling: sellingPrice,
+        preliminaries_gross_margin: grossMargin.toFixed(2)
+      })
+    })
+
+    this.quotationForm.get('preliminaries_price_factor')?.valueChanges.subscribe((res) => {
+      const cost = this.quotationForm.get('preliminaries_cost')?.value;
+
+      const sellingPrice = cost * res;
+
+      const grossMargin = ((sellingPrice - cost) / sellingPrice) * 100
+
+      this.quotationForm.patchValue({
+        preliminaries_selling: sellingPrice,
+        preliminaries_gross_margin: grossMargin.toFixed(2)
+      })
+    })
+
+    this.quotationForm.get('supervision_cost')?.valueChanges.subscribe((res) => {
+      const priceFactor = this.quotationForm.get('supervision_price_factor')?.value;
+
+      const sellingPrice = priceFactor * res;
+
+      const grossMargin = ((sellingPrice - res) / sellingPrice) * 100
+
+      this.quotationForm.patchValue({
+        supervision_selling: sellingPrice,
+        supervision_gross_margin: grossMargin.toFixed(2)
+      })
+    })
+
+    this.quotationForm.get('supervision_price_factor')?.valueChanges.subscribe((res) => {
+      const cost = this.quotationForm.get('supervision_cost')?.value;
+
+      const sellingPrice = cost * res;
+
+      const grossMargin = ((sellingPrice - cost) / sellingPrice) * 100
+
+      this.quotationForm.patchValue({
+        supervision_selling: sellingPrice,
+        supervision_gross_margin: grossMargin.toFixed(2)
+      })
+    })
+
+    this.quotationForm.get('test_commisioning_cost')?.valueChanges.subscribe((res) => {
+      const priceFactor = this.quotationForm.get('test_commisioning_price_factor')?.value;
+
+      const sellingPrice = priceFactor * res;
+
+      const grossMargin = ((sellingPrice - res) / sellingPrice) * 100
+
+      this.quotationForm.patchValue({
+        test_commisioning_selling: sellingPrice,
+        test_commisioning_gross_margin: grossMargin.toFixed(2)
+      })
+    })
+
+    this.quotationForm.get('test_commisioning_price_factor')?.valueChanges.subscribe((res) => {
+      const cost = this.quotationForm.get('test_commisioning_cost')?.value;
+
+      const sellingPrice = cost * res;
+
+      const grossMargin = ((sellingPrice - cost) / sellingPrice) * 100
+
+      this.quotationForm.patchValue({
+        test_commisioning_selling: sellingPrice,
+        test_commisioning_gross_margin: grossMargin.toFixed(2)
+      })
+    })
+    
 
     this.apiSvc.refreshGetQuotation$.subscribe(() => {
 
@@ -412,6 +510,24 @@ export class AddQuotationComponent implements OnInit {
 
       if(this.isCreateQuotationTotal && this.dataQuotation.latest_quotation_revision.quotation_items.length > 0) {
         this.items.clear();
+
+        this.quotationForm.patchValue({
+          tax: parseFloat(this.dataQuotation.latest_quotation_revision.tax ?? 0),
+          preliminaries_cost: parseFloat(this.dataQuotation.latest_quotation_revision.preliminaries_cost ?? 0),
+          preliminaries_price_factor: parseFloat(this.dataQuotation.latest_quotation_revision.preliminaries_cost ?? 0),
+          preliminaries_selling: parseFloat(this.dataQuotation.latest_quotation_revision.preliminaries ?? 0),
+          preliminaries_gross_margin: parseFloat(this.dataQuotation.latest_quotation_revision.preliminaries_gross_margin ?? 0),
+      
+          supervision_cost: parseFloat(this.dataQuotation.latest_quotation_revision.supervision_cost ?? 0),
+          supervision_price_factor: parseFloat(this.dataQuotation.latest_quotation_revision.supervision_price_factor ?? 0),
+          supervision_selling: parseFloat(this.dataQuotation.latest_quotation_revision.supervision ?? 0),
+          supervision_gross_margin: parseFloat(this.dataQuotation.latest_quotation_revision.supervision_gross_margin ?? 0),
+      
+          test_commisioning_cost: parseFloat(this.dataQuotation.latest_quotation_revision.test_commisioning_cost ?? 0),
+          test_commisioning_price_factor: parseFloat(this.dataQuotation.latest_quotation_revision.test_commisioning_price_factor ?? 0),
+          test_commisioning_selling: parseFloat(this.dataQuotation.latest_quotation_revision.test_commisioning ?? 0),
+          test_commisioning_gross_margin: parseFloat(this.dataQuotation.latest_quotation_revision.test_commisioning_gross_margin ?? 0),
+        })
 
         this.dataQuotation.latest_quotation_revision.quotation_items.forEach((item) => {
           const newItem = this.fb.group({
@@ -792,29 +908,11 @@ export class AddQuotationComponent implements OnInit {
   }
 
   calculateGrandGrossMargin() {
-    const priceList = this.items.controls.reduce((sum, group) => {
-      const totalPrice = group.get('price_list')?.value || 0;
-      return sum + Number(totalPrice);
-    }, 0);
 
-    const unitPrice = this.items.controls.reduce((sum, group) => {
-      const totalPrice = group.get('unit_price')?.value || 0;
-      return sum + Number(totalPrice);
-    }, 0);
 
-    const grossMargin = ((unitPrice - priceList)/unitPrice) * 100;
+    const grossMargin = ((this.totalGrandCost - this.totalGrandPriceList)/this.totalGrandCost) * 100;
 
-    const iUnitPrice = this.items.controls.reduce((sum, group) => {
-      const totalPrice = group.get('installation_price_per_unit')?.value || 0;
-      return sum + Number(totalPrice);
-    }, 0);
-
-    const iSellingPrice = this.items.controls.reduce((sum, group) => {
-      const totalPrice = group.get('installation_selling_price')?.value || 0;
-      return sum + Number(totalPrice);
-    }, 0);
-
-    const iGrossMargin = ((iSellingPrice - iUnitPrice)/iSellingPrice) * 100;
+    const iGrossMargin = ((this.iTotalGrandCost - this.totalGrandICost)/this.iTotalGrandCost) * 100;
 
     this.iTotalGrandGrossMargin = parseFloat(iGrossMargin.toFixed(2));
 
@@ -1597,7 +1695,14 @@ export class AddQuotationComponent implements OnInit {
           customer_cp_ids,
           quotation_type: this.quotationForm.get('project_type')?.value,
           issued_date: this.quotationForm.get('date')?.value,
-          quotation_items_discount: null
+          quotation_items_discount: null,
+          tax: this.quotationForm.get('tax')?.value,
+          preliminaries_cost: this.quotationForm.get('preliminaries_cost')?.value,
+          preliminaries_price_factor: this.quotationForm.get('preliminaries_price_factor')?.value,
+          supervision_cost: this.quotationForm.get('supervision_cost')?.value,
+          supervision_price_factor: this.quotationForm.get('supervision_price_factor')?.value,
+          test_commisioning_cost: this.quotationForm.get('test_commisioning_cost')?.value,
+          test_commisioning_price_factor: this.quotationForm.get('test_commisioning_price_factor')?.value,
           // inventories: inventoryComplete
         }
   
@@ -1730,7 +1835,14 @@ export class AddQuotationComponent implements OnInit {
           customer_cp_ids_new: customer_cp_ids,
           issued_date: this.quotationForm.get('date')?.value,
           quotation_stack_deleted_ids: this.deletedStackIds,
-          quotation_items_discount: quotationItemsDiscount
+          quotation_items_discount: quotationItemsDiscount,
+          tax: this.quotationForm.get('tax')?.value,
+          preliminaries_cost: this.quotationForm.get('preliminaries_cost')?.value,
+          preliminaries_price_factor: this.quotationForm.get('preliminaries_price_factor')?.value,
+          supervision_cost: this.quotationForm.get('supervision_cost')?.value,
+          supervision_price_factor: this.quotationForm.get('supervision_price_factor')?.value,
+          test_commisioning_cost: this.quotationForm.get('test_commisioning_cost')?.value,
+          test_commisioning_price_factor: this.quotationForm.get('test_commisioning_price_factor')?.value,
           // inventories: inventoryComplete,
         }
   

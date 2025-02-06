@@ -104,7 +104,8 @@
                 <td>{{ data.customer.name }}</td>
                 <td>{{ data.issued_date | date: 'Y' }}</td>
                 <td>{{ data.issued_date | date: 'MM' }}</td>
-                <td>Rp. {{ data.latest_quotation_revision.total_price | number:'1.0-0'}}</td>
+                <td>Rp. {{ data.latest_quotation_revision.grand_total_selling_price | number:'1.0-0'}}</td>
+                <td>Rp. {{ data.latest_quotation_revision.grand_total_gross_margin }}</td>
                 <td>{{ data.latest_quotation_revision?.revision }}</td>
                 <td>{{ formatProjectCategory(data.project.project_category) }}</td>
                 <td>
@@ -255,6 +256,7 @@
           <nz-select nzShowSearch nzAllowClear nzPlaceHolder="Select Document" style="width: 320px;" [(ngModel)]="document_type">
             <nz-option [nzLabel]="'RAB'" [nzValue]="'RAB'"></nz-option>
             <nz-option [nzLabel]="'Quotation'" [nzValue]="'quotation'"></nz-option>
+            <nz-option [nzLabel]="'Quotation with detail list'" [nzValue]="'quotation2'"></nz-option>
           </nz-select>  
       </ng-container>
       <ng-template #loadRevList>
