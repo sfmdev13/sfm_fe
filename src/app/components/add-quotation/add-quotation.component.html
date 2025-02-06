@@ -377,7 +377,7 @@
                     </div>
                 </nz-tab>
                 <nz-tab *ngIf="this.isCreateQuotationTotal" nzTitle="Quotation">
-                    <div class="row p-3">
+                    <div class="row">
                         <!-- <p class="m-0 p-0 fw-bold col-12">Stacks</p>
                         <div class="col-12">
                             <p class="m-0 p-0 text-uppercase">
@@ -396,14 +396,21 @@
                                 </nz-form-control>
                             </nz-form-item>
                         </div>
-                        <div class="col-4">
+                    </div>
+
+                    <div class="row">
+                        <span class="fw-semibold">Preliminaries</span>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-3">
                             <nz-form-item>
-                                <nz-form-label nzRequired nzFor="preliminaries" class="fw-semibold">Preliminaries</nz-form-label>
+                                <nz-form-label nzRequired nzFor="preliminaries_cost" class="fw-semibold">Cost</nz-form-label>
                                 <nz-form-control>
                                     <nz-input-number-group nzAddOnBefore="Rp. " class="w-100">
                                         <nz-input-number
-                                        id="preliminaries"
-                                        formControlName="preliminaries"
+                                        id="preliminaries_cost"
+                                        formControlName="preliminaries_cost"
                                         [nzFormatter]="formatter"
                                         [nzMin]="0"
                                         ></nz-input-number>
@@ -411,14 +418,27 @@
                                 </nz-form-control>
                             </nz-form-item>
                         </div>
-                        <div class="col-4">
+                        <div class="col-3">
                             <nz-form-item>
-                                <nz-form-label nzRequired nzFor="supervision" class="fw-semibold" class="w-100">Supervision</nz-form-label>
+                                <nz-form-label nzRequired nzFor="preliminaries_price_factor" class="fw-semibold">Price Factor</nz-form-label>
+                                <nz-form-control>
+                                    <nz-input-number
+                                    class="w-100"
+                                    id="preliminaries_price_factor"
+                                    formControlName="preliminaries_price_factor"
+                                    [nzMin]="0"
+                                    ></nz-input-number>
+                                </nz-form-control>
+                            </nz-form-item>
+                        </div>
+                        <div class="col-3">
+                            <nz-form-item>
+                                <nz-form-label nzRequired nzFor="preliminaries_selling" class="w-100 fw-semibold">Selling Price</nz-form-label>
                                 <nz-form-control>
                                     <nz-input-number-group nzAddOnBefore="Rp. " class="w-100">
                                         <nz-input-number
-                                        id="supervision"
-                                        formControlName="supervision"
+                                        id="preliminaries_selling"
+                                        formControlName="preliminaries_selling"
                                         [nzFormatter]="formatter"
                                         [nzMin]="0"
                                         ></nz-input-number>
@@ -426,15 +446,14 @@
                                 </nz-form-control>
                             </nz-form-item>
                         </div>
-                        <div class="col-4">
+                        <div class="col-3">
                             <nz-form-item>
-                                <nz-form-label nzRequired nzFor="test_commisioning" class="fw-semibold" class="w-100">Test Commisioning</nz-form-label>
+                                <nz-form-label nzRequired nzFor="preliminaries_gross_margin" class="w-100 fw-semibold">Gross Margin</nz-form-label>
                                 <nz-form-control>
-                                    <nz-input-number-group nzAddOnBefore="Rp. " class="w-100">
+                                    <nz-input-number-group nzAddOnAfter="%" class="w-100">
                                         <nz-input-number
-                                        id="test_commisioning"
-                                        formControlName="test_commisioning"
-                                        [nzFormatter]="formatter"
+                                        id="preliminaries_gross_margin"
+                                        formControlName="preliminaries_gross_margin"
                                         [nzMin]="0"
                                         ></nz-input-number>
                                     </nz-input-number-group>
@@ -442,6 +461,134 @@
                             </nz-form-item>
                         </div>
                     </div>
+
+                    <div class="row">
+                        <span class="fw-semibold">Supervision</span>
+                    </div>
+                    <div class="row">
+                        <div class="col-3">
+                            <nz-form-item>
+                                <nz-form-label nzRequired nzFor="supervision_cost" class="fw-semibold">Cost</nz-form-label>
+                                <nz-form-control>
+                                    <nz-input-number-group nzAddOnBefore="Rp. " class="w-100">
+                                        <nz-input-number
+                                        id="supervision_cost"
+                                        formControlName="supervision_cost"
+                                        [nzFormatter]="formatter"
+                                        [nzMin]="0"
+                                        ></nz-input-number>
+                                    </nz-input-number-group>
+                                </nz-form-control>
+                            </nz-form-item>
+                        </div>
+                        <div class="col-3">
+                            <nz-form-item>
+                                <nz-form-label nzRequired nzFor="supervision_price_factor" class="fw-semibold">Price Factor</nz-form-label>
+                                <nz-form-control>
+                                    <nz-input-number
+                                    class="w-100"
+                                    id="supervision_price_factor"
+                                    formControlName="supervision_price_factor"
+                                    [nzMin]="0"
+                                    ></nz-input-number>
+                                </nz-form-control>
+                            </nz-form-item>
+                        </div>
+                        <div class="col-3">
+                            <nz-form-item>
+                                <nz-form-label nzRequired nzFor="supervision_selling" class="w-100 fw-semibold">Selling Price</nz-form-label>
+                                <nz-form-control>
+                                    <nz-input-number-group nzAddOnBefore="Rp. " class="w-100">
+                                        <nz-input-number
+                                        id="supervision_selling"
+                                        formControlName="supervision_selling"
+                                        [nzFormatter]="formatter"
+                                        [nzMin]="0"
+                                        ></nz-input-number>
+                                    </nz-input-number-group>
+                                </nz-form-control>
+                            </nz-form-item>
+                        </div>
+                        <div class="col-3">
+                            <nz-form-item>
+                                <nz-form-label nzRequired nzFor="supervision_gross_margin" class="w-100 fw-semibold">Gross Margin</nz-form-label>
+                                <nz-form-control>
+                                    <nz-input-number-group nzAddOnAfter="%" class="w-100">
+                                        <nz-input-number
+                                        id="supervision_gross_margin"
+                                        formControlName="supervision_gross_margin"
+                                        [nzMin]="0"
+                                        ></nz-input-number>
+                                    </nz-input-number-group>
+                                </nz-form-control>
+                            </nz-form-item>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <span class="fw-semibold">Test Commisioning</span>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-3">
+                            <nz-form-item>
+                                <nz-form-label nzRequired nzFor="test_commisioning_cost" class="fw-semibold">Cost</nz-form-label>
+                                <nz-form-control>
+                                    <nz-input-number-group nzAddOnBefore="Rp. " class="w-100">
+                                        <nz-input-number
+                                        id="test_commisioning_cost"
+                                        formControlName="test_commisioning_cost"
+                                        [nzFormatter]="formatter"
+                                        [nzMin]="0"
+                                        ></nz-input-number>
+                                    </nz-input-number-group>
+                                </nz-form-control>
+                            </nz-form-item>
+                        </div>
+                        <div class="col-3">
+                            <nz-form-item>
+                                <nz-form-label nzRequired nzFor="test_commisioning_price_factor" class="fw-semibold">Price Factor</nz-form-label>
+                                <nz-form-control>
+                                    <nz-input-number
+                                    class="w-100"
+                                    id="test_commisioning_price_factor"
+                                    formControlName="test_commisioning_price_factor"
+                                    [nzMin]="0"
+                                    ></nz-input-number>
+                                </nz-form-control>
+                            </nz-form-item>
+                        </div>
+                        <div class="col-3">
+                            <nz-form-item>
+                                <nz-form-label nzRequired nzFor="test_commisioning_selling" class="w-100 fw-semibold">Selling Price</nz-form-label>
+                                <nz-form-control>
+                                    <nz-input-number-group nzAddOnBefore="Rp. " class="w-100">
+                                        <nz-input-number
+                                        id="test_commisioning_selling"
+                                        formControlName="test_commisioning_selling"
+                                        [nzFormatter]="formatter"
+                                        [nzMin]="0"
+                                        ></nz-input-number>
+                                    </nz-input-number-group>
+                                </nz-form-control>
+                            </nz-form-item>
+                        </div>
+                        <div class="col-3">
+                            <nz-form-item>
+                                <nz-form-label nzRequired nzFor="test_commisioning_gross_margin" class="w-100 fw-semibold">Gross Margin</nz-form-label>
+                                <nz-form-control>
+                                    <nz-input-number-group nzAddOnAfter="%" class="w-100">
+                                        <nz-input-number
+                                        id="test_commisioning_gross_margin"
+                                        formControlName="test_commisioning_gross_margin"
+                                        [nzMin]="0"
+                                        ></nz-input-number>
+                                    </nz-input-number-group>
+                                </nz-form-control>
+                            </nz-form-item>
+                        </div>
+                    </div>
+
                     <nz-tabset [nzAnimated]="false">
                         <nz-tab nzTitle="Material">
                             <div class="table-responsive">
