@@ -191,7 +191,21 @@
     preliminaries: string;
     supervision: string;
     test_commisioning: string;
-
+    preliminaries_cost: string;
+    preliminaries_price_factor: string;
+    preliminaries_gross_margin: string;
+    supervision_cost: string;
+    supervision_price_factor: string;
+    supervision_gross_margin: string;
+    test_commisioning_cost: string;
+    test_commisioning_gross_margin: string;
+    test_commisioning_price_factor: string;
+    total_installation_addon_price: string;
+    total_installation_addon_price_after_discount: string;
+    total_installation_addon_gross_margin: string;
+    grand_total_selling_price: string;
+    grand_total_gross_margin: string;
+    grand_total_cost: string;
   }
   
   export interface PreparedBy {

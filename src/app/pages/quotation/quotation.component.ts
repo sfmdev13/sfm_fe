@@ -149,6 +149,19 @@ export class QuotationComponent implements OnInit {
       searchValue: ''
     },
     {
+      name: 'Gross Margin',
+      sortOrder: null,
+      sortFn: null,
+      sortDirections: [null],
+      showSort: false,
+      showFilter: false,
+      listOfFilter: [],
+      filterFn: null,
+      showSearch: false,
+      searchVisible: false,
+      searchValue: ''
+    },
+    {
       name: 'Last Revision',
       sortOrder: null,
       sortFn: null,

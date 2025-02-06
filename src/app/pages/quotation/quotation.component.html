@@ -104,7 +104,8 @@
                 <td>{{ data.customer.name }}</td>
                 <td>{{ data.issued_date | date: 'Y' }}</td>
                 <td>{{ data.issued_date | date: 'MM' }}</td>
-                <td>Rp. {{ data.latest_quotation_revision.total_price | number:'1.0-0'}}</td>
+                <td>Rp. {{ data.latest_quotation_revision.grand_total_selling_price | number:'1.0-0'}}</td>
+                <td>Rp. {{ data.latest_quotation_revision.grand_total_gross_margin }}</td>
                 <td>{{ data.latest_quotation_revision?.revision }}</td>
                 <td>{{ formatProjectCategory(data.project.project_category) }}</td>
                 <td>
