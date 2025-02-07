@@ -371,7 +371,7 @@ export class ExcelQuotationDetailService {
     
 
     worksheet.getCell('A9').value = 'Kepada';
-    worksheet.getCell('A9').font = { name: 'Arial' };
+    worksheet.getCell('A9').font = { name: 'Arial', bold: true };
 
     worksheet.getCell('C9').value = dataBasic.customer.name;
     worksheet.getCell('C9').font = { name: 'Arial' };
@@ -386,7 +386,7 @@ export class ExcelQuotationDetailService {
     worksheet.getCell('A12').font = { name: 'Arial' };
     
     worksheet.getCell('C12').value = dataBasic.project.name;
-    worksheet.getCell('C12').font = { name: 'Arial' };
+    worksheet.getCell('C12').font = { name: 'Arial', bold: true };
 
     worksheet.getCell('A13').value = 'Lokasi Proyek';
     worksheet.getCell('A13').font = { name: 'Arial' };
@@ -720,7 +720,7 @@ export class ExcelQuotationDetailService {
     categorySummary.forEach((cat, i) => {
       if(cat.total > 0) {
         currentRow++;
-        worksheet.getRow(currentRow).height = 60;
+        worksheet.getRow(currentRow).height = 75;
 
         worksheet.getCell(`A${currentRow}`).border = {
           right: {style: 'thick'},
@@ -919,6 +919,9 @@ export class ExcelQuotationDetailService {
 
             //Column Unit
             worksheet.getCell(`E${currentRow}`).value = item.inventory.unit.name;
+            worksheet.getCell(`D${currentRow}`).font = {
+              name: 'Arial'
+            };
             worksheet.getCell(`E${currentRow}`).alignment = {horizontal: 'center'}
             worksheet.getCell(`E${currentRow}`).border = {
               left: { style: 'thick' },
@@ -1008,6 +1011,7 @@ export class ExcelQuotationDetailService {
     }
 
     worksheet.getCell(`D${currentRow}`).value = 'Sub Total 1';
+    worksheet.getCell(`D${currentRow}`).font = { name: 'Arial' }
     worksheet.getCell(`D${currentRow}`).border = {
       right: {style: 'thick'},
       top: {style: 'thick'},
@@ -1027,6 +1031,7 @@ export class ExcelQuotationDetailService {
 
     worksheet.getCell(`G${currentRow}`).value = totalSellingPrice1;
     worksheet.getCell(`G${currentRow}`).numFmt = '_("Rp"* #,##0.00_);_("Rp"* (#,##0.00);_("Rp"* "-"??_);_(@_)';
+    worksheet.getCell(`G${currentRow}`).font = { name: 'Arial' }
     worksheet.getCell(`G${currentRow}`).border = {
       top: {style: 'thick'},
       bottom: {style: 'thick'},
@@ -1048,6 +1053,7 @@ export class ExcelQuotationDetailService {
     }
 
     worksheet.getCell(`D${currentRow}`).value = 'Discount';
+    worksheet.getCell(`D${currentRow}`).font = { name: 'Arial' }
     worksheet.getCell(`D${currentRow}`).border = {
       right: {style: 'thick'},
       top: {style: 'thick'},
@@ -1067,6 +1073,7 @@ export class ExcelQuotationDetailService {
     worksheet.getCell(`F${currentRow}`).value = '%0';
 
     worksheet.getCell(`G${currentRow}`).value = 0;
+    worksheet.getCell(`G${currentRow}`).font = { name: 'Arial' }
     worksheet.getCell(`G${currentRow}`).numFmt = '_("Rp"* #,##0.00_);_("Rp"* (#,##0.00);_("Rp"* "-"??_);_(@_)';
     worksheet.getCell(`G${currentRow}`).border = {
       top: {style: 'thick'},
@@ -1092,7 +1099,8 @@ export class ExcelQuotationDetailService {
 
     worksheet.getCell(`D${currentRow}`).value = 'Total 1';
     worksheet.getCell(`D${currentRow}`).font = {
-      bold: true
+      bold: true,
+      name: 'Arial'
     }
     worksheet.getCell(`D${currentRow}`).border = {
       right: {style: 'thick'},
@@ -1133,6 +1141,7 @@ export class ExcelQuotationDetailService {
     };
 
     worksheet.getCell(`G${currentRow}`).value = totalSellingPrice1;
+    worksheet.getCell(`G${currentRow}`).font = { name: 'Arial' }
     worksheet.getCell(`G${currentRow}`).numFmt = '_("Rp"* #,##0.00_);_("Rp"* (#,##0.00);_("Rp"* "-"??_);_(@_)';
     worksheet.getCell(`G${currentRow}`).border = {
       top: {style: 'thick'},
@@ -1536,6 +1545,7 @@ export class ExcelQuotationDetailService {
 
 
     worksheet.getCell(`D${currentRow}`).value = 'Sub Total 2';
+    worksheet.getCell(`D${currentRow}`).font = { name: 'Arial' }
     worksheet.getCell(`D${currentRow}`).border = {
       top: {style: 'thick'},
       bottom: {style: 'thick'},
@@ -1555,6 +1565,7 @@ export class ExcelQuotationDetailService {
     };
 
     worksheet.getCell(`G${currentRow}`).value = totalSellingPrice2 + preliminaries + supervision + testCommisioning;
+    worksheet.getCell(`G${currentRow}`).font = { name: 'Arial' }
     worksheet.getCell(`G${currentRow}`).numFmt = '_("Rp"* #,##0.00_);_("Rp"* (#,##0.00);_("Rp"* "-"??_);_(@_)';
     worksheet.getCell(`G${currentRow}`).border = {
       top: {style: 'thick'},
@@ -1578,6 +1589,7 @@ export class ExcelQuotationDetailService {
 
 
     worksheet.getCell(`D${currentRow}`).value = 'Discount';
+    worksheet.getCell(`D${currentRow}`).font = { name: 'Arial' }
     worksheet.getCell(`D${currentRow}`).border = {
       top: {style: 'thick'},
       bottom: {style: 'thick'},
@@ -1598,6 +1610,7 @@ export class ExcelQuotationDetailService {
     };
 
     worksheet.getCell(`G${currentRow}`).value = 0;
+    worksheet.getCell(`G${currentRow}`).font = { name: 'Arial' }
     worksheet.getCell(`G${currentRow}`).numFmt = '_("Rp"* #,##0.00_);_("Rp"* (#,##0.00);_("Rp"* "-"??_);_(@_)';
     worksheet.getCell(`G${currentRow}`).border = {
       top: {style: 'thick'},
@@ -1620,6 +1633,7 @@ export class ExcelQuotationDetailService {
     };
 
     worksheet.getCell(`D${currentRow}`).value = 'Total 2';
+    worksheet.getCell(`D${currentRow}`).font = { name: 'Arial' }
     worksheet.getCell(`D${currentRow}`).font = {
       bold: true
     }
@@ -1657,6 +1671,7 @@ export class ExcelQuotationDetailService {
     };
   
     worksheet.getCell(`G${currentRow}`).value = totalSellingPrice2 + preliminaries + supervision + testCommisioning;
+    worksheet.getCell(`G${currentRow}`).font = { name: 'Arial' }
     worksheet.getCell(`G${currentRow}`).numFmt = '_("Rp"* #,##0.00_);_("Rp"* (#,##0.00);_("Rp"* "-"??_);_(@_)';
     worksheet.getCell(`G${currentRow}`).border = {
       top: {style: 'thick'},
