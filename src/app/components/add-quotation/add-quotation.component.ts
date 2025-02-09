@@ -26,6 +26,7 @@ import { NzDropDownModule } from 'ng-zorro-antd/dropdown';
 import { NzInputNumberModule } from 'ng-zorro-antd/input-number';
 import { NzRadioModule } from 'ng-zorro-antd/radio';
 import { NzSpinModule } from 'ng-zorro-antd/spin';
+import { NzCollapseModule } from 'ng-zorro-antd/collapse';
 
 @Component({
   selector: 'app-add-quotation',
@@ -50,7 +51,8 @@ import { NzSpinModule } from 'ng-zorro-antd/spin';
     NzDropDownModule,
     NzInputNumberModule,
     NzRadioModule,
-    NzSpinModule
+    NzSpinModule,
+    NzCollapseModule
   ],
   providers: [DatePipe],
   templateUrl: './add-quotation.component.html',
@@ -514,7 +516,7 @@ export class AddQuotationComponent implements OnInit {
         this.quotationForm.patchValue({
           tax: parseFloat(this.dataQuotation.latest_quotation_revision.tax ?? 0),
           preliminaries_cost: parseFloat(this.dataQuotation.latest_quotation_revision.preliminaries_cost ?? 0),
-          preliminaries_price_factor: parseFloat(this.dataQuotation.latest_quotation_revision.preliminaries_cost ?? 0),
+          preliminaries_price_factor: parseFloat(this.dataQuotation.latest_quotation_revision.preliminaries_price_factor ?? 0),
           preliminaries_selling: parseFloat(this.dataQuotation.latest_quotation_revision.preliminaries ?? 0),
           preliminaries_gross_margin: parseFloat(this.dataQuotation.latest_quotation_revision.preliminaries_gross_margin ?? 0),
       

@@ -398,197 +398,6 @@
                         </div>
                     </div>
 
-                    <div class="row">
-                        <span class="fw-semibold">Preliminaries</span>
-                    </div>
-
-                    <div class="row">
-                        <div class="col-3">
-                            <nz-form-item>
-                                <nz-form-label nzRequired nzFor="preliminaries_cost" class="fw-semibold">Cost</nz-form-label>
-                                <nz-form-control>
-                                    <nz-input-number-group nzAddOnBefore="Rp. " class="w-100">
-                                        <nz-input-number
-                                        id="preliminaries_cost"
-                                        formControlName="preliminaries_cost"
-                                        [nzFormatter]="formatter"
-                                        [nzMin]="0"
-                                        ></nz-input-number>
-                                    </nz-input-number-group>
-                                </nz-form-control>
-                            </nz-form-item>
-                        </div>
-                        <div class="col-3">
-                            <nz-form-item>
-                                <nz-form-label nzRequired nzFor="preliminaries_price_factor" class="fw-semibold">Price Factor</nz-form-label>
-                                <nz-form-control>
-                                    <nz-input-number
-                                    class="w-100"
-                                    id="preliminaries_price_factor"
-                                    formControlName="preliminaries_price_factor"
-                                    [nzMin]="0"
-                                    ></nz-input-number>
-                                </nz-form-control>
-                            </nz-form-item>
-                        </div>
-                        <div class="col-3">
-                            <nz-form-item>
-                                <nz-form-label nzRequired nzFor="preliminaries_selling" class="w-100 fw-semibold">Selling Price</nz-form-label>
-                                <nz-form-control>
-                                    <nz-input-number-group nzAddOnBefore="Rp. " class="w-100">
-                                        <nz-input-number
-                                        id="preliminaries_selling"
-                                        formControlName="preliminaries_selling"
-                                        [nzFormatter]="formatter"
-                                        [nzMin]="0"
-                                        ></nz-input-number>
-                                    </nz-input-number-group>
-                                </nz-form-control>
-                            </nz-form-item>
-                        </div>
-                        <div class="col-3">
-                            <nz-form-item>
-                                <nz-form-label nzRequired nzFor="preliminaries_gross_margin" class="w-100 fw-semibold">Gross Margin</nz-form-label>
-                                <nz-form-control>
-                                    <nz-input-number-group nzAddOnAfter="%" class="w-100">
-                                        <nz-input-number
-                                        id="preliminaries_gross_margin"
-                                        formControlName="preliminaries_gross_margin"
-                                        [nzMin]="0"
-                                        ></nz-input-number>
-                                    </nz-input-number-group>
-                                </nz-form-control>
-                            </nz-form-item>
-                        </div>
-                    </div>
-
-                    <div class="row">
-                        <span class="fw-semibold">Supervision</span>
-                    </div>
-                    <div class="row">
-                        <div class="col-3">
-                            <nz-form-item>
-                                <nz-form-label nzRequired nzFor="supervision_cost" class="fw-semibold">Cost</nz-form-label>
-                                <nz-form-control>
-                                    <nz-input-number-group nzAddOnBefore="Rp. " class="w-100">
-                                        <nz-input-number
-                                        id="supervision_cost"
-                                        formControlName="supervision_cost"
-                                        [nzFormatter]="formatter"
-                                        [nzMin]="0"
-                                        ></nz-input-number>
-                                    </nz-input-number-group>
-                                </nz-form-control>
-                            </nz-form-item>
-                        </div>
-                        <div class="col-3">
-                            <nz-form-item>
-                                <nz-form-label nzRequired nzFor="supervision_price_factor" class="fw-semibold">Price Factor</nz-form-label>
-                                <nz-form-control>
-                                    <nz-input-number
-                                    class="w-100"
-                                    id="supervision_price_factor"
-                                    formControlName="supervision_price_factor"
-                                    [nzMin]="0"
-                                    ></nz-input-number>
-                                </nz-form-control>
-                            </nz-form-item>
-                        </div>
-                        <div class="col-3">
-                            <nz-form-item>
-                                <nz-form-label nzRequired nzFor="supervision_selling" class="w-100 fw-semibold">Selling Price</nz-form-label>
-                                <nz-form-control>
-                                    <nz-input-number-group nzAddOnBefore="Rp. " class="w-100">
-                                        <nz-input-number
-                                        id="supervision_selling"
-                                        formControlName="supervision_selling"
-                                        [nzFormatter]="formatter"
-                                        [nzMin]="0"
-                                        ></nz-input-number>
-                                    </nz-input-number-group>
-                                </nz-form-control>
-                            </nz-form-item>
-                        </div>
-                        <div class="col-3">
-                            <nz-form-item>
-                                <nz-form-label nzRequired nzFor="supervision_gross_margin" class="w-100 fw-semibold">Gross Margin</nz-form-label>
-                                <nz-form-control>
-                                    <nz-input-number-group nzAddOnAfter="%" class="w-100">
-                                        <nz-input-number
-                                        id="supervision_gross_margin"
-                                        formControlName="supervision_gross_margin"
-                                        [nzMin]="0"
-                                        ></nz-input-number>
-                                    </nz-input-number-group>
-                                </nz-form-control>
-                            </nz-form-item>
-                        </div>
-                    </div>
-
-                    <div class="row">
-                        <span class="fw-semibold">Test Commisioning</span>
-                    </div>
-
-                    <div class="row">
-                        <div class="col-3">
-                            <nz-form-item>
-                                <nz-form-label nzRequired nzFor="test_commisioning_cost" class="fw-semibold">Cost</nz-form-label>
-                                <nz-form-control>
-                                    <nz-input-number-group nzAddOnBefore="Rp. " class="w-100">
-                                        <nz-input-number
-                                        id="test_commisioning_cost"
-                                        formControlName="test_commisioning_cost"
-                                        [nzFormatter]="formatter"
-                                        [nzMin]="0"
-                                        ></nz-input-number>
-                                    </nz-input-number-group>
-                                </nz-form-control>
-                            </nz-form-item>
-                        </div>
-                        <div class="col-3">
-                            <nz-form-item>
-                                <nz-form-label nzRequired nzFor="test_commisioning_price_factor" class="fw-semibold">Price Factor</nz-form-label>
-                                <nz-form-control>
-                                    <nz-input-number
-                                    class="w-100"
-                                    id="test_commisioning_price_factor"
-                                    formControlName="test_commisioning_price_factor"
-                                    [nzMin]="0"
-                                    ></nz-input-number>
-                                </nz-form-control>
-                            </nz-form-item>
-                        </div>
-                        <div class="col-3">
-                            <nz-form-item>
-                                <nz-form-label nzRequired nzFor="test_commisioning_selling" class="w-100 fw-semibold">Selling Price</nz-form-label>
-                                <nz-form-control>
-                                    <nz-input-number-group nzAddOnBefore="Rp. " class="w-100">
-                                        <nz-input-number
-                                        id="test_commisioning_selling"
-                                        formControlName="test_commisioning_selling"
-                                        [nzFormatter]="formatter"
-                                        [nzMin]="0"
-                                        ></nz-input-number>
-                                    </nz-input-number-group>
-                                </nz-form-control>
-                            </nz-form-item>
-                        </div>
-                        <div class="col-3">
-                            <nz-form-item>
-                                <nz-form-label nzRequired nzFor="test_commisioning_gross_margin" class="w-100 fw-semibold">Gross Margin</nz-form-label>
-                                <nz-form-control>
-                                    <nz-input-number-group nzAddOnAfter="%" class="w-100">
-                                        <nz-input-number
-                                        id="test_commisioning_gross_margin"
-                                        formControlName="test_commisioning_gross_margin"
-                                        [nzMin]="0"
-                                        ></nz-input-number>
-                                    </nz-input-number-group>
-                                </nz-form-control>
-                            </nz-form-item>
-                        </div>
-                    </div>
-
                     <nz-tabset [nzAnimated]="false">
                         <nz-tab nzTitle="Material">
                             <div class="table-responsive">
@@ -728,166 +537,378 @@
                             </div>
                         </nz-tab>
                         <nz-tab nzTitle="Installation">
-
-                            <ng-container formArrayName="items">
-                                <ng-container *ngFor="let category of objectKeys(groupedItems); let catIndex = index">
-                                    <div class="table-responsive">
-                                        <table class="table table-installation">
-                                            <thead>
-
-                                                <tr class="table-active sticky-head" style="width: 100%">
-                                                    <th scope="col" colSpan="16" style="width: 100%;">{{ category }}</th>
-                                                </tr>
-
-                                                <tr class="sticky-head" *ngIf="groupedItems[category].items.length > 0">
-                                                    <th class="" colspan="16">
-                                                        <div class="d-flex flex-column gap-2">
-                                                            <span class="fw-bold">Discount</span>
-                                                            <nz-input-number-group class="w-25" nzAddOnAfter="%">
-                                                                <nz-input-number [nzMin]="0" [formControl]="groupedItems[category].discount_installation"></nz-input-number>
-                                                            </nz-input-number-group>
-                                                        </div>
-                                                    </th>
-                                                </tr>
-
-                                                <tr class="sticky-head table-active ">
-                                                    <th scope="col">No.</th>
-                                                    <th scope="col">Part Number</th>
-                                                    <th scope="col">Product Description</th>
-                                                    <th scope="col">Alias</th>
-                                                    <th scope="col">Unit</th>
-                                                    <th scope="col">Qty</th>
-                                                    <th scope="col">Price List</th>
-                                                    <th scope="col">Inch</th>
-                                                    <th scope="col">
-                                                        {{ category.toLowerCase() === 'pipe' ? 'Cost/M\'' : 'Cost/Unit'  }}
-                                                    </th>
-                                                    <th scope="col">
-                                                        {{ category.toLowerCase() === 'pipe' ? 'Cost M\'/inch' : 'Cost Unit/Inch'  }}
-                                                    </th>
-                                                    <th scope="col">Total Cost</th>
-                                                    <th scope="col">Discount</th>
-                                                    <th scope="col">Price Factor</th>
-                                                    <th scope="col">Selling Price</th>
-                                                    <th scope="col">Total Selling Price</th>
-                                                    <th scope="col">Gross Margin</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                <ng-container>
-                                                    <tr  *ngFor="let item of groupedItems[category].items; let i = index" [formGroup]="item">
-                                                        <td>{{ calculateGlobalIndex(catIndex, i) }}</td>
-                                                        <td>
-                                                            {{ item.get('i_part_number')?.value }}
-                                                        </td>
-                                                        <td>
-                                                            {{ item.get('i_description')?.value }}
-                                                        </td>
-                                                        <td>
-                                                            {{ item.get('alias')?.value }}
-                                                        </td>
-                                                        <td>
-                                                            {{ item.get('unit')?.value }}
-                                                        </td>
-                                                        <td>
-                                                            {{ item.get('qty')?.value }}
-                                                        </td>
-                                                        <td>
-                                                            Rp. {{ item.get('price_list')?.value | number:'1.0-0'  }}
-                                                        </td>
-                                                        <td>
-                                                            <ng-container *ngIf="item.get('installation_unit_price_type')?.value === 'price'; else emptyUnitPrice">
-                                                                <nz-input-number-group class="w-100">
-                                                                    <nz-input-number class="w-100" [nzMin]="0" formControlName="installation_unit_inch_qty"></nz-input-number>
-                                                                </nz-input-number-group>
-                                                            </ng-container>
-                                                            <ng-template #emptyUnitPrice>
-                                                                -
-                                                            </ng-template>
-                                                        </td>
-                                                        <td>
-                                                            <div class="d-flex flex-column">
-                                                                <ng-container *ngIf="item.get('installation_unit_price_type')?.value === 'percent';else price">
-                                                                    <nz-input-number-group nzAddOnAfter="%">
-                                                                        <nz-input-number formControlName="installation_unit_price"></nz-input-number>
+                            <nz-collapse>
+                                <nz-collapse-panel nzHeader="2.1 Preliminaries">
+                                    <div class="row">
+                                        <div class="col-3">
+                                            <nz-form-item>
+                                                <nz-form-label nzRequired nzFor="preliminaries_cost" class="fw-semibold">Cost</nz-form-label>
+                                                <nz-form-control>
+                                                    <nz-input-number-group nzAddOnBefore="Rp. " class="w-100">
+                                                        <nz-input-number
+                                                        id="preliminaries_cost"
+                                                        formControlName="preliminaries_cost"
+                                                        [nzFormatter]="formatter"
+                                                        [nzMin]="0"
+                                                        ></nz-input-number>
+                                                    </nz-input-number-group>
+                                                </nz-form-control>
+                                            </nz-form-item>
+                                        </div>
+                                        <div class="col-3">
+                                            <nz-form-item>
+                                                <nz-form-label nzRequired nzFor="preliminaries_price_factor" class="fw-semibold">Price Factor</nz-form-label>
+                                                <nz-form-control>
+                                                    <nz-input-number
+                                                    class="w-100"
+                                                    id="preliminaries_price_factor"
+                                                    formControlName="preliminaries_price_factor"
+                                                    [nzMin]="0"
+                                                    ></nz-input-number>
+                                                </nz-form-control>
+                                            </nz-form-item>
+                                        </div>
+                                        <div class="col-3">
+                                            <nz-form-item>
+                                                <nz-form-label nzRequired nzFor="preliminaries_selling" class="w-100 fw-semibold">Selling Price</nz-form-label>
+                                                <nz-form-control>
+                                                    <nz-input-number-group nzAddOnBefore="Rp. " class="w-100">
+                                                        <nz-input-number
+                                                        id="preliminaries_selling"
+                                                        formControlName="preliminaries_selling"
+                                                        [nzFormatter]="formatter"
+                                                        [nzMin]="0"
+                                                        ></nz-input-number>
+                                                    </nz-input-number-group>
+                                                </nz-form-control>
+                                            </nz-form-item>
+                                        </div>
+                                        <div class="col-3">
+                                            <nz-form-item>
+                                                <nz-form-label nzRequired nzFor="preliminaries_gross_margin" class="w-100 fw-semibold">Gross Margin</nz-form-label>
+                                                <nz-form-control>
+                                                    <nz-input-number-group nzAddOnAfter="%" class="w-100">
+                                                        <nz-input-number
+                                                        id="preliminaries_gross_margin"
+                                                        formControlName="preliminaries_gross_margin"
+                                                        [nzMin]="0"
+                                                        ></nz-input-number>
+                                                    </nz-input-number-group>
+                                                </nz-form-control>
+                                            </nz-form-item>
+                                        </div>
+                                    </div>
+                                </nz-collapse-panel>
+                                <nz-collapse-panel nzHeader="2.2 Material Installation">
+                                    <ng-container formArrayName="items">
+                                        <ng-container *ngFor="let category of objectKeys(groupedItems); let catIndex = index">
+                                            <div class="table-responsive">
+                                                <table class="table table-installation" [ngClass]="{'mt-2': groupedItems[category].items.length === 0}">
+                                                    <thead>
+        
+                                                        <tr class="table-active sticky-head" style="width: 100%">
+                                                            <th scope="col" colSpan="16" style="width: 100%;">{{ category }}</th>
+                                                        </tr>
+        
+                                                        <tr class="sticky-head" *ngIf="groupedItems[category].items.length > 0">
+                                                            <th class="" colspan="16">
+                                                                <div class="d-flex flex-column gap-2">
+                                                                    <span class="fw-bold">Discount</span>
+                                                                    <nz-input-number-group class="w-25" nzAddOnAfter="%">
+                                                                        <nz-input-number [nzMin]="0" [formControl]="groupedItems[category].discount_installation"></nz-input-number>
                                                                     </nz-input-number-group>
-                                                                </ng-container>
-                                                                <ng-template #price>
-                                                                    <nz-input-number-group nzAddOnBefore="Rp. ">
-                                                                        <nz-input-number     
-                                                                        formControlName="installation_unit_price"
-                                                                        [nzFormatter]="formatter"
-                                                                        ></nz-input-number>
+                                                                </div>
+                                                            </th>
+                                                        </tr>
+        
+                                                        <tr *ngIf="groupedItems[category].items.length > 0" class="sticky-head table-active ">
+                                                            <th scope="col">No.</th>
+                                                            <th scope="col">Part Number</th>
+                                                            <th scope="col">Product Description</th>
+                                                            <th scope="col">Alias</th>
+                                                            <th scope="col">Unit</th>
+                                                            <th scope="col">Qty</th>
+                                                            <th scope="col">Price List</th>
+                                                            <th scope="col">Inch</th>
+                                                            <th scope="col">
+                                                                {{ category.toLowerCase() === 'pipe' ? 'Cost/M\'' : 'Cost/Unit'  }}
+                                                            </th>
+                                                            <th scope="col">
+                                                                {{ category.toLowerCase() === 'pipe' ? 'Cost M\'/inch' : 'Cost Unit/Inch'  }}
+                                                            </th>
+                                                            <th scope="col">Total Cost</th>
+                                                            <th scope="col">Discount</th>
+                                                            <th scope="col">Price Factor</th>
+                                                            <th scope="col">Selling Price</th>
+                                                            <th scope="col">Total Selling Price</th>
+                                                            <th scope="col">Gross Margin</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody *ngIf="groupedItems[category].items.length > 0">
+                                                        <ng-container>
+                                                            <tr  *ngFor="let item of groupedItems[category].items; let i = index" [formGroup]="item">
+                                                                <td>{{ calculateGlobalIndex(catIndex, i) }}</td>
+                                                                <td>
+                                                                    {{ item.get('i_part_number')?.value }}
+                                                                </td>
+                                                                <td>
+                                                                    {{ item.get('i_description')?.value }}
+                                                                </td>
+                                                                <td>
+                                                                    {{ item.get('alias')?.value }}
+                                                                </td>
+                                                                <td>
+                                                                    {{ item.get('unit')?.value }}
+                                                                </td>
+                                                                <td>
+                                                                    {{ item.get('qty')?.value }}
+                                                                </td>
+                                                                <td>
+                                                                    Rp. {{ item.get('price_list')?.value | number:'1.0-0'  }}
+                                                                </td>
+                                                                <td>
+                                                                    <ng-container *ngIf="item.get('installation_unit_price_type')?.value === 'price'; else emptyUnitPrice">
+                                                                        <nz-input-number-group class="w-100">
+                                                                            <nz-input-number class="w-100" [nzMin]="0" formControlName="installation_unit_inch_qty"></nz-input-number>
+                                                                        </nz-input-number-group>
+                                                                    </ng-container>
+                                                                    <ng-template #emptyUnitPrice>
+                                                                        -
+                                                                    </ng-template>
+                                                                </td>
+                                                                <td>
+                                                                    <div class="d-flex flex-column">
+                                                                        <ng-container *ngIf="item.get('installation_unit_price_type')?.value === 'percent';else price">
+                                                                            <nz-input-number-group nzAddOnAfter="%">
+                                                                                <nz-input-number formControlName="installation_unit_price"></nz-input-number>
+                                                                            </nz-input-number-group>
+                                                                        </ng-container>
+                                                                        <ng-template #price>
+                                                                            <nz-input-number-group nzAddOnBefore="Rp. ">
+                                                                                <nz-input-number     
+                                                                                formControlName="installation_unit_price"
+                                                                                [nzFormatter]="formatter"
+                                                                                ></nz-input-number>
+                                                                            </nz-input-number-group>
+                                                                        </ng-template>
+                                                                        <nz-radio-group formControlName="installation_unit_price_type" class="mt-2">
+                                                                            <label nz-radio nzValue="percent">Percent</label>
+                                                                            <label nz-radio nzValue="price">Price</label>
+                                                                        </nz-radio-group>
+                                                                    </div>
+                                                                </td>
+                                                                <td>
+                                                                    Rp. {{ item.get('installation_price_per_unit')?.value | number:'1.0-0' }}
+                                                                </td>
+                                                                <td>
+                                                                    Rp. {{ item.get('installation_price_per_unit')?.value * item.get('qty')?.value  | number:'1.0-0' }}
+                                                                </td>
+                                                                <td> {{ groupedItems[category].discount.value}} % </td>
+                                                                <td>
+                                                                    <nz-input-number-group class="w-100">
+                                                                        <nz-input-number class="w-100" [nzMin]="0" formControlName="installation_price_factor"></nz-input-number>
                                                                     </nz-input-number-group>
-                                                                </ng-template>
-                                                                <nz-radio-group formControlName="installation_unit_price_type" class="mt-2">
-                                                                    <label nz-radio nzValue="percent">Percent</label>
-                                                                    <label nz-radio nzValue="price">Price</label>
-                                                                </nz-radio-group>
-                                                            </div>
+                                                                </td>
+                                                                <td>
+                                                                    Rp. {{ item.get('installation_selling_price')?.value | number:'1.0-0' }}
+                                                                </td>
+                                                                <td>
+                                                                    Rp. {{ item.get('installation_selling_price')?.value * item.get('qty')?.value  | number:'1.0-0' }}
+                                                                </td>
+                                                                <td>
+                                                                    {{ item.get('installation_gross_margin')?.value }} %
+                                                                </td>
+                                                            </tr>
+                                                        </ng-container>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </ng-container>
+                                        <div class="mt-4">
+                                            <table class="table table-order">
+                                                <tbody>
+                                                    <tr>
+                                                        <td>
+                                                            <span class="fw-bold">Total Grand Cost:</span>
                                                         </td>
                                                         <td>
-                                                            Rp. {{ item.get('installation_price_per_unit')?.value | number:'1.0-0' }}
+                                                            <span class="fw-bold"> Rp.  {{ totalGrandICost | number:'1.0-0' }}</span>
                                                         </td>
                                                         <td>
-                                                            Rp. {{ item.get('installation_price_per_unit')?.value * item.get('qty')?.value  | number:'1.0-0' }}
-                                                        </td>
-                                                        <td> {{ groupedItems[category].discount.value}} % </td>
-                                                        <td>
-                                                            <nz-input-number-group class="w-100">
-                                                                <nz-input-number class="w-100" [nzMin]="0" formControlName="installation_price_factor"></nz-input-number>
-                                                            </nz-input-number-group>
+                                                            <span class="fw-bold">Total Grand Selling Price:</span>
                                                         </td>
                                                         <td>
-                                                            Rp. {{ item.get('installation_selling_price')?.value | number:'1.0-0' }}
+                                                            <span class="fw-bold"> Rp.  {{ iTotalGrandCost | number:'1.0-0' }}</span>
                                                         </td>
                                                         <td>
-                                                            Rp. {{ item.get('installation_selling_price')?.value * item.get('qty')?.value  | number:'1.0-0' }}
+                                                            <span class="fw-bold">Total Grand Gross Margin:</span>
                                                         </td>
                                                         <td>
-                                                            {{ item.get('installation_gross_margin')?.value }} %
+                                                            <span class="fw-bold"> {{iTotalGrandGrossMargin }} %</span>
                                                         </td>
                                                     </tr>
-                                                </ng-container>
-                                            </tbody>
-                                        </table>
+                                                </tbody>
+                                            </table>
+                                        </div>
+        
+                                    </ng-container>
+                                </nz-collapse-panel>
+                                <nz-collapse-panel nzHeader="2.3 Supervision">
+                                    <div class="row">
+                                        <div class="col-3">
+                                            <nz-form-item>
+                                                <nz-form-label nzRequired nzFor="supervision_cost" class="fw-semibold">Cost</nz-form-label>
+                                                <nz-form-control>
+                                                    <nz-input-number-group nzAddOnBefore="Rp. " class="w-100">
+                                                        <nz-input-number
+                                                        id="supervision_cost"
+                                                        formControlName="supervision_cost"
+                                                        [nzFormatter]="formatter"
+                                                        [nzMin]="0"
+                                                        ></nz-input-number>
+                                                    </nz-input-number-group>
+                                                </nz-form-control>
+                                            </nz-form-item>
+                                        </div>
+                                        <div class="col-3">
+                                            <nz-form-item>
+                                                <nz-form-label nzRequired nzFor="supervision_price_factor" class="fw-semibold">Price Factor</nz-form-label>
+                                                <nz-form-control>
+                                                    <nz-input-number
+                                                    class="w-100"
+                                                    id="supervision_price_factor"
+                                                    formControlName="supervision_price_factor"
+                                                    [nzMin]="0"
+                                                    ></nz-input-number>
+                                                </nz-form-control>
+                                            </nz-form-item>
+                                        </div>
+                                        <div class="col-3">
+                                            <nz-form-item>
+                                                <nz-form-label nzRequired nzFor="supervision_selling" class="w-100 fw-semibold">Selling Price</nz-form-label>
+                                                <nz-form-control>
+                                                    <nz-input-number-group nzAddOnBefore="Rp. " class="w-100">
+                                                        <nz-input-number
+                                                        id="supervision_selling"
+                                                        formControlName="supervision_selling"
+                                                        [nzFormatter]="formatter"
+                                                        [nzMin]="0"
+                                                        ></nz-input-number>
+                                                    </nz-input-number-group>
+                                                </nz-form-control>
+                                            </nz-form-item>
+                                        </div>
+                                        <div class="col-3">
+                                            <nz-form-item>
+                                                <nz-form-label nzRequired nzFor="supervision_gross_margin" class="w-100 fw-semibold">Gross Margin</nz-form-label>
+                                                <nz-form-control>
+                                                    <nz-input-number-group nzAddOnAfter="%" class="w-100">
+                                                        <nz-input-number
+                                                        id="supervision_gross_margin"
+                                                        formControlName="supervision_gross_margin"
+                                                        [nzMin]="0"
+                                                        ></nz-input-number>
+                                                    </nz-input-number-group>
+                                                </nz-form-control>
+                                            </nz-form-item>
+                                        </div>
                                     </div>
-                                </ng-container>
-                                <div class="table-responsive">
-                                    <table class="table table-order table-installation">
-                                        <tbody>
-                                            <tr>
-                                                <td></td>
-                                                <td></td>
-                                                <td></td>
-                                                <td></td>
-                                                <td></td>
-                                                <td></td>
-                                                <td></td>
-                                                <td>
-                                                    <span class="fw-bold">Total Grand Cost:</span>
-                                                </td>
-                                                <td>
-                                                    <span class="fw-bold"> Rp.  {{ totalGrandICost | number:'1.0-0' }}</span>
-                                                </td>
-                                                <td>
-                                                    <span class="fw-bold">Total Grand Selling Price:</span>
-                                                </td>
-                                                <td>
-                                                    <span class="fw-bold"> Rp.  {{ iTotalGrandCost | number:'1.0-0' }}</span>
-                                                </td>
-                                                <td>
-                                                    <span class="fw-bold">Total Grand Gross Margin:</span>
-                                                </td>
-                                                <td>
-                                                    <span class="fw-bold"> {{iTotalGrandGrossMargin }} %</span>
-                                                </td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                </div>
+                                </nz-collapse-panel>
+                                <nz-collapse-panel nzHeader="2.4 Test Commisioning">
+                                    <div class="row">
+                                        <div class="col-3">
+                                            <nz-form-item>
+                                                <nz-form-label nzRequired nzFor="test_commisioning_cost" class="fw-semibold">Cost</nz-form-label>
+                                                <nz-form-control>
+                                                    <nz-input-number-group nzAddOnBefore="Rp. " class="w-100">
+                                                        <nz-input-number
+                                                        id="test_commisioning_cost"
+                                                        formControlName="test_commisioning_cost"
+                                                        [nzFormatter]="formatter"
+                                                        [nzMin]="0"
+                                                        ></nz-input-number>
+                                                    </nz-input-number-group>
+                                                </nz-form-control>
+                                            </nz-form-item>
+                                        </div>
+                                        <div class="col-3">
+                                            <nz-form-item>
+                                                <nz-form-label nzRequired nzFor="test_commisioning_price_factor" class="fw-semibold">Price Factor</nz-form-label>
+                                                <nz-form-control>
+                                                    <nz-input-number
+                                                    class="w-100"
+                                                    id="test_commisioning_price_factor"
+                                                    formControlName="test_commisioning_price_factor"
+                                                    [nzMin]="0"
+                                                    ></nz-input-number>
+                                                </nz-form-control>
+                                            </nz-form-item>
+                                        </div>
+                                        <div class="col-3">
+                                            <nz-form-item>
+                                                <nz-form-label nzRequired nzFor="test_commisioning_selling" class="w-100 fw-semibold">Selling Price</nz-form-label>
+                                                <nz-form-control>
+                                                    <nz-input-number-group nzAddOnBefore="Rp. " class="w-100">
+                                                        <nz-input-number
+                                                        id="test_commisioning_selling"
+                                                        formControlName="test_commisioning_selling"
+                                                        [nzFormatter]="formatter"
+                                                        [nzMin]="0"
+                                                        ></nz-input-number>
+                                                    </nz-input-number-group>
+                                                </nz-form-control>
+                                            </nz-form-item>
+                                        </div>
+                                        <div class="col-3">
+                                            <nz-form-item>
+                                                <nz-form-label nzRequired nzFor="test_commisioning_gross_margin" class="w-100 fw-semibold">Gross Margin</nz-form-label>
+                                                <nz-form-control>
+                                                    <nz-input-number-group nzAddOnAfter="%" class="w-100">
+                                                        <nz-input-number
+                                                        id="test_commisioning_gross_margin"
+                                                        formControlName="test_commisioning_gross_margin"
+                                                        [nzMin]="0"
+                                                        ></nz-input-number>
+                                                    </nz-input-number-group>
+                                                </nz-form-control>
+                                            </nz-form-item>
+                                        </div>
+                                    </div>
+                                </nz-collapse-panel>
+                            </nz-collapse>
 
-                            </ng-container>
+                            <div class="row mt-4">
+                                <div class="col-md-8">
+
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="d-flex justify-content-between pb-2" style="border-bottom: 2px solid black">
+                                        <div class="d-flex flex-column gap-2">
+                                            <span class="fw-semibold">Total Selling Pleminaries</span>
+                                            <span class="fw-semibold">Total Selling Material Installation</span>
+                                            <span class="fw-semibold">Total Selling Supervision</span>
+                                            <span class="fw-semibold">Total Selling Test Commisioning</span>
+                                        </div>
+
+                                        <div class="d-flex flex-column gap-2">
+                                            <span class="fw-semibold">Rp. {{ quotationForm.get('preliminaries_selling')?.value | number: '1.0-0' }}</span>
+                                            <span class="fw-semibold">Rp.  {{ iTotalGrandCost | number:'1.0-0' }}</span>
+                                            <span class="fw-semibold">Rp. {{ quotationForm.get('supervision_selling')?.value | number: '1.0-0' }}</span>
+                                            <span class="fw-semibold">Rp. {{ quotationForm.get('test_commisioning_selling')?.value | number: '1.0-0' }}</span>
+                                        </div>
+                                    </div>
+
+                                    <div class="d-flex justify-content-between mt-3">
+                                        <div class="d-flex flex-column gap-2">
+                                            <span class="fw-semibold">Total Installation</span>
+                                        </div>
+
+                                        <div class="d-flex flex-column gap-2">
+                                            <span class="fw-semibold">Rp. {{ quotationForm.get('preliminaries_selling')?.value + iTotalGrandCost +  quotationForm.get('supervision_selling')?.value + quotationForm.get('test_commisioning_selling')?.value  | number: '1.0-0' }}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </nz-tab>
                         <nz-tab nzTitle="Total">
                             <div class="table-responsive">
@@ -910,7 +931,7 @@
                                     </thead>
                                     <tbody>
                                         <tr class="table-secondary">
-                                            <td colspan="12">
+                                            <td colspan="12" class="top-header">
                                                 <span class="fw-bold" style="font-size: 16px;">
                                                     Material
                                                 </span>
@@ -1001,7 +1022,7 @@
                                         </ng-container>
 
                                         <tr class="table-secondary">
-                                            <td colSpan="12">
+                                            <td colSpan="12" class="top-header">
                                                 <span class="fw-bold" style="font-size: 16px;">
                                                     Material Installation
                                                 </span>
