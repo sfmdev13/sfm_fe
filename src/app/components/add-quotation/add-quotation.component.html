@@ -377,6 +377,42 @@
                     </div>
                 </nz-tab>
                 <nz-tab *ngIf="this.isCreateQuotationTotal" nzTitle="Quotation">
+
+                    <div class="row">
+                        <div class="col-md-3">
+                            <nz-form-item>
+                                <nz-form-label nzRequired nzFor="delivery_duration" class="fw-semibold">Delivery Duration</nz-form-label>
+                                <nz-form-control>
+                                    <input nz-input formControlName="delivery_duration"/>
+                                </nz-form-control>
+                            </nz-form-item>
+                        </div>
+                        <div class="col-md-3">
+                            <nz-form-item>
+                                <nz-form-label nzRequired nzFor="offer_applies" class="fw-semibold">Offer Applies</nz-form-label>
+                                <nz-form-control>
+                                    <input nz-input formControlName="offer_applies"/>
+                                </nz-form-control>
+                            </nz-form-item>
+                        </div>
+                        <div class="col-md-3">
+                            <nz-form-item>
+                                <nz-form-label nzRequired nzFor="type_of_work" class="fw-semibold">Type of Work</nz-form-label>
+                                <nz-form-control>
+                                    <input nz-input formControlName="type_of_work"/>
+                                </nz-form-control>
+                            </nz-form-item>
+                        </div>
+                        <div class="col-md-3">
+                            <nz-form-item>
+                                <nz-form-label nzRequired nzFor="termin_payment" class="fw-semibold">Termin Payment</nz-form-label>
+                                <nz-form-control>
+                                    <input nz-input formControlName="termin_payment"/>
+                                </nz-form-control>
+                            </nz-form-item>
+                        </div>
+                    </div>
+
                     <div class="row">
                         <!-- <p class="m-0 p-0 fw-bold col-12">Stacks</p>
                         <div class="col-12">

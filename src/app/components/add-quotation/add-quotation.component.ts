@@ -112,6 +112,11 @@ export class AddQuotationComponent implements OnInit {
     test_commisioning_price_factor: [0],
     test_commisioning_selling: [{value: 0, disabled: true}],
     test_commisioning_gross_margin: [{value: 0, disabled: true}],
+
+    delivery_duration: [''],
+    offer_applies: [''],
+    type_of_work: [''],
+    termin_payment: ['']
     
   })
 
@@ -529,6 +534,11 @@ export class AddQuotationComponent implements OnInit {
           test_commisioning_price_factor: parseFloat(this.dataQuotation.latest_quotation_revision.test_commisioning_price_factor ?? 0),
           test_commisioning_selling: parseFloat(this.dataQuotation.latest_quotation_revision.test_commisioning ?? 0),
           test_commisioning_gross_margin: parseFloat(this.dataQuotation.latest_quotation_revision.test_commisioning_gross_margin ?? 0),
+
+          delivery_duration: this.dataQuotation.latest_quotation_revision.delivery_duration,
+          offer_applies: this.dataQuotation.latest_quotation_revision.offer_applies,
+          type_of_work: this.dataQuotation.latest_quotation_revision.type_of_work,
+          termin_payment: this.dataQuotation.latest_quotation_revision.termin_payment
         })
 
         this.dataQuotation.latest_quotation_revision.quotation_items.forEach((item) => {
@@ -1705,6 +1715,10 @@ export class AddQuotationComponent implements OnInit {
           supervision_price_factor: this.quotationForm.get('supervision_price_factor')?.value,
           test_commisioning_cost: this.quotationForm.get('test_commisioning_cost')?.value,
           test_commisioning_price_factor: this.quotationForm.get('test_commisioning_price_factor')?.value,
+          delivery_duration: this.quotationForm.get('delivery_duration')?.value,
+          offer_applies: this.quotationForm.get('offer_applies')?.value,
+          type_of_work: this.quotationForm.get('type_of_work')?.value,
+          termin_payment: this.quotationForm.get('termin_payment')?.value
           // inventories: inventoryComplete
         }
   
@@ -1845,6 +1859,10 @@ export class AddQuotationComponent implements OnInit {
           supervision_price_factor: this.quotationForm.get('supervision_price_factor')?.value,
           test_commisioning_cost: this.quotationForm.get('test_commisioning_cost')?.value,
           test_commisioning_price_factor: this.quotationForm.get('test_commisioning_price_factor')?.value,
+          delivery_duration: this.quotationForm.get('delivery_duration')?.value,
+          offer_applies: this.quotationForm.get('offer_applies')?.value,
+          type_of_work: this.quotationForm.get('type_of_work')?.value,
+          termin_payment: this.quotationForm.get('termin_payment')?.value
           // inventories: inventoryComplete,
         }
   
