@@ -74,6 +74,11 @@ export class ExcelQuotationDetailService {
     let allGrandTotalSelling = 0;
     let taxPrice = 0;
 
+    let delivery_duration = '';
+    let offer_applies = '';
+    let type_of_work = '';
+    let termin_payment = '';
+
     const sortedProductCategory = [...productCategory].sort((a, b) => parseInt(a.level ?? '0') - parseInt(b.level ?? '0'));    
 
     sortedProductCategory.forEach((cat, i) => {
@@ -98,6 +103,11 @@ export class ExcelQuotationDetailService {
           preliminaries = parseFloat(data.preliminaries);
           supervision = parseFloat(data.supervision);
           testCommisioning = parseFloat(data.test_commisioning);
+
+          delivery_duration = data.delivery_duration;
+          offer_applies = data.offer_applies;
+          type_of_work = data.type_of_work;
+          termin_payment = data.termin_payment;
 
           tax = parseFloat(data.tax)
           totalSellingPrice2 = parseFloat(parseFloat(data.total_installation_price_after_discount).toFixed(2))
@@ -1851,7 +1861,7 @@ export class ExcelQuotationDetailService {
 
     worksheet.mergeCells(`B${currentRow}:C${currentRow}`);
 
-    worksheet.getCell(`B${currentRow}`).value = ' Waktu Pengiriman: 45 Hari';
+    worksheet.getCell(`B${currentRow}`).value = ` Waktu Pengiriman: ${delivery_duration}`;
     worksheet.getCell(`B${currentRow}`).font = {
       name: 'Arial',
       size: 12
@@ -1925,7 +1935,7 @@ export class ExcelQuotationDetailService {
 
     worksheet.mergeCells(`B${currentRow}:C${currentRow}`);
 
-    worksheet.getCell(`B${currentRow}`).value = ' Penawaran Berlaku: 2 Minggu';
+    worksheet.getCell(`B${currentRow}`).value = ` Penawaran Berlaku: ${offer_applies}`;
     worksheet.getCell(`B${currentRow}`).font = {
       name: 'Arial',
       size: 12
@@ -1999,7 +2009,7 @@ export class ExcelQuotationDetailService {
 
     worksheet.mergeCells(`B${currentRow}:C${currentRow}`);
 
-    worksheet.getCell(`B${currentRow}`).value = ' Sifat Pekerjaan: Unit Price, Sesuai dengan lingkup Pekerjaan';
+    worksheet.getCell(`B${currentRow}`).value = ` Sifat Pekerjaan: ${type_of_work}`;
     worksheet.getCell(`B${currentRow}`).font = {
       name: 'Arial',
       size: 12
@@ -2081,7 +2091,7 @@ export class ExcelQuotationDetailService {
 
     worksheet.mergeCells(`B${currentRow}:C${currentRow}`);
 
-    worksheet.getCell(`B${currentRow}`).value = ' Termin Pembayaran : DP 40%, MOS 60%';
+    worksheet.getCell(`B${currentRow}`).value = ` Termin Pembayaran : ${termin_payment}`;
     worksheet.getCell(`B${currentRow}`).font = {
       name: 'Arial',
       size: 12

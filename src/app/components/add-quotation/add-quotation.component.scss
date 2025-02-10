@@ -140,8 +140,13 @@
     z-index: 1001; /* Ensures stacked headers stay on top */
 }
 .sticky-head:nth-child(3) { 
-    top: 116px !important;
+    top: 112px !important;
     position: sticky;
     top: 0;
     z-index: 1001; /* Ensures stacked headers stay on top */
+}
+
+.top-header{
+    background-color: #1A2369 !important;
+    color: white;
 }

@@ -206,6 +206,10 @@
     grand_total_selling_price: string;
     grand_total_gross_margin: string;
     grand_total_cost: string;
+    delivery_duration: string;
+    offer_applies: string;
+    type_of_work: string;
+    termin_payment: string;
   }
   
   export interface PreparedBy {

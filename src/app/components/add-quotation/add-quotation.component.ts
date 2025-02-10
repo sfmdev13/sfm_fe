@@ -26,6 +26,7 @@ import { NzDropDownModule } from 'ng-zorro-antd/dropdown';
 import { NzInputNumberModule } from 'ng-zorro-antd/input-number';
 import { NzRadioModule } from 'ng-zorro-antd/radio';
 import { NzSpinModule } from 'ng-zorro-antd/spin';
+import { NzCollapseModule } from 'ng-zorro-antd/collapse';
 
 @Component({
   selector: 'app-add-quotation',
@@ -50,7 +51,8 @@ import { NzSpinModule } from 'ng-zorro-antd/spin';
     NzDropDownModule,
     NzInputNumberModule,
     NzRadioModule,
-    NzSpinModule
+    NzSpinModule,
+    NzCollapseModule
   ],
   providers: [DatePipe],
   templateUrl: './add-quotation.component.html',
@@ -110,6 +112,11 @@ export class AddQuotationComponent implements OnInit {
     test_commisioning_price_factor: [0],
     test_commisioning_selling: [{value: 0, disabled: true}],
     test_commisioning_gross_margin: [{value: 0, disabled: true}],
+
+    delivery_duration: [''],
+    offer_applies: [''],
+    type_of_work: [''],
+    termin_payment: ['']
     
   })
 
@@ -514,7 +521,7 @@ export class AddQuotationComponent implements OnInit {
         this.quotationForm.patchValue({
           tax: parseFloat(this.dataQuotation.latest_quotation_revision.tax ?? 0),
           preliminaries_cost: parseFloat(this.dataQuotation.latest_quotation_revision.preliminaries_cost ?? 0),
-          preliminaries_price_factor: parseFloat(this.dataQuotation.latest_quotation_revision.preliminaries_cost ?? 0),
+          preliminaries_price_factor: parseFloat(this.dataQuotation.latest_quotation_revision.preliminaries_price_factor ?? 0),
           preliminaries_selling: parseFloat(this.dataQuotation.latest_quotation_revision.preliminaries ?? 0),
           preliminaries_gross_margin: parseFloat(this.dataQuotation.latest_quotation_revision.preliminaries_gross_margin ?? 0),
       
@@ -527,6 +534,11 @@ export class AddQuotationComponent implements OnInit {
           test_commisioning_price_factor: parseFloat(this.dataQuotation.latest_quotation_revision.test_commisioning_price_factor ?? 0),
           test_commisioning_selling: parseFloat(this.dataQuotation.latest_quotation_revision.test_commisioning ?? 0),
           test_commisioning_gross_margin: parseFloat(this.dataQuotation.latest_quotation_revision.test_commisioning_gross_margin ?? 0),
+
+          delivery_duration: this.dataQuotation.latest_quotation_revision.delivery_duration,
+          offer_applies: this.dataQuotation.latest_quotation_revision.offer_applies,
+          type_of_work: this.dataQuotation.latest_quotation_revision.type_of_work,
+          termin_payment: this.dataQuotation.latest_quotation_revision.termin_payment
         })
 
         this.dataQuotation.latest_quotation_revision.quotation_items.forEach((item) => {
@@ -1703,6 +1715,10 @@ export class AddQuotationComponent implements OnInit {
           supervision_price_factor: this.quotationForm.get('supervision_price_factor')?.value,
           test_commisioning_cost: this.quotationForm.get('test_commisioning_cost')?.value,
           test_commisioning_price_factor: this.quotationForm.get('test_commisioning_price_factor')?.value,
+          delivery_duration: this.quotationForm.get('delivery_duration')?.value,
+          offer_applies: this.quotationForm.get('offer_applies')?.value,
+          type_of_work: this.quotationForm.get('type_of_work')?.value,
+          termin_payment: this.quotationForm.get('termin_payment')?.value
           // inventories: inventoryComplete
         }
   
@@ -1843,6 +1859,10 @@ export class AddQuotationComponent implements OnInit {
           supervision_price_factor: this.quotationForm.get('supervision_price_factor')?.value,
           test_commisioning_cost: this.quotationForm.get('test_commisioning_cost')?.value,
           test_commisioning_price_factor: this.quotationForm.get('test_commisioning_price_factor')?.value,
+          delivery_duration: this.quotationForm.get('delivery_duration')?.value,
+          offer_applies: this.quotationForm.get('offer_applies')?.value,
+          type_of_work: this.quotationForm.get('type_of_work')?.value,
+          termin_payment: this.quotationForm.get('termin_payment')?.value
           // inventories: inventoryComplete,
         }
   
