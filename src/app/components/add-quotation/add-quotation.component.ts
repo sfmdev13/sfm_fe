@@ -468,16 +468,19 @@ export class AddQuotationComponent implements OnInit {
           preliminaries_price_factor: parseFloat(this.dataQuotation.latest_quotation_revision.preliminaries_price_factor ?? 0),
           preliminaries_selling: parseFloat(this.dataQuotation.latest_quotation_revision.preliminaries ?? 0),
           preliminaries_gross_margin: parseFloat(this.dataQuotation.latest_quotation_revision.preliminaries_gross_margin ?? 0),
+          discount_preliminaries: parseFloat(this.dataQuotation.latest_quotation_revision.discount_preliminaries ?? 0),
       
           supervision_cost: parseFloat(this.dataQuotation.latest_quotation_revision.supervision_cost ?? 0),
           supervision_price_factor: parseFloat(this.dataQuotation.latest_quotation_revision.supervision_price_factor ?? 0),
           supervision_selling: parseFloat(this.dataQuotation.latest_quotation_revision.supervision ?? 0),
           supervision_gross_margin: parseFloat(this.dataQuotation.latest_quotation_revision.supervision_gross_margin ?? 0),
+          discount_supervision: parseFloat(this.dataQuotation.latest_quotation_revision.discount_supervision ?? 0),
       
           test_commisioning_cost: parseFloat(this.dataQuotation.latest_quotation_revision.test_commisioning_cost ?? 0),
           test_commisioning_price_factor: parseFloat(this.dataQuotation.latest_quotation_revision.test_commisioning_price_factor ?? 0),
           test_commisioning_selling: parseFloat(this.dataQuotation.latest_quotation_revision.test_commisioning ?? 0),
           test_commisioning_gross_margin: parseFloat(this.dataQuotation.latest_quotation_revision.test_commisioning_gross_margin ?? 0),
+          discount_test_commisioning: parseFloat(this.dataQuotation.latest_quotation_revision.discount_test_commisioning ?? 0),
 
           delivery_duration: this.dataQuotation.latest_quotation_revision.delivery_duration,
           offer_applies: this.dataQuotation.latest_quotation_revision.offer_applies,

@@ -210,6 +210,9 @@
     offer_applies: string;
     type_of_work: string;
     termin_payment: string;
+    discount_preliminaries: string;
+    discount_supervision: string;
+    discount_test_commisioning: string;
   }
   
   export interface PreparedBy {
