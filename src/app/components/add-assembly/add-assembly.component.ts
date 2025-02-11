@@ -199,18 +199,18 @@ export class AddAssemblyComponent implements OnInit {
             suppliersList: [product.inventory_items],
             part_number: [order.raw_material_inventory?.inventory.id],
             product_code: [order.raw_material_inventory?.inventory.code],
-            qty: [parseInt(order.qty), Validators.required],
+            qty: [parseFloat(order.qty), Validators.required],
             unit_unit: [order.raw_material_inventory?.inventory.unit.unit],
             unit_measurement: [order.raw_material_inventory?.inventory.unit.measurement],
-            price_list: [{value: parseInt(order.raw_material_inventory?.inventory.price_list ?? '0'), disabled: true}],
+            price_list: [{value: parseFloat(order.raw_material_inventory?.inventory.price_list ?? '0'), disabled: true}],
             discount_type_1: [{value: order.raw_material_inventory?.discount_type_1, disabled: true}],
-            discount_1: [{value: parseInt(order.raw_material_inventory?.discount_1 ?? '0'), disabled: true}],
+            discount_1: [{value: parseFloat(order.raw_material_inventory?.discount_1 ?? '0'), disabled: true}],
             discount_type_2: [{value: order.raw_material_inventory?.discount_type_2, disabled: true}],
-            discount_2: [{value: parseInt(order.raw_material_inventory?.discount_2 ?? '0'), disabled: true }],
-            product_cost_1: [{value: parseInt(order.raw_material_inventory?.product_cost_1 ?? '0'), disabled: true}],
-            product_cost_2: [{value: parseInt(order.raw_material_inventory?.product_cost_2 ?? '0'), disabled: true}],
-            total_per_cost: [parseInt(order.each_product_cost)],
-            total_cost: [parseInt(order.total_product_cost)],
+            discount_2: [{value: parseFloat(order.raw_material_inventory?.discount_2 ?? '0'), disabled: true }],
+            product_cost_1: [{value: parseFloat(order.raw_material_inventory?.product_cost_1 ?? '0'), disabled: true}],
+            product_cost_2: [{value: parseFloat(order.raw_material_inventory?.product_cost_2 ?? '0'), disabled: true}],
+            total_per_cost: [parseFloat(order.each_product_cost)],
+            total_cost: [parseFloat(order.total_product_cost)],
             qty_total: [order.total_qty]
           })
         }
@@ -222,10 +222,10 @@ export class AddAssemblyComponent implements OnInit {
             part_number: [order.raw_material_assembly?.id],
             product_code: [order.raw_material_assembly?.no_ref],
             qty: [order.qty],
-            price_list: [{value: parseInt(order.raw_material_assembly?.total_price ?? '0'), disabled: true}],
-            total_per_cost: [parseInt(order.each_product_cost)],
-            total_cost: [parseInt(order.total_product_cost)],
-            qty_total: [parseInt(order.total_qty)]
+            price_list: [{value: parseFloat(order.raw_material_assembly?.total_price ?? '0'), disabled: true}],
+            total_per_cost: [parseFloat(order.each_product_cost)],
+            total_cost: [parseFloat(order.total_product_cost)],
+            qty_total: [parseFloat(order.total_qty)]
           })  
         }
 
@@ -237,13 +237,12 @@ export class AddAssemblyComponent implements OnInit {
         const updateOrderAdd = this.fb.group({
           id: order.id,
           product_description: order.product_description,
-          qty: parseInt(order.qty),
+          qty: parseFloat(order.qty),
           unit_id: order.unit.id,
-          price_list: parseInt(order.price_list),
-          discount: parseInt(order.discount),
+          price_list: parseFloat(order.price_list),
+          discount: parseFloat(order.discount),
           discount_type: order.discount_type,
-          discount_price: parseInt(order.discount_price),
-          total_cost: parseInt(order.total_product_cost),
+          total_cost: parseFloat(order.total_product_cost),
           measurement: order.unit.measurement,
           unit: order.unit.unit          
         })
@@ -365,8 +364,7 @@ export class AddAssemblyComponent implements OnInit {
         unit_id: order.unit_id.toString(),
         price_list: order.price_list.toString(),
         discount_type: order.discount_type,
-        discount: order.discount.toString(),
-        discount_price: order.discount_price.toString()
+        discount: order.discount.toString()
       }))
     }
 
@@ -489,7 +487,6 @@ export class AddAssemblyComponent implements OnInit {
   updateTotalCostAdditional(orderRow: UntypedFormGroup): void{
     const qty = orderRow.get('qty')?.value || 0;
     const discount = orderRow.get('discount')?.value || 0;
-    const discount_price = orderRow.get('discount_price')?.value || 0;
     const price_list = orderRow.get('price_list')?.value || 0;
     let totalCost = orderRow.get('total_cost')?.value || 0;
 
@@ -500,7 +497,7 @@ export class AddAssemblyComponent implements OnInit {
     }
 
     if(orderRow.get('discount_type')?.value === 'price'){
-      totalCost = totalCost - parseInt(discount_price);
+      totalCost = totalCost - parseFloat(discount);
     }
 
     orderRow.get('total_cost')?.setValue(totalCost, { emitEvent: false });
@@ -549,19 +546,9 @@ export class AddAssemblyComponent implements OnInit {
       })
     })
 
-    control.get('discount_type')?.valueChanges.subscribe((res) => {
-      if(res === 'percent'){
-        control.get('discount_price')?.setValue(0);
-      } 
-
-      if(res === 'price'){
-        control.get('discount')?.setValue(0);
-      }
-    })
 
     control.get('qty')?.valueChanges.subscribe(() => this.updateTotalCostAdditional(control));
     control.get('price_list')?.valueChanges.subscribe(() => this.updateTotalCostAdditional(control));
-    control.get('discount_price')?.valueChanges.subscribe(() => this.updateTotalCostAdditional(control));
     control.get('discount')?.valueChanges.subscribe(() => this.updateTotalCostAdditional(control))
   }
 
@@ -634,13 +621,15 @@ export class AddAssemblyComponent implements OnInit {
         control.get('inventory_items_id')?.setValue(selectedInventoryItems.id);
         // control.get('price_list')?.setValue(20000);
         control.get('discount_type_1')?.setValue(selectedInventoryItems.discount_type_1);
-        control.get('discount_1')?.setValue(parseInt(selectedInventoryItems.discount_1));
+        control.get('discount_1')?.setValue(parseFloat(selectedInventoryItems.discount_1));
         control.get('discount_type_2')?.setValue(selectedInventoryItems.discount_type_2);
-        control.get('discount_2')?.setValue(parseInt(selectedInventoryItems.discount_2));
+        control.get('discount_2')?.setValue(parseFloat(selectedInventoryItems.discount_2));
   
-        control.get('product_cost_1')?.setValue(parseInt(selectedInventoryItems.product_cost_1));
-        control.get('product_cost_2')?.setValue(parseInt(selectedInventoryItems.product_cost_2));
+        control.get('product_cost_1')?.setValue(parseFloat(selectedInventoryItems.product_cost_1));
+        control.get('product_cost_2')?.setValue(parseFloat(selectedInventoryItems.product_cost_2));
       }
+
+      this.updateTotalCost(control)
 
     });
   }
@@ -649,7 +638,7 @@ export class AddAssemblyComponent implements OnInit {
     const type = control.get('type')?.value;
 
     if(type === 'inventory'){
-      control.get('price_list')?.setValue(parseInt(product?.price_list));
+      control.get('price_list')?.setValue(parseFloat(product?.price_list));
       control.get('unit_measurement')?.setValue(product?.unit.measurement);
       control.get('unit_unit')?.setValue(product?.unit.unit);
   
@@ -660,7 +649,7 @@ export class AddAssemblyComponent implements OnInit {
     }
 
     if(type === 'assembly'){
-      control.get('price_list')?.setValue(parseInt(product?.total_price));
+      control.get('price_list')?.setValue(parseFloat(product?.total_price));
       control.get('product_code')?.setValue(product?.no_ref)
     }
 
@@ -688,7 +677,6 @@ export class AddAssemblyComponent implements OnInit {
       price_list: [0, [Validators.required]],
       discount: [0],
       discount_type: ['percent', [Validators.required]],
-      discount_price: [0],
       total_cost: [0],
       measurement: [''],
       unit: ['']
