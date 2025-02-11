@@ -1,3 +1,5 @@
+import { IDataAssembly } from "./assembly"
+
 export interface IRootInventory {
   data: IDataInventory[]
   pagination: Pagination
@@ -32,7 +34,10 @@ export interface IDataInventory {
     name: string;
     description: string;
   }
+  is_assembly: number;
+  assembly: IDataAssembly | null;
 }
+
 
 interface InventoryInstallation{
   id: string
