@@ -232,7 +232,7 @@
 </nz-modal>
 
 <!-- detail modal -->
-<nz-modal nzCentered nzWidth="900px" [(nzVisible)]="isVisibleDetail" [nzTitle]="'Detail Inventory'" (nzOnCancel)="handleCancelDetail()">
+<nz-modal nzCentered nzWidth="1200px" [(nzVisible)]="isVisibleDetail" [nzTitle]="'Detail Inventory'" (nzOnCancel)="handleCancelDetail()">
   <ng-container *nzModalContent>
     <div class="d-flex flex-column gap-2">  
 
@@ -387,6 +387,161 @@
               <p class="fw-light">{{ dataDetail.inventory_installation.gross_margin }} %</p>
             </div>
           </div>
+        </nz-tab>
+        <nz-tab *ngIf="dataDetail.is_assembly === 1" nzTitle="Assembly">
+          <div class="mt-3">
+            <p class="m-0 p-0 fw-semibold">Qty Assembly</p>
+            <p class="m-0 p-0">{{ dataDetail.assembly?.qty }}</p>
+          </div>
+          <nz-tabset [nzAnimated]="false">
+            <nz-tab nzTitle="Raw Materials">
+              <div class="table-responsive">
+                <table class="table table-assembly">
+                  <thead>
+                    <tr>
+                      <th scope="col">#</th>
+                      <th scope="col">Type</th>
+                      <th scope="col">Part Number</th>
+                      <th scope="col">Product Description</th>
+                      <th scope="col">Supplier</th>
+                      <th scope="col">Qty</th>
+                      <th scope="col">Qty Total</th>
+                      <th scope="col">Unit</th>
+                      <th scope="col">Price List</th>
+                      <th scope="col">Discount 1</th>
+                      <th scope="col">Product Cost 1</th>
+                      <th scope="col">Discount 2</th>
+                      <th scope="col">Product Cost 2</th>
+                      <th scope="col">Total per Item</th>
+                      <th scope="col">Total</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let assembly of dataDetail.assembly?.assembly_inventory_items; let i = index">
+                      <th scope="row">{{ i + 1 }}</th>
+                      <td>{{ assembly.type === 'inventory' ? 'Inventory' : 'Assembly' }}</td>
+                      <td>{{ assembly.type === 'inventory' ? assembly.raw_material_inventory?.inventory?.code : assembly.raw_material_assembly?.no_ref }}</td>
+                      <td>{{ assembly.type === 'inventory' ? assembly.raw_material_inventory?.inventory?.description : assembly.raw_material_assembly?.description}}</td>
+                      <td>{{ assembly.type === 'inventory' ? assembly.raw_material_inventory?.supplier?.name : '-' }}</td>
+                      <td>{{ assembly.qty }}</td>
+                      <td>{{ assembly.total_qty }}</td>
+                      <td>{{ assembly.type === 'inventory' ? assembly.raw_material_inventory?.inventory?.unit?.name : '-' }}</td>
+                      <td>Rp. {{ (assembly.type === 'inventory' ? assembly.raw_material_inventory?.inventory?.price_list : assembly.raw_material_assembly?.total_price_per_assembly) | number:'1.0-0' }}</td>
+                      <td>{{ assembly.type === 'inventory' 
+                            ? assembly.raw_material_inventory?.discount_type_1 === 'percent' 
+                              ? assembly.raw_material_inventory?.discount_1 + ' %'
+                              : 'Rp. ' +  (assembly.raw_material_inventory?.discount_1 | number : '1.0-0')
+                            : '-' }}
+                      </td>
+                      <td>Rp. {{ (assembly.type === 'inventory' ? assembly.raw_material_inventory?.product_cost_1 : '-') | number:'1.0-0'  }}</td>
+                      <td>{{ assembly.type === 'inventory' 
+                        ? assembly.raw_material_inventory?.discount_type_2 === 'percent' 
+                          ? assembly.raw_material_inventory?.discount_2 + ' %'
+                          : 'Rp. ' +  (assembly.raw_material_inventory?.discount_2 | number : '1.0-0')
+                        : '-' }}
+                      </td>
+                      <td>Rp. {{ (assembly.type === 'inventory' ? assembly.raw_material_inventory?.product_cost_2  : '-') | number: '1.0-0' }}</td>
+                      <td>Rp. {{ assembly.each_product_cost | number: '1.0-0' }}</td>
+                      <td>Rp. {{ assembly.total_product_cost | number: '1.0-0' }}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <div class="row mt-4">
+                <div class="col-md-8">
+
+                </div>
+                <div class="col-md-4">
+                  <div class="d-flex flex-row justify-content-between">
+                    <div class="d-flex flex-column gap-3">
+                      <span class="fw-semibold">Total Raw Material (per earch)</span>
+                      <span class="fw-semibold">Total Raw Material</span>
+                    </div>
+                    <div class="d-flex flex-column gap-3">
+                      <span class="fw-semibold">Rp. {{ dataDetail.assembly?.total_inventory_price_per_assembly | number: '1.0-0' }}</span>
+                      <span class="fw-semibold">Rp. {{ dataDetail.assembly?.total_inventory_price | number: '1.0-0' }}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </nz-tab>
+            <nz-tab nzTitle="Additional Cost">
+              <div class="table-responsive">
+                <table class="table table-assembly">
+                  <thead>
+                    <tr>
+                      <th scope="col">#</th>
+                      <th scope="col">Product Description</th>
+                      <th scope="col">Qty</th>
+                      <th scope="col">Unit</th>
+                      <th scope="col">Price List</th>
+                      <th scope="col">Discount</th>
+                      <th scope="col">Total</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let addition of dataDetail.assembly?.assembly_additional_items; let i = index">
+                      <td scope="row">{{i + 1}}</td>
+                      <td>{{ addition.product_description }}</td>
+                      <td>{{ addition.qty }}</td>
+                      <td>{{ addition.unit.name }}</td>
+                      <td>Rp. {{ addition.price_list | number:'1.0-0' }}</td>
+                      <td>{{ addition.discount_type === 'percent' 
+                              ? addition.discount + ' %'
+                              : 'Rp ' + (addition.discount | number: '1.0-0')
+                          }}
+                      </td>
+                      <td>Rp. {{ addition.total_product_cost | number: '1.0-0' }}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+
+              <div class="row mt-4">
+                <div class="col-md-8">
+
+                </div>
+                <div class="col-md-4">
+                  <div class="d-flex flex-row justify-content-between">
+                    <div class="d-flex flex-column gap-3">
+                      <span class="fw-semibold">Total Additional Cost</span>
+                    </div>
+                    <div class="d-flex flex-column gap-3">
+                      <span class="fw-semibold">Rp. {{ dataDetail.assembly?.total_additional_items_price | number: '1.0-0' }}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </nz-tab>
+            <nz-tab nzTitle="Finish Good">
+
+            <div class="d-flex flex-row align-items-center justify-content-between gap-5">
+                <div class="w-100">
+                    <div class="d-flex align-items-center justify-content-between" style="margin-bottom: 12px;">
+                        <p class="m-0 p-0 fw-semibold">Total Raw Materials</p>
+                        <p class="m-0 p-0 fw-semibold total-order">Rp {{ dataDetail.assembly?.total_inventory_price  | number:'1.0-0' }}</p>
+                    </div>
+
+                    <div class="d-flex align-items-center justify-content-between total-children">
+                        <p class="m-0 p-0 fw-semibold">Total Additional Cost</p>
+                        <p class="m-0 p-0 fw-semibold total-order">Rp {{ dataDetail.assembly?.total_additional_items_price  | number:'1.0-0' }}</p>
+                    </div>
+                </div>
+                <div class="w-100">
+                    <div class="d-flex align-items-center justify-content-between" style="margin-bottom: 12px;">
+                        <p class="m-0 p-0 fw-semibold">Total Order</p>
+                        <p class="m-0 p-0 fw-semibold total-order">Rp {{ dataDetail.assembly?.total_price_per_assembly  | number:'1.0-0' }}</p>
+                    </div>
+
+                    <div class="d-flex align-items-center justify-content-between total-children">
+                        <p class="m-0 p-0 fw-semibold">Grand Total</p>
+                        <p class="m-0 p-0 fw-semibold total-order">Rp {{ dataDetail.assembly?.total_price  | number:'1.0-0' }}</p>
+                    </div>
+                </div>     
+
+            </div>
+            </nz-tab>
+          </nz-tabset>
         </nz-tab>
       </nz-tabset>
 

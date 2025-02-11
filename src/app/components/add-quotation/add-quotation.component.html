@@ -576,7 +576,7 @@
                             <nz-collapse>
                                 <nz-collapse-panel nzHeader="2.1 Preliminaries">
                                     <div class="row">
-                                        <div class="col-3">
+                                        <div class="col-4">
                                             <nz-form-item>
                                                 <nz-form-label nzRequired nzFor="preliminaries_cost" class="fw-semibold">Cost</nz-form-label>
                                                 <nz-form-control>
@@ -591,7 +591,21 @@
                                                 </nz-form-control>
                                             </nz-form-item>
                                         </div>
-                                        <div class="col-3">
+                                        <div class="col-4">
+                                            <nz-form-item>
+                                                <nz-form-label nzRequired nzFor="discount_preliminaries" class="w-100 fw-semibold">Discount</nz-form-label>
+                                                <nz-form-control>
+                                                    <nz-input-number-group nzAddOnAfter="%" class="w-100">
+                                                        <nz-input-number
+                                                        id="discount_preliminaries"
+                                                        formControlName="discount_preliminaries"
+                                                        [nzMin]="0"
+                                                        ></nz-input-number>
+                                                    </nz-input-number-group>
+                                                </nz-form-control>
+                                            </nz-form-item>
+                                        </div>
+                                        <div class="col-4">
                                             <nz-form-item>
                                                 <nz-form-label nzRequired nzFor="preliminaries_price_factor" class="fw-semibold">Price Factor</nz-form-label>
                                                 <nz-form-control>
@@ -604,7 +618,7 @@
                                                 </nz-form-control>
                                             </nz-form-item>
                                         </div>
-                                        <div class="col-3">
+                                        <div class="col-4">
                                             <nz-form-item>
                                                 <nz-form-label nzRequired nzFor="preliminaries_selling" class="w-100 fw-semibold">Selling Price</nz-form-label>
                                                 <nz-form-control>
@@ -619,7 +633,7 @@
                                                 </nz-form-control>
                                             </nz-form-item>
                                         </div>
-                                        <div class="col-3">
+                                        <div class="col-4">
                                             <nz-form-item>
                                                 <nz-form-label nzRequired nzFor="preliminaries_gross_margin" class="w-100 fw-semibold">Gross Margin</nz-form-label>
                                                 <nz-form-control>
@@ -791,7 +805,7 @@
                                 </nz-collapse-panel>
                                 <nz-collapse-panel nzHeader="2.3 Supervision">
                                     <div class="row">
-                                        <div class="col-3">
+                                        <div class="col-4">
                                             <nz-form-item>
                                                 <nz-form-label nzRequired nzFor="supervision_cost" class="fw-semibold">Cost</nz-form-label>
                                                 <nz-form-control>
@@ -806,7 +820,21 @@
                                                 </nz-form-control>
                                             </nz-form-item>
                                         </div>
-                                        <div class="col-3">
+                                        <div class="col-4">
+                                            <nz-form-item>
+                                                <nz-form-label nzRequired nzFor="discount_supervision" class="w-100 fw-semibold">Discount</nz-form-label>
+                                                <nz-form-control>
+                                                    <nz-input-number-group nzAddOnAfter="%" class="w-100">
+                                                        <nz-input-number
+                                                        id="discount_supervision"
+                                                        formControlName="discount_supervision"
+                                                        [nzMin]="0"
+                                                        ></nz-input-number>
+                                                    </nz-input-number-group>
+                                                </nz-form-control>
+                                            </nz-form-item>
+                                        </div>
+                                        <div class="col-4">
                                             <nz-form-item>
                                                 <nz-form-label nzRequired nzFor="supervision_price_factor" class="fw-semibold">Price Factor</nz-form-label>
                                                 <nz-form-control>
@@ -819,7 +847,7 @@
                                                 </nz-form-control>
                                             </nz-form-item>
                                         </div>
-                                        <div class="col-3">
+                                        <div class="col-4">
                                             <nz-form-item>
                                                 <nz-form-label nzRequired nzFor="supervision_selling" class="w-100 fw-semibold">Selling Price</nz-form-label>
                                                 <nz-form-control>
@@ -834,7 +862,7 @@
                                                 </nz-form-control>
                                             </nz-form-item>
                                         </div>
-                                        <div class="col-3">
+                                        <div class="col-4">
                                             <nz-form-item>
                                                 <nz-form-label nzRequired nzFor="supervision_gross_margin" class="w-100 fw-semibold">Gross Margin</nz-form-label>
                                                 <nz-form-control>
@@ -852,7 +880,7 @@
                                 </nz-collapse-panel>
                                 <nz-collapse-panel nzHeader="2.4 Test Commisioning">
                                     <div class="row">
-                                        <div class="col-3">
+                                        <div class="col-4">
                                             <nz-form-item>
                                                 <nz-form-label nzRequired nzFor="test_commisioning_cost" class="fw-semibold">Cost</nz-form-label>
                                                 <nz-form-control>
@@ -867,7 +895,21 @@
                                                 </nz-form-control>
                                             </nz-form-item>
                                         </div>
-                                        <div class="col-3">
+                                        <div class="col-4">
+                                            <nz-form-item>
+                                                <nz-form-label nzRequired nzFor="discount_test_commisioning" class="w-100 fw-semibold">Discount</nz-form-label>
+                                                <nz-form-control>
+                                                    <nz-input-number-group nzAddOnAfter="%" class="w-100">
+                                                        <nz-input-number
+                                                        id="discount_test_commisioning"
+                                                        formControlName="discount_test_commisioning"
+                                                        [nzMin]="0"
+                                                        ></nz-input-number>
+                                                    </nz-input-number-group>
+                                                </nz-form-control>
+                                            </nz-form-item>
+                                        </div>
+                                        <div class="col-4">
                                             <nz-form-item>
                                                 <nz-form-label nzRequired nzFor="test_commisioning_price_factor" class="fw-semibold">Price Factor</nz-form-label>
                                                 <nz-form-control>
@@ -880,7 +922,7 @@
                                                 </nz-form-control>
                                             </nz-form-item>
                                         </div>
-                                        <div class="col-3">
+                                        <div class="col-4">
                                             <nz-form-item>
                                                 <nz-form-label nzRequired nzFor="test_commisioning_selling" class="w-100 fw-semibold">Selling Price</nz-form-label>
                                                 <nz-form-control>
@@ -895,7 +937,7 @@
                                                 </nz-form-control>
                                             </nz-form-item>
                                         </div>
-                                        <div class="col-3">
+                                        <div class="col-4">
                                             <nz-form-item>
                                                 <nz-form-label nzRequired nzFor="test_commisioning_gross_margin" class="w-100 fw-semibold">Gross Margin</nz-form-label>
                                                 <nz-form-control>
@@ -947,7 +989,7 @@
                             </div>
                         </nz-tab>
                         <nz-tab nzTitle="Total">
-                            <div class="table-responsive">
+                            <div class="table-responsive" style="border-bottom: 1px solid lightgray;">
                                 <table class="table table-order table-purchase">
                                     <thead>
                                         <tr>
@@ -1125,7 +1167,7 @@
                                                 </tr>
                                             </ng-container>
                                         </ng-container>
-                                        <tr>
+                                        <!-- <tr>
                                             <td class="" [colSpan]='7'>
                                                 -
                                             </td>
@@ -1144,7 +1186,7 @@
                                                    {{ (( ( (totalGrandCost + iTotalGrandCost ) - (totalGrandPriceList + totalGrandICost) ) / (totalGrandCost + iTotalGrandCost )) * 100).toFixed(2) }} %
                                                 </span>
                                             </td>
-                                        </tr>
+                                        </tr> -->
                                         <!-- <tr>
                                             <td></td>
                                             <td></td>
@@ -1166,6 +1208,111 @@
                                         </tr> -->
                                     </tbody>
                                 </table>
+                            </div>
+
+                            <div class="row mt-4">
+                                <div class="col-md-8">
+
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="d-flex justify-content-between pb-2" style="border-bottom: 2px solid black">
+                                        <div class="d-flex flex-column gap-2">
+                                            <span class="fw-semibold">Gross Margin</span>
+                                            <span class="fw-semibold">Sub Total 1</span>
+                                            <span class="fw-semibold">Sub Total 2</span>
+                                        </div>
+
+                                        <div class="d-flex flex-column gap-2">
+                                            <span class="fw-semibold">
+                                                {{
+                                                    (((
+                                                        (
+                                                            totalGrandCost 
+                                                            + (+quotationForm.get('preliminaries_selling')?.value || 0)
+                                                            + iTotalGrandCost 
+                                                            + (+quotationForm.get('supervision_selling')?.value || 0)
+                                                            + (+quotationForm.get('test_commisioning_selling')?.value || 0)
+                                                        )
+                                                        -
+                                                        (
+                                                            totalGrandPriceList 
+                                                            + (+quotationForm.get('preliminaries_cost')?.value || 0)
+                                                            + totalGrandICost 
+                                                            + (+quotationForm.get('supervision_cost')?.value || 0)
+                                                            + (+quotationForm.get('test_commisioning_cost')?.value || 0)  
+                                                        )
+                                                    )
+                                                    /
+                                                    (
+                                                        totalGrandCost 
+                                                        + (+quotationForm.get('preliminaries_selling')?.value || 0)
+                                                        + iTotalGrandCost 
+                                                        + (+quotationForm.get('supervision_selling')?.value || 0)
+                                                        + (+quotationForm.get('test_commisioning_selling')?.value || 0)
+                                                    )) * 100).toFixed(2)}} %
+                                            </span>
+                                            <span class="fw-semibold">Rp. {{ totalGrandCost | number: '1.0-0' }}</span>
+                                            <span class="fw-semibold">
+                                                Rp. {{ (
+                                                    + quotationForm.get('preliminaries_selling')?.value 
+                                                    + iTotalGrandCost 
+                                                    +  quotationForm.get('supervision_selling')?.value 
+                                                    + quotationForm.get('test_commisioning_selling')?.value 
+                                                ) | number: '1.0-0' }}
+                                            </span>
+                                        </div>
+                                    </div>
+
+                                    <div class="d-flex justify-content-between mt-3">
+                                        <div class="d-flex flex-column gap-2">
+                                            <span class="fw-semibold">Total (1+2)</span>
+                                            <span class="fw-semibold">Round</span>
+                                            <span class="fw-semibold">Tax({{quotationForm.get('tax')?.value}}%)</span>
+                                            <span class="fw-semibold">Grand Total</span>
+                                        </div>
+
+                                        <div class="d-flex flex-column gap-2">
+                                            <span class="fw-semibold">
+                                                Rp. {{ (totalGrandCost 
+                                                    + quotationForm.get('preliminaries_selling')?.value 
+                                                    + iTotalGrandCost 
+                                                    +  quotationForm.get('supervision_selling')?.value 
+                                                    + quotationForm.get('test_commisioning_selling')?.value 
+                                                ) | number: '1.0-0' }}
+                                            </span>
+                                            <span class="fw-semibold">
+                                                Rp. {{ (totalGrandCost 
+                                                    + quotationForm.get('preliminaries_selling')?.value 
+                                                    + iTotalGrandCost 
+                                                    +  quotationForm.get('supervision_selling')?.value 
+                                                    + quotationForm.get('test_commisioning_selling')?.value 
+                                                ) | number: '1.0-0' }}
+                                            </span>
+                                            <span class="fw-semibold">
+                                                Rp. {{ ((totalGrandCost 
+                                                    + (+quotationForm.get('preliminaries_selling')?.value || 0)
+                                                    + iTotalGrandCost 
+                                                    + (+quotationForm.get('supervision_selling')?.value || 0)
+                                                    + (+quotationForm.get('test_commisioning_selling')?.value || 0)
+                                                ) * ((+quotationForm.get('tax')?.value || 0) / 100) ) | number: '1.0-0' }}
+                                            </span>
+                                            <span class="fw-semibold">
+                                                Rp. {{ ((totalGrandCost 
+                                                    + (+quotationForm.get('preliminaries_selling')?.value || 0)
+                                                    + iTotalGrandCost 
+                                                    + (+quotationForm.get('supervision_selling')?.value || 0)
+                                                    + (+quotationForm.get('test_commisioning_selling')?.value || 0)
+                                                )
+                                                    + (totalGrandCost 
+                                                    + (+quotationForm.get('preliminaries_selling')?.value || 0)
+                                                    + iTotalGrandCost 
+                                                    + (+quotationForm.get('supervision_selling')?.value || 0)
+                                                    + (+quotationForm.get('test_commisioning_selling')?.value || 0)
+                                                ) * ((+quotationForm.get('tax')?.value || 0) / 100) ) | number: '1.0-0' }}
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </nz-tab>
                     </nz-tabset>

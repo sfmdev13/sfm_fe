@@ -97,6 +97,8 @@ export class AddInventoriesComponent implements OnInit {
     installation_selling_price: [0],
     installation_gross_margin: [0],
 
+    is_assembly: [0, [Validators.required]],
+
 
     inventory_items: this.fb.array([])
   })
@@ -181,6 +183,10 @@ export class AddInventoriesComponent implements OnInit {
       this.inventoryForm.get('status')?.setValue(value ? 1 : 0, { emitEvent: false });
     });
 
+    this.inventoryForm.get('is_assembly')?.valueChanges.subscribe((value: boolean) => {
+      this.inventoryForm.get('is_assembly')?.setValue(value ? 1 : 0, { emitEvent: false });
+    });
+
     this.productCat$ = this.apiSvc.getSupplierProduct();
     this.subCategory$ = this.apiSvc.getSubCategory();
     this.manufacture$ = this.apiSvc.getManufacture();
@@ -225,6 +231,7 @@ export class AddInventoriesComponent implements OnInit {
         part_number: this.dataDetail.code,
         isEqualMeasurement: this.dataDetail.unit_report === null ? true : false,
         attachment: this.modal_type === 'edit' ?  newUpdateFileList : '',
+        is_assembly: this.dataDetail.is_assembly
       })
 
       this.getFormattedLabel(this.dataDetail.unit.measurement, this.dataDetail.unit.unit);
@@ -798,7 +805,8 @@ export class AddInventoriesComponent implements OnInit {
         i_unit_inch_qty: this.inventoryForm.get('installation_unit_inch_qty')?.value?.toString() || '0',
         i_price: this.inventoryForm.get('installation_unit_price')?.value?.toString() || '0',
         i_price_type: this.inventoryForm.get('installation_unit_price_type')?.value,
-        i_price_factor: this.inventoryForm.get('installation_price_factor')?.value?.toString() || '0'
+        i_price_factor: this.inventoryForm.get('installation_price_factor')?.value?.toString() || '0',
+        is_assembly: this.inventoryForm.get('is_assembly')?.value,
       }
 
       const formData = new FormData();
@@ -893,7 +901,8 @@ export class AddInventoriesComponent implements OnInit {
         i_unit_inch_qty: this.inventoryForm.get('installation_unit_inch_qty')?.value?.toString() || '0',
         i_price: this.inventoryForm.get('installation_unit_price')?.value?.toString() || '0',
         i_price_type: this.inventoryForm.get('installation_unit_price_type')?.value,
-        i_price_factor: this.inventoryForm.get('installation_price_factor')?.value?.toString() || '0'
+        i_price_factor: this.inventoryForm.get('installation_price_factor')?.value?.toString() || '0',
+        is_assembly: this.inventoryForm.get('is_assembly')?.value,
       }
 
       const formData = new FormData();

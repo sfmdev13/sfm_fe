@@ -104,3 +104,8 @@
     }
 
 }
+
+.table-assembly td, .table-assembly th{
+    white-space: nowrap;
+    min-width: 150px;
+}
