@@ -3,6 +3,7 @@
         <nz-tabset [nzAnimated]="false">
             <nz-tab nzTitle="Basic Information">
                 <div class="row">
+                    
                     <div class="col-md-6">
                         <nz-form-item>
                             <nz-form-label nzRequired nzFor="supplier_product_id" class="fw-semibold">Product Category</nz-form-label>
@@ -64,11 +65,34 @@
                         </nz-form-item>
                     </div>
 
+                    <div class="col-12">
+                        <nz-form-item>
+                            <nz-form-label nzFor="is_assembly" nzRequired class="fw-semibold">Assembly</nz-form-label>
+                            <nz-form-control>
+                                <nz-switch nzSize="default" id="is_assembly" formControlName="is_assembly" nzCheckedChildren="yes" nzUnCheckedChildren="no"></nz-switch>
+                            </nz-form-control>
+                        </nz-form-item>
+                    </div>
+
                     <div class="col-md-6">
                         <nz-form-item>
                             <nz-form-label nzRequired nzFor="description" class="fw-semibold">Product Description</nz-form-label>
                             <nz-form-control>
-                                <input nz-input formControlName="description" id="description" />
+                                <ng-container *ngIf="inventoryForm.get('is_assembly')?.value; else manualInputDescription">
+                                    <nz-select nzShowSearch nzAllowClear formControlName="description" id="description">
+                                        <ng-container *ngIf="listAssembly$ | async as assembly; else loadAssembly1">
+                                            <ng-container *ngFor="let item of assembly.data">
+                                                <nz-option [nzLabel]="item.description" [nzValue]="item.description"></nz-option>
+                                            </ng-container>
+                                        </ng-container>
+                                        <ng-template #loadAssembly1>
+                                            <nz-option nzDisabled nzLabel="Loading..."></nz-option>
+                                        </ng-template>
+                                    </nz-select>
+                                </ng-container>
+                                <ng-template #manualInputDescription>
+                                    <input nz-input formControlName="description" id="description" />
+                                </ng-template>
                             </nz-form-control>
                         </nz-form-item>
                     </div>
@@ -77,7 +101,22 @@
                         <nz-form-item>
                             <nz-form-label nzRequired nzFor="part_number" class="fw-semibold">Part Number</nz-form-label>
                             <nz-form-control>
-                                <input nz-input formControlName="part_number" id="part_number" />
+                                <ng-container *ngIf="inventoryForm.get('is_assembly')?.value; else manualInputNumber">
+                                    <nz-select nzShowSearch nzAllowClear formControlName="part_number" id="part_number">
+                                        <ng-container *ngIf="listAssembly$ | async as assembly; else loadAssembly2">
+                                            <ng-container *ngFor="let item of assembly.data">
+                                                <nz-option [nzLabel]="item.no_ref" [nzValue]="item.no_ref"></nz-option>
+                                            </ng-container>
+                                        </ng-container>
+                                        <ng-template #loadAssembly2>
+                                            <nz-option nzDisabled nzLabel="Loading..."></nz-option>
+                                        </ng-template>
+                                    </nz-select>
+                                </ng-container>
+                                <ng-template #manualInputNumber>
+                                    <input nz-input formControlName="part_number" id="part_number" />
+                                </ng-template>
+
                             </nz-form-control>
                         </nz-form-item>
                     </div>
@@ -230,15 +269,6 @@
                                 <nz-input-number-group nzAddOnAfter="%">
                                     <nz-input-number formControlName="tax"></nz-input-number>
                                 </nz-input-number-group>
-                            </nz-form-control>
-                        </nz-form-item>
-                    </div>
-
-                    <div class="col-md-6">
-                        <nz-form-item>
-                            <nz-form-label nzFor="is_assembly" nzRequired class="fw-semibold">Assembly</nz-form-label>
-                            <nz-form-control>
-                                <nz-switch nzSize="default" id="is_assembly" formControlName="is_assembly" nzCheckedChildren="yes" nzUnCheckedChildren="no"></nz-switch>
                             </nz-form-control>
                         </nz-form-item>
                     </div>
