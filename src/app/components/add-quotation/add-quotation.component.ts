@@ -119,7 +119,9 @@ export class AddQuotationComponent implements OnInit {
     delivery_duration: [''],
     offer_applies: [''],
     type_of_work: [''],
-    termin_payment: ['']
+    termin_payment: [''],
+
+    select_all: [false]
     
   })
 
@@ -196,6 +198,13 @@ export class AddQuotationComponent implements OnInit {
 
   ngOnInit(): void {
 
+    this.quotationForm.get('select_all')?.valueChanges.subscribe((value)=> {
+
+      this.stacks.controls.forEach(control => {
+        control.patchValue({ is_total_quotation: value });
+      });
+
+    });
 
     ['preliminaries_cost', 'discount_preliminaries', 'preliminaries_price_factor'].forEach(field => {
       this.quotationForm.get(field)?.valueChanges.subscribe(() => {
@@ -732,6 +741,7 @@ export class AddQuotationComponent implements OnInit {
 
 
   }
+
 
   updatePreliminariesValues() {
     const cost = this.quotationForm.get('preliminaries_cost')?.value || 0;

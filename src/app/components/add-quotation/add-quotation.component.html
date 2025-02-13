@@ -240,7 +240,12 @@
                                     <th scope="col">BOM Contract Revision PDF</th>
                                     <th scope="col" style="width: 8%;">Revision Contract</th>
                                     <th scope="col">Detail</th>
-                                    <th scope="col" *ngIf="modal_type !== 'add'">Used for Total Quotation</th>
+                                    <th scope="col" *ngIf="modal_type !== 'add'">
+                                        <div class="d-flex flex-column">
+                                            <span>Used for Total Quotation</span>
+                                            <span style="font-size:12px">Select All <label nz-checkbox formControlName="select_all"></label></span>
+                                        </div>
+                                    </th>
                                     <th scope="col">Active</th>
                                     <th scope="col">Action</th>
                                 </tr>
