@@ -1,7 +1,7 @@
 import { Component, inject, Input, OnInit } from '@angular/core';
 import { UntypedFormGroup, Validators, UntypedFormBuilder, UntypedFormArray, AbstractControl } from '@angular/forms';
 import { NZ_MODAL_DATA, NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
-import { Observable, Subject, tap, debounceTime, distinctUntilChanged, subscribeOn } from 'rxjs';
+import { Observable, Subject, tap, debounceTime, distinctUntilChanged, subscribeOn, take } from 'rxjs';
 import { ApiService } from 'src/app/api.service';
 import { AuthService } from 'src/app/auth.service';
 import { IRootInventory, IRootUnit, ICategories, IDataInventory, IRootUnitReport } from 'src/app/interfaces';
@@ -110,6 +110,10 @@ export class AddInventoriesComponent implements OnInit {
 
   isAttachmentChange: boolean = false;
 
+  listAssembly$!: Observable<any>;
+
+  listAssemblySimple: any;
+
   constructor(
     private apiSvc: ApiService,
     private fb: UntypedFormBuilder,
@@ -131,6 +135,38 @@ export class AddInventoriesComponent implements OnInit {
    }
 
   ngOnInit(): void {
+
+    this.listAssembly$ = this.apiSvc.listSimpleAssembly().pipe(
+      tap((res) => {
+
+      })
+    );
+
+    this.inventoryForm.get('description')?.valueChanges.subscribe((value) => {
+      const isAssembly = this.inventoryForm.get('is_assembly')?.value;
+
+      if(isAssembly){
+        this.listAssembly$.pipe(take(1)).subscribe((assembly: any) => {
+          const selectedItem = assembly.data.find((item:any) => item.description === value);
+          if (selectedItem) {
+              this.inventoryForm.get('part_number')?.setValue(selectedItem.no_ref, {emitEvent: false});
+          }
+        });
+      }
+    })
+
+    this.inventoryForm.get('part_number')?.valueChanges.subscribe((value) => {
+      const isAssembly = this.inventoryForm.get('is_assembly')?.value;
+
+      if(isAssembly){
+        this.listAssembly$.pipe(take(1)).subscribe((assembly: any) => {
+          const selectedItem = assembly.data.find((item:any) => item.no_ref === value);
+          if (selectedItem) {
+            this.inventoryForm.get('description')?.setValue(selectedItem.description, {emitEvent: false});
+          }
+        });
+      }
+    })
 
     this.inventoryForm.get('installation_unit_price')?.valueChanges.subscribe((res) => {
       this.changeInstallationValue();

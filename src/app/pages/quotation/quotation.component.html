@@ -86,6 +86,7 @@
           [nzShowFilter]="column.showFilter"
           [nzShowSort]="column.showSort"
           [nzRight]="column.name === 'Action'"
+          [nzLeft]="column.name === 'Project ID'"
           [nzWidth]="'200px'"
         >
           {{ column.name }}
@@ -97,7 +98,7 @@
     <tbody>
         <ng-container *ngFor="let data of basicTable.data">
             <tr>
-                <td>{{ data.project.project_pid }}</td>
+                <td nzLeft>{{ data.project.project_pid }}</td>
                 <td>{{ data.project.name }}</td>
                 <td>{{ data.quotation_no}}</td>
                 <td>{{ data.issued_date | date: 'fullDate' }}</td>

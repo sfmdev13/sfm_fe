@@ -240,7 +240,12 @@
                                     <th scope="col">BOM Contract Revision PDF</th>
                                     <th scope="col" style="width: 8%;">Revision Contract</th>
                                     <th scope="col">Detail</th>
-                                    <th scope="col" *ngIf="modal_type !== 'add'">Used for Total Quotation</th>
+                                    <th scope="col" *ngIf="modal_type !== 'add'">
+                                        <div class="d-flex flex-column">
+                                            <span>Used for Total Quotation</span>
+                                            <span style="font-size:12px">Select All <label nz-checkbox formControlName="select_all"></label></span>
+                                        </div>
+                                    </th>
                                     <th scope="col">Active</th>
                                     <th scope="col">Action</th>
                                 </tr>
@@ -460,7 +465,10 @@
                                         <ng-container formArrayName="items">
                                             <ng-container *ngFor="let category of objectKeys(groupedItems);let catIndex = index">
                                                 <tr>
-                                                    <td class="" colspan="14">
+                                                    <td class="fw-bold">
+                                                        1.{{catIndex + 1}}
+                                                    </td>
+                                                    <td class="" colspan="13">
                                                         <span class="fw-bold">{{category}}</span>
                                                     </td>
                                                 </tr>
@@ -593,6 +601,19 @@
                                         </div>
                                         <div class="col-4">
                                             <nz-form-item>
+                                                <nz-form-label nzRequired nzFor="preliminaries_price_factor" class="fw-semibold">Price Factor</nz-form-label>
+                                                <nz-form-control>
+                                                    <nz-input-number
+                                                    class="w-100"
+                                                    id="preliminaries_price_factor"
+                                                    formControlName="preliminaries_price_factor"
+                                                    [nzMin]="0"
+                                                    ></nz-input-number>
+                                                </nz-form-control>
+                                            </nz-form-item>
+                                        </div>
+                                        <div class="col-4">
+                                            <nz-form-item>
                                                 <nz-form-label nzRequired nzFor="discount_preliminaries" class="w-100 fw-semibold">Discount</nz-form-label>
                                                 <nz-form-control>
                                                     <nz-input-number-group nzAddOnAfter="%" class="w-100">
@@ -602,19 +623,6 @@
                                                         [nzMin]="0"
                                                         ></nz-input-number>
                                                     </nz-input-number-group>
-                                                </nz-form-control>
-                                            </nz-form-item>
-                                        </div>
-                                        <div class="col-4">
-                                            <nz-form-item>
-                                                <nz-form-label nzRequired nzFor="preliminaries_price_factor" class="fw-semibold">Price Factor</nz-form-label>
-                                                <nz-form-control>
-                                                    <nz-input-number
-                                                    class="w-100"
-                                                    id="preliminaries_price_factor"
-                                                    formControlName="preliminaries_price_factor"
-                                                    [nzMin]="0"
-                                                    ></nz-input-number>
                                                 </nz-form-control>
                                             </nz-form-item>
                                         </div>
@@ -1009,7 +1017,8 @@
                                     </thead>
                                     <tbody>
                                         <tr class="table-secondary">
-                                            <td colspan="12" class="top-header">
+                                            <td class="fw-bold top-header">1</td>
+                                            <td colspan="11" class="top-header">
                                                 <span class="fw-bold" style="font-size: 16px;">
                                                     Material
                                                 </span>
@@ -1018,7 +1027,8 @@
                                         <ng-container formArrayName="items">
                                             <ng-container *ngFor="let category of objectKeys(groupedItems); let catIndex = index">
                                                 <tr>
-                                                    <td class="" [colSpan]="groupedItems[category].items.length > 0 ? '7' : '12'">
+                                                    <td class="fw-bold">1. {{catIndex + 1}}</td>
+                                                    <td class="" [colSpan]="groupedItems[category].items.length > 0 ? '6' : '11'">
                                                         <span class="fw-bold">{{category}}</span>
                                                     </td>
                                                     <ng-container *ngIf="groupedItems[category].items.length > 0">
@@ -1100,7 +1110,8 @@
                                         </ng-container>
 
                                         <tr class="table-secondary">
-                                            <td colSpan="12" class="top-header">
+                                            <td class="fw-bold top-header">2</td>
+                                            <td colSpan="11" class="top-header">
                                                 <span class="fw-bold" style="font-size: 16px;">
                                                     Material Installation
                                                 </span>
@@ -1110,7 +1121,8 @@
                                         <ng-container formArrayName="items">
                                             <ng-container *ngFor="let category of objectKeys(groupedItems); let catIndex = index">
                                                 <tr>
-                                                    <td class="" [colSpan]="groupedItems[category].items.length > 0 ? '7' : '12'">
+                                                    <td class="fw-bold">2.{{catIndex + 1}}</td>
+                                                    <td class="" [colSpan]="groupedItems[category].items.length > 0 ? '6' : '12'">
                                                         <span class="fw-bold">{{category}}</span>
                                                     </td>
                                                     <ng-container *ngIf="groupedItems[category].items.length > 0">
