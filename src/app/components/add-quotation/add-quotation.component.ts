@@ -196,6 +196,7 @@ export class AddQuotationComponent implements OnInit {
 
   ngOnInit(): void {
 
+
     ['preliminaries_cost', 'discount_preliminaries', 'preliminaries_price_factor'].forEach(field => {
       this.quotationForm.get(field)?.valueChanges.subscribe(() => {
         this.updatePreliminariesValues();
@@ -736,13 +737,17 @@ export class AddQuotationComponent implements OnInit {
     const cost = this.quotationForm.get('preliminaries_cost')?.value || 0;
     const discount = this.quotationForm.get('discount_preliminaries')?.value || 0;
     const priceFactor = this.quotationForm.get('preliminaries_price_factor')?.value || 1;
-  
-    const costDiscount = cost - (cost * discount / 100);
-    const sellingPrice = priceFactor * costDiscount;
-    const grossMargin = sellingPrice ? ((sellingPrice - costDiscount) / sellingPrice) * 100 : 0;
+
+    const sellingPrice = priceFactor * cost;
+    let discountedSelling = sellingPrice;
+    if(discount > 0){
+      discountedSelling = sellingPrice - (sellingPrice * discount/100 );
+    }
+
+    const grossMargin = discountedSelling ? ((discountedSelling - cost) / discountedSelling) * 100 : 0;
   
     this.quotationForm.patchValue({
-      preliminaries_selling: sellingPrice,
+      preliminaries_selling: discountedSelling,
       preliminaries_gross_margin: grossMargin.toFixed(2)
     }, { emitEvent: false });
   }
@@ -752,9 +757,13 @@ export class AddQuotationComponent implements OnInit {
     const discount = this.quotationForm.get('discount_supervision')?.value || 0;
     const priceFactor = this.quotationForm.get('supervision_price_factor')?.value || 1;
   
-    const costDiscount = cost - (cost * discount / 100);
-    const sellingPrice = priceFactor * costDiscount;
-    const grossMargin = sellingPrice ? ((sellingPrice - costDiscount) / sellingPrice) * 100 : 0;
+    const sellingPrice = priceFactor * cost;
+    let discountedSelling = sellingPrice;
+    if(discount > 0){
+      discountedSelling = sellingPrice - (sellingPrice * discount/100 );
+    }
+
+    const grossMargin = discountedSelling ? ((discountedSelling - cost) / discountedSelling) * 100 : 0;
   
     this.quotationForm.patchValue({
       supervision_selling: sellingPrice,
@@ -767,9 +776,13 @@ export class AddQuotationComponent implements OnInit {
     const discount = this.quotationForm.get('discount_test_commisioning')?.value || 0;
     const priceFactor = this.quotationForm.get('test_commisioning_price_factor')?.value || 1;
   
-    const costDiscount = cost - (cost * discount / 100);
-    const sellingPrice = priceFactor * costDiscount;
-    const grossMargin = sellingPrice ? ((sellingPrice - costDiscount) / sellingPrice) * 100 : 0;
+    const sellingPrice = priceFactor * cost;
+    let discountedSelling = sellingPrice;
+    if(discount > 0){
+      discountedSelling = sellingPrice - (sellingPrice * discount/100 );
+    }
+
+    const grossMargin = discountedSelling ? ((discountedSelling - cost) / discountedSelling) * 100 : 0;
   
     this.quotationForm.patchValue({
       test_commisioning_selling: sellingPrice,
