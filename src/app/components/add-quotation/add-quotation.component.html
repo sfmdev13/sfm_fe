@@ -460,7 +460,10 @@
                                         <ng-container formArrayName="items">
                                             <ng-container *ngFor="let category of objectKeys(groupedItems);let catIndex = index">
                                                 <tr>
-                                                    <td class="" colspan="14">
+                                                    <td class="fw-bold">
+                                                        1.{{catIndex + 1}}
+                                                    </td>
+                                                    <td class="" colspan="13">
                                                         <span class="fw-bold">{{category}}</span>
                                                     </td>
                                                 </tr>
@@ -1009,7 +1012,8 @@
                                     </thead>
                                     <tbody>
                                         <tr class="table-secondary">
-                                            <td colspan="12" class="top-header">
+                                            <td class="fw-bold top-header">1</td>
+                                            <td colspan="11" class="top-header">
                                                 <span class="fw-bold" style="font-size: 16px;">
                                                     Material
                                                 </span>
@@ -1018,7 +1022,8 @@
                                         <ng-container formArrayName="items">
                                             <ng-container *ngFor="let category of objectKeys(groupedItems); let catIndex = index">
                                                 <tr>
-                                                    <td class="" [colSpan]="groupedItems[category].items.length > 0 ? '7' : '12'">
+                                                    <td class="fw-bold">1. {{catIndex + 1}}</td>
+                                                    <td class="" [colSpan]="groupedItems[category].items.length > 0 ? '6' : '11'">
                                                         <span class="fw-bold">{{category}}</span>
                                                     </td>
                                                     <ng-container *ngIf="groupedItems[category].items.length > 0">
@@ -1100,7 +1105,8 @@
                                         </ng-container>
 
                                         <tr class="table-secondary">
-                                            <td colSpan="12" class="top-header">
+                                            <td class="fw-bold top-header">2</td>
+                                            <td colSpan="11" class="top-header">
                                                 <span class="fw-bold" style="font-size: 16px;">
                                                     Material Installation
                                                 </span>
@@ -1110,7 +1116,8 @@
                                         <ng-container formArrayName="items">
                                             <ng-container *ngFor="let category of objectKeys(groupedItems); let catIndex = index">
                                                 <tr>
-                                                    <td class="" [colSpan]="groupedItems[category].items.length > 0 ? '7' : '12'">
+                                                    <td class="fw-bold">2.{{catIndex + 1}}</td>
+                                                    <td class="" [colSpan]="groupedItems[category].items.length > 0 ? '6' : '12'">
                                                         <span class="fw-bold">{{category}}</span>
                                                     </td>
                                                     <ng-container *ngIf="groupedItems[category].items.length > 0">
