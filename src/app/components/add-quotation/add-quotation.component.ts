@@ -776,7 +776,7 @@ export class AddQuotationComponent implements OnInit {
     const grossMargin = discountedSelling ? ((discountedSelling - cost) / discountedSelling) * 100 : 0;
   
     this.quotationForm.patchValue({
-      supervision_selling: sellingPrice,
+      supervision_selling: discountedSelling,
       supervision_gross_margin: grossMargin.toFixed(2)
     }, { emitEvent: false });
   }
@@ -795,7 +795,7 @@ export class AddQuotationComponent implements OnInit {
     const grossMargin = discountedSelling ? ((discountedSelling - cost) / discountedSelling) * 100 : 0;
   
     this.quotationForm.patchValue({
-      test_commisioning_selling: sellingPrice,
+      test_commisioning_selling: discountedSelling,
       test_commisioning_gross_margin: grossMargin.toFixed(2)
     }, { emitEvent: false });
   }
