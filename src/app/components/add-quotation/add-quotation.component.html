@@ -830,6 +830,19 @@
                                         </div>
                                         <div class="col-4">
                                             <nz-form-item>
+                                                <nz-form-label nzRequired nzFor="supervision_price_factor" class="fw-semibold">Price Factor</nz-form-label>
+                                                <nz-form-control>
+                                                    <nz-input-number
+                                                    class="w-100"
+                                                    id="supervision_price_factor"
+                                                    formControlName="supervision_price_factor"
+                                                    [nzMin]="0"
+                                                    ></nz-input-number>
+                                                </nz-form-control>
+                                            </nz-form-item>
+                                        </div>
+                                        <div class="col-4">
+                                            <nz-form-item>
                                                 <nz-form-label nzRequired nzFor="discount_supervision" class="w-100 fw-semibold">Discount</nz-form-label>
                                                 <nz-form-control>
                                                     <nz-input-number-group nzAddOnAfter="%" class="w-100">
@@ -839,19 +852,6 @@
                                                         [nzMin]="0"
                                                         ></nz-input-number>
                                                     </nz-input-number-group>
-                                                </nz-form-control>
-                                            </nz-form-item>
-                                        </div>
-                                        <div class="col-4">
-                                            <nz-form-item>
-                                                <nz-form-label nzRequired nzFor="supervision_price_factor" class="fw-semibold">Price Factor</nz-form-label>
-                                                <nz-form-control>
-                                                    <nz-input-number
-                                                    class="w-100"
-                                                    id="supervision_price_factor"
-                                                    formControlName="supervision_price_factor"
-                                                    [nzMin]="0"
-                                                    ></nz-input-number>
                                                 </nz-form-control>
                                             </nz-form-item>
                                         </div>
@@ -905,6 +905,19 @@
                                         </div>
                                         <div class="col-4">
                                             <nz-form-item>
+                                                <nz-form-label nzRequired nzFor="test_commisioning_price_factor" class="fw-semibold">Price Factor</nz-form-label>
+                                                <nz-form-control>
+                                                    <nz-input-number
+                                                    class="w-100"
+                                                    id="test_commisioning_price_factor"
+                                                    formControlName="test_commisioning_price_factor"
+                                                    [nzMin]="0"
+                                                    ></nz-input-number>
+                                                </nz-form-control>
+                                            </nz-form-item>
+                                        </div>
+                                        <div class="col-4">
+                                            <nz-form-item>
                                                 <nz-form-label nzRequired nzFor="discount_test_commisioning" class="w-100 fw-semibold">Discount</nz-form-label>
                                                 <nz-form-control>
                                                     <nz-input-number-group nzAddOnAfter="%" class="w-100">
@@ -914,19 +927,6 @@
                                                         [nzMin]="0"
                                                         ></nz-input-number>
                                                     </nz-input-number-group>
-                                                </nz-form-control>
-                                            </nz-form-item>
-                                        </div>
-                                        <div class="col-4">
-                                            <nz-form-item>
-                                                <nz-form-label nzRequired nzFor="test_commisioning_price_factor" class="fw-semibold">Price Factor</nz-form-label>
-                                                <nz-form-control>
-                                                    <nz-input-number
-                                                    class="w-100"
-                                                    id="test_commisioning_price_factor"
-                                                    formControlName="test_commisioning_price_factor"
-                                                    [nzMin]="0"
-                                                    ></nz-input-number>
                                                 </nz-form-control>
                                             </nz-form-item>
                                         </div>
