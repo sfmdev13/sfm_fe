@@ -46,6 +46,7 @@
           [nzFilterFn]="column.filterFn"
           [nzShowFilter]="column.showFilter"
           [nzShowSort]="column.showSort"
+          [nzLeft]="column.name === 'Project Name'"
           nzCustomFilter
         >
           {{ column.name }}
@@ -99,7 +100,7 @@
         <ng-container *ngFor="let data of basicTable.data">
             <tr>
                 <td nzLeft>{{ data.project.project_pid }}</td>
-                <td>{{ data.project.name }}</td>
+                <td nzLeft>{{ data.project.name }}</td>
                 <td>{{ data.quotation_no}}</td>
                 <td>{{ data.issued_date | date: 'fullDate' }}</td>
                 <td>{{ data.customer.name }}</td>
