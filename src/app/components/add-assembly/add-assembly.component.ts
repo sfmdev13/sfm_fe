@@ -518,13 +518,14 @@ export class AddAssemblyComponent implements OnInit {
       priceList = orderRow.get('price_list')?.value;
       totalPerCost = qty * priceList;
       totalQty = qty * qtyAssembly;
-      totalCost = totalQty * totalPerCost
+      totalCost = totalQty * priceList
     }
 
     if(type === 'inventory'){
       totalPerCost = qty * productCost;
       totalQty = qty * qtyAssembly;
-      totalCost = totalQty * totalPerCost
+      totalCost = totalQty * totalPerCost;
+      totalCost = totalQty * productCost
     }
 
 
