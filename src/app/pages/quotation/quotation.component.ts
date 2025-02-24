@@ -10,6 +10,8 @@ import { ExcelQuotationService } from 'src/app/excel-quotation.service';
 import { ExcelService } from 'src/app/excel.service';
 import { IDataCategories, IDataInventory, IDataQuotation, IDetailDataQuotation, IQuotation, IRootQuotation } from 'src/app/interfaces';
 import { IDataProject } from 'src/app/interfaces/project';
+import { PdfQuotationDetailService } from 'src/app/pdf-quotation-detail.service';
+import { PdfQuotationService } from 'src/app/pdf-quotation.service';
 import { PdfRabService } from 'src/app/pdf-rab.service';
 
 @Component({
@@ -225,7 +227,9 @@ export class QuotationComponent implements OnInit {
     private excelService: ExcelService,
     private pdfRABService: PdfRabService,
     private excelQuotSvc: ExcelQuotationService,
-    private excelQuot2Svc: ExcelQuotationDetailService
+    private excelQuot2Svc: ExcelQuotationDetailService,
+    private pdfQuotSvc: PdfQuotationService,
+    private pdfQuot2Svc: PdfQuotationDetailService
   ){}
 
   ngOnInit(): void {
@@ -295,7 +299,7 @@ export class QuotationComponent implements OnInit {
         }
         this.apiSvc.createQuotationLog(body).subscribe({
           next: () => {
-            this.excelQuotSvc.generateExcel(dataBasic, dataDetail, revision, this.productCategory, type);
+            this.pdfQuotSvc.generatePdf(dataBasic, dataDetail, revision, this.productCategory, type);
           }
         })
       }
@@ -323,7 +327,7 @@ export class QuotationComponent implements OnInit {
         }
         this.apiSvc.createQuotationLog(body).subscribe({
           next: () => {
-            this.excelQuot2Svc.generateExcel(dataBasic, dataDetail, revision, this.productCategory, type);
+            this.pdfQuot2Svc.generatePdf(dataBasic, dataDetail, revision, this.productCategory, type);
           }
         })
       }

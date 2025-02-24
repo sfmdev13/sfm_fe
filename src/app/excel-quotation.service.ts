@@ -842,7 +842,7 @@ export class ExcelQuotationService {
           right: {style: 'thick'},
           left: {style: 'thick'}
         };
-        worksheet.getCell(`F${currentRow}`).alignment = {horizontal: 'center', vertical: 'top'};
+        worksheet.getCell(`F${currentRow}`).alignment = {horizontal: 'right', vertical: 'top'};
   
         worksheet.getCell(`G${currentRow}`).value = cat.totalSellingPrice
         worksheet.getCell(`G${currentRow}`).numFmt = '_("Rp"* #,##0.00_);_("Rp"* (#,##0.00);_("Rp"* "-"??_);_(@_)'; 
@@ -854,7 +854,7 @@ export class ExcelQuotationService {
           right: {style: 'thick'},
           left: {style: 'thick'}
         };
-        worksheet.getCell(`G${currentRow}`).alignment = {horizontal: 'center', vertical: 'top'};
+        worksheet.getCell(`G${currentRow}`).alignment = {horizontal: 'right', vertical: 'top'};
       }
     })
 
@@ -1698,7 +1698,7 @@ export class ExcelQuotationService {
 
     currentRow++;
 
-    worksheet.getCell(`A${currentRow}`).value = '1';
+    worksheet.getCell(`A${currentRow}`).value = `1 Waktu Pengiriman: ${delivery_duration}`;
     worksheet.getCell(`A${currentRow}`).font = {
       name: 'Arial',
       size: 12
@@ -1712,9 +1712,8 @@ export class ExcelQuotationService {
 
     worksheet.getCell(`A${currentRow}`).border = { left: {style: 'thick'} };
 
-    worksheet.mergeCells(`B${currentRow}:C${currentRow}`);
+    worksheet.mergeCells(`A${currentRow}:C${currentRow}`);
 
-    worksheet.getCell(`B${currentRow}`).value = ` Waktu Pengiriman: ${delivery_duration}`;
     worksheet.getCell(`B${currentRow}`).font = {
       name: 'Arial',
       size: 12
@@ -1773,7 +1772,7 @@ export class ExcelQuotationService {
 
     currentRow++;
 
-    worksheet.getCell(`A${currentRow}`).value = '2';
+    worksheet.getCell(`A${currentRow}`).value = `2 Penawaran Berlaku: ${offer_applies}`;
     worksheet.getCell(`A${currentRow}`).font = {
       name: 'Arial',
       size: 12
@@ -1786,9 +1785,8 @@ export class ExcelQuotationService {
     worksheet.getCell(`A${currentRow}`).alignment = {horizontal: 'right'};
     worksheet.getCell(`A${currentRow}`).border = {left: {style: 'thick'} };
 
-    worksheet.mergeCells(`B${currentRow}:C${currentRow}`);
+    worksheet.mergeCells(`A${currentRow}:C${currentRow}`);
 
-    worksheet.getCell(`B${currentRow}`).value = ` Penawaran Berlaku: ${offer_applies}`;
     worksheet.getCell(`B${currentRow}`).font = {
       name: 'Arial',
       size: 12
@@ -1847,7 +1845,7 @@ export class ExcelQuotationService {
 
     currentRow++;
 
-    worksheet.getCell(`A${currentRow}`).value = '3';
+    worksheet.getCell(`A${currentRow}`).value = `3 Sifat Pekerjaan: ${type_of_work}`;
     worksheet.getCell(`A${currentRow}`).font = {
       name: 'Arial',
       size: 12
@@ -1860,9 +1858,8 @@ export class ExcelQuotationService {
     worksheet.getCell(`A${currentRow}`).alignment = {horizontal: 'right'};
     worksheet.getCell(`A${currentRow}`).border = { left: {style: 'thick'} };
 
-    worksheet.mergeCells(`B${currentRow}:C${currentRow}`);
+    worksheet.mergeCells(`A${currentRow}:C${currentRow}`);
 
-    worksheet.getCell(`B${currentRow}`).value = ` Sifat Pekerjaan: ${type_of_work}`;
     worksheet.getCell(`B${currentRow}`).font = {
       name: 'Arial',
       size: 12
@@ -1929,7 +1926,7 @@ export class ExcelQuotationService {
 
     currentRow++;
 
-    worksheet.getCell(`A${currentRow}`).value = '4';
+    worksheet.getCell(`A${currentRow}`).value = `4 Termin Pembayaran : ${termin_payment}`;
     worksheet.getCell(`A${currentRow}`).font = {
       name: 'Arial',
       size: 12
@@ -1942,9 +1939,8 @@ export class ExcelQuotationService {
     worksheet.getCell(`A${currentRow}`).alignment = {horizontal: 'right'};
     worksheet.getCell(`A${currentRow}`).border = { left: {style: 'thick'} };
 
-    worksheet.mergeCells(`B${currentRow}:C${currentRow}`);
+    worksheet.mergeCells(`A${currentRow}:C${currentRow}`);
 
-    worksheet.getCell(`B${currentRow}`).value = ` Termin Pembayaran : ${termin_payment}`;
     worksheet.getCell(`B${currentRow}`).font = {
       name: 'Arial',
       size: 12
@@ -1999,10 +1995,24 @@ export class ExcelQuotationService {
 
     currentRow++;
 
-    worksheet.getCell(`A${currentRow}`).value = '5';
+    worksheet.getCell(`A${currentRow}`).value = {
+      richText: [
+        {
+          text: '5 Semua material mengacu spesifikasi dari'
+        },
+        {
+          text: ' sfm siphonic systems',
+          font: {bold: true},
+        },
+        {
+          text: 'TM',
+          font: {bold: true, vertAlign: 'superscript'}
+        },
+      ]
+    };
     worksheet.getCell(`A${currentRow}`).font = {
       name: 'Arial',
-      size: 12
+      size: 17.5
     };
     worksheet.getCell(`A${currentRow}`).fill = {
       type: 'pattern',
@@ -2012,23 +2022,8 @@ export class ExcelQuotationService {
     worksheet.getCell(`A${currentRow}`).alignment = {horizontal: 'right'};
     worksheet.getCell(`A${currentRow}`).border = { left: {style: 'thick'} };
 
-    worksheet.mergeCells(`B${currentRow}:C${currentRow}`);
+    worksheet.mergeCells(`A${currentRow}:C${currentRow}`);
 
-    worksheet.getCell(`B${currentRow}`).value = {
-      richText: [
-        {
-          text: ' Semua material mengacu spesifikasi dari'
-        },
-        {
-          text: ' sfm siphonic systems',
-          font: {bold: true}
-        },
-        {
-          text: 'TM',
-          font: {bold: true, vertAlign: 'superscript'}
-        },
-      ]
-    };
     worksheet.getCell(`B${currentRow}`).font = {
       name: 'Arial',
       size: 12
@@ -2145,7 +2140,7 @@ export class ExcelQuotationService {
 
  
 
-    worksheet.getCell(`A${currentRow}`).value = 'Siphonic System is a solution for rainwater drainage which can provide a total freedom and flexibility in roof drainage design for both the Architect and Engineer.  PT. Siphonic Flow Mandiri as siphonic specialist provide total solution to the customer. We supply a complete system consist of design calculation, roof outlet, pipe & fittings, support systems and solvent cement.'
+    worksheet.getCell(`A${currentRow}`).value = 'SFM Siphonic System is an innovative drainage solution that optimizes water flow, reduces material usage, and saves space. We provide end-to-end services, from design to installation, ensuring reliable, cost-effective, and sustainable water management for modern buildings and infrastructure.'
 
     worksheet.getCell(`A${currentRow}`).alignment = {
       wrapText: true,
