@@ -177,7 +177,7 @@ export class PdfQuotationService {
     worksheet.getCell('A1').value = {
       richText: [
         { text: 'PROPOSAL HARGA SISTEM AIR HUJAN SIPHONIC sfm Siphonic System' },
-        { text: 'TM', font: { vertAlign: 'superscript' } },
+        { text: 'TM', font: { vertAlign: 'superscript', name: 'Arial' } },
       ],
     };
 
@@ -739,6 +739,8 @@ export class PdfQuotationService {
         worksheet.getCell(`B${currentRow}`).value = `1.${i+1}`
         worksheet.getCell(`B${currentRow}`).alignment = {vertical: 'top'};
 
+        worksheet.getCell(`B${currentRow}`).font = { name: 'Arial', size: 12}
+
         if(cat.name.toLowerCase() === 'sro'){
           worksheet.getCell(`C${currentRow}`).value = {
             richText: [
@@ -934,6 +936,7 @@ export class PdfQuotationService {
       bottom: {style: 'thick'}
     }
     worksheet.getCell(`F${currentRow}`).value = '%0';
+    worksheet.getCell(`F${currentRow}`).font = {name: 'Arial', size: 12}
 
     worksheet.getCell(`G${currentRow}`).value = 0;
     worksheet.getCell(`G${currentRow}`).font = { name: 'Arial' }
@@ -1151,6 +1154,7 @@ export class PdfQuotationService {
     };
 
     worksheet.getCell(`B${currentRow}`).value = '2.1';
+    worksheet.getCell(`B${currentRow}`).font = {name: 'Arial', size: 12}
     worksheet.getCell(`B${currentRow}`).alignment = {vertical: 'top'};
 
     worksheet.getCell(`C${currentRow}`).value = 'Pekerjaan Preliminaries';
@@ -1223,6 +1227,7 @@ export class PdfQuotationService {
     };
 
     worksheet.getCell(`B${currentRow}`).value = '2.2';
+    worksheet.getCell(`B${currentRow}`).font = {name: 'Arial', size: 12}
     worksheet.getCell(`B${currentRow}`).alignment = {vertical: 'middle'};
 
     worksheet.getCell(`C${currentRow}`).value = `Pemasangan Material Komponen SFM Siphonic Systems (${formattedInstallation})`;
@@ -1283,6 +1288,7 @@ export class PdfQuotationService {
     };
 
     worksheet.getCell(`B${currentRow}`).value = '2.3';
+    worksheet.getCell(`B${currentRow}`).font = {name: 'Arial', size: 12}
     worksheet.getCell(`B${currentRow}`).alignment = {vertical: 'top'};
 
     worksheet.getCell(`C${currentRow}`).value = `Supervision`;
@@ -1293,6 +1299,7 @@ export class PdfQuotationService {
     worksheet.getCell(`C${currentRow}`).alignment = {vertical: 'top'};
 
     worksheet.getCell(`D${currentRow}`).value = 1;
+    worksheet.getCell(`D${currentRow}`).font = {name: 'Arial', size: 12}
     worksheet.getCell(`D${currentRow}`).border = {
       right: {style: 'thick'},
       left: {style: 'thick'}
@@ -1332,6 +1339,10 @@ export class PdfQuotationService {
       right: {style: 'thick'},
       left: {style: 'thick'}
     };
+    worksheet.getCell(`F${currentRow}`).font = {
+      name: 'Arial',
+      size: 12,
+    }
 
     currentRow++;
     worksheet.getRow(currentRow).height = 32;
@@ -1342,6 +1353,7 @@ export class PdfQuotationService {
     };
 
     worksheet.getCell(`B${currentRow}`).value = '2.4';
+    worksheet.getCell(`B${currentRow}`).font = {name: 'Arial', size: 12}
     worksheet.getCell(`B${currentRow}`).alignment = {vertical: 'top'};
 
     worksheet.getCell(`C${currentRow}`).value = `Test & Commisioning`;
@@ -1391,6 +1403,11 @@ export class PdfQuotationService {
       right: {style: 'thick'},
       left: {style: 'thick'}
     };
+
+    worksheet.getCell(`F${currentRow}`).font = {
+      name: 'Arial',
+      size: 12,
+    }
 
     currentRow++;
     worksheet.getCell(`A${currentRow}`).border = {
@@ -1467,6 +1484,7 @@ export class PdfQuotationService {
     };
 
     worksheet.getCell(`F${currentRow}`).value = '%0';
+    worksheet.getCell(`F${currentRow}`).font = {name: 'Arial', size: 12}
     worksheet.getCell(`F${currentRow}`).border = {
       top: {style: 'thick'},
       bottom: {style: 'thick'},
@@ -1496,7 +1514,10 @@ export class PdfQuotationService {
     };
 
     worksheet.getCell(`D${currentRow}`).value = 'Total 2';
-    worksheet.getCell(`D${currentRow}`).font = { name: 'Arial' }
+    worksheet.getCell(`D${currentRow}`).font = {
+      name: 'Arial',
+      bold: true
+    }
     worksheet.getCell(`D${currentRow}`).font = {
       bold: true
     }
@@ -1708,11 +1729,15 @@ export class PdfQuotationService {
       pattern: 'solid',
       fgColor: { argb: 'ffffffff' },
     };
-    worksheet.getCell(`A${currentRow}`).alignment = {horizontal: 'right'};
-
-    worksheet.getCell(`A${currentRow}`).border = { left: {style: 'thick'} };
 
     worksheet.mergeCells(`A${currentRow}:C${currentRow}`);
+
+    worksheet.getCell(`A${currentRow}`).alignment = {horizontal: 'left'};
+
+    worksheet.getCell(`A${currentRow}`).border = {
+      left: { style: 'thick' },
+      right: { style: 'thick' }
+    };
 
     worksheet.getCell(`B${currentRow}`).font = {
       name: 'Arial',
@@ -1725,7 +1750,6 @@ export class PdfQuotationService {
     };
     worksheet.getCell(`B${currentRow}`).alignment = {horizontal: 'left'}
 
-    worksheet.getCell(`C${currentRow}`).border = {right: {style: 'thick'} };
     worksheet.getCell(`C${currentRow}`).fill = {
       type: 'pattern',
       pattern: 'solid',
@@ -1783,7 +1807,7 @@ export class PdfQuotationService {
       fgColor: { argb: 'ffffffff' },
     };
     worksheet.getCell(`A${currentRow}`).alignment = {horizontal: 'right'};
-    worksheet.getCell(`A${currentRow}`).border = {left: {style: 'thick'} };
+    worksheet.getCell(`A${currentRow}`).border = {left: {style: 'thick'}, right: {style: 'thick'} };
 
     worksheet.mergeCells(`A${currentRow}:C${currentRow}`);
 
@@ -1798,7 +1822,6 @@ export class PdfQuotationService {
     };
     worksheet.getCell(`B${currentRow}`).alignment = {horizontal: 'left'};
 
-    worksheet.getCell(`C${currentRow}`).border = {right: {style: 'thick'} };
     worksheet.getCell(`C${currentRow}`).fill = {
       type: 'pattern',
       pattern: 'solid',
@@ -1856,7 +1879,7 @@ export class PdfQuotationService {
       fgColor: { argb: 'ffffffff' },
     };
     worksheet.getCell(`A${currentRow}`).alignment = {horizontal: 'right'};
-    worksheet.getCell(`A${currentRow}`).border = { left: {style: 'thick'} };
+    worksheet.getCell(`A${currentRow}`).border = { left: {style: 'thick'}, right: {style: 'thick'} };
 
     worksheet.mergeCells(`A${currentRow}:C${currentRow}`);
 
@@ -1871,7 +1894,6 @@ export class PdfQuotationService {
     };
     worksheet.getCell(`B${currentRow}`).alignment = { horizontal: 'left'};
 
-    worksheet.getCell(`C${currentRow}`).border = {right: {style: 'thick'} };
     worksheet.getCell(`C${currentRow}`).fill = {
       type: 'pattern',
       pattern: 'solid',
@@ -1937,7 +1959,7 @@ export class PdfQuotationService {
       fgColor: { argb: 'ffffffff' },
     };
     worksheet.getCell(`A${currentRow}`).alignment = {horizontal: 'right'};
-    worksheet.getCell(`A${currentRow}`).border = { left: {style: 'thick'} };
+    worksheet.getCell(`A${currentRow}`).border = { left: {style: 'thick'}, right: {style: 'thick'}  };
 
     worksheet.mergeCells(`A${currentRow}:C${currentRow}`);
 
@@ -1952,7 +1974,6 @@ export class PdfQuotationService {
     };
     worksheet.getCell(`B${currentRow}`).alignment = {horizontal: 'left'}
 
-    worksheet.getCell(`C${currentRow}`).border = {right: {style: 'thick'} };
     worksheet.getCell(`C${currentRow}`).fill = {
       type: 'pattern',
       pattern: 'solid',
@@ -2002,11 +2023,11 @@ export class PdfQuotationService {
         },
         {
           text: ' sfm siphonic systems',
-          font: {bold: true},
+          font: {bold: true, name: 'Arial'},
         },
         {
           text: 'TM',
-          font: {bold: true, vertAlign: 'superscript'}
+          font: {bold: true, vertAlign: 'superscript', name: 'Arial'}
         },
       ]
     };
@@ -2020,7 +2041,7 @@ export class PdfQuotationService {
       fgColor: { argb: 'ffffffff' },
     };
     worksheet.getCell(`A${currentRow}`).alignment = {horizontal: 'right'};
-    worksheet.getCell(`A${currentRow}`).border = { left: {style: 'thick'} };
+    worksheet.getCell(`A${currentRow}`).border = { left: {style: 'thick'}, right: {style: 'thick'} };
 
     worksheet.mergeCells(`A${currentRow}:C${currentRow}`);
 
@@ -2036,7 +2057,6 @@ export class PdfQuotationService {
 
     worksheet.getCell(`B${currentRow}`).alignment = { horizontal: 'left' };
 
-    worksheet.getCell(`C${currentRow}`).border = {right: {style: 'thick'} };
     worksheet.getCell(`C${currentRow}`).fill = {
       type: 'pattern',
       pattern: 'solid',
