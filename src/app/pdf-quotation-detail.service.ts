@@ -179,7 +179,7 @@ export class PdfQuotationDetailService {
     worksheet.getCell('A1').value = {
       richText: [
         { text: 'PROPOSAL HARGA SISTEM AIR HUJAN SIPHONIC sfm Siphonic System' },
-        { text: 'TM', font: { vertAlign: 'superscript' } },
+        { text: 'TM', font: { vertAlign: 'superscript', name: 'Arial' } },
       ],
     };
 
@@ -741,6 +741,8 @@ export class PdfQuotationDetailService {
         worksheet.getCell(`B${currentRow}`).value = `1.${i+1}`
         worksheet.getCell(`B${currentRow}`).alignment = {vertical: 'top'};
 
+        worksheet.getCell(`B${currentRow}`).font = { name: 'Arial', size: 17.5}
+
         if(cat.name.toLowerCase() === 'sro'){
           worksheet.getCell(`C${currentRow}`).value = {
             richText: [
@@ -1081,6 +1083,7 @@ export class PdfQuotationDetailService {
       bottom: {style: 'thick'}
     }
     worksheet.getCell(`F${currentRow}`).value = '%0';
+    worksheet.getCell(`F${currentRow}`).font = {name: 'Arial', size: 17.5}
 
     worksheet.getCell(`G${currentRow}`).value = 0;
     worksheet.getCell(`G${currentRow}`).font = { name: 'Arial' }
@@ -1298,6 +1301,7 @@ export class PdfQuotationDetailService {
     };
 
     worksheet.getCell(`B${currentRow}`).value = '2.1';
+    worksheet.getCell(`B${currentRow}`).font = {name: 'Arial', size: 17.5}
     worksheet.getCell(`B${currentRow}`).alignment = {vertical: 'top'};
 
     worksheet.getCell(`C${currentRow}`).value = 'Pekerjaan Preliminaries';
@@ -1370,6 +1374,7 @@ export class PdfQuotationDetailService {
     };
 
     worksheet.getCell(`B${currentRow}`).value = '2.2';
+    worksheet.getCell(`B${currentRow}`).font = {name: 'Arial', size: 17.5}
     worksheet.getCell(`B${currentRow}`).alignment = {vertical: 'middle'};
 
     worksheet.getCell(`C${currentRow}`).value = `Pemasangan Material Komponen SFM Siphonic Systems (${formattedInstallation})`;
@@ -1430,6 +1435,7 @@ export class PdfQuotationDetailService {
     };
 
     worksheet.getCell(`B${currentRow}`).value = '2.3';
+    worksheet.getCell(`B${currentRow}`).font = {name: 'Arial', size: 17.5}
     worksheet.getCell(`B${currentRow}`).alignment = {vertical: 'top'};
 
     worksheet.getCell(`C${currentRow}`).value = `Supervision`;
@@ -1479,6 +1485,10 @@ export class PdfQuotationDetailService {
       right: {style: 'thick'},
       left: {style: 'thick'}
     };
+    worksheet.getCell(`F${currentRow}`).font = {
+      name: 'Arial',
+      size: 17.5
+    }
 
     currentRow++;
     worksheet.getRow(currentRow).height = 32;
@@ -1490,7 +1500,7 @@ export class PdfQuotationDetailService {
 
     worksheet.getCell(`B${currentRow}`).value = '2.4';
     worksheet.getCell(`B${currentRow}`).alignment = {vertical: 'top'};
-
+    worksheet.getCell(`B${currentRow}`).font = {name: 'Arial', size: 17.5}
     worksheet.getCell(`C${currentRow}`).value = `Test & Commisioning`;
     worksheet.getCell(`C${currentRow}`).font = {
       name: 'Arial',
@@ -1538,6 +1548,11 @@ export class PdfQuotationDetailService {
       right: {style: 'thick'},
       left: {style: 'thick'}
     };
+
+    worksheet.getCell(`F${currentRow}`).font = {
+      name: 'Arial',
+      size: 17.5,
+    }
 
     currentRow++;
     worksheet.getCell(`A${currentRow}`).border = {
@@ -1614,6 +1629,7 @@ export class PdfQuotationDetailService {
     };
 
     worksheet.getCell(`F${currentRow}`).value = '%0';
+    worksheet.getCell(`F${currentRow}`).font = {name: 'Arial', size: 17.5}
     worksheet.getCell(`F${currentRow}`).border = {
       top: {style: 'thick'},
       bottom: {style: 'thick'},
@@ -1643,7 +1659,10 @@ export class PdfQuotationDetailService {
     };
 
     worksheet.getCell(`D${currentRow}`).value = 'Total 2';
-    worksheet.getCell(`D${currentRow}`).font = { name: 'Arial' }
+    worksheet.getCell(`D${currentRow}`).font = {
+      name: 'Arial',
+      bold: true
+    }
     worksheet.getCell(`D${currentRow}`).font = {
       bold: true
     }
@@ -1857,7 +1876,7 @@ export class PdfQuotationDetailService {
     };
     worksheet.getCell(`A${currentRow}`).alignment = {horizontal: 'right'};
 
-    worksheet.getCell(`A${currentRow}`).border = { left: {style: 'thick'} };
+    worksheet.getCell(`A${currentRow}`).border = { left: {style: 'thick'}, right: {style: 'thick'} };
 
     worksheet.mergeCells(`A${currentRow}:C${currentRow}`);
 
@@ -1872,7 +1891,6 @@ export class PdfQuotationDetailService {
     };
     worksheet.getCell(`B${currentRow}`).alignment = {horizontal: 'left'}
 
-    worksheet.getCell(`C${currentRow}`).border = {right: {style: 'thick'} };
     worksheet.getCell(`C${currentRow}`).fill = {
       type: 'pattern',
       pattern: 'solid',
@@ -1930,7 +1948,7 @@ export class PdfQuotationDetailService {
       fgColor: { argb: 'ffffffff' },
     };
     worksheet.getCell(`A${currentRow}`).alignment = {horizontal: 'right'};
-    worksheet.getCell(`A${currentRow}`).border = {left: {style: 'thick'} };
+    worksheet.getCell(`A${currentRow}`).border = {left: {style: 'thick'}, right: {style: 'thick'} };
 
     worksheet.mergeCells(`A${currentRow}:C${currentRow}`);
 
@@ -1945,7 +1963,6 @@ export class PdfQuotationDetailService {
     };
     worksheet.getCell(`B${currentRow}`).alignment = {horizontal: 'left'};
 
-    worksheet.getCell(`C${currentRow}`).border = {right: {style: 'thick'} };
     worksheet.getCell(`C${currentRow}`).fill = {
       type: 'pattern',
       pattern: 'solid',
@@ -1992,7 +2009,7 @@ export class PdfQuotationDetailService {
 
     currentRow++;
 
-    worksheet.getCell(`A${currentRow}`).value = ` Sifat Pekerjaan: ${type_of_work}`;
+    worksheet.getCell(`A${currentRow}`).value = `3 Sifat Pekerjaan: ${type_of_work}`;
     worksheet.getCell(`A${currentRow}`).font = {
       name: 'Arial',
       size: 17.5
@@ -2003,7 +2020,7 @@ export class PdfQuotationDetailService {
       fgColor: { argb: 'ffffffff' },
     };
     worksheet.getCell(`A${currentRow}`).alignment = {horizontal: 'right'};
-    worksheet.getCell(`A${currentRow}`).border = { left: {style: 'thick'} };
+    worksheet.getCell(`A${currentRow}`).border = { left: {style: 'thick'}, right: {style: 'thick'} };
 
     worksheet.mergeCells(`A${currentRow}:C${currentRow}`);
 
@@ -2018,7 +2035,6 @@ export class PdfQuotationDetailService {
     };
     worksheet.getCell(`B${currentRow}`).alignment = { horizontal: 'left'};
 
-    worksheet.getCell(`C${currentRow}`).border = {right: {style: 'thick'} };
     worksheet.getCell(`C${currentRow}`).fill = {
       type: 'pattern',
       pattern: 'solid',
@@ -2084,7 +2100,7 @@ export class PdfQuotationDetailService {
       fgColor: { argb: 'ffffffff' },
     };
     worksheet.getCell(`A${currentRow}`).alignment = {horizontal: 'right'};
-    worksheet.getCell(`A${currentRow}`).border = { left: {style: 'thick'} };
+    worksheet.getCell(`A${currentRow}`).border = { left: {style: 'thick'}, right: {style: 'thick'} };
 
     worksheet.mergeCells(`A${currentRow}:C${currentRow}`);
 
@@ -2099,7 +2115,6 @@ export class PdfQuotationDetailService {
     };
     worksheet.getCell(`B${currentRow}`).alignment = {horizontal: 'left'}
 
-    worksheet.getCell(`C${currentRow}`).border = {right: {style: 'thick'} };
     worksheet.getCell(`C${currentRow}`).fill = {
       type: 'pattern',
       pattern: 'solid',
@@ -2149,11 +2164,11 @@ export class PdfQuotationDetailService {
         },
         {
           text: ' sfm siphonic systems',
-          font: {bold: true}
+          font: {bold: true, name: 'Arial'}
         },
         {
           text: 'TM',
-          font: {bold: true, vertAlign: 'superscript'}
+          font: {bold: true, vertAlign: 'superscript', name: 'Arial'}
         },
       ]
     }
@@ -2167,7 +2182,7 @@ export class PdfQuotationDetailService {
       fgColor: { argb: 'ffffffff' },
     };
     worksheet.getCell(`A${currentRow}`).alignment = {horizontal: 'right'};
-    worksheet.getCell(`A${currentRow}`).border = { left: {style: 'thick'} };
+    worksheet.getCell(`A${currentRow}`).border = { left: {style: 'thick'}, right: {style: 'thick'} };
 
     worksheet.mergeCells(`A${currentRow}:C${currentRow}`);
 
@@ -2182,8 +2197,7 @@ export class PdfQuotationDetailService {
     };
 
     worksheet.getCell(`B${currentRow}`).alignment = { horizontal: 'left' };
-
-    worksheet.getCell(`C${currentRow}`).border = {right: {style: 'thick'} };
+    
     worksheet.getCell(`C${currentRow}`).fill = {
       type: 'pattern',
       pattern: 'solid',
