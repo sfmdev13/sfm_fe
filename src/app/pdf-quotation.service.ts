@@ -9,7 +9,7 @@ import { from, map, Observable, switchMap } from 'rxjs';
 @Injectable({
   providedIn: 'root'
 })
-export class ExcelQuotationDetailService {
+export class PdfQuotationService {
 
   provinceList: any[] = [];
 
@@ -33,7 +33,7 @@ export class ExcelQuotationDetailService {
     });
   }
 
-  async generateExcel(
+  async generatePdf(
     dataBasic: IDataQuotation, 
     dataDetail: IDetailDataQuotation, 
     revision: string, 
@@ -53,7 +53,6 @@ export class ExcelQuotationDetailService {
 
     let categorySummary: 
       { 
-        id: number;
         name: string; 
         total: number;
         totalUnitPrice: number;
@@ -123,7 +122,6 @@ export class ExcelQuotationDetailService {
       })
 
       categorySummary.push({
-        id: cat.id,
         name: cat.name,
         total: count,
         totalUnitPrice,
@@ -186,7 +184,7 @@ export class ExcelQuotationDetailService {
     worksheet.getCell('A1').font={
       bold: true,
       name: 'Arial',
-      size: 18
+      size: 32
     }
 
     worksheet.getCell('A1').alignment = {
@@ -217,7 +215,7 @@ export class ExcelQuotationDetailService {
       bottom: {style: 'thick'},
       left: {style: 'thick'}
     }
-    worksheet.getCell('F2').font = { name: 'Arial' }
+    worksheet.getCell('F2').font = { name: 'Arial', size: 14}
 
     worksheet.getCell('G2').value = dataBasic.quotation_no;
     worksheet.getCell('G2').border = {
@@ -226,7 +224,7 @@ export class ExcelQuotationDetailService {
       bottom: {style: 'thick'},
       left: {style: 'thick'}
     }
-    worksheet.getCell('G2').font = { name: 'Arial' }
+    worksheet.getCell('G2').font = { name: 'Arial', size: 14 }
 
     worksheet.getCell('F3').value = 'Reference';
     worksheet.getCell('F3').border = {
@@ -235,7 +233,7 @@ export class ExcelQuotationDetailService {
       bottom: {style: 'thick'},
       left: {style: 'thick'}
     }
-    worksheet.getCell('F3').font = { name: 'Arial' };
+    worksheet.getCell('F3').font = { name: 'Arial', size: 14 };
 
     worksheet.getCell('G3').value = '0';
     worksheet.getCell('G3').border = {
@@ -244,7 +242,7 @@ export class ExcelQuotationDetailService {
       bottom: {style: 'thick'},
       left: {style: 'thick'}
     }
-    worksheet.getCell('G3').font = { name: 'Arial' };
+    worksheet.getCell('G3').font = { name: 'Arial', size: 14 };
 
     worksheet.getCell('F4').value = 'Issued Date';
     worksheet.getCell('F4').border = {
@@ -253,7 +251,7 @@ export class ExcelQuotationDetailService {
       bottom: {style: 'thick'},
       left: {style: 'thick'}
     }
-    worksheet.getCell('F4').font = { name: 'Arial' };
+    worksheet.getCell('F4').font = { name: 'Arial', size: 14 };
 
     worksheet.getCell('G4').value =  this.datePipe.transform(dataBasic.issued_date, 'dd-MMM-yyyy');
     worksheet.getCell('G4').border = {
@@ -262,7 +260,7 @@ export class ExcelQuotationDetailService {
       bottom: {style: 'thick'},
       left: {style: 'thick'}
     }
-    worksheet.getCell('G4').font = { name: 'Arial' };
+    worksheet.getCell('G4').font = { name: 'Arial', size: 14 };
 
     worksheet.getCell('F5').value = 'Revision';
     worksheet.getCell('F5').border = {
@@ -271,7 +269,7 @@ export class ExcelQuotationDetailService {
       bottom: {style: 'thick'},
       left: {style: 'thick'}
     }
-    worksheet.getCell('F5').font = { name: 'Arial' };
+    worksheet.getCell('F5').font = { name: 'Arial', size: 14 };
 
     worksheet.getCell('G5').value = revision;
     worksheet.getCell('G5').border = {
@@ -280,7 +278,7 @@ export class ExcelQuotationDetailService {
       bottom: {style: 'thick'},
       left: {style: 'thick'}
     }
-    worksheet.getCell('G5').font = { name: 'Arial' };
+    worksheet.getCell('G5').font = { name: 'Arial', size: 14 };
 
 
     worksheet.getCell('F6').value = 'Prepared By';
@@ -290,7 +288,7 @@ export class ExcelQuotationDetailService {
       bottom: {style: 'thick'},
       left: {style: 'thick'}
     }
-    worksheet.getCell('F6').font = { name: 'Arial' };
+    worksheet.getCell('F6').font = { name: 'Arial', size: 14 };
 
     worksheet.getCell('G6').value = dataBasic.prepared_by.name;
     worksheet.getCell('G6').border = {
@@ -299,7 +297,7 @@ export class ExcelQuotationDetailService {
       bottom: {style: 'thick'},
       left: {style: 'thick'}
     }
-    worksheet.getCell('G6').font = { name: 'Arial' };
+    worksheet.getCell('G6').font = { name: 'Arial', size: 14 };
     
     worksheet.getCell('F7').value = 'Sales/Architect Name';
     worksheet.getCell('F7').border = {
@@ -308,7 +306,7 @@ export class ExcelQuotationDetailService {
       bottom: {style: 'thick'},
       left: {style: 'thick'}
     }
-    worksheet.getCell('F7').font = { name: 'Arial' };
+    worksheet.getCell('F7').font = { name: 'Arial', size: 14 };
 
     worksheet.getCell('G7').value = dataBasic.project.pic.filter((p) => p.is_pic_internal === 1).map((p) => (p.name))[0];
     worksheet.getCell('G7').border = {
@@ -317,7 +315,7 @@ export class ExcelQuotationDetailService {
       bottom: {style: 'thick'},
       left: {style: 'thick'}
     }
-    worksheet.getCell('G7').font = { name: 'Arial' };
+    worksheet.getCell('G7').font = { name: 'Arial', size: 14 };
 
     worksheet.getCell('F8').value = 'Page';
     worksheet.getCell('F8').border = {
@@ -326,7 +324,7 @@ export class ExcelQuotationDetailService {
       bottom: {style: 'thick'},
       left: {style: 'thick'}
     }
-    worksheet.getCell('F8').font = { name: 'Arial' };
+    worksheet.getCell('F8').font = { name: 'Arial', size: 14 };
 
     worksheet.getCell('G8').value = '1/1';
     worksheet.getCell('G8').border = {
@@ -335,7 +333,7 @@ export class ExcelQuotationDetailService {
       bottom: {style: 'thick'},
       left: {style: 'thick'}
     }
-    worksheet.getCell('G8').font = { name: 'Arial' };
+    worksheet.getCell('G8').font = { name: 'Arial', size: 14 };
 
 
     worksheet.getCell('A9').border = {
@@ -345,12 +343,12 @@ export class ExcelQuotationDetailService {
 
     worksheet.addImage(imageId, {
       tl: { col: 0.5, row: 2.5 },  // Start at cell A2 (row index is 0-based)
-      ext: { width: 125, height: 75 }, // Set fixed dimensions
+      ext: { width: 313, height: 196 }, // Set fixed dimensions
     });
 
     worksheet.addImage(imageId2, {
       tl: { col: 2.5, row: 2.5 },  // Start at cell A2 (row index is 0-based)
-      ext: { width: 300, height: 100 }, // Set fixed dimensions
+      ext: { width: 389, height: 147 }, // Set fixed dimensions
     });
 
     worksheet.getCell('B9').border = {top: {style: 'thick'}}
@@ -381,48 +379,48 @@ export class ExcelQuotationDetailService {
     
 
     worksheet.getCell('A9').value = 'Kepada';
-    worksheet.getCell('A9').font = { name: 'Arial', bold: true };
+    worksheet.getCell('A9').font = { name: 'Arial', size: 14 };
 
     worksheet.getCell('C9').value = dataBasic.customer.name;
-    worksheet.getCell('C9').font = { name: 'Arial' };
+    worksheet.getCell('C9').font = { name: 'Arial', bold: true, size: 14 };
 
     worksheet.getCell('C10').value = address1;
-    worksheet.getCell('C10').font = { name: 'Arial' };
+    worksheet.getCell('C10').font = { name: 'Arial', size: 14 };
 
     worksheet.getCell('C11').value = address2;
-    worksheet.getCell('C11').font = { name: 'Arial' };
+    worksheet.getCell('C11').font = { name: 'Arial', size: 14 };
 
     worksheet.getCell('A12').value = 'Nama Proyek';
-    worksheet.getCell('A12').font = { name: 'Arial' };
+    worksheet.getCell('A12').font = { name: 'Arial', size: 14 };
     
     worksheet.getCell('C12').value = dataBasic.project.name;
-    worksheet.getCell('C12').font = { name: 'Arial', bold: true };
+    worksheet.getCell('C12').font = { name: 'Arial', bold: true, size: 14 };
 
     worksheet.getCell('A13').value = 'Lokasi Proyek';
-    worksheet.getCell('A13').font = { name: 'Arial' };
+    worksheet.getCell('A13').font = { name: 'Arial', size: 14 };
 
     worksheet.getCell('C13').value = customerLocation;
-    worksheet.getCell('C13').font = { name: 'Arial' };
+    worksheet.getCell('C13').font = { name: 'Arial', size: 14 };
 
     worksheet.getCell('A14').value = 'Telpon';
-    worksheet.getCell('A14').font = { name: 'Arial' };
+    worksheet.getCell('A14').font = { name: 'Arial', size: 14 };
 
     worksheet.getCell('C14').value = dataBasic.customer.phone;
-    worksheet.getCell('C14').font = { name: 'Arial' };
+    worksheet.getCell('C14').font = { name: 'Arial', size: 14 };
 
     worksheet.getCell('A15').value = 'Fax';
-    worksheet.getCell('A15').font = { name: 'Arial' };
+    worksheet.getCell('A15').font = { name: 'Arial' , size: 14};
 
     worksheet.getCell('C15').value = '-';
-    worksheet.getCell('C15').font = { name: 'Arial' };
+    worksheet.getCell('C15').font = { name: 'Arial', size: 14 };
 
     worksheet.getCell('A16').value = 'Attn';
-    worksheet.getCell('A16').font = { name: 'Arial' };
+    worksheet.getCell('A16').font = { name: 'Arial', size: 14 };
 
     worksheet.getCell('C16').value = {
       richText: attention
     };
-    worksheet.getCell('C16').font = { name: 'Arial' };
+    worksheet.getCell('C16').font = { name: 'Arial' , size: 14};
     
     worksheet.getRow(18).height = 27;
     worksheet.getCell('A18').value = 'No';
@@ -430,7 +428,7 @@ export class ExcelQuotationDetailService {
     worksheet.getCell('A18').font = {
       bold: true,
       name: 'Arial',
-      size: 12
+      size: 17.5
     }
     worksheet.getCell('A18').border = {
       top: {style: 'thick'},
@@ -450,7 +448,7 @@ export class ExcelQuotationDetailService {
     worksheet.getCell('C18').font = {
       bold: true,
       name: 'Arial',
-      size: 12
+      size: 17.5
     }
     worksheet.getCell('C18').border = {
       top: {style: 'thick'},
@@ -463,7 +461,7 @@ export class ExcelQuotationDetailService {
     worksheet.getCell('D18').font = {
       bold: true,
       name: 'Arial',
-      size: 12
+      size: 17.5
     }
     worksheet.getCell('D18').border = {
       top: {style: 'thick'},
@@ -477,7 +475,7 @@ export class ExcelQuotationDetailService {
     worksheet.getCell('E18').font = {
       bold: true,
       name: 'Arial',
-      size: 12
+      size: 17.5
     }
     worksheet.getCell('E18').border = {
       top: {style: 'thick'},
@@ -491,7 +489,7 @@ export class ExcelQuotationDetailService {
     worksheet.getCell('F18').font = {
       bold: true,
       name: 'Arial',
-      size: 12
+      size: 17.5
     }
     worksheet.getCell('F18').border = {
       top: {style: 'thick'},
@@ -505,7 +503,7 @@ export class ExcelQuotationDetailService {
     worksheet.getCell('G18').font = {
       bold: true,
       name: 'Arial',
-      size: 12
+      size: 17.5
     }
     worksheet.getCell('G18').border = {
       top: {style: 'thick'},
@@ -559,8 +557,8 @@ export class ExcelQuotationDetailService {
     worksheet.getRow(20).height = 50;
     worksheet.getCell('C20').value = {
       richText: [
-        {text: 'PENAWARAN SISTEM DRAINASE AIR HUJAN - sfm Siphonic System', font: {bold: true, size: 14, name: 'Arial'}},
-        { text: 'TM', font: { vertAlign: 'superscript', bold: true, size: 14, name: 'Arial' } },
+        {text: 'PENAWARAN SISTEM DRAINASE AIR HUJAN - sfm Siphonic System', font: {bold: true, size: 17.5, name: 'Arial'}},
+        { text: 'TM', font: { vertAlign: 'superscript', bold: true, size: 17.5, name: 'Arial' } },
       ]
     }
     worksheet.getCell('C20').border = {
@@ -657,14 +655,14 @@ export class ExcelQuotationDetailService {
       left: {style: 'thick'}
     };
     worksheet.getCell('A22').alignment = {horizontal: 'center', vertical: 'middle'}
-    worksheet.getCell('A22').font = {size: 12, bold: true, name: 'Arial'}
+    worksheet.getCell('A22').font = {size: 17.5, bold: true, name: 'Arial'}
 
     worksheet.mergeCells('B22:C22');
 
     worksheet.getCell('C22').value = {
       richText: [
-        {text: 'PEKERJAAN PENGADAAN MATERIAL KOMPONEN  SFM SIPHONIC SYSTEM', font: {bold: true, size: 12, name: 'Arial'}},
-        { text: 'TM', font: { vertAlign: 'superscript', bold: true, size: 12, name: 'Arial' } },
+        {text: 'PEKERJAAN PENGADAAN MATERIAL KOMPONEN  SFM SIPHONIC SYSTEM', font: {bold: true, size: 17.5, name: 'Arial'}},
+        { text: 'TM', font: { vertAlign: 'superscript', bold: true, size: 17.5, name: 'Arial' } },
       ]
     }
 
@@ -730,7 +728,7 @@ export class ExcelQuotationDetailService {
     categorySummary.forEach((cat, i) => {
       if(cat.total > 0) {
         currentRow++;
-        worksheet.getRow(currentRow).height = 75;
+        worksheet.getRow(currentRow).height = 60;
 
         worksheet.getCell(`A${currentRow}`).border = {
           right: {style: 'thick'},
@@ -744,55 +742,55 @@ export class ExcelQuotationDetailService {
         if(cat.name.toLowerCase() === 'sro'){
           worksheet.getCell(`C${currentRow}`).value = {
             richText: [
-              {text: 'sfm NOFLAF', font: {bold: true, size: 12, name: 'Arial'}},
-              { text: 'TM', font: { vertAlign: 'superscript', bold: true, size: 12, name: 'Arial' } },
-              { text: ' Siphonic Roof Outlet (SRO) metalik dari material Stainless Steel dan/atau paduan Aluminium untuk aplikasi sistem', font: {size: 12, name: 'Arial'} },
-              { text: ' sfm Siphonic System', font: {bold: true, size: 12, name: 'Arial'} },
-              { text: 'TM', font: { vertAlign: 'superscript', bold: true, size: 12, name: 'Arial' } },
-              { text: '.', font: {size: 12, name: 'Arial' } },
+              {text: 'sfm NOFLAF', font: {bold: true, size: 17.5, name: 'Arial'}},
+              { text: 'TM', font: { vertAlign: 'superscript', bold: true, size: 17.5, name: 'Arial' } },
+              { text: ' Siphonic Roof Outlet (SRO) metalik dari material Stainless Steel dan/atau paduan Aluminium untuk aplikasi sistem', font: {size: 17.5, name: 'Arial'} },
+              { text: ' sfm Siphonic System', font: {bold: true, size: 17.5, name: 'Arial'} },
+              { text: 'TM', font: { vertAlign: 'superscript', bold: true, size: 17.5, name: 'Arial' } },
+              { text: '.', font: {size: 17.5, name: 'Arial' } },
             ]
           }
         } else if(cat.name.toLowerCase() === 'pipe'){
           worksheet.getCell(`C${currentRow}`).value = {
             richText: [
-              {text: 'Pipa uPVC', font: {size: 12, name: 'Arial'}},
-              {text: ' sfm SiphonicPipe', font: {bold: true, size: 12, name: 'Arial'}},
-              { text: 'TM', font: { vertAlign: 'superscript', bold: true, size: 12, name: 'Arial' } },
-              { text: ' untuk aplikasi sfm Siphonic System', font: {size: 12, name: 'Arial' } },
-              { text: 'TM', font: {vertAlign: 'superscript', size: 12, name: 'Arial'} },
-              { text: ' yang dapat menahan tekanan kerja positif 6 bar dan negatif -0.9 bar.', font: { size: 12, name: 'Arial' } },
+              {text: 'Pipa uPVC', font: {size: 17.5, name: 'Arial'}},
+              {text: ' sfm SiphonicPipe', font: {bold: true, size: 17.5, name: 'Arial'}},
+              { text: 'TM', font: { vertAlign: 'superscript', bold: true, size: 17.5, name: 'Arial' } },
+              { text: ' untuk aplikasi sfm Siphonic System', font: {size: 17.5, name: 'Arial' } },
+              { text: 'TM', font: {vertAlign: 'superscript', size: 17.5, name: 'Arial'} },
+              { text: ' yang dapat menahan tekanan kerja positif 6 bar dan negatif -0.9 bar.', font: { size: 17.5, name: 'Arial' } },
             ]
           }
         } else if(cat.name.toLowerCase() === 'fitting'){
           worksheet.getCell(`C${currentRow}`).value = {
             richText: [
-              {text: 'Fiting uPVC', font: {size: 12, name: 'Arial'}},
-              { text: ' untuk aplikasi sfm Siphonic System', font: {size: 12, name: 'Arial' } },
-              { text: 'TM', font: {vertAlign: 'superscript', size: 12, name: 'Arial'} },
-              { text: ' yang dapat menahan tekanan kerja positif 6 bar dan negatif -0.9 bar.', font: { size: 12, name: 'Arial' } },
+              {text: 'Fiting uPVC', font: {size: 17.5, name: 'Arial'}},
+              { text: ' untuk aplikasi sfm Siphonic System', font: {size: 17.5, name: 'Arial' } },
+              { text: 'TM', font: {vertAlign: 'superscript', size: 17.5, name: 'Arial'} },
+              { text: ' yang dapat menahan tekanan kerja positif 6 bar dan negatif -0.9 bar.', font: { size: 17.5, name: 'Arial' } },
             ]
           }
         } else if(cat.name.toLowerCase() === 'bracketing' || cat.name.toLowerCase() === 'standard bracketing' ){
           worksheet.getCell(`C${currentRow}`).value = {
             richText: [
-              {text: 'Standard bracketing', font: {size: 12, name: 'Arial'}},
-              { text: ' sfm Dinamix', font: {bold: true, size: 12, name: 'Arial' } },
-              { text: 'TM', font: {bold: true, vertAlign: 'superscript', size: 12, name: 'Arial'} },
-              { text: ' system untuk aplikasi pada', font: { size: 12, name: 'Arial' } },
-              {text: ' sfm SiphonicPipe', font: {bold: true, size: 12, name: 'Arial'}},
-              { text: 'TM', font: { vertAlign: 'superscript', bold: true, size: 12, name: 'Arial' } },
-              { text: '.', font: {size: 12, name: 'Arial' } },
+              {text: 'Standard bracketing', font: {size: 17.5, name: 'Arial'}},
+              { text: ' sfm Dinamix', font: {bold: true, size: 17.5, name: 'Arial' } },
+              { text: 'TM', font: {bold: true, vertAlign: 'superscript', size: 17.5, name: 'Arial'} },
+              { text: ' system untuk aplikasi pada', font: { size: 17.5, name: 'Arial' } },
+              {text: ' sfm SiphonicPipe', font: {bold: true, size: 17.5, name: 'Arial'}},
+              { text: 'TM', font: { vertAlign: 'superscript', bold: true, size: 17.5, name: 'Arial' } },
+              { text: '.', font: {size: 17.5, name: 'Arial' } },
             ]
           }
         } else if(cat.name.toLowerCase() === 'non-standard bracketing'){
           worksheet.getCell(`C${currentRow}`).value = {
             richText: [
-              {text: 'Non Standard bracketing', font: {size: 12, name: 'Arial'}},
-              {text: ' (Item diluar standar', font: {size: 12, name: 'Arial'}},
-              { text: ' sfm Dinamix', font: {bold: true, size: 12, name: 'Arial' } },
-              { text: 'TM', font: {bold: true, vertAlign: 'superscript', size: 12, name: 'Arial'} },
-              { text: ' menyesuaikan kondisi di gambar/ lapangan) - ', font: { size: 12, name: 'Arial' } },
-              {text: 'Exclude', font: {bold: true, size: 12, name: 'Arial', color: {argb: 'ffff0000'}}},
+              {text: 'Non Standard bracketing', font: {size: 17.5, name: 'Arial'}},
+              {text: ' (Item diluar standar', font: {size: 17.5, name: 'Arial'}},
+              { text: ' sfm Dinamix', font: {bold: true, size: 17.5, name: 'Arial' } },
+              { text: 'TM', font: {bold: true, vertAlign: 'superscript', size: 17.5, name: 'Arial'} },
+              { text: ' menyesuaikan kondisi di gambar/ lapangan) - ', font: { size: 17.5, name: 'Arial' } },
+              {text: 'Exclude', font: {bold: true, size: 17.5, name: 'Arial', color: {argb: 'ffff0000'}}},
             ]
           }
         } else if(cat.name.toLowerCase() === 'solvent cement'){
@@ -804,7 +802,7 @@ export class ExcelQuotationDetailService {
         
         worksheet.getCell(`C${currentRow}`).font = {
           name: 'Arial',
-          size: 12
+          size: 17.5
         }
         worksheet.getCell(`C${currentRow}`).border = {
           right: {style: 'thick'}
@@ -814,7 +812,7 @@ export class ExcelQuotationDetailService {
         worksheet.getCell(`D${currentRow}`).value = 1;
         worksheet.getCell(`D${currentRow}`).font = {
           name: 'Arial',
-          size: 12
+          size: 17.5
         }
         worksheet.getCell(`D${currentRow}`).border = {
           right: {style: 'thick'},
@@ -826,7 +824,7 @@ export class ExcelQuotationDetailService {
         worksheet.getCell(`E${currentRow}`).value = 'lot'
         worksheet.getCell(`E${currentRow}`).font = {
           name: 'Arial',
-          size: 12
+          size: 17.5
         }
         worksheet.getCell(`E${currentRow}`).border = {
           right: {style: 'thick'},
@@ -838,173 +836,27 @@ export class ExcelQuotationDetailService {
         worksheet.getCell(`F${currentRow}`).numFmt = '_("Rp"* #,##0.00_);_("Rp"* (#,##0.00);_("Rp"* "-"??_);_(@_)'; 
         worksheet.getCell(`F${currentRow}`).font = {
           name: 'Arial',
-          size: 12
+          size: 17.5
         }
         worksheet.getCell(`F${currentRow}`).border = {
           right: {style: 'thick'},
           left: {style: 'thick'}
         };
-        worksheet.getCell(`F${currentRow}`).alignment = {horizontal: 'center', vertical: 'top'};
+        worksheet.getCell(`F${currentRow}`).alignment = {horizontal: 'right', vertical: 'top'};
   
         worksheet.getCell(`G${currentRow}`).value = cat.totalSellingPrice
         worksheet.getCell(`G${currentRow}`).numFmt = '_("Rp"* #,##0.00_);_("Rp"* (#,##0.00);_("Rp"* "-"??_);_(@_)'; 
         worksheet.getCell(`G${currentRow}`).font = {
           name: 'Arial',
-          size: 12
+          size: 17.5
         }
         worksheet.getCell(`G${currentRow}`).border = {
           right: {style: 'thick'},
           left: {style: 'thick'}
         };
-        worksheet.getCell(`G${currentRow}`).alignment = {horizontal: 'center', vertical: 'top'};
+        worksheet.getCell(`G${currentRow}`).alignment = {horizontal: 'right', vertical: 'top'};
       }
-
-      currentRow++;
-      worksheet.getCell(`A${currentRow}`).border = {
-        right: {style: 'thick'},
-        left: {style: 'thick'}
-      }
-  
-      worksheet.getCell(`D${currentRow}`).border = {
-        right: {style: 'thick'},
-        left: {style: 'thick'},
-      }
-  
-      worksheet.getCell(`E${currentRow}`).border = {
-        right: {style: 'thick'},
-        left: {style: 'thick'},
-      }
-  
-      worksheet.getCell(`F${currentRow}`).border = {
-        right: {style: 'thick'},
-        left: {style: 'thick'},
-      }
-  
-      worksheet.getCell(`G${currentRow}`).border = {
-        right: {style: 'thick'},
-        left: {style: 'thick'},
-      }
-
-      const sortOrder = ['Elbow', 'Reducer', 'Branch'];
-      dataDetail.quotation_revision.forEach((data) => {
-        if (data.revision === revision) {
-          data.quotation_items
-          .filter((item) => cat.id === item.inventory.supplier_product.id) // Filter first
-          .sort((a, b) => {
-            if (cat.name.toLowerCase() === 'fitting') {
-              const indexA = sortOrder.findIndex((order) => a.inventory.sub_category.name === order);
-              const indexB = sortOrder.findIndex((order) => b.inventory.sub_category.name === order);
-        
-              return (indexA === -1 ? sortOrder.length : indexA) - (indexB === -1 ? sortOrder.length : indexB);
-            }
-            return 0; // No sorting if not 'fitting'
-          })
-          .forEach((item) => {
-
-            worksheet.getCell(`A${currentRow}`).border = {
-              right: {style: 'thick'},
-              left: {style: 'thick'}
-            };
-
-            // Column title for inventory
-            worksheet.getCell(`C${currentRow}`).value = `- ${item.inventory.description}`;
-            worksheet.getCell(`C${currentRow}`).font = {
-              name: 'Arial',
-              size: 11,
-            };
-  
-            //Column qty
-            worksheet.getCell(`D${currentRow}`).value = parseFloat(item.qty);
-            worksheet.getCell(`D${currentRow}`).font = {
-              name: 'Arial',
-              size: 11,
-              color: { argb: 'ffff6347' },
-            };
-            worksheet.getCell(`D${currentRow}`).border = {
-              left: { style: 'thick' },
-              right: { style: 'thick' },
-            };
-
-            worksheet.getCell(`D${currentRow}`).alignment = {horizontal: 'center'}
-
-            //Column Unit
-            worksheet.getCell(`E${currentRow}`).value = item.inventory.unit.name;
-            worksheet.getCell(`D${currentRow}`).font = {
-              name: 'Arial'
-            };
-            worksheet.getCell(`E${currentRow}`).alignment = {horizontal: 'center'}
-            worksheet.getCell(`E${currentRow}`).border = {
-              left: { style: 'thick' },
-              right: { style: 'thick' },
-            };
-
-            //Column Unit Price
-            worksheet.getCell(`F${currentRow}`).border = {
-              left: { style: 'thick' },
-              right: { style: 'thick' },
-            };
-
-            //Column Total Selling Price
-            worksheet.getCell(`G${currentRow}`).border = {
-              left: { style: 'thick' },
-              right: { style: 'thick' },
-            };
-  
-            currentRow++;
-
-            worksheet.getCell(`A${currentRow}`).border = {
-              right: {style: 'thick'},
-              left: {style: 'thick'}
-            }
-        
-            worksheet.getCell(`D${currentRow}`).border = {
-              right: {style: 'thick'},
-              left: {style: 'thick'},
-            }
-        
-            worksheet.getCell(`E${currentRow}`).border = {
-              right: {style: 'thick'},
-              left: {style: 'thick'},
-            }
-        
-            worksheet.getCell(`F${currentRow}`).border = {
-              right: {style: 'thick'},
-              left: {style: 'thick'},
-            }
-        
-            worksheet.getCell(`G${currentRow}`).border = {
-              right: {style: 'thick'},
-              left: {style: 'thick'},
-            }
-          });
-        }
-      });
     })
-
-    worksheet.getCell(`A${currentRow}`).border = {
-      right: {style: 'thick'},
-      left: {style: 'thick'}
-    }
-
-    worksheet.getCell(`D${currentRow}`).border = {
-      right: {style: 'thick'},
-      left: {style: 'thick'},
-    }
-
-    worksheet.getCell(`E${currentRow}`).border = {
-      right: {style: 'thick'},
-      left: {style: 'thick'},
-    }
-
-    worksheet.getCell(`F${currentRow}`).border = {
-      right: {style: 'thick'},
-      left: {style: 'thick'},
-    }
-
-    worksheet.getCell(`G${currentRow}`).border = {
-      right: {style: 'thick'},
-      left: {style: 'thick'},
-    }
 
     currentRow++;
     worksheet.getCell(`A${currentRow}`).border = {
@@ -1022,6 +874,7 @@ export class ExcelQuotationDetailService {
 
     worksheet.getCell(`D${currentRow}`).value = 'Sub Total 1';
     worksheet.getCell(`D${currentRow}`).font = { name: 'Arial' }
+
     worksheet.getCell(`D${currentRow}`).border = {
       right: {style: 'thick'},
       top: {style: 'thick'},
@@ -1040,8 +893,8 @@ export class ExcelQuotationDetailService {
     }
 
     worksheet.getCell(`G${currentRow}`).value = totalSellingPrice1;
-    worksheet.getCell(`G${currentRow}`).numFmt = '_("Rp"* #,##0.00_);_("Rp"* (#,##0.00);_("Rp"* "-"??_);_(@_)';
     worksheet.getCell(`G${currentRow}`).font = { name: 'Arial' }
+    worksheet.getCell(`G${currentRow}`).numFmt = '_("Rp"* #,##0.00_);_("Rp"* (#,##0.00);_("Rp"* "-"??_);_(@_)';
     worksheet.getCell(`G${currentRow}`).border = {
       top: {style: 'thick'},
       bottom: {style: 'thick'},
@@ -1110,7 +963,7 @@ export class ExcelQuotationDetailService {
     worksheet.getCell(`D${currentRow}`).value = 'Total 1';
     worksheet.getCell(`D${currentRow}`).font = {
       bold: true,
-      name: 'Arial'
+      name: "Arial"
     }
     worksheet.getCell(`D${currentRow}`).border = {
       right: {style: 'thick'},
@@ -1190,13 +1043,13 @@ export class ExcelQuotationDetailService {
       left: {style: 'thick'}
     };
     worksheet.getCell(`A${currentRow}`).alignment = {horizontal: 'center', vertical: 'middle'}
-    worksheet.getCell(`A${currentRow}`).font = {size: 12, bold: true, name: 'Arial'}
+    worksheet.getCell(`A${currentRow}`).font = {size: 17.5, bold: true, name: 'Arial'}
 
     worksheet.mergeCells(`B${currentRow}:C${currentRow}`);
     worksheet.getCell(`B${currentRow}`).value = {
       richText: [
-        {text: 'PEKERJAAN PEMASANGAN, SUPERVISI DAN TEST & COMISSIONING  SFM SIPHONIC SYSTEMS', font: {bold: true, size: 12, name: 'Arial'}},
-        { text: 'TM', font: { vertAlign: 'superscript', bold: true, size: 12, name: 'Arial' } },
+        {text: 'PEKERJAAN PEMASANGAN, SUPERVISI DAN TEST & COMISSIONING  SFM SIPHONIC SYSTEMS', font: {bold: true, size: 17.5, name: 'Arial'}},
+        { text: 'TM', font: { vertAlign: 'superscript', bold: true, size: 17.5, name: 'Arial' } },
       ]
     }
     worksheet.getCell(`B${currentRow}`).border = {
@@ -1303,7 +1156,7 @@ export class ExcelQuotationDetailService {
     worksheet.getCell(`C${currentRow}`).value = 'Pekerjaan Preliminaries';
     worksheet.getCell(`C${currentRow}`).font = {
       name: 'Arial',
-      size: 12
+      size: 17.5
     }
     worksheet.getCell(`C${currentRow}`).alignment = {vertical: 'top', wrapText: true}
 
@@ -1315,13 +1168,13 @@ export class ExcelQuotationDetailService {
     worksheet.getCell(`D${currentRow}`).alignment = {vertical: 'middle', horizontal: 'center'}
     worksheet.getCell(`D${currentRow}`).font = {
       name: 'Arial',
-      size: 12
+      size: 17.5
     }
 
     worksheet.getCell(`E${currentRow}`).value = 'lot'
     worksheet.getCell(`E${currentRow}`).font = {
       name: 'Arial',
-      size: 12
+      size: 17.5
     }
     worksheet.getCell(`E${currentRow}`).border = {
       right: {style: 'thick'},
@@ -1335,7 +1188,7 @@ export class ExcelQuotationDetailService {
 
     worksheet.getCell(`F${currentRow}`).font = {
       name: 'Arial',
-      size: 12
+      size: 17.5
     }
     worksheet.getCell(`F${currentRow}`).alignment = {vertical: 'middle'};
 
@@ -1355,7 +1208,7 @@ export class ExcelQuotationDetailService {
 
     worksheet.getCell(`G${currentRow}`).font = {
       name: 'Arial',
-      size: 12
+      size: 17.5
     }
     worksheet.getCell(`G${currentRow}`).alignment = {vertical: 'middle'};
 
@@ -1375,7 +1228,7 @@ export class ExcelQuotationDetailService {
     worksheet.getCell(`C${currentRow}`).value = `Pemasangan Material Komponen SFM Siphonic Systems (${formattedInstallation})`;
     worksheet.getCell(`C${currentRow}`).font = {
       name: 'Arial',
-      size: 12
+      size: 17.5
     }
     worksheet.getCell(`C${currentRow}`).alignment = {wrapText: true, vertical: 'middle'}
 
@@ -1388,7 +1241,7 @@ export class ExcelQuotationDetailService {
     worksheet.getCell(`E${currentRow}`).value = 'lot'
     worksheet.getCell(`E${currentRow}`).font = {
       name: 'Arial',
-      size: 12
+      size: 17.5
     }
     worksheet.getCell(`E${currentRow}`).border = {
       right: {style: 'thick'},
@@ -1404,7 +1257,7 @@ export class ExcelQuotationDetailService {
     };
     worksheet.getCell(`G${currentRow}`).font = {
       name: 'Arial',
-      size: 12
+      size: 17.5
     }
     worksheet.getCell(`G${currentRow}`).alignment = {vertical: 'middle'};
 
@@ -1416,7 +1269,7 @@ export class ExcelQuotationDetailService {
     };
     worksheet.getCell(`F${currentRow}`).font = {
       name: 'Arial',
-      size: 12
+      size: 17.5
     }
     worksheet.getCell(`F${currentRow}`).alignment = {vertical: 'middle'};
 
@@ -1435,7 +1288,7 @@ export class ExcelQuotationDetailService {
     worksheet.getCell(`C${currentRow}`).value = `Supervision`;
     worksheet.getCell(`C${currentRow}`).font = {
       name: 'Arial',
-      size: 12
+      size: 17.5
     }
     worksheet.getCell(`C${currentRow}`).alignment = {vertical: 'top'};
 
@@ -1449,7 +1302,7 @@ export class ExcelQuotationDetailService {
     worksheet.getCell(`E${currentRow}`).value = 'lot'
     worksheet.getCell(`E${currentRow}`).font = {
       name: 'Arial',
-      size: 12
+      size: 17.5
     }
     worksheet.getCell(`E${currentRow}`).border = {
       right: {style: 'thick'},
@@ -1468,7 +1321,7 @@ export class ExcelQuotationDetailService {
 
     worksheet.getCell(`G${currentRow}`).font = {
       name: 'Arial',
-      size: 12
+      size: 17.5
     }
     worksheet.getCell(`G${currentRow}`).alignment = {vertical: 'middle'}
 
@@ -1494,7 +1347,7 @@ export class ExcelQuotationDetailService {
     worksheet.getCell(`C${currentRow}`).value = `Test & Commisioning`;
     worksheet.getCell(`C${currentRow}`).font = {
       name: 'Arial',
-      size: 12
+      size: 17.5
     }
     worksheet.getCell(`C${currentRow}`).alignment = {vertical: 'top'};
 
@@ -1508,7 +1361,7 @@ export class ExcelQuotationDetailService {
     worksheet.getCell(`E${currentRow}`).value = 'lot'
     worksheet.getCell(`E${currentRow}`).font = {
       name: 'Arial',
-      size: 12
+      size: 17.5
     }
     worksheet.getCell(`E${currentRow}`).border = {
       right: {style: 'thick'},
@@ -1527,7 +1380,7 @@ export class ExcelQuotationDetailService {
 
     worksheet.getCell(`G${currentRow}`).font = {
       name: 'Arial',
-      size: 12
+      size: 17.5
     }
     worksheet.getCell(`G${currentRow}`).alignment = {vertical: 'middle'};
 
@@ -1719,7 +1572,7 @@ export class ExcelQuotationDetailService {
     worksheet.getCell(`A${currentRow}`).font = {
       bold: true,
       name: 'Arial',
-      size: 12
+      size: 17.5
     };
     worksheet.getCell(`A${currentRow}`).fill = {
       type: 'pattern',
@@ -1746,7 +1599,7 @@ export class ExcelQuotationDetailService {
     worksheet.getCell(`D${currentRow}`).value = 'Total (1+2)';
     worksheet.getCell(`D${currentRow}`).font = {
       name: 'Arial',
-      size: 12
+      size: 17.5
     };
     worksheet.getCell(`D${currentRow}`).border = {
       top: {style: 'thick'}, 
@@ -1771,7 +1624,7 @@ export class ExcelQuotationDetailService {
     worksheet.getCell(`G${currentRow}`).numFmt = '_("Rp"* #,##0.00_);_("Rp"* (#,##0.00);_("Rp"* "-"??_);_(@_)';
     worksheet.getCell(`G${currentRow}`).font = {
       name: 'Arial',
-      size: 12,
+      size: 17.5,
       bold: true
     };
     worksheet.getCell(`G${currentRow}`).border = {
@@ -1808,7 +1661,7 @@ export class ExcelQuotationDetailService {
     worksheet.getCell(`D${currentRow}`).value = 'Round';
     worksheet.getCell(`D${currentRow}`).font = {
       name: 'Arial',
-      size: 12
+      size: 17.5
     };
     worksheet.getCell(`D${currentRow}`).border = {
       top: {style: 'thick'}, 
@@ -1833,7 +1686,7 @@ export class ExcelQuotationDetailService {
     worksheet.getCell(`G${currentRow}`).numFmt = '_("Rp"* #,##0.00_);_("Rp"* (#,##0.00);_("Rp"* "-"??_);_(@_)';
     worksheet.getCell(`G${currentRow}`).font = {
       name: 'Arial',
-      size: 12,
+      size: 17.5,
       bold: true
     };
     worksheet.getCell(`G${currentRow}`).border = {
@@ -1848,7 +1701,7 @@ export class ExcelQuotationDetailService {
     worksheet.getCell(`A${currentRow}`).value = `1 Waktu Pengiriman: ${delivery_duration}`;
     worksheet.getCell(`A${currentRow}`).font = {
       name: 'Arial',
-      size: 12
+      size: 17.5
     };
     worksheet.getCell(`A${currentRow}`).fill = {
       type: 'pattern',
@@ -1863,7 +1716,7 @@ export class ExcelQuotationDetailService {
 
     worksheet.getCell(`B${currentRow}`).font = {
       name: 'Arial',
-      size: 12
+      size: 17.5
     };
     worksheet.getCell(`B${currentRow}`).fill = {
       type: 'pattern',
@@ -1882,7 +1735,7 @@ export class ExcelQuotationDetailService {
     worksheet.getCell(`D${currentRow}`).value = `TAX ${tax}%`;
     worksheet.getCell(`D${currentRow}`).font = {
       name: 'Arial',
-      size: 12
+      size: 17.5
     };
     worksheet.getCell(`D${currentRow}`).border = {
       top: {style: 'thick'}, 
@@ -1907,7 +1760,7 @@ export class ExcelQuotationDetailService {
     worksheet.getCell(`G${currentRow}`).numFmt = '_("Rp"* #,##0.00_);_("Rp"* (#,##0.00);_("Rp"* "-"??_);_(@_)';
     worksheet.getCell(`G${currentRow}`).font = {
       name: 'Arial',
-      size: 12,
+      size: 17.5,
       bold: true
     };
     worksheet.getCell(`G${currentRow}`).border = {
@@ -1922,7 +1775,7 @@ export class ExcelQuotationDetailService {
     worksheet.getCell(`A${currentRow}`).value = `2 Penawaran Berlaku: ${offer_applies}`;
     worksheet.getCell(`A${currentRow}`).font = {
       name: 'Arial',
-      size: 12
+      size: 17.5
     };
     worksheet.getCell(`A${currentRow}`).fill = {
       type: 'pattern',
@@ -1936,7 +1789,7 @@ export class ExcelQuotationDetailService {
 
     worksheet.getCell(`B${currentRow}`).font = {
       name: 'Arial',
-      size: 12
+      size: 17.5
     };
     worksheet.getCell(`B${currentRow}`).fill = {
       type: 'pattern',
@@ -1955,7 +1808,7 @@ export class ExcelQuotationDetailService {
     worksheet.getCell(`D${currentRow}`).value = 'Grand Total';
     worksheet.getCell(`D${currentRow}`).font = {
       name: 'Arial',
-      size: 12
+      size: 17.5
     };
     worksheet.getCell(`D${currentRow}`).border = {
       top: {style: 'thick'}, 
@@ -1980,7 +1833,7 @@ export class ExcelQuotationDetailService {
     worksheet.getCell(`G${currentRow}`).numFmt = '_("Rp"* #,##0.00_);_("Rp"* (#,##0.00);_("Rp"* "-"??_);_(@_)';
     worksheet.getCell(`G${currentRow}`).font = {
       name: 'Arial',
-      size: 12,
+      size: 17.5,
       bold: true
     };
     worksheet.getCell(`G${currentRow}`).border = {
@@ -1992,10 +1845,10 @@ export class ExcelQuotationDetailService {
 
     currentRow++;
 
-    worksheet.getCell(`A${currentRow}`).value = ` Sifat Pekerjaan: ${type_of_work}`;
+    worksheet.getCell(`A${currentRow}`).value = `3 Sifat Pekerjaan: ${type_of_work}`;
     worksheet.getCell(`A${currentRow}`).font = {
       name: 'Arial',
-      size: 12
+      size: 17.5
     };
     worksheet.getCell(`A${currentRow}`).fill = {
       type: 'pattern',
@@ -2009,7 +1862,7 @@ export class ExcelQuotationDetailService {
 
     worksheet.getCell(`B${currentRow}`).font = {
       name: 'Arial',
-      size: 12
+      size: 17.5
     };
     worksheet.getCell(`B${currentRow}`).fill = {
       type: 'pattern',
@@ -2027,7 +1880,7 @@ export class ExcelQuotationDetailService {
 
     worksheet.getCell(`D${currentRow}`).font = {
       name: 'Arial',
-      size: 12
+      size: 17.5
     };
     worksheet.getCell(`D${currentRow}`).border = {
       top: {style: 'thick'}, 
@@ -2076,7 +1929,7 @@ export class ExcelQuotationDetailService {
     worksheet.getCell(`A${currentRow}`).value = `4 Termin Pembayaran : ${termin_payment}`;
     worksheet.getCell(`A${currentRow}`).font = {
       name: 'Arial',
-      size: 12
+      size: 17.5
     };
     worksheet.getCell(`A${currentRow}`).fill = {
       type: 'pattern',
@@ -2090,7 +1943,7 @@ export class ExcelQuotationDetailService {
 
     worksheet.getCell(`B${currentRow}`).font = {
       name: 'Arial',
-      size: 12
+      size: 17.5
     };
     worksheet.getCell(`B${currentRow}`).fill = {
       type: 'pattern',
@@ -2149,17 +2002,17 @@ export class ExcelQuotationDetailService {
         },
         {
           text: ' sfm siphonic systems',
-          font: {bold: true}
+          font: {bold: true},
         },
         {
           text: 'TM',
           font: {bold: true, vertAlign: 'superscript'}
         },
       ]
-    }
+    };
     worksheet.getCell(`A${currentRow}`).font = {
       name: 'Arial',
-      size: 12
+      size: 17.5
     };
     worksheet.getCell(`A${currentRow}`).fill = {
       type: 'pattern',
@@ -2173,7 +2026,7 @@ export class ExcelQuotationDetailService {
 
     worksheet.getCell(`B${currentRow}`).font = {
       name: 'Arial',
-      size: 12
+      size: 17.5
     };
     worksheet.getCell(`B${currentRow}`).fill = {
       type: 'pattern',
@@ -2192,7 +2045,7 @@ export class ExcelQuotationDetailService {
 
     worksheet.getCell(`D${currentRow}`).font = {
       name: 'Arial',
-      size: 12
+      size: 17.5
     };
     worksheet.getCell(`D${currentRow}`).border = {
       left: {style: 'thick'},
@@ -2580,7 +2433,7 @@ export class ExcelQuotationDetailService {
     worksheet.getCell(`D${currentRow}`).font = {
       bold: true,
       underline: true,
-      size: 12,
+      size: 17.5,
       name: 'Arial'
     }
     worksheet.getCell(`D${currentRow}`).alignment = {
@@ -2607,7 +2460,7 @@ export class ExcelQuotationDetailService {
     worksheet.getCell(`D${currentRow}`).value = 'Area Sales Manager';
     worksheet.getCell(`D${currentRow}`).font = {
       italic: true,
-      size: 12,
+      size: 17.5,
       name: 'Arial'
     }
     worksheet.getCell(`D${currentRow}`).alignment = {
