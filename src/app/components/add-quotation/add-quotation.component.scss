@@ -87,7 +87,7 @@
 }
 
 .table-order th:last-child,
-.table-order tr:last-child td:last-child,
+.table-order.table-total td:last-child,
 .table-material td:last-child,
 .table-installation thead tr.sticky-head  th:last-child,
 .table-installation td:last-child{
@@ -103,7 +103,7 @@
 }
 
 .table-order th:last-child::after,
-.table-order tr:last-child td:last-child::after,
+.table-order.table-total td:last-child::after,
 .table-material td:last-child::after,
 .table-installation thead tr.sticky-head  th:last-child::after,
 .table-installation td:last-child::after {
