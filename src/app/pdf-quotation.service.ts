@@ -2507,6 +2507,7 @@ export class PdfQuotationService {
 
       const formData = new FormData();
       formData.append('file', file);
+      formData.append('type', 'quotation');
 
       if(fileType === 'pdf'){
         this.apiSvc.convertToPdf(formData).subscribe({
