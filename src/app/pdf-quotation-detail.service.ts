@@ -1663,9 +1663,6 @@ export class PdfQuotationDetailService {
       name: 'Arial',
       bold: true
     }
-    worksheet.getCell(`D${currentRow}`).font = {
-      bold: true
-    }
     worksheet.getCell(`D${currentRow}`).border = {
       top: {style: 'thick'},
       bottom: {style: 'thick'},
