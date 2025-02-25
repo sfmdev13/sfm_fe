@@ -1427,6 +1427,7 @@ export class ExcelService {
 
       const formData = new FormData();
       formData.append('file', file);
+      formData.append('type', 'rab');
 
       if(fileType === 'pdf'){
         this.apiSvc.convertToPdf(formData).subscribe({

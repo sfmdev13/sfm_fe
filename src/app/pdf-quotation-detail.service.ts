@@ -1663,9 +1663,6 @@ export class PdfQuotationDetailService {
       name: 'Arial',
       bold: true
     }
-    worksheet.getCell(`D${currentRow}`).font = {
-      bold: true
-    }
     worksheet.getCell(`D${currentRow}`).border = {
       top: {style: 'thick'},
       bottom: {style: 'thick'},
@@ -2648,6 +2645,7 @@ export class PdfQuotationDetailService {
 
       const formData = new FormData();
       formData.append('file', file);
+      formData.append('type', 'quotationdetail');
 
       if(fileType === 'pdf'){
         this.apiSvc.convertToPdf(formData).subscribe({
