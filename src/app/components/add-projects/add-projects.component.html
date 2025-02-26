@@ -234,7 +234,7 @@
                 <nz-form-label nzRequired class="fw-semibold" nzFor="segmentation" nzRequired>Segmentation</nz-form-label>
                 <nz-form-control>
                   <ng-container *ngIf="segmentation$ | async as segmentation; else segmentLoad">
-                    <nz-select nzShowSearch nzPlaceHolder="Selet Segmentation" formControlName="segmentation" [nzDropdownRender]="segmentRender">
+                    <nz-select nzShowSearch nzPlaceHolder="Select Segmentation" formControlName="segmentation" [nzDropdownRender]="segmentRender">
                       <ng-container *ngFor="let s of segmentation.data">
                         <nz-option [nzLabel]="s.name" [nzValue]="s.id"></nz-option>
                       </ng-container>
