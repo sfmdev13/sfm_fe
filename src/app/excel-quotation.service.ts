@@ -2173,7 +2173,7 @@ export class ExcelQuotationService {
     }
 
     worksheet.getCell(`A${currentRow}`).font = {
-      color: {argb: 'ff3bd12a'},
+      color: {argb: 'ff000000'},
       bold: true,
       italic: true
     }
