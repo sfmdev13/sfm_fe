@@ -27,12 +27,12 @@ export class InventoriesComponent implements OnInit {
       cover: '/assets/images/assembly.png',
       link: '/inventories/assembly'
     },
-    {
-      title: 'All Inventories',
-      description: 'Report of All Type Inventories',
-      cover: '/assets/images/all-inventories.png',
-      link: '/inventories/all-inventories'
-    }
+    // {
+    //   title: 'All Inventories',
+    //   description: 'Report of All Type Inventories',
+    //   cover: '/assets/images/all-inventories.png',
+    //   link: '/inventories/all-inventories'
+    // }
   ];
   
   constructor(
