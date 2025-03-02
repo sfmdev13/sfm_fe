@@ -1,5 +1,5 @@
-import { Component, Input, OnInit } from '@angular/core';
-import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
+import { Component, inject, Input, OnInit } from '@angular/core';
+import { NZ_MODAL_DATA, NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
 import { ApiService } from 'src/app/api.service';
 
 @Component({
@@ -9,7 +9,8 @@ import { ApiService } from 'src/app/api.service';
 })
 export class DeleteCustomerModalComponent implements OnInit {
 
-  @Input() id: string = ''
+  nzData = inject(NZ_MODAL_DATA);
+  id: string = this.nzData.id
 
   constructor(
     private modal: NzModalRef,

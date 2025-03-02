@@ -50,6 +50,12 @@ export class AddInventoriesComponent implements OnInit {
     id: [''],
     name: ['', Validators.required],
     description: ['', Validators.required],
+  })
+
+  categoryFormLevel = this.fb.group({
+    id: [''],
+    name: ['', Validators.required],
+    description: ['', Validators.required],
     level: ['', Validators.required]
   })
 
@@ -501,7 +507,7 @@ export class AddInventoriesComponent implements OnInit {
         nzTitle: ' Add Product Category',
         nzContent: EditCategoriesModalComponent,
         nzData: {
-          form: this.categoryFormBasic,
+          form: this.categoryFormLevel,
           type: 'supplier_product'
         },
         nzWidth: '500px',
@@ -525,7 +531,7 @@ export class AddInventoriesComponent implements OnInit {
         nzTitle: ' Add Product Sub Category',
         nzContent: EditCategoriesModalComponent,
         nzData: {
-          form: this.categoryFormBasic,
+          form: this.categoryFormLevel,
           type: titleCat
         },
         nzWidth: '500px',
