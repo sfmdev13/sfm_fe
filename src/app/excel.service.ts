@@ -495,6 +495,9 @@ export class ExcelService {
                 left: { style: 'thick' },
                 right: { style: 'thick' },
               };
+              worksheet.getCell(`L${currentRow}`).font = {
+                name: 'Arial'
+              }
 
               //Column Unit Price
               worksheet.getCell(`M${currentRow}`).value = parseFloat(
@@ -506,6 +509,10 @@ export class ExcelService {
                 left: { style: 'thick' },
                 right: { style: 'thick' },
               };
+              worksheet.getCell(`M${currentRow}`).font = {
+                name: 'Arial'
+              }
+
 
               //Column Total Selling Price
               worksheet.getCell(`N${currentRow}`).value = parseFloat(
@@ -517,6 +524,10 @@ export class ExcelService {
                 left: { style: 'thick' },
                 right: { style: 'thick' },
               };
+              worksheet.getCell(`N${currentRow}`).font = {
+                name: 'Arial'
+              }
+
 
               currentRow++; // Move to the next row after each inventory item
             });
@@ -642,7 +653,7 @@ export class ExcelService {
       vertical: 'middle',
     };
 
-    worksheet.getCell(`N${currentRowInst}`).font = { bold: true };
+    worksheet.getCell(`N${currentRowInst}`).font = { bold: true, name: 'Arial' };
 
     currentRowInst++;
 
@@ -689,6 +700,10 @@ export class ExcelService {
       right: { style: 'thick' },
     };
 
+    worksheet.getCell(`K${currentRowInst}`).font = {
+      name: 'Arial'
+    };
+
     worksheet.getCell(`L${currentRowInst}`).value = 'LS';
 
     worksheet.getCell(`L${currentRowInst}`).alignment = {
@@ -699,6 +714,11 @@ export class ExcelService {
     worksheet.getCell(`L${currentRowInst}`).border = {
       left: { style: 'thick' },
       right: { style: 'thick' },
+    };
+
+    
+    worksheet.getCell(`L${currentRowInst}`).font = {
+      name: 'Arial'
     };
 
     worksheet.getCell(`M${currentRowInst}`).value = preliminaries;
@@ -716,7 +736,7 @@ export class ExcelService {
       right: { style: 'thick' },
     };
 
-    worksheet.getCell(`M${currentRowInst}`).font = { bold: true };
+    worksheet.getCell(`M${currentRowInst}`).font = { bold: true, name: 'Arial' };
 
     worksheet.getCell(`N${currentRowInst}`).value = preliminaries * 1;
 
@@ -733,7 +753,7 @@ export class ExcelService {
       right: { style: 'thick' },
     };
 
-    worksheet.getCell(`N${currentRowInst}`).font = { bold: true };
+    worksheet.getCell(`N${currentRowInst}`).font = { bold: true, name: 'Arial' };
 
     currentRowInst++;
 
@@ -858,6 +878,10 @@ export class ExcelService {
       right: { style: 'thick' },
     };
 
+    worksheet.getCell(`K${currentRowInst}`).font = {
+      name: 'Arial'
+    };
+
     worksheet.getCell(`L${currentRowInst}`).value = 'lot';
 
     worksheet.getCell(`L${currentRowInst}`).border = {
@@ -868,6 +892,10 @@ export class ExcelService {
     worksheet.getCell(`L${currentRowInst}`).alignment = {
       horizontal: 'center',
       vertical: 'middle',
+    };
+
+    worksheet.getCell(`L${currentRowInst}`).font = {
+      name: 'Arial'
     };
 
     worksheet.getCell(`M${currentRowInst}`).border = {
@@ -1042,6 +1070,9 @@ export class ExcelService {
                 left: { style: 'thick' },
                 right: { style: 'thick' },
               };
+              worksheet.getCell(`L${currentRowInst}`).font = {
+                name: 'Arial'
+              };
 
               //Column Unit Price
               worksheet.getCell(`M${currentRowInst}`).value = parseFloat(
@@ -1053,6 +1084,9 @@ export class ExcelService {
                 left: { style: 'thick' },
                 right: { style: 'thick' },
               };
+              worksheet.getCell(`M${currentRowInst}`).font = {
+                name: 'Arial'
+              };
 
               //Column Total Selling Price
               worksheet.getCell(`N${currentRowInst}`).value = parseFloat(
@@ -1063,6 +1097,9 @@ export class ExcelService {
               worksheet.getCell(`N${currentRowInst}`).border = {
                 left: { style: 'thick' },
                 right: { style: 'thick' },
+              };
+              worksheet.getCell(`N${currentRowInst}`).font = {
+                name: 'Arial'
               };
 
               currentRowInst++; // Move to the next row after each inventory item
@@ -1146,6 +1183,9 @@ export class ExcelService {
       left: { style: 'thick' },
       right: { style: 'thick' },
     };
+    worksheet.getCell(`K${currentRowInst}`).font = {
+      name: 'Arial'
+    };
 
     worksheet.getCell(`L${currentRowInst}`).value = 'lot';
 
@@ -1157,6 +1197,9 @@ export class ExcelService {
     worksheet.getCell(`L${currentRowInst}`).border = {
       left: { style: 'thick' },
       right: { style: 'thick' },
+    };
+    worksheet.getCell(`L${currentRowInst}`).font = {
+      name: 'Arial'
     };
 
     worksheet.getCell(`M${currentRowInst}`).value = supervision;
@@ -1174,7 +1217,7 @@ export class ExcelService {
       right: { style: 'thick' },
     };
 
-    worksheet.getCell(`M${currentRowInst}`).font = { bold: true };
+    worksheet.getCell(`M${currentRowInst}`).font = { bold: true, name: 'Arial' };
 
     worksheet.getCell(`N${currentRowInst}`).value = supervision * 1;
 
@@ -1191,7 +1234,7 @@ export class ExcelService {
       right: { style: 'thick' },
     };
 
-    worksheet.getCell(`N${currentRowInst}`).font = { bold: true };
+    worksheet.getCell(`N${currentRowInst}`).font = { bold: true, name: 'Arial' };
 
     currentRowInst++;
 
@@ -1271,6 +1314,10 @@ export class ExcelService {
       right: { style: 'thick' },
     };
 
+    worksheet.getCell(`K${currentRowInst}`).font = {
+      name: 'Arial'
+    };
+
     worksheet.getCell(`L${currentRowInst}`).value = 'lot';
 
     worksheet.getCell(`L${currentRowInst}`).alignment = {
@@ -1281,6 +1328,10 @@ export class ExcelService {
     worksheet.getCell(`L${currentRowInst}`).border = {
       left: { style: 'thick' },
       right: { style: 'thick' },
+    };
+
+    worksheet.getCell(`L${currentRowInst}`).font = {
+      name: 'Arial'
     };
 
     worksheet.getCell(`M${currentRowInst}`).value = testCommisioning;
@@ -1298,11 +1349,11 @@ export class ExcelService {
       right: { style: 'thick' },
     };
 
-    worksheet.getCell(`M${currentRowInst}`).font = { bold: true };
+    worksheet.getCell(`M${currentRowInst}`).font = { bold: true, name: 'Arial' };
 
     worksheet.getCell(`N${currentRowInst}`).value = testCommisioning * 1;
 
-    worksheet.getCell(`N${currentRowInst}`).font = { bold: true };
+    worksheet.getCell(`N${currentRowInst}`).font = { bold: true, name: 'Arial' };
 
     worksheet.getCell(`N${currentRowInst}`).numFmt =
       '_("Rp"* #,##0.00_);_("Rp"* (#,##0.00);_("Rp"* "-"??_);_(@_)';
@@ -1423,6 +1474,10 @@ export class ExcelService {
       left: { style: 'thick' },
     };
 
+    worksheet.getCell(`N${currentRowInst}`).font = {
+      name: 'Arial'
+    };
+
     currentRowInst++;
 
     worksheet.getCell(`B${currentRowInst}`).border = {
@@ -1471,6 +1526,9 @@ export class ExcelService {
       bottom: { style: 'thick' },
       right: { style: 'thick' },
       left: { style: 'thick' },
+    };
+    worksheet.getCell(`N${currentRowInst}`).font = {
+      name: 'Arial'
     };
 
     currentRowInst++;
@@ -1523,16 +1581,42 @@ export class ExcelService {
       bottom: { style: 'thick' },
       right: { style: 'thick' },
     };
+    worksheet.getCell(`N${currentRowInst}`).font = {
+      name: 'Arial'
+    };
 
     currentRowInst++;
 
     //signature section
-    worksheet.mergeCells(`B${currentRowInst}:L${currentRowInst + 10}`);
-    worksheet.getCell(`B${currentRowInst}`).border = {
-      left: { style: 'thick' },
-      top: { style: 'thick' },
-      bottom: { style: 'thick' },
-    };
+    worksheet.mergeCells(`B${currentRowInst}:L${currentRowInst}`);
+    worksheet.mergeCells(`B${currentRowInst + 1}:L${currentRowInst + 1}`);
+    worksheet.mergeCells(`B${currentRowInst + 2}:L${currentRowInst + 2}`);
+    worksheet.mergeCells(`B${currentRowInst + 3}:L${currentRowInst + 3}`);
+    worksheet.mergeCells(`B${currentRowInst + 4}:L${currentRowInst + 4}`);
+    worksheet.mergeCells(`B${currentRowInst + 5}:L${currentRowInst + 5}`);
+    worksheet.mergeCells(`B${currentRowInst + 6}:L${currentRowInst + 6}`);
+    worksheet.mergeCells(`B${currentRowInst + 7}:L${currentRowInst + 7}`);
+    worksheet.mergeCells(`B${currentRowInst + 8}:L${currentRowInst + 8}`);
+    worksheet.mergeCells(`B${currentRowInst + 9}:L${currentRowInst + 9}`);
+    worksheet.mergeCells(`B${currentRowInst + 10}:L${currentRowInst + 10}`);
+
+    
+    for(let i = 0; i <= 10;i++){
+      worksheet.getCell(`B${currentRowInst+i}`).border = {
+        left: { style: 'thick' },
+        right: {style: 'thick'}
+      };
+
+      if(i === 10){
+        worksheet.getCell(`B${currentRowInst+i}`).border = {
+          left: { style: 'thick' },
+          bottom: { style: 'thick' },
+          right: {style: 'thick'}
+        };
+      }
+    }
+
+
 
     worksheet.mergeCells(`M${currentRowInst}:N${currentRowInst}`);
     worksheet.getCell(`M${currentRowInst}`).border = {
@@ -1548,6 +1632,7 @@ export class ExcelService {
     worksheet.getCell(`M${currentRowInst + 1}`).border = {
       right: { style: 'thick' },
     };
+    worksheet.getCell(`M${currentRowInst + 1}`).font = {name: 'Arial'}
     worksheet.getCell(`M${currentRowInst + 1}:N${currentRowInst + 1}`);
 
     worksheet.mergeCells(`M${currentRowInst + 2}:N${currentRowInst + 2}`);
@@ -1559,6 +1644,7 @@ export class ExcelService {
     worksheet.getCell(`M${currentRowInst + 2}`).border = {
       right: { style: 'thick' },
     };
+    worksheet.getCell(`M${currentRowInst + 2}`).font = { name: 'Arial' }
     worksheet.getCell(`M${currentRowInst + 2}:N${currentRowInst + 2}`);
 
     worksheet.mergeCells(`M${currentRowInst + 3}:N${currentRowInst + 7}`);
@@ -1575,6 +1661,7 @@ export class ExcelService {
     worksheet.getCell(`M${currentRowInst + 8}`).border = {
       right: { style: 'thick' },
     };
+    worksheet.getCell(`M${currentRowInst + 8}`).font = {name: 'Arial'}
     worksheet.mergeCells(`M${currentRowInst + 8}:N${currentRowInst + 8}`);
 
     worksheet.getCell(`M${currentRowInst + 9}`).value = 'Area Sales Manager';
@@ -1584,6 +1671,7 @@ export class ExcelService {
     worksheet.getCell(`M${currentRowInst + 9}`).border = {
       right: { style: 'thick' },
     };
+    worksheet.getCell(`M${currentRowInst + 8}`).font = {name: 'Arial'}
     worksheet.mergeCells(`M${currentRowInst + 9}:N${currentRowInst + 9}`);
 
     worksheet.mergeCells(`M${currentRowInst + 10}:N${currentRowInst + 10}`);
@@ -1592,39 +1680,51 @@ export class ExcelService {
       bottom: { style: 'thick' },
     };
 
-    // if(fileType === 'pdf'){
-    //   const pageBreakRows = [72];
+    if(fileType === 'pdf'){
+      const pageBreakRows = [64];
 
-    //   let nextBreak = 72;
-    //   const rowInterval = 72;
+      let nextBreak = 64;
+      const rowInterval = 64;
 
-    //   while (nextBreak + rowInterval < currentRowInst) {
-    //     nextBreak += rowInterval;
-    //     pageBreakRows.push(nextBreak);
-    //   }
+      while (nextBreak + rowInterval < currentRowInst) {
+        nextBreak += rowInterval;
+        pageBreakRows.push(nextBreak);
+      }
 
-    //   // Apply borders on each page break
-    //   pageBreakRows.forEach((breakRow) => {
-    //     const rowBot = worksheet.getRow(breakRow);  // Bottom row of page
-    //     const rowTop = worksheet.getRow(breakRow - 1);  // Top row of next page
+      // Apply borders on each page break
+      pageBreakRows.forEach((breakRow) => {
+        const rowBot = worksheet.getRow(breakRow);  // Bottom row of page
+        const rowTop = worksheet.getRow(breakRow - 1);  // Top row of next page
 
-    //     for (let col = 2; col <= 14; col++) {  // Columns B to N
-    //       // Bottom row (Top Border)
-    //       rowBot.getCell(col).border = {
-    //         top: { style: 'thick' },
-    //         right: { style: 'thick' },
-    //         left: { style: 'thick' },
-    //       };
+        for (let col = 2; col <= 14; col++) {  // Columns B to N
+          // Bottom row (Top Border)
+          rowBot.getCell(col).border = {
+            top: { style: 'thick' },
+            right: { style: 'thick' },
+            left: { style: 'thick' },
+          };
 
-    //       // Top row (Bottom Border)
-    //       rowTop.getCell(col).border = {
-    //         bottom: { style: 'thick' },
-    //         right: { style: 'thick' },
-    //         left: { style: 'thick' },
-    //       };
-    //     }
-    //   });
-    // }
+          // Top row (Bottom Border)
+          rowTop.getCell(col).border = {
+            bottom: { style: 'thick' },
+            right: { style: 'thick' },
+            left: { style: 'thick' },
+          };
+        }
+      });
+
+
+        // Configure page settings
+  worksheet.pageSetup = {
+    fitToPage: true,
+    fitToWidth: 1,
+    fitToHeight: 0,
+    horizontalCentered: true,
+    verticalCentered: true,
+    paperSize: 9, // A4
+    orientation: 'portrait',
+  };
+    }
 
     // Save the workbook to a blob
     workbook.xlsx.writeBuffer().then((buffer) => {
