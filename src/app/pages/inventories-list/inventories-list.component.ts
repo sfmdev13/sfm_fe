@@ -122,7 +122,7 @@ export class InventoriesListComponent implements OnInit {
     this.getInventory();
 
     this.apiSvc.refreshGetInventory$.subscribe(() => {
-      this.getInventory();
+      this.refreshTable();
     })
 
     this.searchSubject.pipe(
@@ -140,6 +140,7 @@ export class InventoriesListComponent implements OnInit {
 
 
   refreshTable(): void{
+    this.search = '';
     this.filtered = false;
     this.pageSize = 5;
     this.currentPage = 1;
