@@ -259,6 +259,7 @@ export class QuotationComponent implements OnInit {
         }
         this.apiSvc.createQuotationLog(body).subscribe({
           next: () => {
+            console.log('masuk')
             this.excelService.generateExcel(dataBasic, dataDetail, revision, this.productCategory, type);
           }
         })
